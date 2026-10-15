@@ -53,8 +53,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed ordinary-local forge transport and real-Git acceptance: automatic managed links update after landing without local code/base mutation; explicit Restack retains change identity and drafts. Git guide describes limits; native storage/publication semantics are unchanged.",
-      "fingerprint": "f4689d6acdd3f14864df0539efa91dd73b8950ea0a477f5e6c5080ea3bc05670"
+      "reason": "Reviewed equivalent SCP remote parsing with strip_prefix: accepted hosts, paths, endpoint identities and local repository authority remain unchanged. Existing Git and conversion documentation still describes the supported forge profile.",
+      "fingerprint": "a7a8868c3b78f0b9bc04fbfb0c6f9c78bd1d4da69fd699b610b813e422a66602"
     }
   },
   {
@@ -97,8 +97,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed portable paired executable discovery and equivalent process/test code organization. Server configuration, native state and authorization are unchanged.",
-      "fingerprint": "cd09a8a423ba015a84fc4fa3b9d647589cd65f4a23149ce9110fb92f3d3f6f65"
+      "reason": "Reviewed capture scheduling fixture setup and body-free timeout diagnostics. The multi-step prefix test now prepares the qualified rule cache before its unchanged scheduling deadline; production capture, storage, configuration schemas and lifecycle behavior are unchanged.",
+      "fingerprint": "377ba41288d1db7dbe6b428ebe2f12e26885103e84affd292e82c217a757d18f"
     }
   },
   {
@@ -110,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
-      "fingerprint": "578e7264c187102d8ed21a078348d225d7982c93c6a02137051286e6540f3950"
+      "reason": "Reviewed stack forge parser/orchestration and explicit CLI automation credential selection. CLI index and Git guide cover PR/submission/recovery/restack families and preserve exact intent and qualification limits.",
+      "fingerprint": "3ada316a70cc49fc47364d1845e94193e97e293e536384f0da87cc7249d9a9aa"
     }
   },
   {
@@ -123,8 +123,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
-      "fingerprint": "ac27450d69e3702b5604f445da656fad7515a45152e974de15f7898d5de38090"
+      "reason": "Reviewed the exact 202-route inventory including LocalTrusted integrations and repository forge endpoints. The test now explicitly requires both endpoints and retains every method, media, HEAD, operation identity and security assertion; wire contracts are unchanged.",
+      "fingerprint": "4d573e4a75bb8a119496ba834cf9337975be7e1310e98e440e19dad71dd2f918"
     }
   },
   {
@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Prior Search review: Search save failures remain visible through status refresh until the draft is cancelled or an explicit save succeeds. Prior forge review: Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates. Combined-source review remains unqualified; tests were skipped by user request.",
-      "fingerprint": "137fc87a106bc9ac81ced8a59ebbe7ccc8786d55f6fad68fe684e50df259e0de"
+      "reason": "Reviewed accepted code-selection ownership and independent revision detail/context reads. Browser proxy-wrapped routes preserve rejected/no-op selections; valid selections retire superseded navigation while graph/detail retain busy phases. Review/agent associations no longer wait for file inspection; pinned operations, request ownership, guards, existing user flows and documentation remain unchanged.",
+      "fingerprint": "a1c958b934a181a5d26869118d867b9a717f2a317829ff8f771f1d64ca941456"
     }
   },
   {
@@ -146,8 +146,8 @@
     "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
     "pages": ["docs/site/technical/lifecycle.md"],
     "review": {
-      "reason": "Reviewed paired jj-store-jj resource discovery. Packaging/platform gates remain separate; no installed service restart or staged resource replacement occurred.",
-      "fingerprint": "34a08f6e2e58757bf36abdebd68d1f12d3a53cdeb00867d091b588bb9cfb84e8"
+      "reason": "Reviewed the equivalent optional ACP regular-file and symlink guard in Resources::from_root against lifecycle documentation. Fresh desktop Clippy, complete workspace tests, native checking and staged restart acceptance pass; private installation, owner lifetime and independent signed-platform gates remain unchanged.",
+      "fingerprint": "80e70ceb50bf3ea5024a73ae3cedacabb73c8cbf62a5b76c70bb257b69d3b59b"
     }
   },
   {
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
-      "fingerprint": "9e9ed6a627a65cff249162f844e6604dc6b6d1cc15eb7bf5c084dfb4564c13f1"
+      "reason": "Reviewed generated integration inventory/command schemas and current forge CLI help. Transport and CLI pages document metadata-only account responses, explicit automation credentials and exact-request recovery; generated references remain authoritative.",
+      "fingerprint": "ec7bd8e8c3595c2acac741add4a707773ecef330e35a35483fea20fa2ab9b87b"
     }
   },
   {
@@ -176,8 +176,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed renamed staged custom client discovery; independent compute/runtime source and credential handling remain unchanged.",
-      "fingerprint": "48d3aa636f561b70462ae703ab544617e006719c78cb9cb8ea0c308b623ec0dc"
+      "reason": "Reviewed the maintained local-agent hint and bounded catalog simplifications, unchanged item ordering, lexical synthetic request lock and nonempty request-read assertion against the compute, agent and security guides. Permission/cancellation, backend credential custody, single-attempt metadata and uncertain-inference no-replay behavior retain their exact tests and contracts; native GGUF/live-provider/platform gates remain separate.",
+      "fingerprint": "f5cfbd9c2d6a1e666b27ae3315a2aa2998b1fd78839c8a591a6d1a4169d9a03e"
     }
   },
   {
@@ -201,8 +201,8 @@
     "sources": ["crates/jj-forge/src"],
     "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
     "review": {
-      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
-      "fingerprint": "d7e8ba2512c371878acf7b0ef2d2584a3514a4a9d7e5abc7c2373ff59bf65aea"
+      "reason": "Reviewed equivalent forge let-chain guards after strict Rust lint: stale PR identity rejection, retained navigation context and latest-check filtering preserve short-circuit order and documented submission/check/credential semantics.",
+      "fingerprint": "b19a8560984447c3c9e8e06f83185a04dc61f27cbf87bed45861123d113df3fd"
     }
   }
 ]

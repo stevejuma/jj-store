@@ -46,11 +46,13 @@
     await within(upper).findByRole("button", {
       name: "add deployment preview command",
     });
-    expect(
-      within(upper)
-        .getAllByText("workspace/experiment")
-        .filter((element) => element.closest('[data-presentation="inline"]')),
-    ).toHaveLength(1);
+    await waitFor(() =>
+      expect(
+        within(upper)
+          .getAllByText("workspace/experiment")
+          .filter((element) => element.closest('[data-presentation="inline"]')),
+      ).toHaveLength(1),
+    );
     await canvas.findByRole("region", { name: "Stack export-json" });
     await canvas.findByRole("region", { name: "Stack query-filtering" });
     await userEvent.click(
@@ -110,11 +112,13 @@
     await within(upper).findByRole("button", {
       name: "prepare cloud deployment config",
     });
-    expect(
-      within(upper)
-        .getAllByText("workspace/experiment")
-        .filter((element) => element.closest('[data-presentation="inline"]')),
-    ).toHaveLength(1);
+    await waitFor(() =>
+      expect(
+        within(upper)
+          .getAllByText("workspace/experiment")
+          .filter((element) => element.closest('[data-presentation="inline"]')),
+      ).toHaveLength(1),
+    );
     expect(
       within(upper).getByRole("button", {
         name: "Apply cloud-observability",

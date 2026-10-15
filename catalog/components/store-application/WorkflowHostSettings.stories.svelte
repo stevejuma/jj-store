@@ -3,31 +3,16 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/ServerSettingsFixture.svelte";
+  import {
+    admission,
+    selectPrincipal,
+  } from "../../fixtures/workflow-host-settings-play.js";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Workflow hosts",
     component: Fixture,
     args: { section: "workflow" },
     tags: ["visual-pending"],
   });
-  async function admission(canvasElement: HTMLElement) {
-    const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole("button", {
-        name: "Execution access",
-      }),
-    );
-    const input = await canvas.findByRole("combobox", {
-      name: "Admitted execution principals",
-    });
-    return { canvas, input };
-  }
-  async function selectPrincipal(input: HTMLElement) {
-    await userEvent.click(input);
-    await userEvent.click(
-      await within(document.body).findByRole("option", { name: /Steve/ }),
-    );
-    await userEvent.keyboard("{Escape}");
-  }
   async function jsonEditor(canvas: ReturnType<typeof within>) {
     await userEvent.click(
       canvas.getByRole("button", { name: "Add local host" }),
@@ -204,18 +189,23 @@
     const dialog = await within(document.body).findByRole("dialog", {
       name: "Reload saved settings",
     });
+    await waitFor(() => expect(dialog).toBeVisible());
     await expect(document.querySelectorAll('[role="dialog"]')).toHaveLength(1);
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Reload saved settings" }),
     );
-    await expect(await within(dialog).findByText("Applied")).toBeVisible();
+    await waitFor(() =>
+      expect(within(dialog).getByText("Applied")).toBeVisible(),
+    );
     await userEvent.click(
       within(dialog).getByRole("button", {
         name: "Close configuration reload",
       }),
     );
     await waitFor(() => expect(trigger).toHaveFocus());
-    await expect(canvas.getByText("Current", { exact: true })).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByText("Current", { exact: true })).toBeVisible(),
+    );
   }}
 />
 

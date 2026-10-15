@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { sampleWork } from "../../../scripts/dev-demo-work-samples.mjs";
 
 test("development work samples survive cold startup and additive reseeding", async ({
   page,
@@ -38,6 +39,14 @@ test("development work samples survive cold startup and additive reseeding", asy
   const samples = projects.projects.filter((p: { title: string }) =>
     titles.includes(p.title),
   );
+  const seededComments = new Map(
+    sampleWork(home, runtime.repositoryProfiles.repositoryLinks).flatMap(
+      (project) =>
+        project.tasks.flatMap((task) =>
+          task.comments.map((comment) => [comment.id, comment] as const),
+        ),
+    ),
+  );
   expect(samples).toHaveLength(3);
   const states = new Set(),
     taskIds = new Set();
@@ -57,8 +66,21 @@ test("development work samples survive cold startup and additive reseeding", asy
       if (task.title === "Ship repository browsing") browsingTaskId = task.id;
       if (task.parent) subtasks += 1;
       const discussion = await read(`&project=${project.id}&task=${task.id}`);
-      comments += discussion.comments.length;
-      replies += discussion.comments.filter(
+      // Other cold journeys append real comments to these same sample tasks.
+      // Retain exact seed identities/content while preserving those additions.
+      const seeded = discussion.comments.filter((comment: { id: string }) =>
+        seededComments.has(comment.id),
+      );
+      for (const comment of seeded) {
+        const expected = seededComments.get(comment.id)!;
+        expect(comment).toMatchObject({
+          id: expected.id,
+          body: expected.body,
+          reply_to: expected.reply_to,
+        });
+      }
+      comments += seeded.length;
+      replies += seeded.filter(
         (c: { reply_to: string | null }) => c.reply_to,
       ).length;
     }

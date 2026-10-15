@@ -21500,12 +21500,177 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## ForgeIntegrationInventory
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "accounts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgeIntegrationAccount"
+      }
+    },
+    "oauth_available": {
+      "type": "boolean"
+    },
+    "keychain_supported": {
+      "type": "boolean"
+    },
+    "authorization": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeIntegrationAuthorization"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "accounts",
+    "oauth_available",
+    "keychain_supported",
+    "authorization"
+  ]
+}
+```
+
+## ForgeIntegrationAccount
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "api_url": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "login": {
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "avatar_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "method": {
+      "$ref": "#/components/schemas/ForgeIntegrationMethod"
+    },
+    "revision": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "available": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "api_url",
+    "user_id",
+    "login",
+    "name",
+    "email",
+    "avatar_url",
+    "method",
+    "revision",
+    "available"
+  ],
+  "description": "Non-secret identity. The numeric provider ID survives username changes."
+}
+```
+
+## ForgeIntegrationMethod
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "oauth",
+    "pat",
+    "enterprise"
+  ]
+}
+```
+
+## ForgeIntegrationAuthorization
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "session": {
+      "type": "string"
+    },
+    "user_code": {
+      "type": "string"
+    },
+    "verification_uri": {
+      "type": "string"
+    },
+    "expires_at": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "interval": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "state": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "session",
+    "user_code",
+    "verification_uri",
+    "expires_at",
+    "interval",
+    "state"
+  ]
+}
+```
+
 ## ForgeResponse
 
 ```text
 {
   "type": "object",
   "properties": {
+    "detection": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeIntegrationDetection"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "notice": {
       "type": [
         "string",
@@ -21624,6 +21789,91 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## ForgeIntegrationDetection
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "provider": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeProvider"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "remotes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgeIntegrationRemote"
+      }
+    },
+    "accounts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgeIntegrationAccount"
+      }
+    },
+    "readiness": {
+      "type": "string"
+    },
+    "account_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "provider",
+    "remotes",
+    "accounts",
+    "readiness",
+    "account_id"
+  ]
+}
+```
+
+## ForgeProvider
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "github",
+    "gitlab",
+    "forgejo"
+  ]
+}
+```
+
+## ForgeIntegrationRemote
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "api_url": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "api_url",
+    "repository"
+  ]
+}
+```
+
 ## ForgeConnection
 
 ```text
@@ -21668,19 +21918,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "target_remote",
     "target",
     "native_stacks"
-  ]
-}
-```
-
-## ForgeProvider
-
-```text
-{
-  "type": "string",
-  "enum": [
-    "github",
-    "gitlab",
-    "forgejo"
   ]
 }
 ```
@@ -21788,6 +22025,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "account_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "request_id": {
       "type": "string"
     },
@@ -21856,6 +22099,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "account_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "request_id": {
       "type": "string"
     },
@@ -22196,6 +22445,19 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       ]
     },
     "log_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "started_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Provider-reported start and completion, absent when not supplied."
+    },
+    "completed_at": {
       "type": [
         "string",
         "null"

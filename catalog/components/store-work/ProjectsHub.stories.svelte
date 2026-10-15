@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { verifyUnsupportedReviews } from "../../fixtures/projects-unsupported-reviews-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import { playOwnershipLayouts } from "./projects-layout-play.js";
@@ -21,32 +22,7 @@
 <Story
   name="Unsupported reviews empty state"
   args={{ localReviews: true }}
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(await c.findByRole("tab", { name: "Reviews" }));
-    const home = await c.findByRole("region", {
-      name: "Reviews in UI repository",
-    });
-    const empty = within(home)
-      .getByText("Reviews unavailable")
-      .closest('[data-slot="empty"]');
-    await expect(empty).toBeVisible();
-    await expect(
-      empty?.querySelector('[data-ui-part="empty-media"] svg'),
-    ).toBeVisible();
-    await expect(empty).toHaveTextContent(
-      "Reviews are not supported for local JJ repositories.",
-    );
-    await expect(within(home).queryByRole("alert")).toBeNull();
-    await expect(
-      within(home).queryByRole("button", { name: "Retry reviews" }),
-    ).toBeNull();
-    await expect(
-      within(
-        c.getByRole("region", { name: "Reviews in Parser repository" }),
-      ).getByRole("list", { name: "Reviews" }).firstChild,
-    ).not.toBeNull();
-  }}
+  play={verifyUnsupportedReviews}
 />
 <Story
   name="Review load failure retains retry"
@@ -363,9 +339,11 @@
     await userEvent.click(trigger);
     const search = await body.findByPlaceholderText("Search your projects");
     const options = within(body.getByRole("listbox"));
-    await expect(
-      options.getByRole("option", { name: "Native release" }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        options.getByRole("option", { name: "Native release" }),
+      ).toBeVisible(),
+    );
     await expect(
       options.getByRole("option", { name: "Shared code project" }),
     ).toBeVisible();
@@ -388,11 +366,13 @@
         c.getByRole("navigation", { name: "Repository navigation" }),
       ).getByRole("button", { name: "Repositories" }),
     );
-    await expect(
-      within(body.getByRole("listbox")).getByRole("option", {
-        name: "Parser repository",
-      }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(body.getByRole("listbox")).getByRole("option", {
+          name: "Parser repository",
+        }),
+      ).toBeVisible(),
+    );
     await userEvent.keyboard("{Escape}");
   }}
 />

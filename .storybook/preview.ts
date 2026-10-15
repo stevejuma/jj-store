@@ -1,11 +1,20 @@
 import type { Preview } from "@storybook/svelte-vite";
 import { withThemeByDataAttribute } from "@storybook/addon-themes";
+import { expect, waitFor } from "storybook/test";
 import { syncCatalogStoryLayout } from "@lapismd/design-core/storybook/catalog-layout";
 import { preparePortableApplicationCanvas } from "./portable-canvas.js";
+import "../web/src/utilities.css";
 import "@lapismd/design-core/storybook.css";
 import "@lapismd/design-core/themes/lapis.css";
 import "./preview.css";
 const preview: Preview = {
+  beforeEach: async () => {
+    // Portable stories dispose the previous canvas immediately before this hook.
+    // Let an overlay outro release its modal lease before mounting the next one.
+    await waitFor(() =>
+      expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
+    );
+  },
   tags: ["autodocs", "test"],
   globalTypes: {
     theme: {

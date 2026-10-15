@@ -20,7 +20,7 @@ test("CLI installer copies both tools without replacing jj or following target s
   await mkdir(source);
   await mkdir(destination);
   await writeFile(join(source, "jj-store"), "server");
-  await writeFile(join(source, "jj"), "custom jj");
+  await writeFile(join(source, "jj-store-jj"), "custom jj");
   await writeFile(join(destination, "jj"), "existing jj");
   await writeFile(join(root, "symlink-target"), "untouched");
   await symlink(join(root, "symlink-target"), join(destination, "jj-store"));

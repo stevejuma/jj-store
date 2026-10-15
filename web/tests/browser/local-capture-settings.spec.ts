@@ -31,6 +31,12 @@ async function selectTab(page: Page, name: string) {
       })
       .click();
     await page.getByRole("menuitem", { name, exact: true }).click();
+    await expect(
+      page.getByRole("menu", {
+        name: "More agents settings sections",
+        exact: true,
+      }),
+    ).toHaveCount(0);
   }
 }
 async function openSettings(page: Page) {
@@ -377,6 +383,9 @@ test("capture notifications retain dismissal and drafts until observed recovery"
   const bounds = await toast.boundingBox();
   expect(bounds!.x).toBeGreaterThanOrEqual(0);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(390);
+  await expect(
+    page.locator('[data-ui-component="tooltip"][data-state="closed"]'),
+  ).toHaveCount(0);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.screenshot({
     path: test.info().outputPath("capture-notification-mobile.png"),

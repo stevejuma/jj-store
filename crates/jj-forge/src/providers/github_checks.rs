@@ -73,13 +73,12 @@ fn current_checks(
             .iter()
             .copied()
             .find(|r| suite != 0 && number(r, "check_suite_id") == suite);
-        if let Some(run) = run {
-            if latest
+        if let Some(run) = run
+            && latest
                 .get(&workflow(run))
                 .is_some_and(|current| number(current, "id") != number(run, "id"))
-            {
-                continue;
-            }
+        {
+            continue;
         }
         let key = (
             number(&leaf["app"], "id"),

@@ -1,5 +1,6 @@
 <script module lang="ts">
   import { selectSettingsSubtab } from "./settings-shell-play.js";
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Projects from "../../fixtures/ProjectsHubFixture.svelte";
@@ -13,6 +14,15 @@
     title: "JJ Store/Agent transcript settings",
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", a11y: { test: "error" } },
+    beforeEach: async () => {
+      await Promise.all([
+        views.projects(),
+        views.settings(),
+        views.agentsRecorded(),
+        views.agentSidebar(),
+        views.agents(),
+      ]);
+    },
   });
   async function response({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
@@ -258,15 +268,37 @@
     );
     copy.focus();
     await userEvent.keyboard("{ArrowRight}");
-    await expect(
-      await portal.findByRole("menuitem", { name: "Copy message ID" }),
-    ).toBeVisible();
-    await expect(
-      portal.getByRole("menuitem", { name: "Copy session ID" }),
-    ).toBeVisible();
-    await expect(
-      portal.getByRole("menuitem", { name: "Copy turn ID" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await portal.findByRole("menuitem", { name: "Copy message ID" }),
+      ).toBeVisible();
+    });
+    await waitFor(async () => {
+      await expect(
+        portal.getByRole("menuitem", { name: "Copy session ID" }),
+      ).toBeVisible();
+    });
+    await waitFor(async () => {
+      await expect(
+        portal.getByRole("menuitem", { name: "Copy turn ID" }),
+      ).toBeVisible();
+    });
+    await userEvent.keyboard("{ArrowDown}");
+    await waitFor(() =>
+      expect(
+        portal
+          .getByRole("menu", { name: "Copy" })
+          .contains(document.activeElement),
+      ).toBe(true),
+    );
+    await waitFor(() => {
+      for (const menu of portal.getAllByRole("menu"))
+        expect(
+          menu
+            .getAnimations()
+            .some((animation) => animation.playState === "running"),
+        ).toBe(false);
+    });
   }}
 >
   {#snippet children()}<Prompt content="Retained captured message" />{/snippet}

@@ -1085,6 +1085,48 @@ fn session_token() -> Result<String, String> {
     Ok(b.iter().map(|x| format!("{x:02x}")).collect())
 }
 
+// The owned host selects advertised modes through ACP config options.
+fn mode_options() -> Value {
+    json!([{"id":"mode","name":"Execution mode","category":"mode","type":"select","currentValue":"ask",
+        "options":[{"value":"ask","name":"Ask before tools"}]}])
+}
+
+/// LapisMD: a standalone tool-free completion for application discovery metadata.
+/// No ACP session, MCP registry or interactive sign-in is constructed.
+pub async fn discover_subscription_models(
+    source: std::sync::Arc<dyn auth::TokenSource>,
+) -> Result<Vec<serde_json::Value>, AgentError> {
+    let cfg = Config::from_env().map_err(AgentError::InvalidParams)?;
+    Llm::new(&cfg)?
+        .with_token_source(source)
+        .subscription_models()
+        .await
+}
+pub async fn summarize_metadata(system: &str, input: &str) -> Result<String, AgentError> {
+    summarize_metadata_with_token_source(system, input, None).await
+}
+pub async fn summarize_metadata_with_token_source(
+    system: &str,
+    input: &str,
+    source: Option<std::sync::Arc<dyn auth::TokenSource>>,
+) -> Result<String, AgentError> {
+    let cfg = Config::from_env().map_err(AgentError::InvalidParams)?;
+    if matches!(cfg.provider, Provider::Databricks | Provider::DatabricksV2)
+        && cfg.api_key.is_empty()
+    {
+        return Err(AgentError::InvalidParams(
+            "metadata authentication required".into(),
+        ));
+    }
+    let mut llm = Llm::new(&cfg)?;
+    if let Some(source) = source {
+        llm = llm.with_token_source(source);
+    }
+    llm.single_attempt()
+        .summarize(&cfg, system, input, 2048, &cfg.model)
+        .await
+}
+
 #[cfg(test)]
 mod tests {
     use crate::catalog::ModelEntry;
@@ -1185,46 +1227,4 @@ mod tests {
             }]
         );
     }
-}
-
-// The owned host selects advertised modes through ACP config options.
-fn mode_options() -> Value {
-    json!([{"id":"mode","name":"Execution mode","category":"mode","type":"select","currentValue":"ask",
-        "options":[{"value":"ask","name":"Ask before tools"}]}])
-}
-
-/// LapisMD: a standalone tool-free completion for application discovery metadata.
-/// No ACP session, MCP registry or interactive sign-in is constructed.
-pub async fn discover_subscription_models(
-    source: std::sync::Arc<dyn auth::TokenSource>,
-) -> Result<Vec<serde_json::Value>, AgentError> {
-    let cfg = Config::from_env().map_err(AgentError::InvalidParams)?;
-    Llm::new(&cfg)?
-        .with_token_source(source)
-        .subscription_models()
-        .await
-}
-pub async fn summarize_metadata(system: &str, input: &str) -> Result<String, AgentError> {
-    summarize_metadata_with_token_source(system, input, None).await
-}
-pub async fn summarize_metadata_with_token_source(
-    system: &str,
-    input: &str,
-    source: Option<std::sync::Arc<dyn auth::TokenSource>>,
-) -> Result<String, AgentError> {
-    let cfg = Config::from_env().map_err(AgentError::InvalidParams)?;
-    if matches!(cfg.provider, Provider::Databricks | Provider::DatabricksV2)
-        && cfg.api_key.is_empty()
-    {
-        return Err(AgentError::InvalidParams(
-            "metadata authentication required".into(),
-        ));
-    }
-    let mut llm = Llm::new(&cfg)?;
-    if let Some(source) = source {
-        llm = llm.with_token_source(source);
-    }
-    llm.single_attempt()
-        .summarize(&cfg, system, input, 2048, &cfg.model)
-        .await
 }

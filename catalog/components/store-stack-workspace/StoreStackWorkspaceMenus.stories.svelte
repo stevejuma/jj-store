@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
   import {
     applyPreview,
@@ -58,9 +58,11 @@
       };
       await userEvent.click(canvas.getByRole("button", { name: action }));
       await submenu(canvasElement, "Copy", "Copy commit hash");
-      expect(
-        await portal.findByText("Could not copy. Try again."),
-      ).toBeVisible();
+      await waitFor(async () => {
+        expect(
+          await portal.findByText("Could not copy. Try again."),
+        ).toBeVisible();
+      });
       await userEvent.click(
         portal.getByRole("button", { name: "Dismiss Copy failed" }),
       );
@@ -75,11 +77,13 @@
         `Add empty commit ${placement}`,
       );
       await messagePreview(canvasElement, `Empty ${placement}`);
-      expect(
-        await portal.findByText(
-          new RegExp(`${placement} “Expose repository API”`),
-        ),
-      ).toBeVisible();
+      await waitFor(async () => {
+        expect(
+          await portal.findByText(
+            new RegExp(`${placement} “Expose repository API”`),
+          ),
+        ).toBeVisible();
+      });
       await applyPreview(canvasElement);
       const rows = Array.from(
         canvasElement.querySelectorAll("[data-revision-id]"),
@@ -163,9 +167,11 @@
       "API with documentation",
     );
     await userEvent.click(form.getByRole("button", { name: "Save commit" }));
-    expect(
-      await portal.findByText(/only explicitly staged additions/),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await portal.findByText(/only explicitly staged additions/),
+      ).toBeVisible();
+    });
     await userEvent.click(
       portal.getByRole("button", { name: "Cancel preview" }),
     );
@@ -199,9 +205,11 @@
       "Actions for Expose repository API",
       "Delete commit",
     );
-    expect(
-      await portal.findByText(/and its file changes. Unstaged edits remain/),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await portal.findByText(/and its file changes. Unstaged edits remain/),
+      ).toBeVisible();
+    });
     await applyPreview(canvasElement);
     expect(
       canvas.queryByRole("button", { name: "Expose repository API" }),
@@ -224,9 +232,11 @@
       "Branch actions for feature/api",
       "Squash all commits",
     );
-    expect(
-      await portal.findByText(/Lower branch segments remain/),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await portal.findByText(/Lower branch segments remain/),
+      ).toBeVisible();
+    });
     await applyPreview(canvasElement);
     expect(
       canvas.getByRole("button", { name: "Show all changes in feature/model" }),

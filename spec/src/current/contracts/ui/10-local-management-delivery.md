@@ -91,6 +91,11 @@ Repository settings are scoped by their repository URL and have no repository
 picker. Installation-wide Protection and storage configuration live under Local
 service. Dirty drafts, pending commands and active work retain their existing
 owner-change guards; same-repository settings navigation preserves that owner.
+An unresolved repository action may remain retained while changing only a
+repository Settings category or subtab. Every other route field stays exact,
+including the repository, operation, workspace and file selection. Entering or
+leaving Settings, Global Settings, hubs and any changed owner remain guarded;
+category navigation never rebinds or replays the pending action.
 
 Repository review creation and Refresh share one trailing action group at the
 far right of the Reviews header.

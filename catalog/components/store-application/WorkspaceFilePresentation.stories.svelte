@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import { verifyWorkspaceRailHeader } from "../../fixtures/workspace-rail-header-play.js";
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, within, waitFor } from "storybook/test";
   import { page as browser, userEvent as browserEvent } from "vitest/browser";
@@ -18,6 +20,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Conversation workspace files",
     component: Fixture,
+    beforeEach: async () => {
+      await Promise.all([
+        views.agents(),
+        views.agentChatSidebar(),
+        views.workspaceFiles(),
+        views.workspaceInspector(),
+      ]);
+    },
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen" },
   });
@@ -25,54 +35,7 @@
 
 <Story
   name="Workspace rail header and file divider span the panel"
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-
-    await waitFor(() =>
-      expect(
-        c.getByRole("button", { name: "Toggle workspace files" }),
-      ).toBeEnabled(),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Toggle workspace files" }),
-    );
-    const panel = await c.findByRole("complementary", {
-      name: "Workspace files",
-    });
-    await within(panel).findByRole("button", { name: "README.md" });
-    const header = panel.querySelector<HTMLElement>(
-      '[data-ui-part="sidebar-header"]',
-    )!;
-    const toolbar = panel.querySelector<HTMLElement>(
-      ".community-projects__file-tree-actions",
-    )!;
-    await expect(
-      {
-        headerBorder: getComputedStyle(header).borderBottomWidth,
-        startsAtPanelEdge:
-          Math.abs(
-            toolbar.getBoundingClientRect().left -
-              panel.getBoundingClientRect().left,
-          ) <= 1,
-        endsAtPanelEdge:
-          Math.abs(
-            toolbar.getBoundingClientRect().right -
-              panel.getBoundingClientRect().right,
-          ) <= 1,
-      },
-      JSON.stringify({
-        state: panel.getAttribute("data-state"),
-        variant: panel.getAttribute("data-variant"),
-        shell: !!header.closest(".community-app-shell__surface"),
-        headerClass: header.className,
-      }),
-    ).toEqual({
-      headerBorder: "1px",
-      startsAtPanelEdge: true,
-      endsAtPanelEdge: true,
-    });
-    await expect(getComputedStyle(toolbar).borderBottomWidth).toBe("1px");
-  }}
+  play={verifyWorkspaceRailHeader}
 />
 
 <Story
@@ -322,12 +285,14 @@
       await expect(
         within(menu).queryByText("/fixture/repository/agent-workspace"),
       ).toBeNull();
-      await expect(
-        Math.abs(
-          menu.getBoundingClientRect().left -
-            trigger.getBoundingClientRect().left,
-        ),
-      ).toBeLessThanOrEqual(1);
+      await waitFor(() =>
+        expect(
+          Math.abs(
+            menu.getBoundingClientRect().left -
+              trigger.getBoundingClientRect().left,
+          ),
+        ).toBeLessThanOrEqual(1),
+      );
       await expect(getComputedStyle(view).justifyContent).not.toBe("center");
       await browserEvent.click(page.getByRole("menuitem", { name: "Copy" }));
       await browserEvent.click(
@@ -338,9 +303,19 @@
           "/fixture/repository/agent-workspace",
         ),
       );
-      await waitFor(() =>
-        expect(page.queryByRole("menu", { name: "Workspace" })).toBeNull(),
-      );
+      await waitFor(() => {
+        const remaining = page.queryByRole("menu", { name: "Workspace" });
+        const style = remaining ? getComputedStyle(remaining) : null;
+        expect(
+          remaining,
+          JSON.stringify({
+            state: remaining?.getAttribute("data-state"),
+            animation: style?.animation,
+            transitions: style?.transition,
+            pointer: getComputedStyle(document.body).pointerEvents,
+          }),
+        ).toBeNull();
+      });
       await waitFor(() =>
         expect(getComputedStyle(trigger).pointerEvents).not.toBe("none"),
       );
@@ -362,6 +337,9 @@
       await waitFor(() => expect(write).toHaveBeenCalledTimes(2));
       await expect(write).toHaveBeenLastCalledWith("agent-" + "44".repeat(16));
       await waitFor(() => expect(trigger).toHaveFocus());
+      await waitFor(() =>
+        expect(page.queryByRole("menu", { name: "Workspace" })).toBeNull(),
+      );
     } finally {
       if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
       else Reflect.deleteProperty(navigator, "clipboard");

@@ -9,3 +9,4 @@
 - [Workspace inspector and historical turn review](workspace-inspector-review.md)
 - [history](history/index.md)
   {{#include history/SUMMARY.nav.md}}
+- [Main local qualification review](main-local-qualification.md)

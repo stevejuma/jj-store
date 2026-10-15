@@ -4,6 +4,7 @@ import type { CommunityNavigationItemModel } from "../community-navigation/model
 import { settingsNavigationReason } from "./settings-navigation.js";
 import {
   repositorySettingsGuardKey,
+  sameRepositorySettingsOwner,
   type RepositorySettingsDraftGuard,
 } from "./repository-settings-guards.js";
 
@@ -37,10 +38,12 @@ export function ownRepositorySettingsGuard(options: {
     controller.actions.setNavigationGuard?.(
       "settings-and-editing",
       (previous, next) => {
-        notice = reason(
-          previous.repository !== next.repository ||
-            Boolean(next.projectsHub || next.agentsHub || next.threadsHub),
-        );
+        notice = sameRepositorySettingsOwner(previous, next)
+          ? ""
+          : reason(
+              previous.repository !== next.repository ||
+                Boolean(next.projectsHub || next.agentsHub || next.threadsHub),
+            );
         return notice;
       },
     );

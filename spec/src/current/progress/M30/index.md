@@ -103,6 +103,11 @@ controller now retains that failure until Cancel or a successful explicit Save;
 neither observation nor dismissal replays a command. M30 remains In progress:
 the failed standard gate prevented heavy suites from starting, and prior
 backend/cold failures remain unresolved.
+
+E-MAIN-LOCAL-REPAIRS-001 records the user-authorized 2026-10-16 completed
+main-workspace repair validation and wider failure repairs. M30 retains its
+existing status and completion gates; local passes do not establish hosted,
+additional-platform, live-provider or visual-baseline qualification.
 <!-- generated-navigation -->
 
 ## Pages

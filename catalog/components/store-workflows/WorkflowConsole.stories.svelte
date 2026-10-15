@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { verifyRecordedConsole } from "../../fixtures/workflow-recorded-console-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, within, userEvent, waitFor } from "storybook/test";
   import WorkflowsFixture from "../../fixtures/WorkflowsFixture.svelte";
@@ -26,34 +27,7 @@
     return () => clock.mockRestore();
   }}
   args={{ initialHash: selected }}
-  play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole("region", { name: "Step console" }),
-    ).toBeVisible();
-    const step = await canvas.findByRole("button", {
-      name: "Step build · completed",
-    });
-    await expect(step).toHaveAttribute("aria-expanded", "false");
-    const console = canvas.getByRole("region", { name: "Step console" });
-    await expect(getComputedStyle(console).backgroundColor).toBe(
-      "rgb(31, 33, 43)",
-    );
-    await expect(
-      console.querySelectorAll(".workflow-console-step[data-step]"),
-    ).toHaveLength(1);
-    const gear = canvas.getByRole("button", { name: "Log settings" });
-    await expect(gear.getBoundingClientRect().right).toBeLessThanOrEqual(
-      console.getBoundingClientRect().right,
-    );
-    await expect(
-      canvas.getByRole("combobox", { name: "Run attempt" }),
-    ).toHaveTextContent(/Run attempt #1 \(.+ ago\)/);
-    await userEvent.click(canvas.getByRole("button", { name: "Run output" }));
-    await expect(await canvas.findByLabelText("stdout log")).toHaveTextContent(
-      "12 tests passed",
-    );
-  }}
+  play={verifyRecordedConsole}
 />
 
 <Story
@@ -71,9 +45,11 @@
       canvasElement.querySelectorAll(".workflow-console-step[data-step]"),
     ).toHaveLength(3);
     await userEvent.click(prepare);
-    await expect(
-      await canvas.findByLabelText("Loading logs for prepare"),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByLabelText("Loading logs for prepare"),
+      ).toBeVisible();
+    });
     const line = await canvas.findByLabelText("stdout log");
     await expect(line).toHaveTextContent("Pinned source ready");
     await expect(line.querySelector(".ansi-green-fg")).not.toBeNull();
@@ -109,11 +85,13 @@
       "⚙ [runner]: diagnostic",
     );
     await userEvent.click(canvas.getByRole("button", { name: "Log settings" }));
-    await expect(
-      await within(document.body).findByRole("menuitem", {
-        name: "Download demo-result.txt",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(document.body).findByRole("menuitem", {
+          name: "Download demo-result.txt",
+        }),
+      ).toBeVisible();
+    });
     await closeMenu();
     await waitFor(() =>
       expect(within(document.body).queryByRole("menu")).toBeNull(),
@@ -130,7 +108,9 @@
     await userEvent.click(
       await canvas.findByRole("button", { name: "Step prepare · completed" }),
     );
-    await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
+    await waitFor(async () => {
+      await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
+    });
     await userEvent.click(canvas.getByRole("button", { name: "Log settings" }));
     await userEvent.click(
       await body.findByRole("menuitemcheckbox", { name: "Show seconds" }),
@@ -158,7 +138,11 @@
     const fullscreen = within(
       await body.findByRole("dialog", { name: "Workflow logs full screen" }),
     );
-    await expect(await fullscreen.findByLabelText("stdout log")).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await fullscreen.findByLabelText("stdout log"),
+      ).toBeVisible();
+    });
     await expect(
       fullscreen.getByRole("button", { name: "Step prepare · completed" }),
     ).toHaveAttribute("aria-expanded", "true");
@@ -178,7 +162,9 @@
     await userEvent.click(
       fullscreen.getByRole("button", { name: "Exit full screen" }),
     );
-    await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
+    await waitFor(async () => {
+      await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
+    });
     await waitFor(() =>
       expect(
         getComputedStyle(canvas.getByRole("button", { name: "Log settings" }))
@@ -186,9 +172,11 @@
       ).not.toBe("none"),
     );
     await userEvent.click(canvas.getByRole("button", { name: "Log settings" }));
-    await expect(
-      await body.findByRole("menuitem", { name: "Download logs" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("menuitem", { name: "Download logs" }),
+      ).toBeVisible();
+    });
     await closeMenu();
   }}
 />
@@ -243,9 +231,11 @@
   args={{ initialHash: selected, consoleMode: "cancelled" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole("button", { name: "Step test · cancelled" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("button", { name: "Step test · cancelled" }),
+      ).toBeVisible();
+    });
     await expect(
       canvas.getByRole("button", { name: "Step summary · not run" }),
     ).toBeVisible();
@@ -257,9 +247,11 @@
   args={{ initialHash: selected, consoleMode: "running" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole("button", { name: "Step test · running" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("button", { name: "Step test · running" }),
+      ).toBeVisible();
+    });
     const stepSpinner = canvas
       .getByRole("button", { name: "Step test · running" })
       .querySelector(".workflow-run-status__spinner");

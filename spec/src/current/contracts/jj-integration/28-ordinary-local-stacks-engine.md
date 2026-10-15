@@ -89,3 +89,8 @@ contracts and external transport. Upstream JJ imports, graph inspection and
 Restack transactions remain inside jj-store-jj; forge clients never import JJ or
 become native persistence authority. Existing JJ identity and manifest/WAL
 contracts are unchanged. M31 owns the separate live-forge qualification.
+
+E-MAIN-LOCAL-REPAIRS-001 confirms unchanged JST-JJ-003 and forge boundaries.
+Equivalent SCP-style remote prefix extraction preserves the same host/path
+validation, endpoint binding, native transactions and stale-operation guards;
+strict lint qualification introduces no transport or identity-format change.

@@ -254,7 +254,19 @@ test("browser mutation previews and publishes one native request", async ({
   await dialog.getByRole("textbox", { name: "Markdown editor" }).fill(message);
   await dialog.getByRole("button", { name: "Preview change" }).click();
   await expect(dialog.getByText("Preview prepared")).toBeVisible();
+  const applied = page.waitForResponse(
+    (response) =>
+      response.request().method() === "POST" &&
+      new URL(response.url()).pathname.endsWith("/mutations") &&
+      response.request().postDataJSON().request_id === requests[0].request_id,
+  );
   await dialog.getByRole("button", { name: "Apply command" }).click();
+  const response = await applied;
+  expect(response.ok()).toBe(true);
+  expect(await response.json()).toMatchObject({
+    status: "committed",
+    receipt: { request_id: requests[0].request_id },
+  });
   await expect(
     page.getByRole("status").filter({ hasText: "Repository updated" }),
   ).toBeVisible();

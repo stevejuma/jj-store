@@ -147,8 +147,8 @@ impl LocalForge {
             {
                 return Err(f::Error::Stale);
             }
-        } else if value.starts_with("git@") {
-            let (host, path) = value[4..].split_once(':').ok_or(f::Error::Invalid)?;
+        } else if let Some(address) = value.strip_prefix("git@") {
+            let (host, path) = address.split_once(':').ok_or(f::Error::Invalid)?;
             let api = url::Url::parse(&self.connection.api_url).map_err(|_| f::Error::Invalid)?;
             if api.host_str() != Some(host)
                 && !(host == "github.com" && api.host_str() == Some("api.github.com"))

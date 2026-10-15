@@ -67,3 +67,9 @@ Everruns package or source dependency. Current Zed/Goose references use Codex
 backends and do not establish this direct public subscription flow. Synthetic
 OAuth/JWKS and inference fixtures qualify the owned boundaries separately from
 live account and signed desktop acceptance.
+
+Local Rust 1.99 qualification also simplifies equivalent hint/catalog guards,
+keeps test modules after production items, scopes a synthetic request lock
+before awaiting, and checks that the unknown-inference fixture actually reads
+request bytes. Provider retries, tool permission gates and the source pin are
+unchanged.

@@ -154,7 +154,10 @@ Initial loading placeholders follow the selected settings page's card, row,
 control and footer geometry, with a single named busy status and decorative
 placeholders hidden from assistive technology. Respect reduced motion and mobile
 stacking. Background reads retain loaded content, empty results, drafts and
-pending identities instead of replacing them with skeletons.
+pending identities instead of replacing them with skeletons. Card content adds
+no horizontal inset around the already padded application rows, so dividers and
+skeletons span the card. Portalled Settings listboxes use their field label (or
+explicit accessible label), including while closing.
 
 Global Appearance uses the shared Theme and Preferences cards while keeping
 previews and device-local immediate saves. Local service separates status,

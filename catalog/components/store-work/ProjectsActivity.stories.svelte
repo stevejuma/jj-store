@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
@@ -7,6 +8,9 @@
     component: ProjectsHubFixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen" },
+    beforeEach: async () => {
+      await views.projects();
+    },
   });
 </script>
 

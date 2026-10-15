@@ -46,7 +46,7 @@ fn pr() -> jj_forge::PullRequest {
 #[test]
 fn managed_links_preserve_authored_prefix_and_suffix() {
     let p = pr();
-    let first = jj_forge::planner::body(&p.body, &[p.clone()], 1, false).unwrap();
+    let first = jj_forge::planner::body(&p.body, std::slice::from_ref(&p), 1, false).unwrap();
     let input = format!("{first}\nHuman tail\n");
     let mut landed = p.clone();
     landed.state = jj_forge::PrState::Merged;
@@ -55,7 +55,7 @@ fn managed_links_preserve_authored_prefix_and_suffix() {
     assert!(updated.ends_with("\nHuman tail\n"));
     assert!(updated.contains("Merged"));
     assert_eq!(
-        jj_forge::planner::body(&updated, &[p.clone()], 1, false)
+        jj_forge::planner::body(&updated, std::slice::from_ref(&p), 1, false)
             .unwrap()
             .matches(jj_forge::planner::START)
             .count(),
@@ -212,7 +212,7 @@ fn portable_merge_requires_landed_parents_and_a_trunk_target() {
     assert!(!engine::merge_dependencies_met(
         &upper,
         &c,
-        &[receipt.clone()],
+        std::slice::from_ref(&receipt),
         &[lower.clone(), upper.clone()]
     ));
     let mut landed = lower;
@@ -220,14 +220,14 @@ fn portable_merge_requires_landed_parents_and_a_trunk_target() {
     assert!(!engine::merge_dependencies_met(
         &upper,
         &c,
-        &[receipt.clone()],
+        std::slice::from_ref(&receipt),
         &[landed.clone(), upper.clone()]
     ));
     upper.base = "main".into();
     assert!(engine::merge_dependencies_met(
         &upper,
         &c,
-        &[receipt.clone()],
+        std::slice::from_ref(&receipt),
         &[landed.clone(), upper.clone()]
     ));
     landed.state = PrState::Closed;

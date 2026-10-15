@@ -12,7 +12,10 @@
     const p = within(document.body);
     const trigger = p.getByLabelText(label, { exact: true });
     await userEvent.click(trigger);
+    if (trigger.hasAttribute("data-select-trigger"))
+      await expect(p.getByRole("listbox")).toHaveAccessibleName(label);
     await userEvent.click(await p.findByRole("option", { name: option }));
+    await waitFor(() => expect(p.queryByRole("listbox")).toBeNull());
     await waitFor(() =>
       expect(getComputedStyle(trigger).pointerEvents).not.toBe("none"),
     );

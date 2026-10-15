@@ -163,9 +163,11 @@
     });
     await userEvent.click(actions);
     const menu = within(canvasElement.ownerDocument.body);
-    await expect(
-      await menu.findByRole("menuitem", { name: "Ready for review" }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        menu.getByRole("menuitem", { name: "Ready for review" }),
+      ).toBeVisible(),
+    );
     await expect(
       menu.getByRole("menuitem", { name: "Restack…" }),
     ).toBeVisible();
@@ -327,9 +329,11 @@
     await userEvent.click(menu);
     await waitFor(() => expect(menu).toHaveAttribute("aria-expanded", "true"));
     const page = within(canvasElement.ownerDocument.body);
-    await expect(
-      await page.findByRole("menuitem", { name: "Submit stack" }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        page.getByRole("menuitem", { name: "Submit stack" }),
+      ).toBeVisible(),
+    );
     await userEvent.keyboard("{Escape}");
     await expect(menu).toHaveFocus();
     await userEvent.click(menu);

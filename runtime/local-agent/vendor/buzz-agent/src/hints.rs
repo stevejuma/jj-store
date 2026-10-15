@@ -1,3 +1,4 @@
+// LapisMD: equivalent early-return simplification in the maintained Buzz fork.
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
@@ -30,10 +31,7 @@ fn find_git_root(start: &Path) -> Option<PathBuf> {
         if current.join(".git").exists() {
             return Some(current);
         }
-        match current.parent() {
-            Some(parent) => current = parent.to_path_buf(),
-            None => return None,
-        }
+        current = current.parent()?.to_path_buf();
     }
 }
 

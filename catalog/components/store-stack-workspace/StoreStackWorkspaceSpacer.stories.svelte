@@ -65,9 +65,11 @@
     const dialog = await workspacePortal(canvasElement).findByRole("dialog", {
       name: "Create stack",
     });
-    expect(
-      within(dialog).getByRole("group", { name: "Branch relationship" }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole("group", { name: "Branch relationship" }),
+      ).toBeVisible(),
+    );
     await userEvent.type(
       within(dialog).getByLabelText("Name"),
       "feature/from-spacer",

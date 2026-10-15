@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import ForgeWorkspaceFixture from "../../fixtures/ForgeWorkspaceFixture.svelte";
   const { Story } = defineMeta({
@@ -71,6 +71,12 @@
     ).toBeEnabled();
     await userEvent.click(
       within(confirmation).getByRole("button", { name: /^Cancel$/ }),
+    );
+    await waitFor(() =>
+      expect(page.queryByRole("dialog", { name: "Merge PR #42?" })).toBeNull(),
+    );
+    await waitFor(() =>
+      expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
     );
     await userEvent.click(
       within(pr).getByRole("button", { name: "Float PR details" }),

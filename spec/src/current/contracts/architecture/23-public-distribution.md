@@ -204,3 +204,9 @@ E-UI-CI-003 retains JST-ARCH-005: the Search notification repair uses an
 ordinary patch Changeset and PR checks. The failed standard browser gate
 prevented the new heavy run from starting its heavy suites; those suites remain
 unqualified.
+
+E-MAIN-LOCAL-REPAIRS-001 confirms unchanged JST-ARCH-005 release authority for
+the main-workspace repair slice and its patch Changeset. A user-requested draft
+PR may publish the verified repair snapshot while comprehensive local checks
+continue with their pending status explicit. It does not authorize merge or
+release, waive required checks, or establish full qualification.

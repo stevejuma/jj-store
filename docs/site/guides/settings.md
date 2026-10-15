@@ -24,6 +24,10 @@ beside controls on wide screens and stack on narrow screens. Close/Done and the
 create action share the bottom dialog footer. Unknown requests retain their
 original identity and recovery controls.
 
+Within repository Settings, category and subtab changes keep the same selected
+operation and pending action. Other navigation stays guarded while a repository
+action needs recovery; changing categories never retries that action.
+
 For authenticated remote agent administration, select the server and use
 **Agents → Manage server access**. An enrolled `manage-agents` operator can edit
 definitions and messaging allowlists; use **Reload saved settings** to activate.
@@ -34,29 +38,30 @@ while unsettled, and pauses hidden reads. See
 [agent sessions](agent-execution.md).
 
 Open **Settings** from the profile menu for Profile, Custom emoji, Appearance,
-Local service, Agents and Compute. Local service includes installation-wide
-Protection and Storage configuration, workflow hosts, folder registration and
-Add folder. **Local service → Workflows** configures execution-principal
-admission and an optional local event/action host. Save retains an inactive
-draft; Reload saved settings activates it without replacing listeners. Busy or
-uncertain work defers replacement and preserves its journal. The normal form
-focuses on enablement, name, labels and executors. Registered native workspace
-links and each job's recorded repository/revision provide source context.
-Advanced starts collapsed and offers optional path/polling overrides and owner
-policy; Execution access separately offers explicit admission for the derived
-local identity. No per-repo mapping or execution-principal input is needed. Use
-the Form/JSON toggle at the right of the local-host header to switch editors.
-Both retain one draft; JSON has syntax highlighting and includes named commands,
-environment variables and secret references. Invalid JSON remains editable and
-reports a toast. Legacy host documents remain accepted; Form edits convert their
-execution settings on explicit Save while retaining custom paths and recovery.
-Runtime status uses bounded checks while this tab is visible. Appearance
-separates Theme and Preferences into subtabs; changes still save immediately on
-this device. Link previews and Thread layout have their own cards under
-Preferences. Launch and Storage group their read-only inventory by purpose. Use
-Copy beside a configured path or endpoint to copy the complete value. Workflow
-host fields appear only under **Local service → Workflows**, keeping Launch
-focused on service, installation and access configuration.
+Local service, Integrations, Agents and Compute. Local service includes
+installation-wide Protection and Storage configuration, workflow hosts, folder
+registration and Add folder. **Local service → Workflows** configures
+execution-principal admission and an optional local event/action host. Save
+retains an inactive draft; Reload saved settings activates it without replacing
+listeners. Busy or uncertain work defers replacement and preserves its journal.
+The normal form focuses on enablement, name, labels and executors. Registered
+native workspace links and each job's recorded repository/revision provide
+source context. Advanced starts collapsed and offers optional path/polling
+overrides and owner policy; Execution access separately offers explicit
+admission for the derived local identity. No per-repo mapping or
+execution-principal input is needed. Use the Form/JSON toggle at the right of
+the local-host header to switch editors. Both retain one draft; JSON has syntax
+highlighting and includes named commands, environment variables and secret
+references. Invalid JSON remains editable and reports a toast. Legacy host
+documents remain accepted; Form edits convert their execution settings on
+explicit Save while retaining custom paths and recovery. Runtime status uses
+bounded checks while this tab is visible. Appearance separates Theme and
+Preferences into subtabs; changes still save immediately on this device. Link
+previews and Thread layout have their own cards under Preferences. Launch and
+Storage group their read-only inventory by purpose. Use Copy beside a configured
+path or endpoint to copy the complete value. Workflow host fields appear only
+under **Local service → Workflows**, keeping Launch focused on service,
+installation and access configuration.
 
 Global Settings links record the section and tab, for example
 `#/settings?section=agents&tab=runtimes`. Reload restores that page, and a root
@@ -91,6 +96,47 @@ URL and support browser Back/Forward.
 
 While settings first load, placeholders follow the selected page’s cards and
 fields. Later refreshes keep existing values and unsaved drafts on screen.
+
+## Integrations
+
+Open **Settings → Integrations → GitHub → Add account** to choose:
+
+- **Authorize GitHub Account**: copy the verification code, open GitHub's
+  activation page and approve the jj-store application. Keep the waiting view
+  open until completion, or Cancel to end that authorization. This option is
+  available only when this installation has a jj-store OAuth client ID
+  configured.
+- **Add Personal Access Token**: enter a token in the masked field. The
+  visibility toggle reveals only the token currently being entered.
+- **Add GitHub Enterprise Account**: supply the explicit HTTPS API base URL
+  ending in `/api/v3`, plus a personal token for that host.
+
+Accounts are verified before they are connected. Multiple accounts and
+Enterprise hosts are supported. The card shows identity, available email, host,
+authentication method and connection status. Reconnecting the same provider
+user, host and method replaces that account's credentials. Tokens and optional
+OAuth refresh credentials remain in the OS Keychain, Windows Credential Manager
+or Linux Secret Service. Account metadata is private installation state outside
+checkouts. An unavailable or locked credential store reports a toast; there is
+no plaintext fallback. **Forget** removes local credentials and linked access;
+it does not revoke the token on GitHub or discard drafts and submission
+receipts.
+
+Opening a GitHub-backed workspace that needs access shows **GitHub detected**
+with **Configure access**. This opens Integrations and retains the exact
+workspace destination for Back. One verified, unambiguous match can connect
+automatically. Multiple accounts, remotes or fork targets require the
+**Repository access** choices. Account changes invalidate previews and never
+replay an uncertain push, submission or merge. GitLab and Forgejo global account
+screens remain future work; their existing repository configuration is retained.
+
+In **Appearance → Preferences → Link previews**, choose Inline, Compact or Rich.
+Inline is the default for a new or unset preference; existing saved Compact/Rich
+choices are retained. Prose and labelled links use small locally bundled site
+icons. Only supported standalone GitHub repository/issue/PR, Linear issue and
+Google document/Drive URLs can become Compact/Rich cards. Lists, headings,
+tables and quotes retain inline links. No metadata or favicon requests are made.
+The example uses the shared Markdown renderer without saving temporary choices.
 
 ## Saved and effective settings
 
@@ -339,14 +385,15 @@ save before another action. Filesystem-only installations show these settings as
 unavailable.
 
 Global Settings groups Profile, Appearance and Custom emoji under Personal;
-Local service, Agents and Compute appear under App. The app version is at the
-bottom of the sidebar, below Help. The single Application menu (horizontal
-kebab) contains **Reload saved settings** alongside available repository
-actions. It appears in the desktop top header. On narrow browser screens, the
-top header is hidden and the menu moves into the body toolbar, including
-Workflows and History, using the same placement as Projects. Open dialogs and
-drafts survive resizing. Reload applies saved supported server configuration
-while preserving drafts, original pending requests and the running server.
+Local service, Integrations, Agents and Compute appear under App. The app
+version is at the bottom of the sidebar, below Help. The single Application menu
+(horizontal kebab) contains **Reload saved settings** alongside available
+repository actions. It appears in the desktop top header. On narrow browser
+screens, the top header is hidden and the menu moves into the body toolbar,
+including Workflows and History, using the same placement as Projects. Open
+dialogs and drafts survive resizing. Reload applies saved supported server
+configuration while preserving drafts, original pending requests and the running
+server.
 
 For GitHub YAML execution, enable **GitHub workflow executor** in Workflows
 settings. Configure the native Forgejo Runner 13.2.0 executable, Docker

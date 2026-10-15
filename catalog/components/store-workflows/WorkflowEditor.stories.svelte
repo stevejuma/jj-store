@@ -49,9 +49,11 @@
         dialog.getByRole("button", { name: "Edit workflow name" }),
       );
     await expect(inspector).not.toBeVisible();
-    await expect(
-      dialog.getByRole("button", { name: "Trigger Run manually" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByRole("button", { name: "Trigger Run manually" }),
+      ).toBeVisible();
+    });
     await expect(element.querySelectorAll(".workflow-node")).toHaveLength(2);
     await userEvent.click(
       dialog.getByRole("button", { name: "Trigger Run manually" }),
@@ -276,9 +278,11 @@
     const dialog = within(element);
     const edit = dialog.getByRole("button", { name: "Edit workflow name" });
     await expect(getComputedStyle(edit).borderRadius).toBe("50%");
-    await expect(
-      dialog.getByRole("heading", { name: "Create workflow" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByRole("heading", { name: "Create workflow" }),
+      ).toBeVisible();
+    });
     await userEvent.click(edit);
     const name = dialog.getByRole("textbox", { name: "Name" });
     await expect(getComputedStyle(name).borderTopWidth).toBe("0px");
@@ -291,7 +295,11 @@
     await expect(getComputedStyle(accept).borderRadius).toBe("50%");
     await userEvent.click(accept);
     await expect(dialog.queryByRole("textbox", { name: "Name" })).toBeNull();
-    await expect(dialog.getByText("Build all", { exact: true })).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByText("Build all", { exact: true }),
+      ).toBeVisible();
+    });
     await userEvent.click(dialog.getByRole("button", { name: "build build" }));
     const remove = dialog.getByRole("button", {
       name: "Delete selected action",
@@ -304,17 +312,21 @@
     );
     await userEvent.click(remove);
     await expect(element.querySelectorAll(".workflow-node")).toHaveLength(1);
-    await expect(
-      dialog.getByRole("button", { name: "Trigger Run manually" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByRole("button", { name: "Trigger Run manually" }),
+      ).toBeVisible();
+    });
     await userEvent.click(
       dialog.getByRole("button", { name: "Save workflow" }),
     );
-    await expect(
-      await body.findByText(
-        "Choose a name, source repository, trigger and at least one action",
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByText(
+          "Choose a name, source repository, trigger and at least one action",
+        ),
+      ).toBeVisible();
+    });
     await userEvent.click(dialog.getByRole("button", { name: "Add action" }));
     await expect(element.querySelectorAll(".workflow-node")).toHaveLength(2);
     await userEvent.click(dialog.getByRole("button", { name: "Cancel" }));

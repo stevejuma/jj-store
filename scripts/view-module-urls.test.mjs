@@ -27,8 +27,8 @@ test("every application view receives a compiler URL before development evaluati
   plugin.configResolved({ command: "serve" });
   const transformed = plugin.transform(await readFile(id, "utf8"), id);
   assert.equal(/viewModuleURL\s*\(/.test(transformed), false);
-  assert.equal((transformed.match(/lazyView\(/g) ?? []).length, 24);
-  assert.equal((transformed.match(/"\/src\/lib\/ui\//g) ?? []).length, 24);
+  assert.equal((transformed.match(/lazyView\(/g) ?? []).length, 26);
+  assert.equal((transformed.match(/"\/src\/lib\/ui\//g) ?? []).length, 26);
 });
 
 test("catalog retry URLs use the catalog serving root and the same owned component", () => {

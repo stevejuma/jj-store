@@ -77,6 +77,10 @@ independent CI/Search history. M31 remains In progress, with M16, M4.2 and M30
 statuses and original evidence retained. Tests were explicitly skipped for this
 integration; structural checks do not promote any qualification gate.
 
+E-MAIN-LOCAL-REPAIRS-001 records the user-authorized 2026-10-16 completed
+main-workspace repair validation and wider failure repairs. M31 retains its
+existing status and completion gates; local passes do not establish hosted,
+additional-platform, live-provider or visual-baseline qualification.
 <!-- generated-navigation -->
 
 ## Pages

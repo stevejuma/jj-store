@@ -110,7 +110,7 @@ pnpm web:build
 
 Follow [AGENTS.md](AGENTS.md) for focused verification. PR checks run
 formatting, tooling and governance before standard Rust tests and affected web
-checks. The standard Rust cohort has 16 packages; server, CLI and capture tests,
+checks. The standard Rust cohort has 17 packages; server, CLI and capture tests,
 including their unit tests, run only during qualification (apart from the two
 HTTP fixture captures needed by browser tests). Affected web checks also run
 Storybook interactions, served-browser tests, the static catalog and Help in

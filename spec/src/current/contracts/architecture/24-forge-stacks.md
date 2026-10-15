@@ -151,11 +151,12 @@ clipboard-check for Jobs and refresh-cw-off for rerunning failed jobs.
 
 ## Delivery and evidence
 
-M31 owns implementation and qualification. Tests for this work are restricted to
-changed components and their contracts, per the user's 2026-10-15 instruction.
-Wider test-suite repairs and baseline approval are deferred. Live provider and
-platform qualifications require actual evidence and cannot be inferred from
-mocked adapter tests.
+M31 owns implementation and qualification. Initial feature slices used focused
+changed-component checks under the user's 2026-10-15 instruction. The user's
+2026-10-16 main-workspace qualification explicitly authorizes all local checks,
+tests and required wider repairs. Visual baseline approval remains separate.
+Live provider and platform qualifications require actual evidence and cannot be
+inferred from mocked adapter tests or local-suite success.
 
 ## Qualified bounds and recovery
 

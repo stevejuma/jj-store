@@ -27,10 +27,16 @@ test("operational toasts deduplicate, retain dismissal and clear on recovery", a
     return route.fulfill(failure);
   });
   await page.goto("/");
+  await expect(
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Local service", level: 1 }),
+  ).toBeVisible();
   await repositorySettings(page, "Sync");
   await page.getByRole("button", { name: "Pause sync", exact: true }).click();
   const toast = page.locator(
@@ -55,6 +61,9 @@ test("operational toasts deduplicate, retain dismissal and clear on recovery", a
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Local service", level: 1 }),
+  ).toBeVisible();
   await repositorySettings(page, "Sync");
   await expect(toast).toHaveCount(0);
   unavailable = false;

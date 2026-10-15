@@ -13,9 +13,11 @@
   name="Edit profile with keyboard"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await expect(
-      await c.findByRole("heading", { name: /^Profile info$/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await c.findByRole("heading", { name: /^Profile info$/ }),
+      ).toBeVisible();
+    });
     await expect(
       c.getByRole("button", { name: /^Copy full Principal ID:/ }),
     ).toBeVisible();
@@ -50,7 +52,11 @@
     await expect(edit).toBeVisible();
     edit.focus();
     await userEvent.keyboard("{Enter}");
-    await expect(await body.findByRole("tab", { name: "Image" })).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("tab", { name: "Image" }),
+      ).toBeVisible();
+    });
     await expect(name).toHaveValue("Local admin draft");
     await userEvent.keyboard("{Escape}");
     await userEvent.click(c.getByRole("button", { name: /^Cancel$/ }));
@@ -70,9 +76,11 @@
       " draft",
     );
     await userEvent.click(c.getByRole("button", { name: "Save profile" }));
-    await expect(
-      await c.findByRole("button", { name: "Check save status" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await c.findByRole("button", { name: "Check save status" }),
+      ).toBeVisible();
+    });
     await expect(c.getByRole("textbox", { name: "Display name" })).toHaveValue(
       "Local admin draft",
     );
@@ -99,7 +107,9 @@
       c.getByRole("button", { name: "Choose emoji image" }),
     );
     await userEvent.click(c.getByRole("button", { name: "Save emoji" }));
-    await expect(await c.findByText(":party:")).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText(":party:")).toBeVisible();
+    });
     await userEvent.click(c.getByRole("button", { name: "Remove :party:" }));
     await waitFor(() => expect(c.queryByText(":party:")).toBeNull());
   }}

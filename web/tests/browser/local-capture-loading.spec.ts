@@ -10,12 +10,25 @@ import {
 import { decode, pretty } from "../../src/lib/api/client.js";
 import type { CaptureImport } from "../../src/lib/controller/capture-types.js";
 
+function sourceCount(page: Page, label: string) {
+  return page
+    .getByRole("list", { name: "Capture source counts" })
+    .getByRole("listitem")
+    .filter({ has: page.getByText(label, { exact: true }) });
+}
+
 async function openAgents(page: Page) {
   await page
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Local service", level: 1 }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Agents", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Agents", level: 1 }),
+  ).toBeVisible();
   await page.getByRole("tab", { name: "Capture", exact: true }).click();
 }
 async function bootstrap(page: Page, linked = false) {
@@ -99,7 +112,7 @@ test("cold capture loading keeps guarded controls and recovers from busy reads",
   await expect(
     page.getByRole("table", { name: "Capture sources" }),
   ).toBeVisible();
-  await expect(page.getByText("5 observed", { exact: true })).toBeVisible();
+  await expect(sourceCount(page, "5 observed")).toBeVisible();
   await expect(
     page.getByRole("status", { name: "Loading capture sources" }),
   ).toHaveCount(0);
@@ -164,6 +177,9 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await expect(table.locator("tbody > tr")).toHaveCount(3);
   const filter = page.getByRole("button", { name: "Filter by harness" });
   await filter.click();
+  await expect(
+    page.getByRole("listbox", { name: "Capture source harnesses" }),
+  ).toBeVisible();
   await page.getByRole("option", { name: "Codex", exact: true }).click();
   await expect(table.locator("tbody > tr")).toHaveCount(2);
   const statusFilter = page.getByRole("button", {
@@ -209,7 +225,7 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await statusFilter.click();
   await page.getByRole("option", { name: "Degraded", exact: true }).click();
   await expect(table.locator("tbody > tr")).toHaveCount(1);
-  await expect(page.getByText("1 shown", { exact: true })).toBeVisible();
+  await expect(sourceCount(page, "1 shown")).toBeVisible();
   await expect(
     page.getByText("Codex Desktop source 3", { exact: true }),
   ).toBeVisible();
@@ -241,9 +257,9 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await statusFilter.click();
   await expect(statusSearch).toHaveValue("");
   await page.getByRole("option", { name: "All statuses", exact: true }).click();
-  await expect(page.getByText("2 shown", { exact: true })).toBeVisible();
-  await expect(page.getByText("3 loaded", { exact: true })).toBeVisible();
-  await expect(page.getByText("5 observed", { exact: true })).toBeVisible();
+  await expect(sourceCount(page, "2 shown")).toBeVisible();
+  await expect(sourceCount(page, "3 loaded")).toBeVisible();
+  await expect(sourceCount(page, "5 observed")).toBeVisible();
   await expect(
     page.getByText("Codex Desktop source 3", { exact: true }),
   ).toBeVisible();
@@ -266,6 +282,9 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await page
     .getByRole("option", { name: "All harnesses", exact: true })
     .click();
+  await expect(
+    page.getByRole("listbox", { name: "Capture source harnesses" }),
+  ).toHaveCount(0);
   const styles = await page
     .locator(".store-capture-sources__table")
     .evaluate((e) => {
@@ -365,8 +384,8 @@ test("cold repository source filtering composes with status and harness filters"
     })
     .click();
   await expect(table.locator("tbody > tr")).toHaveCount(3);
-  await expect(page.getByText("3 loaded", { exact: true })).toBeVisible();
-  await expect(page.getByText("5 observed", { exact: true })).toBeVisible();
+  await expect(sourceCount(page, "3 loaded")).toBeVisible();
+  await expect(sourceCount(page, "5 observed")).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.screenshot({
     path: test.info().outputPath("source-repository-filter.png"),
@@ -469,6 +488,9 @@ test("cold source refresh retains coverage and repository link opens its authori
     "datetime",
     timestamp!,
   );
+  await expect(
+    page.locator('[data-ui-component="tooltip"][data-state="closed"]'),
+  ).toHaveCount(0);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.screenshot({
     path: test.info().outputPath("source-footer-refreshing.png"),

@@ -20,7 +20,14 @@ async fn dispatch(f: &ImportFixture) -> crate::capture_management::CaptureImport
         }
     })
     .await
-    .unwrap()
+    .unwrap_or_else(|error| {
+        panic!(
+            "{error}: runtime={:?}; import_receipts={:?}; pending_batches={:?}",
+            f.runtime.snapshot(),
+            f.imports.entries().map(|entries| entries.len()),
+            f.f.spool.pending().map(|entries| entries.len())
+        )
+    })
 }
 async fn pause(f: &ImportFixture) {
     f.runtime.pause().unwrap();
@@ -73,7 +80,14 @@ async fn published(f: &ImportFixture, text: &str) -> String {
         }
     })
     .await
-    .unwrap()
+    .unwrap_or_else(|error| {
+        panic!(
+            "{error}: runtime={:?}; import_receipts={:?}; pending_batches={:?}",
+            f.runtime.snapshot(),
+            f.imports.entries().map(|entries| entries.len()),
+            f.f.spool.pending().map(|entries| entries.len())
+        )
+    })
 }
 
 #[tokio::test]
@@ -195,6 +209,9 @@ async fn accepted_source_refuses_other_request_without_replacing_original_owned_
 #[tokio::test]
 async fn multi_step_import_prefix_survives_worker_parking_without_starving_ingress() {
     let mut f = ImportFixture::new().await;
+    // This deadline exercises prefix scheduling, not cold rule compilation.
+    // Integration setup warms this same qualified cache before capture starts.
+    jj_store_capture::agent_sanitization::warm_kingfisher_cache(&f.f.privacy().cache).unwrap();
     for _ in 0..5 {
         f.f.append_bytes(
             format!("{{\"unknown\":\"{}\"}}\n", "x".repeat(1024 * 1024 - 32)).as_bytes(),

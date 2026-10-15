@@ -35,6 +35,9 @@
     await expect(
       within(section).queryByRole("button", { name: "Ready for review" }),
     ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(getComputedStyle(actions).pointerEvents).not.toBe("none"),
+    );
     await userEvent.click(actions);
     await expect(
       await page.findByRole("menuitem", { name: "Merge next…" }),
@@ -44,6 +47,9 @@
     );
     await waitFor(() =>
       expect(within(header).getByText("open", { exact: true })).toBeVisible(),
+    );
+    await waitFor(() =>
+      expect(getComputedStyle(actions).pointerEvents).not.toBe("none"),
     );
     await userEvent.click(actions);
     await userEvent.click(
@@ -57,6 +63,9 @@
     await expect(
       within(header).getByText("open", { exact: true }),
     ).toBeVisible();
+    await waitFor(() =>
+      expect(getComputedStyle(actions).pointerEvents).not.toBe("none"),
+    );
     await userEvent.click(actions);
     await userEvent.click(
       await page.findByRole("menuitem", { name: "Merge next…" }),

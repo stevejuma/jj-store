@@ -29,9 +29,11 @@
     const c = within(canvasElement),
       page = within(document.body);
     await userEvent.click(await c.findByRole("button", { name: /Workspace:/ }));
-    await expect(
-      await page.findByRole("menuitem", { name: "View files" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await page.findByRole("menuitem", { name: "View files" }),
+      ).toBeVisible();
+    });
     await expect(c.getByLabelText("Workspace read count")).toHaveTextContent(
       "0",
     );

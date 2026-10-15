@@ -34,6 +34,7 @@
     await expect(
       layout.querySelector('[data-ui-component="ai-chat-composer"]'),
     ).toBeNull();
+    let phase = "initial-jump";
     const assertUncovered = () => {
       expect(viewport.getBoundingClientRect().bottom).toBeLessThanOrEqual(
         dock.getBoundingClientRect().top + 1,
@@ -42,14 +43,23 @@
         c
           .getByRole("textbox", { name: "Markdown editor" })
           .getBoundingClientRect().bottom,
+        JSON.stringify({
+          phase,
+          top: viewport.scrollTop,
+          height: viewport.scrollHeight,
+          client: viewport.clientHeight,
+        }),
       ).toBeLessThanOrEqual(viewport.getBoundingClientRect().bottom + 1);
     };
     await userEvent.click(c.getByRole("button", { name: "Jump to end" }));
     await waitFor(assertUncovered);
     const draft = c.getByRole("textbox", { name: "Markdown editor" });
+    await expect(draft).toHaveFocus();
+    phase = "typing";
     await userEvent.type(
       draft,
       "A growing draft\nwith multiple lines\nthat stays below the chat",
+      { skipClick: true },
     );
     await waitFor(assertUncovered);
     expect(viewport.scrollHeight).toBeGreaterThan(viewport.clientHeight + 100);
@@ -58,6 +68,7 @@
     viewport.dispatchEvent(new Event("scroll"));
     const latest = await c.findByRole("button", { name: "Jump to end" });
     await waitFor(() => expect(latest).toBeVisible());
+    phase = "keyboard-jump";
     latest.focus();
     await userEvent.keyboard("{Enter}");
     await waitFor(() =>

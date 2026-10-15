@@ -134,10 +134,9 @@ pub async fn submit(
             .iter()
             .find(|p| p.head == step.branch)
             .or(item.pr.as_ref())
+            && observed.as_ref().is_none_or(|p| p.number != bound.number)
         {
-            if observed.as_ref().is_none_or(|p| p.number != bound.number) {
-                return Err(Error::Stale);
-            }
+            return Err(Error::Stale);
         }
         let unknown = matches!(step.outcome, Outcome::Running | Outcome::Unknown);
         let satisfied = match step.kind {
@@ -394,10 +393,11 @@ async fn navigation(client: &Client, device: &Device, plan: &Plan) -> Result<Vec
             continue;
         }
         for old in &r.pull_requests {
-            if branches.contains(&old.head) && !active.iter().any(|p| p.number == old.number) {
-                if let Some(pr) = live.iter().find(|p| p.number == old.number) {
-                    upsert(&mut context, pr.clone());
-                }
+            if branches.contains(&old.head)
+                && !active.iter().any(|p| p.number == old.number)
+                && let Some(pr) = live.iter().find(|p| p.number == old.number)
+            {
+                upsert(&mut context, pr.clone());
             }
         }
     }

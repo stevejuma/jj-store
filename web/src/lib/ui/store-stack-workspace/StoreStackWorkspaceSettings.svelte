@@ -112,8 +112,14 @@
               maxlength={128}
             />
           </StoreWorkField>
-          <StoreWorkField label="Target branch" {disabled} compact>
+          <StoreWorkField
+            label="Target branch"
+            id="stack-workspace-target"
+            {disabled}
+            compact
+          >
             <StoreRepositoryPicker
+              id="stack-workspace-target"
               label="Workspace target branch"
               repositories={targets.map((item) => ({
                 id: JSON.stringify([item.name, item.commit]),

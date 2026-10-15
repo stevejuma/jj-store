@@ -26,6 +26,11 @@ preferences while new preferences default to Inline. Focused rendering,
 Settings, contextual PR, keyboard and accessibility acceptance does not promote
 registry/platform, release, broader-suite or visual-baseline gates. The
 enclosing Jujutsu change owns the evidence.
+
+E-MAIN-LOCAL-REPAIRS-001 records the user-authorized 2026-10-16 completed
+main-workspace repair validation and wider failure repairs. M16 retains its
+existing status and completion gates; local passes do not establish hosted,
+additional-platform, live-provider or visual-baseline qualification.
 <!-- generated-navigation -->
 
 ## Pages

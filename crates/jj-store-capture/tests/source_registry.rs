@@ -189,7 +189,7 @@ fn source_registry_process_probe() {
     if std::env::var_os("JJ_STORE_REGISTRY_HOLD").is_some() {
         use std::io::{Read as _, Write as _};
         let lease = result.unwrap();
-        println!("{}", lease.source_instance_id());
+        println!("source-instance: {}", lease.source_instance_id());
         std::io::stdout().flush().unwrap();
         let _ = std::io::stdin().read(&mut [0]);
         drop(lease);
@@ -218,15 +218,28 @@ fn killed_reader_releases_both_leases_and_keeps_durable_source_identity() {
         .stdout(std::process::Stdio::piped())
         .spawn()
         .unwrap();
-    let mut output = BufReader::new(child.stdout.take().unwrap());
-    let mut source = String::new();
-    loop {
-        source.clear();
-        assert_ne!(output.read_line(&mut source).unwrap(), 0);
-        if source.trim().len() == 32 && source.trim().bytes().all(|b| b.is_ascii_hexdigit()) {
-            break;
+    let output = BufReader::new(child.stdout.take().unwrap());
+    let (send, ready) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        for line in output.lines() {
+            let Ok(line) = line else { break };
+            // Serial libtest may print its test label before this marker.
+            if let Some((_, source)) = line.split_once("source-instance: ") {
+                let source = source.trim();
+                if source.len() == 32 && source.bytes().all(|b| b.is_ascii_hexdigit()) {
+                    let _ = send.send(source.to_owned());
+                    return;
+                }
+            }
         }
-    }
+    });
+    let source = ready
+        .recv_timeout(std::time::Duration::from_secs(10))
+        .unwrap_or_else(|error| {
+            let _ = child.kill();
+            let _ = child.wait();
+            panic!("source lease probe did not report readiness: {error}");
+        });
     let registry = SourceRegistry::open(&state, INSTALLATION, 4).unwrap();
     let busy = registry
         .acquire(qualified(

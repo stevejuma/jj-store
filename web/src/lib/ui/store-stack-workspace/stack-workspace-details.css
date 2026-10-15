@@ -17,7 +17,7 @@
   background: var(--background);
 }
 .stack-workspace-details__patch {
-  padding: 0.5rem;
+  min-width: 0;
 }
 .stack-workspace-details__empty {
   min-height: 12rem;

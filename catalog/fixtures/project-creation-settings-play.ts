@@ -1,4 +1,4 @@
-import { expect, within } from "storybook/test";
+import { expect, within, waitFor } from "storybook/test";
 
 export async function expectProjectCreationSettings(
   dialogElement: HTMLElement,
@@ -7,9 +7,11 @@ export async function expectProjectCreationSettings(
     title = dialog.getByLabelText("Project title"),
     card = title.closest<HTMLElement>(".store-settings-card")!;
   await expect(card).not.toBeNull();
-  await expect(
-    within(card).getByRole("heading", { name: "Project details" }),
-  ).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(card).getByRole("heading", { name: "Project details" }),
+    ).toBeVisible(),
+  );
   await expect(card.querySelector(".store-settings-icon svg")).not.toBeNull();
   const label = title
     .closest('[data-slot="field"]')!

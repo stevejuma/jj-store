@@ -176,12 +176,14 @@
     ></ColumnCanvas.Header
   >
 {/snippet}
-{#snippet content()}
+{#snippet unavailable()}
   {#if file?.content?.status === "unavailable"}
     <CommunityProjectsColumnAlert
       description={`This file cannot be displayed as a text diff (${file.content.reason.replaceAll("_", " ")}).`}
     />
   {/if}
+{/snippet}
+{#snippet content()}
   <StoreNotice
     noticeKey={`stack-files:${diff.source}`}
     title="Changed files unavailable"
@@ -269,6 +271,7 @@
     aria-label="Selected file diff"
   >
     {@render header()}
+    {@render unavailable()}
     <div class="stack-workspace-details__patch">{@render content()}</div>
   </section>
 {:else}
@@ -278,6 +281,7 @@
     aria-label={`Selected changes from ${diff.origin}`}
   >
     {@render header()}
+    {@render unavailable()}
     <ColumnCanvas.Body scrollStrategy="styled"
       >{@render content()}</ColumnCanvas.Body
     >

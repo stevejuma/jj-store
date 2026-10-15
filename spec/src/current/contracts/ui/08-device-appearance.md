@@ -21,9 +21,17 @@ never persist temporary choices. Native entity chips, media, file links, code
 and spoilers retain their established behavior. Labelled links reveal their full
 destination on hover and keyboard focus. Site matching uses explicit
 hosts/aliases and Slack workspace subdomains, with a generic icon for unknown
-hosts. Brand paths are bundled locally, monochrome and theme-aware; no metadata,
-favicons or external images are fetched. Inline labels wrap naturally and retain
-visible hover/focus states. Icon support does not imply card eligibility.
+hosts. The shared renderer bridges Mira’s public link-colour token to the app
+foreground colour, retaining contrast on tinted message surfaces and palettes
+whose selected accent lacks text contrast. Underlines and site icons retain the
+link distinction. Brand paths are bundled locally, monochrome and theme-aware;
+no metadata, favicons or external images are fetched. Inline labels wrap
+naturally and retain visible hover/focus states. Icon support does not imply
+card eligibility.
+
+Removed-line and intraline diff washes bind the public foundation diff tokens to
+each palette's deleted-content hue. Pale destructive button foregrounds do not
+supply those layered washes; changed text retains readable contrast.
 
 Appearance uses the shared full-width Theme and Preferences cards with tinted
 headers, relevant icons and edge-to-edge dividers, under Theme and Preferences

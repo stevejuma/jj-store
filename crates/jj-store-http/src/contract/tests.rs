@@ -315,6 +315,8 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         "/v1/local/capture/sources",
         "/v1/local/capture/control",
         "/v1/local/capture/rescan",
+        "/v1/local/integrations",
+        "/v1/local/repos/{repo}/forge",
         "/v1/local/repos/{repo}/working-tree/observe",
         "/v1/repos/{repo}/local/workspaces",
         "/v1/repos/{repo}/local/workspaces/link",
@@ -353,13 +355,13 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 200);
+    assert_eq!(paths.len(), 202);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        86
+        88
     );
     assert_eq!(
         paths

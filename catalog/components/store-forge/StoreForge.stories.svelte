@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import ForgeFixture from "../../fixtures/ForgeFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Forge/Pull requests",
@@ -24,7 +24,11 @@
     await userEvent.keyboard("{Control>}a{/Control}{Backspace}");
     await userEvent.type(description, "Updated explanation");
     await userEvent.click(canvas.getByRole("button", { name: "Save changes" }));
-    await expect(await canvas.findByText("Updated explanation")).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByText("Updated explanation"),
+      ).toBeVisible();
+    });
     await expect(
       canvas.queryByRole("textbox", { name: "Markdown editor" }),
     ).not.toBeInTheDocument();
@@ -40,11 +44,13 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Actions for Build and test" }),
     );
-    await expect(
-      within(canvasElement.ownerDocument.body).getByRole("menuitem", {
-        name: "Cancel run",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(canvasElement.ownerDocument.body).getByRole("menuitem", {
+          name: "Cancel run",
+        }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
 
     await userEvent.click(
@@ -83,11 +89,13 @@
     await userEvent.keyboard("{Control>}a{/Control}{Backspace}");
     await userEvent.type(description, "Keep this draft");
     await userEvent.click(canvas.getByRole("button", { name: "Save changes" }));
-    await expect(
-      await within(canvasElement.ownerDocument.body).findByText(
-        "The forge refused this description update",
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(canvasElement.ownerDocument.body).findByText(
+          "The forge refused this description update",
+        ),
+      ).toBeVisible();
+    });
     await expect(description).toHaveTextContent("Keep this draft");
     await userEvent.click(
       canvas.getByRole("button", { name: "Preview description" }),
@@ -104,9 +112,11 @@
   name="Markdown description and merge method menu"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole("heading", { name: "Review summary" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("heading", { name: "Review summary" }),
+      ).toBeVisible();
+    });
     await expect(
       canvas.getByRole("link", { name: "review guidance" }),
     ).toHaveAttribute("href", "https://example.com/review");
@@ -178,9 +188,11 @@
   name="Rendered details with automatic checks"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole("heading", { name: "Add API" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("heading", { name: "Add API" }),
+      ).toBeVisible();
+    });
     await expect(
       canvas.queryByRole("textbox", { name: "Title" }),
     ).not.toBeInTheDocument();
@@ -212,14 +224,18 @@
   args={{ failureChecks: true, provider: "forgejo" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole("heading", { name: "Add API" }),
-    ).toBeVisible();
-    await expect(
-      await within(canvasElement.ownerDocument.body).findByText(
-        "The forge could not load checks",
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("heading", { name: "Add API" }),
+      ).toBeVisible();
+    });
+    await waitFor(async () => {
+      await expect(
+        await within(canvasElement.ownerDocument.body).findByText(
+          "The forge could not load checks",
+        ),
+      ).toBeVisible();
+    });
     await expect(
       canvas.getByRole("region", { name: "CI checks" }),
     ).toHaveTextContent("Checks unavailable");
@@ -237,9 +253,11 @@
   args={{ provider: "gitlab" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole("heading", { name: "Add API" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("heading", { name: "Add API" }),
+      ).toBeVisible();
+    });
     await expect(canvas.getAllByRole("img", { name: "GitLab" })).toHaveLength(
       1,
     );
@@ -253,7 +271,11 @@
     const dialog = await document.findByRole("dialog", {
       name: "Forge connection",
     });
-    await expect(within(dialog).getByLabelText("Session token")).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByLabelText("Session token"),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await expect(
       canvas.queryByLabelText("Session token"),
@@ -266,11 +288,13 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const checks = await canvas.findByRole("region", { name: "CI checks" });
-    await expect(
-      await within(checks).findByRole("heading", {
-        name: "Checks need refresh",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(checks).findByRole("heading", {
+          name: "Checks need refresh",
+        }),
+      ).toBeVisible();
+    });
     await expect(checks).toHaveTextContent("Observed revision ffffffff");
     await expect(
       within(checks).queryByRole("heading", { name: "Checks passed" }),

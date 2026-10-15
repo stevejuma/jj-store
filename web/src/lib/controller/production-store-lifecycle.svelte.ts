@@ -41,8 +41,9 @@ export function createProductionRevisionSelector(
 ) {
   return async (id: string | null) => {
     const page = history.route.page;
-    history.push({
-      ...history.route,
+    const previous = history.route;
+    const next = {
+      ...previous,
       inspectedOperationId: page === "oplog" ? id : null,
       commitId: page === "oplog" ? null : id,
       evolutionCommitId: null,
@@ -52,7 +53,11 @@ export function createProductionRevisionSelector(
       path: null,
       agentSessionId: null,
       reviewThreadId: null,
-    });
+    };
+    history.push(next);
+    if (history.route === previous) return;
+    // Retire interrupted restoration without cancelling this graph's completion.
+    data.status.navigation = "ready";
     Object.assign(data, {
       detail: undefined,
       blob: undefined,
@@ -64,8 +69,10 @@ export function createProductionRevisionSelector(
       await reader.loadOperationContext(id);
     } else if (page === "files") await reader.loadFiles(id);
     else {
-      await reader.loadCommit(id);
-      await reader.loadRevisionContext(id);
+      await Promise.all([
+        reader.loadCommit(id),
+        reader.loadRevisionContext(id),
+      ]);
     }
   };
 }

@@ -100,18 +100,22 @@
         .querySelector(".history-query-string"),
     ).not.toBeNull();
     await userEvent.click(dialog.getByRole("combobox", { name: /^Authors$/ }));
-    await expect(
-      await body.findByRole("option", { name: /Home author/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("option", { name: /Home author/ }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await userEvent.click(
       dialog.getByRole("combobox", { name: "Source repository" }),
     );
     await userEvent.click(body.getByRole("option", { name: /Parser/ }));
     await userEvent.click(dialog.getByRole("combobox", { name: /^Authors$/ }));
-    await expect(
-      await body.findByRole("option", { name: /Code author/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("option", { name: /Code author/ }),
+      ).toBeVisible();
+    });
     await expect(
       body.queryByRole("option", { name: /Home author/ }),
     ).toBeNull();
@@ -135,7 +139,11 @@
       "Agents could not be loaded",
       "Threads could not be loaded from Automation home",
     ])
-      await expect(await body.findByText(title, { exact: true })).toBeVisible();
+      await waitFor(async () => {
+        await expect(
+          await body.findByText(title, { exact: true }),
+        ).toBeVisible();
+      });
     await expect(
       within(
         dialog.getByRole("complementary", { name: "Workflow inspector" }),
@@ -147,11 +155,13 @@
       ).queryByText("Thread lookup failed", { exact: true }),
     ).toBeNull();
     await trigger(dialog, body, "Code published");
-    await expect(
-      await body.findByText("Trigger choices could not be loaded", {
-        exact: true,
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByText("Trigger choices could not be loaded", {
+          exact: true,
+        }),
+      ).toBeVisible();
+    });
     await userEvent.type(
       dialog.getByRole("searchbox", { name: "Revision match" }),
       "all()",

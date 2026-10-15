@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceApplicationFixture from "../../fixtures/StackWorkspaceApplicationFixture.svelte";
@@ -7,6 +8,9 @@
     component: StackWorkspaceApplicationFixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
+    beforeEach: async () => {
+      await Promise.all([views.stacks(), views.stackDetails()]);
+    },
   });
   async function openSettings(canvasElement: HTMLElement) {
     const c = within(canvasElement),
@@ -88,7 +92,11 @@
       await portal.findByRole("option", { name: /feature\/api/ }),
     );
     await userEvent.click(settings.getByRole("button", { name: "Save" }));
-    expect(await portal.findByText(/Focused work.*feature\/api/)).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await portal.findByText(/Focused work.*feature\/api/),
+      ).toBeVisible();
+    });
     await userEvent.click(
       portal.getByRole("button", { name: "Cancel preview" }),
     );
@@ -130,11 +138,13 @@
     await userEvent.click(
       settings.getByRole("button", { name: "Delete workspace" }),
     );
-    expect(
-      await portal.findByText(
-        /Branches, commits.*unfinished JJ work are retained/,
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await portal.findByText(
+          /Branches, commits.*unfinished JJ work are retained/,
+        ),
+      ).toBeVisible();
+    });
     await userEvent.click(
       portal.getByRole("button", { name: "Cancel preview" }),
     );
@@ -154,9 +164,11 @@
       selector: '[data-ui-part="empty-title"]',
     });
     await userEvent.click(c.getByRole("tab", { name: "Branches" }));
-    expect(
-      await c.findByRole("option", { name: /feature\/api/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await c.findByRole("option", { name: /feature\/api/ }),
+      ).toBeVisible();
+    });
     await waitFor(() =>
       expect(
         c.queryByRole("complementary", { name: "Workspace settings" }),
