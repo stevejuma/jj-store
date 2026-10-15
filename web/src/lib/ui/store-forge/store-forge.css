@@ -51,25 +51,21 @@
   display: grid;
   gap: 0.3rem;
 }
-.forge-pr__identity,
 .forge-pr__branches {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-.forge-pr__identity {
-  font-size: var(--text-sm, 0.875rem);
-}
-.forge-pr__identity > span:last-child,
 .forge-pr__branches {
   color: var(--muted-foreground);
 }
-.forge-pr__title {
-  font-size: var(--text-lg, 1.125rem);
-  font-weight: 600;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
+.forge-pr__number {
+  flex-shrink: 0;
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--muted-foreground);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 .forge-panel .forge-checks {
   gap: 0;

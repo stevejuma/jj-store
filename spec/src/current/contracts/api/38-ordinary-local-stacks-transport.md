@@ -154,3 +154,10 @@ E-FORGE-EDIT-001 confirms JST-API-001 unchanged: the column header pencil and
 label-free description presentation share the existing title/composer editing
 state, authored drafts, capability gates and exact pending actions. Save,
 expected-body guards and transport formats are unchanged.
+
+E-FORGE-INLINE-001 confirms JST-API-001 unchanged: inline creation uses the
+existing pinned ForgePlan and explicit submit action, with branch-name title
+defaults as authored UI input. Per-branch session drafts and floating hosts do
+not become transport or repository authority. Inline PR details omit checks;
+explicit inspection retains the same selected-revision reads, capabilities,
+expected body/head guards and pending receipt recovery.

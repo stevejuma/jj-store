@@ -20,7 +20,12 @@ const connection: ForgeConnection = {
 };
 const navigation =
   "\n\n<!-- jj-store:stack:v1 -->\n\n### Stack\n\n1. [#41](https://github.com/team/repo/pull/41) · Open\n2. [#42](https://github.com/team/repo/pull/42) · Open\n<!-- /jj-store:stack -->";
-export function workspaceForgeTransport(workspacePullRequest = false) {
+export function workspaceForgeTransport(
+  workspacePullRequest = false,
+  apiPullRequests = true,
+  failPreview = false,
+  unknownSubmit = false,
+) {
   const examples: ForgePr[] = [
     {
       number: 41,
@@ -59,8 +64,8 @@ export function workspaceForgeTransport(workspacePullRequest = false) {
     native_stack: null,
     updated_at: "2026-10-15T10:00:00Z",
   }));
-  const prs = examples.filter(
-    (pr) => workspacePullRequest || pr.head !== "feature/workspace",
+  const prs = examples.filter((pr) =>
+    pr.head === "feature/workspace" ? workspacePullRequest : apiPullRequests,
   );
   const states = new Map<string, "running" | "passed" | "failed" | "cancelled">(
     [
@@ -124,10 +129,14 @@ export function workspaceForgeTransport(workspacePullRequest = false) {
     merges: {},
     operation: null,
   });
+  let recovered: ForgeResponse | undefined;
   const transport: ForgeTransport = async ({
     action,
   }): Promise<ForgeResponse> => {
+    if (action.kind === "recover" && recovered) return recovered;
     if (action.kind === "preview") {
+      if (failPreview)
+        throw new Error("The forge could not prepare this pull request");
       const members =
         action.bookmark === "feature/api"
           ? examples.slice(0, 2)
@@ -148,7 +157,9 @@ export function workspaceForgeTransport(workspacePullRequest = false) {
                 head: p.sha,
                 base: p.base,
                 title: p.title,
-                body: p.body,
+                body: pr
+                  ? pr.body
+                  : p.body.split("\n\n<!-- jj-store:stack:v1 -->")[0]!,
                 remote_head: pr ? "0".repeat(40) : null,
                 shared: false,
               },
@@ -185,7 +196,7 @@ export function workspaceForgeTransport(workspacePullRequest = false) {
           pr: prs.find((pr) => pr.head === item.segment.branch) ?? null,
         })),
       };
-      return {
+      recovered = {
         ...response(),
         receipt: {
           plan,
@@ -202,6 +213,8 @@ export function workspaceForgeTransport(workspacePullRequest = false) {
           ),
         },
       };
+      if (unknownSubmit) throw new Error("Network submission outcome unknown");
+      return recovered;
     }
     if (action.kind === "pr" || action.kind === "pull_request") {
       const pr = prs.find((p) => p.number === action.number)!;

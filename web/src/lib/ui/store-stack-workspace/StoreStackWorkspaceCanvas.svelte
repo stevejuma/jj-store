@@ -13,12 +13,13 @@
   import StoreStackLane from "./StoreStackLane.svelte";
   import StoreStackTargetHistory from "./StoreStackTargetHistory.svelte";
   import StoreStackWorkspaceDiff from "./StoreStackWorkspaceDiff.svelte";
+  import StoreStackWorkspaceDetailsColumn from "./StoreStackWorkspaceDetailsColumn.svelte";
+  import { stackDetailsColumns } from "../../controller/stack-workspace/details-columns.js";
   import {
     appliedStacks,
     browsingStack,
     isAppliedBranch,
     stackBookmarks,
-    stackLaneMembers,
   } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
@@ -42,6 +43,14 @@
       : [browsingStack(snapshot, controller.selectedStack)].filter(
           (stack): stack is NonNullable<typeof stack> => Boolean(stack),
         ),
+  );
+  const details = $derived(
+    stacks.flatMap((stack) =>
+      stackDetailsColumns(controller, stack).map((detail) => ({
+        ...detail,
+        stack: stack.id,
+      })),
+    ),
   );
   const canvas = ColumnCanvas.createColumnCanvasController({
     trailingSpacerWidth: 240,
@@ -101,6 +110,7 @@
   $effect(() => {
     const origins = [
       ...controller.diffs.map((diff) => diff.origin),
+      ...details.map((detail) => detail.origin),
       ...(controller.targetHistory.diff ? [TARGET_HISTORY_ORIGIN] : []),
     ];
     untrack(() => {
@@ -232,8 +242,14 @@
         {onCommand}
         onDrop={drop}
       />
-      {#each controller.diffs.filter((diff) => stacks.find( (candidate) => stackLaneMembers(snapshot, candidate).some((member) => diff.origin === `stack-${member.id}`) )?.id === stack.id && registeredDiffs.includes(diff.origin)) as diff (diff.origin)}
-        <StoreStackWorkspaceDiff {controller} {diff} {onCommand} />
+      {#each details.filter((detail) => detail.stack === stack.id && registeredDiffs.includes(detail.origin)) as detail (detail.origin)}
+        <StoreStackWorkspaceDetailsColumn
+          {controller}
+          origin={detail.origin}
+          branch={detail.branch}
+          diff={detail.diff}
+          {onCommand}
+        />
       {/each}
     {/each}
     {#if controller.forge?.open}<ColumnCanvas.Column

@@ -117,41 +117,79 @@
     ).toBe(unsubmitted);
     await expect(
       within(unsubmitted).getByRole("button", {
-        name: "Pull request for feature/workspace",
+        name: "Create PR for feature/workspace",
       }),
     ).toHaveTextContent("Create PR");
     await expect(
       within(unsubmitted).queryByText(/Checks /),
     ).not.toBeInTheDocument();
+    const badge = within(stack).getByRole("button", {
+      name: "Pull request for feature/api",
+    });
+    await expect(badge).toHaveTextContent("#42");
     await expect(
-      within(stack).getByRole("button", {
+      within(badge).getByRole("img", { name: "GitHub" }),
+    ).toBeInTheDocument();
+    await expect(within(stack).getByText("Checks running")).toBeInTheDocument();
+    const details = await canvas.findByRole("region", {
+      name: "Selected changes from stack-api",
+    });
+    const panel = within(details).getByRole("region", {
+      name: "Pull request for feature/api",
+    });
+    await expect(
+      within(stack).queryByRole("region", {
         name: "Pull request for feature/api",
       }),
-    ).toHaveTextContent("#42");
-    await expect(within(stack).getByText("Checks running")).toBeInTheDocument();
+    ).not.toBeInTheDocument();
+    const header = panel.querySelector("header")!;
     await expect(
-      within(
-        within(stack).getByRole("button", {
-          name: "Pull request for feature/api",
-        }),
-      ).getByRole("img", { name: "GitHub" }),
-    ).toBeInTheDocument();
-    const panel = await canvas.findByRole("region", {
-      name: "Pull request details",
+      within(header).getByRole("heading", { name: "Expose repository API" }),
+    ).toBeVisible();
+    await expect(
+      within(header).getByRole("link", { name: "#42" }),
+    ).toBeVisible();
+    await expect(
+      within(header).getByText("Draft", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      within(header).getByRole("button", { name: "Float PR details" }),
+    ).toBeVisible();
+    await expect(
+      within(header).getByRole("button", { name: "Inspect checks" }),
+    ).toBeVisible();
+    const actions = within(header).getByRole("button", {
+      name: "PR actions: Squash",
     });
-    panel.scrollIntoView({ block: "nearest", inline: "end" });
-    const stackHeader = stack.querySelector("header")!;
-    const panelHeader = panel.querySelector("header")!;
-    await expect(panelHeader).toHaveAttribute("data-ui-part", "column-header");
-    await expect(panelHeader.getBoundingClientRect().height).toBe(
-      stackHeader.getBoundingClientRect().height,
-    );
-    await expect(getComputedStyle(panelHeader).backgroundColor).toBe(
-      getComputedStyle(stackHeader).backgroundColor,
-    );
-    const edit = within(panelHeader).getByRole("button", {
-      name: "Edit details",
-    });
+    await userEvent.click(actions);
+    const menu = within(canvasElement.ownerDocument.body);
+    await expect(
+      await menu.findByRole("menuitem", { name: "Ready for review" }),
+    ).toBeVisible();
+    await expect(
+      menu.getByRole("menuitem", { name: "Restack…" }),
+    ).toBeVisible();
+    await expect(
+      menu.getByRole("menuitemradio", { name: "Squash" }),
+    ).toHaveAttribute("aria-checked", "true");
+    await userEvent.keyboard("{Escape}");
+    await expect(actions).toHaveFocus();
+    const body = within(panel).getByRole("region", { name: "PR 42" });
+    await expect(
+      within(body).queryByText("team/repo", { exact: true }),
+    ).not.toBeInTheDocument();
+    await expect(body.querySelector(".forge-pr__identity")).toBeNull();
+    await expect(
+      within(body).getAllByRole("link", { name: "#42" }),
+    ).toHaveLength(1);
+    await expect(
+      within(body).queryByRole("heading", { name: "Expose repository API" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(body).queryByText("Draft", { exact: true }),
+    ).not.toBeInTheDocument();
+    const edit = within(panel).getByRole("button", { name: "Edit details" });
+    await expect(edit.closest("header")).toBeInTheDocument();
     await expect(edit.textContent?.trim()).toBe("");
     await expect(edit.querySelector("svg")).toBeInTheDocument();
     await expect(
@@ -160,28 +198,22 @@
     await expect(
       within(panel).queryByText("Description", { exact: true }),
     ).not.toBeInTheDocument();
-    const close = within(panelHeader).getByRole("button", {
-      name: "Close pull requests",
-    });
-    await expect(close.textContent?.trim()).toBe("");
-    await expect(close.querySelector("svg")).toBeInTheDocument();
-    await expect(
-      within(panel).getByRole("heading", { name: "Stack" }),
-    ).toBeInTheDocument();
-    await expect(
-      within(panel).getByRole("link", { name: "#41" }),
-    ).toHaveAttribute("href", "https://github.com/team/repo/pull/41");
     await expect(
       within(panel).getByRole("heading", { name: "Expose repository API" }),
     ).toBeVisible();
     await expect(
-      within(panel).getByRole("region", { name: "CI checks" }),
-    ).toHaveTextContent("running");
+      within(panel).getByRole("link", { name: "#41" }),
+    ).toHaveAttribute("href", "https://github.com/team/repo/pull/41");
     await expect(
-      within(panel).getByRole("region", { name: "CI checks" }),
-    ).toHaveTextContent("2 successful · 1 in progress");
-    await expect(panel.getBoundingClientRect().left).toBeGreaterThanOrEqual(
-      stack.getBoundingClientRect().right - 1,
+      within(panel).queryByRole("region", { name: "CI checks" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(panel).getByRole("button", { name: "Inspect checks" }),
+    ).toBeEnabled();
+    await expect(panel.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      within(details)
+        .getByRole("region", { name: "Selected file diff" })
+        .getBoundingClientRect().top,
     );
   }}
 />
@@ -199,24 +231,24 @@
         name: "Pull request for feature/workspace",
       }),
     );
-    let panel = await canvas.findByRole("region", {
-      name: "Pull request details",
-    });
     await expect(
-      within(panel).getByRole("heading", { name: "Add workspace toolbar" }),
+      canvas.getByRole("heading", { name: "Add workspace toolbar" }),
     ).toBeVisible();
     await userEvent.click(
-      within(panel).getByRole("button", { name: "Close pull requests" }),
+      canvas.getByRole("button", { name: "Collapse pull request #43" }),
     );
     const api = canvas.getByRole("region", { name: "Stack feature/api" });
     await userEvent.click(
       within(api).getByRole("button", { name: "Submit stack feature/api" }),
     );
-    panel = await canvas.findByRole("region", { name: "Pull request details" });
-    panel.scrollIntoView({ block: "nearest", inline: "end" });
+    const panel = await canvas.findByRole("region", {
+      name: "Pull request details",
+    });
     const preview = within(panel).getByRole("region", {
       name: "Stack submission preview",
     });
+    await expect(preview).toHaveTextContent("feature/model → main");
+    await expect(preview).toHaveTextContent("feature/api → feature/model");
     await expect(
       within(panel.querySelector("header")!).queryByRole("button", {
         name: "Edit details",
@@ -225,8 +257,6 @@
     await expect(
       within(preview).queryByText("Description", { exact: true }),
     ).not.toBeInTheDocument();
-    await expect(preview).toHaveTextContent("feature/model → main");
-    await expect(preview).toHaveTextContent("feature/api → feature/model");
     const composer = within(preview).getByRole("group", {
       name: "PR description for feature/api",
     });
@@ -249,7 +279,6 @@
     ).toBeEnabled();
   }}
 />
-
 <Story
   name="Forge buttons align with titles and retain hover contrast"
   args={{ panelOpen: false }}
@@ -261,7 +290,6 @@
   globals={{ colorMode: "dark" }}
   play={verifyForgeTitleButtons}
 />
-
 <Story
   name="Submit stack from column menu"
   args={{ panelOpen: false }}
@@ -330,29 +358,30 @@
     const stack = await canvas.findByRole("region", {
       name: "Stack feature/workspace",
     });
-    const create = within(stack).getByRole("button", {
+    await userEvent.click(
+      within(stack).getByRole("button", {
+        name: "Create PR for feature/workspace",
+      }),
+    );
+    const form = await within(stack).findByRole("region", {
+      name: "Create PR for feature/workspace",
+    });
+    await expect(
+      within(form).getByRole("textbox", { name: "PR title" }),
+    ).toHaveValue("feature/workspace");
+    await expect(form).toHaveTextContent("feature/workspace → main");
+    await userEvent.click(
+      within(form).getByRole("button", { name: "Create PR" }),
+    );
+    const badge = await within(stack).findByRole("button", {
       name: "Pull request for feature/workspace",
     });
-    await expect(create).toHaveTextContent("Create PR");
-    await userEvent.click(create);
-    const panel = await canvas.findByRole("region", {
-      name: "Pull request details",
-    });
-    const preview = within(panel).getByRole("region", {
-      name: "Stack submission preview",
-    });
-    await expect(preview).toHaveTextContent("feature/workspace → main");
-    await expect(preview).toHaveTextContent("push, create, description");
-    await expect(create).toHaveTextContent("Create PR");
-    await userEvent.click(
-      within(preview).getByRole("button", { name: "Push branches and submit" }),
-    );
-    await waitFor(() => expect(create).toHaveTextContent("#43"));
-    await userEvent.click(create);
+    await expect(badge).toHaveTextContent("#43");
     await expect(
-      await within(panel).findByRole("heading", {
-        name: "Add workspace toolbar",
-      }),
+      await canvas.findByRole("heading", { name: "feature/workspace" }),
     ).toBeVisible();
+    await expect(
+      within(stack).queryByRole("region", { name: "CI checks" }),
+    ).not.toBeInTheDocument();
   }}
 />

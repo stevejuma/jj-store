@@ -1,21 +1,18 @@
 <script lang="ts">
-  import StoreForgeButton from "../store-forge/StoreForgeButton.svelte";
+  import StoreStackLaneMenu from "./StoreStackLaneMenu.svelte";
   import { toggleStackSource } from "../../controller/stack-workspace/selection-actions.js";
   import { untrack } from "svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
-  import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Card from "@lapismd/design-core/shadcn/card";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
   import StoreStackCommitComposer from "./StoreStackCommitComposer.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
-  import GitBranch from "@lucide/svelte/icons/git-branch";
-  import Pencil from "@lucide/svelte/icons/pencil";
   import Trash from "@lucide/svelte/icons/trash-2";
+  import GitBranch from "@lucide/svelte/icons/git-branch";
   import LogIn from "@lucide/svelte/icons/log-in";
   import Eject from "@lucide/svelte/icons/eject";
-  import Ellipsis from "@lucide/svelte/icons/ellipsis";
   import {
     repositoryLogLaneX,
     REPOSITORY_LOG_STROKE_WIDTH,
@@ -89,66 +86,7 @@
     {#if stack.conflicts}<CommunityChip tone="warning">Conflicts</CommunityChip
       >{/if}
     <ColumnCanvas.HeaderActions>
-      <Menu.Root
-        ><Menu.Trigger
-          >{#snippet child({ props })}<Button
-              {...props}
-              variant="ghost"
-              size="icon-sm"
-              class="stack-workspace__menu-trigger"
-              aria-label={`Actions for ${stack.name}`}
-              disabled={controller.locked}
-              ><Ellipsis aria-hidden="true" /></Button
-            >{/snippet}</Menu.Trigger
-        >
-        <Menu.Content
-          align="end"
-          preventScroll={false}
-          class="stack-workspace__action-menu"
-          ><Menu.Group>
-            <StoreForgeButton {controller} {stack} menuItem />
-            <Menu.Item
-              disabled={!controller.can(
-                applied ? "unapply_stack" : "apply_stack",
-              )}
-              onSelect={() =>
-                onCommand({
-                  kind: applied ? "unapply_stack" : "apply_stack",
-                  stack: stack.id,
-                  ...(controller.page === "branches"
-                    ? { branch: stack.name }
-                    : {}),
-                })}
-              >{#if applied}<Eject aria-hidden="true" />{:else}<LogIn
-                  aria-hidden="true"
-                />{/if}{applied ? "Unapply stack" : "Apply stack"}</Menu.Item
-            >
-            <Menu.Item
-              disabled={!controller.can("rename_stack")}
-              title={controller.eligibility("rename_stack").reason || undefined}
-              onSelect={() =>
-                onCommand({
-                  kind: "rename_stack",
-                  stack: stack.id,
-                  name: stack.name,
-                })}><Pencil aria-hidden="true" />Rename stack</Menu.Item
-            >
-            <Menu.Item
-              disabled={!controller.can("rebase")}
-              title={controller.eligibility("rebase").reason || undefined}
-              onSelect={() => onCommand({ kind: "rebase", stack: stack.id })}
-              ><GitBranch aria-hidden="true" />Rebase onto base</Menu.Item
-            >
-            <Menu.Item
-              disabled={!controller.can("delete_stack")}
-              title={controller.eligibility("delete_stack").reason || undefined}
-              onSelect={() =>
-                onCommand({ kind: "delete_stack", stack: stack.id })}
-              ><Trash aria-hidden="true" />Delete stack</Menu.Item
-            >
-          </Menu.Group></Menu.Content
-        >
-      </Menu.Root>
+      <StoreStackLaneMenu {controller} {stack} {applied} {onCommand} />
       <ColumnCanvas.Toggle aria-label={`Collapse ${stack.name}`} />
     </ColumnCanvas.HeaderActions>
   </ColumnCanvas.Header>

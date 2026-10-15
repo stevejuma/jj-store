@@ -1,0 +1,4 @@
+- [Design references](design-references.md)
+- [E-FORGE-INLINE-001 details 2](details-02.md)
+- [E-FORGE-INLINE-001 details 3](details-03.md)
+- [E-FORGE-INLINE-001 details 4](details-04.md)

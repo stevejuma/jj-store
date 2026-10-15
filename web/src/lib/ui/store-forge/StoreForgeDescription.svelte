@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
@@ -11,6 +12,7 @@
     label = "PR description",
     editLabel = "Edit description",
     showEditButton = true,
+    additionalActions,
   }: {
     value?: string;
     editing?: boolean;
@@ -18,6 +20,7 @@
     label?: string;
     editLabel?: string;
     showEditButton?: boolean;
+    additionalActions?: Snippet;
   } = $props();
 </script>
 
@@ -39,6 +42,7 @@
       ariaLabel={label}
       bind:value
       {disabled}
+      {additionalActions}
       placeholder="Add context for reviewers"
     />
   {:else if value.trim()}

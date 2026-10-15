@@ -1,8 +1,8 @@
 # M31 forge-agnostic stack submission
 
-| ID  | Status      | Depends | Requirements                                                                                      | Gate                                                            | Next                                                                        | Evidence                                                                                                                                    |
-| --- | ----------- | ------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| M31 | In progress | M21     | JST-FORGE-001,JST-FORGE-002,JST-FORGE-003,JST-FORGE-004,JST-FORGE-005,JST-FORGE-006,JST-FORGE-007 | Focused CLI/app submission, editing, CI and merge qualification | Run credentialed disposable-forge acceptance and packaged app qualification | E-FORGE-STACKS-001,E-FORGE-WORKSPACE-001,E-FORGE-PANEL-001,E-FORGE-DETAILS-001,E-FORGE-BUTTONS-001,E-FORGE-UNSUBMITTED-001,E-FORGE-EDIT-001 |
+| ID  | Status      | Depends | Requirements                                                                                      | Gate                                                            | Next                                                                        | Evidence                                                                                                                                                       |
+| --- | ----------- | ------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M31 | In progress | M21     | JST-FORGE-001,JST-FORGE-002,JST-FORGE-003,JST-FORGE-004,JST-FORGE-005,JST-FORGE-006,JST-FORGE-007 | Focused CLI/app submission, editing, CI and merge qualification | Run credentialed disposable-forge acceptance and packaged app qualification | E-FORGE-STACKS-001,E-FORGE-WORKSPACE-001,E-FORGE-PANEL-001,E-FORGE-DETAILS-001,E-FORGE-BUTTONS-001,E-FORGE-UNSUBMITTED-001,E-FORGE-EDIT-001,E-FORGE-INLINE-001 |
 
 The ordinary-local implementation includes submission, managed navigation,
 editing, CI controls, guarded merge and explicit Restack. Focused automated and
@@ -25,6 +25,12 @@ coverage in the same contextual catalog, including Create PR preview and
 simulated submission; production contracts and M31 status remain unchanged.
 E-FORGE-EDIT-001 moves PR editing to a header pencil and removes the redundant
 description label, retaining composer previews, draft/save behavior and gates.
+E-FORGE-INLINE-001 adds topmost inline creation and the Op Log-style details
+column: an expandable PR section above the file diff, with explicit CI
+inspection and reusable floating hosts. Headers own the title, linked number,
+draft/state and compact actions, with repeated body identity removed. Focused
+qualification retains independent diff origins, operation/receipt guards and
+drafts; live provider, native/platform, packaged and visual gates remain open.
 <!-- generated-navigation -->
 
 ## Pages

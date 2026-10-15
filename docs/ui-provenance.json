@@ -3978,7 +3978,17 @@
       "web/src/lib/controller/forge/view-lifecycle.ts",
       "web/src/lib/controller/forge/polling.svelte.ts",
       "web/src/lib/controller/forge/controller.svelte.ts",
-      "web/src/lib/controller/forge/types.ts"
+      "web/src/lib/controller/forge/types.ts",
+      "web/src/lib/controller/forge/inline.svelte.ts",
+      "web/src/lib/ui/store-forge/StoreForgeCreate.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeDetails.svelte",
+      "web/src/lib/ui/store-forge/StoreForgePullRequestActions.svelte",
+      "web/src/lib/ui/store-forge/forge-inline.css",
+      "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkHeader.svelte",
+      "web/src/lib/ui/store-stack-workspace/StoreStackLaneMenu.svelte",
+      "web/src/lib/controller/stack-workspace/details-columns.ts",
+      "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetailsColumn.svelte",
+      "web/src/lib/ui/store-stack-workspace/stack-workspace-details.css"
     ],
     "references": [
       {
@@ -4007,7 +4017,7 @@
         "usage": "Read-only workflow reference; independently implemented effects and presentation."
       }
     ],
-    "communityInspection": "src/components/community-projects/CommunityProjectsPullRequestCreateDialog.svelte and maintained owned Stack components inspected before presentation edits. Existing owned cards/avatars are reused. No new Community-derived component copy.",
+    "communityInspection": "src/components/community-projects/CommunityProjectsPullRequestCreateDialog.svelte, maintained CommunityProjectsRepositoryLogDiff.svelte/repository-log-diff.css and owned Stack components inspected before presentation edits. Existing owned cards/avatars are reused. No new Community-derived component copy.",
     "designCore": "Released @lapismd/design-core 0.3.2 ColumnCanvas, Button, Input, ScrollArea, Field, Dialog, Tooltip and DropdownMenu primitives; no foundational package changes."
   },
   "forgeIcons": {
@@ -4019,5 +4029,35 @@
     "local": ["web/src/lib/ui/store-forge/forge-icons.ts"],
     "paths": ["icons/github.svg", "icons/gitlab.svg", "icons/forgejo.svg"],
     "usage": "Locally bundled monochrome SVG paths rendered by the application-owned forge icon; no runtime external icon requests."
+  },
+  "detachablePanels": {
+    "local": [
+      "web/src/lib/ui/store-panels/StoreDetachablePanel.svelte",
+      "web/src/lib/ui/store-panels/detachable-panel.css"
+    ],
+    "references": [
+      {
+        "project": "jjbutler",
+        "revision": "66597dfb058ce156ec104e979ff77c802bea6a0a",
+        "license": "FSL-1.1-MIT",
+        "paths": [
+          "apps/desktop/src/components/CreateReviewBox.svelte",
+          "apps/desktop/src/components/FloatingCommitBox.svelte",
+          "apps/desktop/src/lib/floating/FloatingModal.svelte"
+        ],
+        "usage": "Read-only inline creation and floating composition reference; no code copied."
+      },
+      {
+        "project": "changeyard",
+        "revision": "b0caf0741f17454f2bc48ef3448d741d231f9299",
+        "paths": [
+          "packages/vcs/src/components/vcs-pull-request-actions.tsx",
+          "packages/vcs/src/views/jj-board-view.tsx"
+        ],
+        "usage": "Read-only contextual PR summary and viewport-constrained floating design reference; no code copied."
+      }
+    ],
+    "communityInspection": "CommunityProjectsPullRequestCreateDialog and maintained chat composer additionalActions seam inspected. Existing owned components are reused; no new Community-derived source copy.",
+    "designCore": "Released 0.3.2 WorkspaceFloatingLayer, WorkspaceShellController, imperative view registry, Dialog.Portal and shadcn primitives. Independent application adapter preserves one DOM/editor instance; foundation owns window geometry and controls."
   }
 }

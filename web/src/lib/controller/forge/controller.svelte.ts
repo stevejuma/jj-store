@@ -1,3 +1,4 @@
+import { ForgeInline } from "./inline.svelte.js";
 import { ForgePolling } from "./polling.svelte.js";
 import { ForgeEffects } from "./effects.svelte.js";
 import type {
@@ -17,6 +18,9 @@ export class ForgeController {
   selected = $state<ForgePr>();
   plan = $state<ForgePlan>();
   open = $state(false);
+  surface = $state<"column" | "inline">("column");
+  detailsExpanded = $state(true);
+  readonly inline = new ForgeInline(this);
   busy = $state(false);
   stale = $state(false);
   token = $state("");
@@ -140,9 +144,12 @@ export class ForgeController {
     await this.run({ kind: "configure", connection });
     await this.refresh();
   }
-  select(branch: string) {
+  select(branch: string, surface: "column" | "inline" = "column") {
+    this.inline.leave();
     this.retainDraft();
-    this.open = true;
+    this.surface = surface;
+    this.detailsExpanded = true;
+    this.open = surface === "column";
     this.plan = undefined;
     this.checks = undefined;
     this.logs = "";
@@ -210,14 +217,20 @@ export class ForgeController {
         original: this.#original,
       });
   }
-  async preview(branch: string, ready = false) {
-    this.open = true;
+  async preview(
+    branch: string,
+    ready = false,
+    surface: "column" | "inline" = "column",
+  ) {
+    if (surface === "column") this.inline.leave();
+    this.surface = surface;
+    this.open = surface === "column";
     this.retainDraft();
     this.selected = undefined;
     this.restack = undefined;
     this.checks = undefined;
     this.logs = "";
-    await this.run({ kind: "preview", bookmark: branch, draft: !ready });
+    return this.run({ kind: "preview", bookmark: branch, draft: !ready });
   }
   async previewRestack(branch: string) {
     this.open = true;
@@ -277,6 +290,7 @@ export class ForgeController {
     this.#closed = true;
     this.#polling.close();
     this.token = "";
+    this.inline.clear();
     this.#drafts.clear();
     this.dispose?.();
   }

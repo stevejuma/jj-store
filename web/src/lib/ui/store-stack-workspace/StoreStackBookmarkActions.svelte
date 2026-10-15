@@ -30,8 +30,10 @@
     reason = () => "",
     onCommand,
     afterPush,
+    beforePush,
   }: {
     afterPush?: Snippet;
+    beforePush?: Snippet;
     stack: string;
     commitStack?: string;
     name: string;
@@ -75,6 +77,7 @@
         </Tooltip.Trigger><Tooltip.Content>Add empty commit</Tooltip.Content
         ></Tooltip.Root
       >{/if}
+    {@render beforePush?.()}
     <Tooltip.Root
       ><Tooltip.Trigger>
         {#snippet child({ props })}

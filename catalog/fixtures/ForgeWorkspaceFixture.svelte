@@ -11,9 +11,15 @@
   let {
     panelOpen = true,
     workspacePullRequest = false,
+    apiPullRequests = true,
+    failPreview = false,
+    unknownSubmit = false,
   }: {
     panelOpen?: boolean;
     workspacePullRequest?: boolean;
+    apiPullRequests?: boolean;
+    failPreview?: boolean;
+    unknownSubmit?: boolean;
   } = $props();
   const controller = untrack(() => {
     const value = createInMemoryStoreController("stacks");
@@ -26,11 +32,16 @@
     snapshot.repository = controller.state.route.repository;
     snapshot.folder = "/Users/demo/code/repository";
     snapshot.workspaces[0]!.applied = ["ui", "api"];
-    const fixture = workspaceForgeTransport(workspacePullRequest);
+    const fixture = workspaceForgeTransport(
+      workspacePullRequest,
+      apiPullRequests,
+      failPreview,
+      unknownSubmit,
+    );
     const forge = new ForgeController(fixture.transport);
     forge.data = fixture.initial;
     forge.ci = fixture.ci;
-    if (panelOpen) forge.select("feature/api");
+    if (panelOpen) forge.select("feature/api", "inline");
     const adapter = Object.assign(new MockStackWorkspaceAdapter(snapshot), {
       forge,
       close: () => forge.close(),
@@ -38,7 +49,10 @@
     return new StackWorkspaceController(adapter);
   });
   onMount(() => {
-    void stackWorkspace.refresh();
+    void stackWorkspace.refresh().then(() => {
+      if (panelOpen)
+        stackWorkspace.selectFile("api2", "src/api.ts", undefined, "api");
+    });
     return () => {
       stackWorkspace.close();
       controller.actions.destroy();

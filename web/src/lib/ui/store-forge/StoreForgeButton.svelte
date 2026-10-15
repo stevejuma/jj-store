@@ -26,7 +26,7 @@
     controller.locked || forge?.busy || Boolean(forge?.pending) || conflicts,
   );
   function open() {
-    if (mode === "bookmark" && forge?.pr(name)) forge.select(name);
+    if (mode === "bookmark" && forge?.pr(name)) forge.select(name, "inline");
     else void forge?.preview(name);
   }
 </script>

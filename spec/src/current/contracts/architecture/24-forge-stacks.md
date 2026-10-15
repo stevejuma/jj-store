@@ -33,35 +33,55 @@ Existing local Stacks undo/redo cannot undo external forge effects.
 
 ## UI and maintenance
 
-Branch and Workspace columns share PR presentation and submission. Change badges
-pair the configured forge icon with the PR number/state at the trailing end of
-the change title row. PR/submission buttons have opaque backgrounds, borders and
-hover/focus surfaces distinguishable from the hovered row in both themes; CI
-status stays in the metadata row. Submit stack appears beside Push in the action
-row of the topmost bookmark card and in the stack column kebab menu, with shared
-pending/conflict guards and the same preview flow; lower bookmark cards omit it.
-The column header has no separate submission button. Opening a PR shows its
-rendered title, branch relationship, state and Markdown description; edit fields
-appear through an accessible icon-only pencil action in the PR column header,
-with a tooltip and pressed state. Editing remains capability/pending-gated. The
-body omits the Edit details button and redundant Description label; its composer
-retains the preview action and drafts. Connection/session controls and inventory
-navigation stay in the column menu. Checks load automatically for the selected
-remote revision and appear immediately below the description, with an aggregate
-status and individually labelled runs. Late responses for earlier selections
-must not replace the current checks; missing, incomplete, unsupported or stale
-checks must never imply success. CI actions remain capability-gated and
-secondary to the status rows, with merge controls after the checks. The PR panel
-uses the shared column header height, background and title primitives with an
-accessible icon-only close action. Descriptions render safe Markdown by default
-and use the maintained chat composer when editing, including submission drafts;
-previewing or closing retains authored edits. Merge methods use the released
-shadcn radio dropdown and expose only provider-supported options. The app
-retains description drafts and exact pending operations during refresh and
-navigation. Operational failures use the shared notification service. Logs are
-bounded untrusted text and remain separate from native WorkflowStore evidence.
-Polling is bounded, deduplicated, paused on teardown and backs off on failures.
-Unsupported capabilities remain explicit; a missing check is never a pass.
+Branch and Workspace columns share PR presentation and submission. When an
+approved forge is configured and the topmost bookmark has no PR, its action row
+offers Create PR immediately before Push. Lower unsubmitted bookmarks omit the
+action. Creation opens within that bookmark card, above its commits, with the
+branch name as the default title and the maintained Markdown chat composer.
+Explicit creation retains the existing pinned submission plan, expected heads,
+stack dependencies, draft/ready choice and exact external-effect journal; it
+pushes only through the existing guarded submission action. An incomplete,
+failed or unknown preview cannot supply a publishable form. Dependency PRs stay
+visible for review. Cancel/reopen, refresh and inline/floating transitions
+retain session-only authored drafts and pending identities; closing an unknown
+action never replaces or replays it. Cached plans retain their original guards
+and may be rejected as stale; explicit reopening never weakens server admission.
+
+Submitted bookmark title rows pair the configured forge icon with PR number and
+state at the trailing edge; CI status remains in metadata. PR/create/submit
+controls retain opaque bordered surfaces and distinct light/dark hover/focus.
+Submit stack remains in the column menu and beside Push for an already submitted
+top bookmark. PR details and file diffs share one adjacent details column per
+origin, mirroring the Op Log's separate cards: an expandable PR section first,
+then the selected file diff. A badge opens this column without requiring a file;
+selecting or switching files keeps the relevant branch's PR above its diff.
+Collapsing the PR preserves the file view; closing only the file preserves the
+PR. Stack cards contain no duplicate details section. The PR header owns its
+title, linked number, draft/state chip and pencil, float, checks and close
+icons. The body renders branch relationships and safe Markdown, omitting
+repeated title/number/state and repository-name metadata. The compact header
+menu owns Draft, Restack, provider-supported merge methods and explicitly
+confirmed guarded merge. An accessible pencil reveals title/composer editing,
+with no redundant Description label. Detailed checks are absent from this inline
+or floating PR section. Inspect checks explicitly opens the existing
+revision-bound CI/job/log/actions column; missing, incomplete or stale checks
+never imply success. Capability and pending guards, merge protection and
+explicit Restack remain unchanged.
+
+Creation and PR details can float and redock through one application-owned,
+forge-independent detachable-panel adapter over released Design Core floating
+windows and its portal. The same content/editor instance moves between hosts.
+Drag, resize, minimize, maximize and dock/close reuse the released window
+controls. Escape redocks only the focused panel; nested menus handle Escape
+first. Focus returns to the originating control, bounds stay within the viewport
+and teardown removes the floating host. Floating layout and drafts stay
+session-only. Panel layout never owns credentials, publication intent or
+receipts. Connection/session controls and inventory remain in the existing PR
+column menu. The adjacent inspection/submission column retains its shared header
+height, background, accessible icon-only pencil/close controls, composer
+previews and shadcn merge-method menu. Operational failures use shared toasts.
+Bounded polling, selected-revision checks and log isolation remain
+authoritative.
 
 ## Delivery and evidence
 

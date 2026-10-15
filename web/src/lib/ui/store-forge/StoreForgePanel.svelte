@@ -6,6 +6,7 @@
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import Pencil from "@lucide/svelte/icons/pencil";
   import X from "@lucide/svelte/icons/x";
+  import CommunityChip from "../community-chip/CommunityChip.svelte";
   import StoreForgeIcon from "./StoreForgeIcon.svelte";
   import StoreForgePanelActions from "./StoreForgePanelActions.svelte";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
@@ -13,6 +14,7 @@
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   import StoreForgeSetup from "./StoreForgeSetup.svelte";
   import StoreForgePullRequest from "./StoreForgePullRequest.svelte";
+  import StoreForgePullRequestActions from "./StoreForgePullRequestActions.svelte";
   import StoreForgeDescription from "./StoreForgeDescription.svelte";
   import "./store-forge.css";
   let { controller }: { controller: ForgeController } = $props();
@@ -31,8 +33,28 @@
 >
   <ColumnCanvas.Header>
     <StoreForgeIcon provider={controller.data?.connection?.provider} />
-    <ColumnCanvas.Title>Pull requests</ColumnCanvas.Title>
+    <ColumnCanvas.Title role="heading" aria-level={2}
+      >{controller.selected
+        ? controller.title || controller.selected.title
+        : "Pull requests"}</ColumnCanvas.Title
+    >
+    {#if controller.selected}
+      <a
+        class="forge-pr__number"
+        href={controller.selected.url}
+        target="_blank"
+        rel="noreferrer">#{controller.selected.number}</a
+      >
+      <CommunityChip variant="muted"
+        >{controller.selected.draft
+          ? "Draft"
+          : controller.selected.state}</CommunityChip
+      >
+    {/if}
     <ColumnCanvas.HeaderActions>
+      {#if controller.selected}<StoreForgePullRequestActions
+          {controller}
+        />{/if}
       <Tooltip.Provider>
         {#if controller.selected && controller.data}
           <Tooltip.Root>

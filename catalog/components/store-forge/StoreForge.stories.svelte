@@ -121,7 +121,7 @@
     ).toBeVisible();
     await expect(edit).toHaveAttribute("aria-pressed", "false");
     await userEvent.click(
-      canvas.getByRole("button", { name: "Merge method: Squash" }),
+      canvas.getByRole("button", { name: "PR actions: Squash" }),
     );
     const menu = within(canvasElement.ownerDocument.body);
     await expect(
@@ -133,7 +133,7 @@
     ).toHaveFocus();
     await userEvent.keyboard("{Enter}");
     await expect(
-      canvas.getByRole("button", { name: "Merge method: Rebase" }),
+      canvas.getByRole("button", { name: "PR actions: Rebase" }),
     ).toBeVisible();
   }}
 />
@@ -144,7 +144,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Merge method: Rebase" }),
+      await canvas.findByRole("button", { name: "PR actions: Rebase" }),
     );
     const menu = within(canvasElement.ownerDocument.body);
     await expect(menu.getAllByRole("menuitemradio")).toHaveLength(1);
@@ -153,7 +153,7 @@
     ).toHaveAttribute("aria-checked", "true");
     await userEvent.keyboard("{Escape}");
     await expect(
-      canvas.getByRole("button", { name: "Merge method: Rebase" }),
+      canvas.getByRole("button", { name: "PR actions: Rebase" }),
     ).toHaveFocus();
   }}
 />
@@ -177,11 +177,11 @@
     await expect(checks.getBoundingClientRect().top).toBeGreaterThan(
       description.getBoundingClientRect().bottom,
     );
-    await expect(checks.getBoundingClientRect().bottom).toBeLessThan(
+    await expect(
       canvas
-        .getByRole("button", { name: "Merge method: Squash" })
-        .getBoundingClientRect().top,
-    );
+        .getByRole("button", { name: "PR actions: Squash" })
+        .getBoundingClientRect().bottom,
+    ).toBeLessThan(checks.getBoundingClientRect().top);
   }}
 />
 
@@ -205,7 +205,7 @@
       canvas.getByRole("heading", { name: "Review summary" }),
     ).toBeVisible();
     await expect(canvas.getAllByRole("img", { name: "Forgejo" })).toHaveLength(
-      2,
+      1,
     );
   }}
 />
@@ -219,7 +219,7 @@
       await canvas.findByRole("heading", { name: "Add API" }),
     ).toBeVisible();
     await expect(canvas.getAllByRole("img", { name: "GitLab" })).toHaveLength(
-      2,
+      1,
     );
     await userEvent.click(
       canvas.getByRole("button", { name: "Pull request options" }),

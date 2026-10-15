@@ -27,6 +27,16 @@ export class ForgeEffects {
       if (outcome === "complete" || outcome === "rejected")
         this.owner.pending = undefined;
       this.owner.receive(response);
+      if (
+        pending.kind === "submit" &&
+        outcome === "complete" &&
+        this.owner.inline.creating
+      ) {
+        const branch = pending.plan.items.at(-1)!.segment.branch;
+        this.owner.plan = undefined;
+        this.owner.inline.complete(branch);
+        this.owner.select(branch, "inline");
+      }
       if (response.restack?.operation)
         this.owner.restacked?.(response.restack.operation);
       if (response.operation?.merge)
@@ -43,6 +53,7 @@ export class ForgeEffects {
   async submit() {
     if (this.owner.plan) {
       const branch = this.owner.plan.items.at(-1)!.segment.branch;
+      const surface = this.owner.surface;
       if (
         await this.owner.run({
           kind: "submit",
@@ -51,7 +62,8 @@ export class ForgeEffects {
       ) {
         this.owner.plan = undefined;
         await this.owner.refresh();
-        this.owner.select(branch);
+        this.owner.inline.complete(branch);
+        this.owner.select(branch, surface);
       }
     }
   }

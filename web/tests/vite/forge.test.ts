@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { ForgeController } from "../../src/lib/controller/forge/controller.svelte.js";
 import type {
   ForgePr,
+  ForgePlan,
   ForgeResponse,
 } from "../../src/lib/controller/forge/types.js";
 const response = (): ForgeResponse => ({
@@ -264,5 +265,157 @@ it("does not label stale branch checks as passed", () => {
   expect(controller.checkSummary(selected.head)).toBe("Checks need refresh");
   controller.ci[selected.head]!.sha = selected.sha;
   expect(controller.checkSummary(selected.head)).toBe("Checks need refresh");
+  controller.close();
+});
+
+function creationPlan(branch: string): ForgePlan {
+  return {
+    request_id: `create-${branch}`,
+    operation: "pinned-operation",
+    connection,
+    draft: true,
+    cumulative: false,
+    items: [
+      {
+        segment: {
+          branch,
+          head: "a".repeat(40),
+          base: "main",
+          title: "Commit message",
+          body: "Authored context",
+          remote_head: null,
+          shared: false,
+        },
+        pr: null,
+        steps: ["push", "create", "description"],
+      },
+    ],
+  };
+}
+it("inline creation defaults titles to branches and retains per-branch drafts and pins", async () => {
+  let previews = 0;
+  const controller = new ForgeController(async ({ action }) => {
+    if (action.kind === "preview") {
+      previews++;
+      return { ...response(), connection, plan: creationPlan(action.bookmark) };
+    }
+    return { ...response(), connection };
+  });
+  controller.data = { ...response(), connection };
+  await controller.inline.start("feature/new");
+  expect(controller.open).toBe(false);
+  expect(controller.surface).toBe("inline");
+  expect(controller.plan!.items[0]!.segment.title).toBe("feature/new");
+  controller.plan!.items[0]!.segment.title = "Retained title";
+  controller.plan!.items[0]!.segment.body = "Retained **draft**";
+  controller.plan!.draft = false;
+  const plan = controller.plan;
+  controller.inline.cancel();
+  expect(controller.plan).toBeUndefined();
+  await controller.inline.start("feature/other");
+  expect(controller.plan!.items[0]!.segment.title).toBe("feature/other");
+  controller.inline.cancel();
+  await controller.inline.start("feature/new");
+  expect(controller.plan).toBe(plan);
+  expect(controller.plan!.operation).toBe("pinned-operation");
+  expect(controller.plan!.items[0]!.segment.body).toBe("Retained **draft**");
+  expect(controller.plan!.items[0]!.segment.title).toBe("Retained title");
+  expect(controller.plan!.draft).toBe(false);
+  expect(previews).toBe(2);
+  controller.close();
+});
+it("an unknown inline submission retains its exact plan and blocks replacement", async () => {
+  const calls: string[] = [];
+  const controller = new ForgeController(async ({ action }) => {
+    calls.push(action.kind);
+    if (action.kind === "preview")
+      return { ...response(), connection, plan: creationPlan(action.bookmark) };
+    throw new Error("unknown submission outcome");
+  });
+  controller.data = { ...response(), connection };
+  await controller.inline.start("feature/new");
+  controller.plan!.items[0]!.segment.body = "Exact authored draft";
+  await controller.submit();
+  const pending = controller.pending;
+  expect(pending?.kind).toBe("submit");
+  expect(
+    pending?.kind === "submit" && pending.plan.items[0]!.segment.body,
+  ).toBe("Exact authored draft");
+  controller.inline.cancel();
+  await controller.inline.start("replacement");
+  expect(controller.pending).toBe(pending);
+  expect(controller.inline.creating).toBe("feature/new");
+  expect(controller.plan!.items[0]!.segment.body).toBe("Exact authored draft");
+  expect(calls).toEqual(["preview", "submit"]);
+  controller.close();
+});
+it("a failed inline preview cannot expose an older plan for publication", async () => {
+  const controller = new ForgeController(async () => {
+    throw new Error("preview failed");
+  });
+  controller.data = { ...response(), connection };
+  controller.plan = creationPlan("old");
+  await controller.inline.start("new");
+  expect(controller.plan).toBeUndefined();
+  expect(controller.pending).toBeUndefined();
+  expect(controller.inline.creating).toBe("new");
+  controller.close();
+});
+
+it("switching from a stack submission retains its authored plan and original guards", async () => {
+  const controller = new ForgeController(async ({ action }) => ({
+    ...response(),
+    connection,
+    plan: action.kind === "preview" ? creationPlan(action.bookmark) : null,
+  }));
+  controller.data = { ...response(), connection };
+  await controller.preview("feature/stack");
+  const plan = controller.plan!;
+  plan.items[0]!.segment.body = "Retained stack submission draft";
+  await controller.inline.start("feature/new");
+  controller.inline.cancel();
+  await controller.inline.start("feature/stack");
+  expect(controller.plan).toBe(plan);
+  expect(controller.plan!.items[0]!.segment.body).toBe(
+    "Retained stack submission draft",
+  );
+  expect(controller.plan!.operation).toBe("pinned-operation");
+  controller.close();
+});
+
+it("explicit observation completes an unknown inline creation without replaying submission", async () => {
+  const plan = creationPlan("feature/new");
+  const created = { ...pr(8), head: "feature/new" };
+  const calls: string[] = [];
+  const controller = new ForgeController(async ({ action }) => {
+    calls.push(action.kind);
+    if (action.kind === "preview") return { ...response(), connection, plan };
+    if (action.kind === "submit") throw new Error("unknown network outcome");
+    if (action.kind === "recover")
+      return {
+        ...response(),
+        connection,
+        pull_requests: [created],
+        receipt: {
+          plan,
+          outcome: "complete",
+          message: null,
+          pull_requests: [created],
+          steps: [],
+        },
+      };
+    return { ...response(), connection, pull_requests: [created] };
+  });
+  controller.data = { ...response(), connection };
+  await controller.inline.start("feature/new");
+  await controller.submit();
+  expect(controller.pending?.kind).toBe("submit");
+  await controller.checkPending();
+  expect(controller.pending).toBeUndefined();
+  expect(controller.inline.creating).toBe("");
+  expect(controller.plan).toBeUndefined();
+  expect(controller.selected?.number).toBe(8);
+  expect(controller.surface).toBe("inline");
+  expect(calls.filter((call) => call === "submit")).toHaveLength(1);
   controller.close();
 });

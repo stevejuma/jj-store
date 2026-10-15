@@ -310,45 +310,40 @@ qualified. Loaded Unstaged summaries are retained in the draft selection model
 without eagerly reading patches. Remote tracking and PR actions remain outside
 the local UI scope.
 
-JST-FORGE-001/007 add capability-owned PR badges, Submit stack and an adjacent
-PR panel to both Branches and Workspace. The shared forge controller retains
-session credentials, authored drafts and exact pending requests across refresh
-and focused navigation. Editing, checks/logs, permitted rerun/cancel, merge and
-explicit Restack use the same typed service as the standalone CLI. Operational
-failures belong to application notifications; stale/unknown operation status may
-remain beside the controls. Native repository forge commands are unavailable.
+JST-FORGE-001/007 add forge-owned PR controls to Branches and Workspace.
+Configured forges offer Create PR only on the topmost unsubmitted bookmark,
+immediately before Push. It opens an inline title and Markdown chat composer
+above commits; new PR titles default to branch names. Dependency plans and
+Draft/Ready selection retain the existing guarded, explicit push/submit action.
+Cancel/reopen and refresh retain authored drafts and exact pending operations.
+Submitted changes retain trailing title-row forge/PR buttons and CI metadata
+chips with bordered opaque surfaces and distinct light/dark hover/focus states.
+Submit stack stays in the column menu and beside Push on submitted top cards.
 
-PR column headers match adjacent stack columns, including height and background,
-and use an icon-only close action with an accessible name and tooltip. Editing
-uses an icon-only pencil action in the PR column header, with an Edit details
-accessible name/tooltip and pressed state, retaining capability and pending
-guards. The body omits Edit details and the redundant Description label. PR
-descriptions render Markdown with managed stack links; editing and submission
-use the shared chat composer with a retained preview toggle. Merge methods use
-the released shadcn dropdown rather than a native select.
+A branch's PR appears as an expandable section above its selected file diff in
+the same adjacent details column, following the Op Log's separate-card layout.
+Badge activation opens PR details before any file is selected. Choosing a file
+uses that same column; the relevant PR summary remains above it. Collapsing the
+PR leaves the diff intact, and closing only the file leaves the PR available. No
+PR details section is inserted into the stack lane. The header owns the title,
+linked PR number, draft/state chip and action icons. Merge method, guarded
+merge, draft and Restack controls share its compact actions menu. The body omits
+repeated identity and repository-name metadata, renders Markdown and uses an
+icon-only header pencil for editing; no body Edit details button or Description
+label. Detailed checks are omitted from this section and remain available
+through explicit Inspect checks in the existing adjacent column.
+Merge/draft/Restack actions preserve provider capability and pending guards.
+Creation and details share the forge-independent detachable-panel adapter:
+released floating window controls own moving, resizing, minimizing, maximizing
+and docking. The same content/editor instance and draft remain mounted during
+float/redock, with focused Escape and return focus. Floating layout is
+session-only, viewport-bounded and cleaned up with the owning view.
 
-E-FORGE-DETAILS-001 adds forge icons to stack/change PR badges and
-rendered-first PR details. Title/description editing is explicit, with retained
-composer drafts; connection controls and PR inventory live in the column menu. A
-grouped checks summary and per-run status rows follow the description before
-merge actions. Status icons have text equivalents; unavailable/stale data cannot
-appear passed.
-
-Forge PR buttons occupy the trailing end of each bookmark's title row, aligned
-vertically with the title; CI status remains in the metadata chips below. PR and
-Submit stack buttons have opaque backgrounds, visible borders and distinct
-hover/focus surfaces even while their containing row is hovered, in both themes.
-Long titles truncate within the remaining space without displacing the control.
-
-Submit stack occupies the action row immediately after Push on the topmost
-bookmark card only, using the displayed group order. The column kebab menu also
-offers Submit stack through the same preview and pending/conflict guards; its
-header omits the separate button. Both entry points retain the existing explicit
-Push branches and submit step.
-
-E-FORGE-UNSUBMITTED-001 retains JST-UI-020 and JST-FORGE-001 behavior: the
-contextual catalog starts with an unsubmitted Workspace bookmark showing Create
-PR without a PR number or CI status, followed by a submitted stack and its PR
-details. The fixture previews creation from local changes independently of
-remote PR inventory; only explicit simulated submission adds the fixture PR.
-Production components, forge actions and authority are unchanged.
+The adjacent PR inspection/submission column retains matching shared headers,
+icon-only pencil/close controls and its connection/inventory menu. Descriptions
+use the owned composer and safe Markdown, including preview; merge methods use
+the released shadcn dropdown. Operational failures belong to notifications.
+Unknown commands retain their exact intent; native forge commands stay
+unavailable. Catalog evidence includes unsubmitted creation beside a submitted
+stack, rendered details, checks inspection, keyboard/float/redock/draft
+behavior, scoped failure toasts and both themes. Stories remain visual-pending.
