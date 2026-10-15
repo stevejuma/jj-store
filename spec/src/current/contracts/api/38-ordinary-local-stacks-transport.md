@@ -142,3 +142,10 @@ details performs the existing read-only checks action automatically, guarded by
 the selected PR identity/epoch. It creates no pending mutation and cannot
 replace a newer selection or an explicitly selected job view. Forge tokens
 remain session-only, entered through the column's connection dialog.
+
+E-FORGE-BUTTONS-001 confirms JST-API-001 unchanged: title-row forge controls and
+their contextual hover surfaces, top-card submission beside Push and column
+kebab-menu entry alter presentation only. Both submission entries use the same
+preview and exact pending/conflict guards. PR selection, submission preview, CI
+observation and exact pending actions are unchanged; clicking the control cannot
+also select the containing branch row.

@@ -46,9 +46,10 @@
     onCommand: (command: WorkspaceCommand) => void;
     onDrop: (event: DragEvent, target: "stack" | "commit", id: string) => void;
   } = $props();
+  const history = $derived(controller.histories.state(stack.id));
   const preparing = $derived(
     controller.adapter.readStackHistory !== undefined &&
-      !controller.histories.state(stack.id).loaded &&
+      !history.loaded &&
       stack.heads.length > 0,
   );
   $effect(() => {
@@ -88,7 +89,6 @@
     {#if stack.conflicts}<CommunityChip tone="warning">Conflicts</CommunityChip
       >{/if}
     <ColumnCanvas.HeaderActions>
-      <StoreForgeButton {controller} {stack} />
       <Menu.Root
         ><Menu.Trigger
           >{#snippet child({ props })}<Button
@@ -106,6 +106,7 @@
           preventScroll={false}
           class="stack-workspace__action-menu"
           ><Menu.Group>
+            <StoreForgeButton {controller} {stack} menuItem />
             <Menu.Item
               disabled={!controller.can(
                 applied ? "unapply_stack" : "apply_stack",
@@ -176,17 +177,15 @@
     <StoreNotice
       noticeKey={`stack-history-${stack.id}`}
       title="Stack history unavailable"
-      message={controller.histories.state(stack.id).error}
+      message={history.error}
       lifetime="condition"
     />
-    {#if controller.histories.state(stack.id).error}<Button
+    {#if history.error}<Button
         variant="outline"
         size="sm"
         onclick={() =>
-          void controller.histories.load(
-            stack.id,
-            Boolean(controller.histories.state(stack.id).cursor),
-          )}>Retry stack history</Button
+          void controller.histories.load(stack.id, Boolean(history.cursor))}
+        >Retry stack history</Button
       >{/if}
     {#if controller.page === "branches"}
       <Card.Root class="stack-workspace__stage-card">
@@ -242,7 +241,7 @@
         label={`Loading history for ${stack.name}`}
         count={5}
       />
-      {#if !controller.histories.state(stack.id).loading && !controller.histories.state(stack.id).error}
+      {#if !history.loading && !history.error}
         <Button
           variant="outline"
           size="sm"
@@ -275,7 +274,7 @@
             <Button
               variant="outline"
               size="sm"
-              disabled={controller.histories.state(stack.id).loading}
+              disabled={history.loading}
               onclick={() => void controller.histories.load(stack.id, true)}
               >Load history for {group.head.name}</Button
             >
@@ -284,6 +283,7 @@
               {controller}
               {stack}
               showActions={showStackActions}
+              submitStack={index === 0}
               name={group.head.name}
               aliases={group.head.aliases ?? []}
               shared={group.head.shared ?? false}

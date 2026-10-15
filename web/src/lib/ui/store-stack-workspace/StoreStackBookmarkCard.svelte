@@ -2,7 +2,6 @@
   import StoreForgeButton from "../store-forge/StoreForgeButton.svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Card from "@lapismd/design-core/shadcn/card";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import GitBranch from "@lucide/svelte/icons/git-branch";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
@@ -42,6 +41,7 @@
     shared = false,
     commits,
     showActions = true,
+    submitStack = false,
     onCommand,
   }: {
     controller: StackWorkspaceController;
@@ -51,6 +51,7 @@
     shared?: boolean;
     commits: StackCommit[];
     showActions?: boolean;
+    submitStack?: boolean;
     onCommand: (command: WorkspaceCommand) => void;
   } = $props();
   const graphWidth = $derived(
@@ -84,6 +85,8 @@
     id: card.owner,
     branch: card.branch,
   });
+  const head = $derived(stack.heads.find((head) => head.name === name));
+  const canRewrite = $derived(!commits.some((commit) => commit.immutable));
   const tip = $derived(commits[0]);
   const selected = $derived(card.commit);
 </script>
@@ -121,16 +124,19 @@
     <StoreStackDropGuide feedback={controller.drag.for(headerTarget)} />
     <GitBranch aria-hidden="true" />
     <div>
-      <Card.Title
-        ><button
-          type="button"
-          class="stack-workspace__branch-title"
-          disabled={controller.locked}
-          aria-label={`Show all changes in ${name}`}
-          aria-pressed={card.branchSelected}
-          ><ColumnCanvas.Title>{name}</ColumnCanvas.Title></button
-        ></Card.Title
-      >
+      <div class="stack-workspace__branch-title-row">
+        <Card.Title
+          ><button
+            type="button"
+            class="stack-workspace__branch-title"
+            disabled={controller.locked}
+            aria-label={`Show all changes in ${name}`}
+            aria-pressed={card.branchSelected}
+            ><ColumnCanvas.Title>{name}</ColumnCanvas.Title></button
+          ></Card.Title
+        >
+        <StoreForgeButton {controller} bookmark={name} />
+      </div>
       {#if tip && controller.page === "workspace"}<Card.Description
           ><CommunityProjectsGitAuthorAvatar
             name={tip.author}
@@ -142,7 +148,9 @@
         >{/if}
       <div class="stack-workspace__branch-chips">
         <CommunityChip variant="muted">Local bookmark</CommunityChip>
-        <StoreForgeButton {controller} bookmark={name} />
+        {#if controller.forge?.pr(name)}<CommunityChip variant="muted"
+            >{controller.forge.checkSummary(name)}</CommunityChip
+          >{/if}
         {#if shared}<CommunityChip variant="muted">Shared</CommunityChip>{/if}
         {#each aliases as alias}<CommunityChip variant="muted"
             >{alias}</CommunityChip
@@ -169,22 +177,24 @@
       {name}
       applied={isAppliedBranch(controller.snapshot!, name)}
       canAddCommit={isWorkspaceBranch(controller.snapshot!, name) &&
-        stack.heads.find((head) => head.name === name)?.baseCommit !== null}
-      commit={stack.heads.find((head) => head.name === name)?.commit ??
-        stack.base}
+        head?.baseCommit !== null}
+      commit={head?.commit ?? stack.base}
       empty={!commits.length}
-      below={stack.heads.find((head) => head.name === name)?.baseCommit ??
-        stack.heads[stack.heads.findIndex((head) => head.name === name) + 1]
-          ?.commit ??
+      below={head?.baseCommit ??
+        stack.heads[stack.heads.indexOf(head!) + 1]?.commit ??
         stack.base}
-      canRewrite={!commits.some((commit) => commit.immutable)}
-      canSquash={commits.length > 1 &&
-        !commits.some((commit) => commit.immutable)}
+      {canRewrite}
+      canSquash={commits.length > 1 && canRewrite}
       disabled={controller.locked}
       enabled={(kind) => controller.can(kind)}
       reason={(kind) => controller.eligibility(kind).reason}
       {onCommand}
-    />{/if}
+    >
+      {#snippet afterPush()}{#if submitStack}<StoreForgeButton
+            {controller}
+            {stack}
+          />{/if}{/snippet}
+    </StoreStackBookmarkActions>{/if}
   <!-- Native drag events delegate to the owned graph's revision rows. -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div

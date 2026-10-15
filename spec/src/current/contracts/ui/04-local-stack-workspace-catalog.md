@@ -330,3 +330,15 @@ composer drafts; connection controls and PR inventory live in the column menu. A
 grouped checks summary and per-run status rows follow the description before
 merge actions. Status icons have text equivalents; unavailable/stale data cannot
 appear passed.
+
+Forge PR buttons occupy the trailing end of each bookmark's title row, aligned
+vertically with the title; CI status remains in the metadata chips below. PR and
+Submit stack buttons have opaque backgrounds, visible borders and distinct
+hover/focus surfaces even while their containing row is hovered, in both themes.
+Long titles truncate within the remaining space without displacing the control.
+
+Submit stack occupies the action row immediately after Push on the topmost
+bookmark card only, using the displayed group order. The column kebab menu also
+offers Submit stack through the same preview and pending/conflict guards; its
+header omits the separate button. Both entry points retain the existing explicit
+Push branches and submit step.

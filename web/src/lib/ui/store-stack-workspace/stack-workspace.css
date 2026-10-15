@@ -287,3 +287,21 @@
   border-radius: 999px;
   flex-shrink: 0;
 }
+
+.stack-workspace__branch-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.stack-workspace__branch-title-row > [data-slot="card-title"] {
+  flex: 1;
+  min-width: 0;
+}
+.stack-workspace__branch-title-row .stack-workspace__branch-title {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -34,7 +34,13 @@ Existing local Stacks undo/redo cannot undo external forge effects.
 ## UI and maintenance
 
 Branch and Workspace columns share PR presentation and submission. Change badges
-pair the configured forge icon with the PR number/state. Opening a PR shows its
+pair the configured forge icon with the PR number/state at the trailing end of
+the change title row. PR/submission buttons have opaque backgrounds, borders and
+hover/focus surfaces distinguishable from the hovered row in both themes; CI
+status stays in the metadata row. Submit stack appears beside Push in the action
+row of the topmost bookmark card and in the stack column kebab menu, with shared
+pending/conflict guards and the same preview flow; lower bookmark cards omit it.
+The column header has no separate submission button. Opening a PR shows its
 rendered title, branch relationship, state and Markdown description; edit fields
 appear only through an explicit action. Connection/session controls and
 inventory navigation stay in the column menu. Checks load automatically for the

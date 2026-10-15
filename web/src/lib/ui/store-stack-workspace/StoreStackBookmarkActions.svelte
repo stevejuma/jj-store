@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -28,7 +29,9 @@
     enabled = () => true,
     reason = () => "",
     onCommand,
+    afterPush,
   }: {
+    afterPush?: Snippet;
     stack: string;
     commitStack?: string;
     name: string;
@@ -90,6 +93,7 @@
       ></Tooltip.Root
     >
   </Tooltip.Provider>
+  {@render afterPush?.()}
   <Menu.Root
     ><Menu.Trigger>
       {#snippet child({ props })}<Button

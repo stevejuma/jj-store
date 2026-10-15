@@ -1,6 +1,6 @@
 <script lang="ts">
+  import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import CommunityChip from "../community-chip/CommunityChip.svelte";
   import StoreForgeIcon from "./StoreForgeIcon.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceStack } from "../../controller/stack-workspace/types.js";
@@ -8,10 +8,12 @@
     controller,
     bookmark,
     stack,
+    menuItem = false,
   }: {
     controller: StackWorkspaceController;
     bookmark?: string;
     stack?: WorkspaceStack;
+    menuItem?: boolean;
   } = $props();
   const name = $derived(bookmark ?? stack?.name ?? "");
   const mode = $derived(stack ? "stack" : "bookmark");
@@ -20,32 +22,61 @@
     mode === "bookmark" ? controller.forge?.watch(name) : undefined,
   );
   const forge = $derived(controller.forge);
+  const disabled = $derived(
+    controller.locked || forge?.busy || Boolean(forge?.pending) || conflicts,
+  );
+  function open() {
+    if (mode === "bookmark" && forge?.pr(name)) forge.select(name);
+    else void forge?.preview(name);
+  }
 </script>
 
 {#if forge}
-  <Button
-    variant="ghost"
-    size="sm"
-    disabled={controller.locked ||
-      forge.busy ||
-      Boolean(forge.pending) ||
-      conflicts}
-    aria-label={mode === "stack"
-      ? `Submit stack ${name}`
-      : `Pull request for ${name}`}
-    onclick={(event) => {
-      event.stopPropagation();
-      if (mode === "bookmark" && forge.pr(name)) forge.select(name);
-      else void forge.preview(name);
-    }}
-  >
-    <StoreForgeIcon provider={forge.data?.connection?.provider} />
-    {#if mode === "stack"}Submit stack{:else if forge.pr(name)}#{forge.pr(name)!
-        .number} · {forge.pr(name)!.draft && forge.pr(name)!.state === "open"
-        ? "Draft"
-        : forge.pr(name)!.state}{:else}Create PR{/if}
-  </Button>
-  {#if mode === "bookmark" && forge.pr(name)}<CommunityChip variant="muted"
-      >{forge.checkSummary(name)}</CommunityChip
-    >{/if}
+  {#if menuItem}
+    <Menu.Item {disabled} onSelect={open} aria-label="Submit stack">
+      <StoreForgeIcon provider={forge.data?.connection?.provider} />Submit stack
+    </Menu.Item>
+  {:else}
+    <Button
+      variant="outline"
+      size="sm"
+      class="store-forge-button"
+      {disabled}
+      aria-label={mode === "stack"
+        ? `Submit stack ${name}`
+        : `Pull request for ${name}`}
+      onclick={(event) => {
+        event.stopPropagation();
+        open();
+      }}
+    >
+      <StoreForgeIcon provider={forge.data?.connection?.provider} />
+      {#if mode === "stack"}Submit stack{:else if forge.pr(name)}#{forge.pr(
+          name,
+        )!.number} · {forge.pr(name)!.draft && forge.pr(name)!.state === "open"
+          ? "Draft"
+          : forge.pr(name)!.state}{:else}Create PR{/if}
+    </Button>
+  {/if}
 {/if}
+
+<style>
+  :global(.store-forge-button[data-ui-component="button"]) {
+    background-color: color-mix(
+      in srgb,
+      var(--foreground) 16%,
+      var(--background)
+    );
+    border-color: color-mix(in srgb, var(--foreground) 30%, var(--background));
+  }
+  :global(
+    .store-forge-button[data-ui-component="button"]:is(:hover, :focus-visible)
+  ) {
+    background-color: color-mix(
+      in srgb,
+      var(--foreground) 28%,
+      var(--background)
+    );
+    border-color: color-mix(in srgb, var(--foreground) 42%, var(--background));
+  }
+</style>

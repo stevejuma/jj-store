@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import ForgeWorkspaceFixture from "../../fixtures/ForgeWorkspaceFixture.svelte";
   const { Story } = defineMeta({
@@ -12,6 +12,94 @@
       await views.stacks();
     },
   });
+  async function verifyForgeTitleButtons({
+    canvasElement,
+  }: {
+    canvasElement: HTMLElement;
+  }) {
+    const canvas = within(canvasElement);
+    const stack = await canvas.findByRole("region", {
+      name: "Stack feature/api",
+    });
+    const button = within(stack).getByRole("button", {
+      name: "Pull request for feature/api",
+    });
+    const title = within(stack).getByRole("button", {
+      name: "Show all changes in feature/api",
+    });
+    const row = title.closest<HTMLElement>(
+      '[data-slot="card-title"]',
+    )!.parentElement!;
+    const centre = (element: HTMLElement) => {
+      const r = element.getBoundingClientRect();
+      return r.top + r.height / 2;
+    };
+    await expect(Math.abs(centre(button) - centre(title))).toBeLessThanOrEqual(
+      1,
+    );
+    await expect(
+      Math.abs(
+        button.getBoundingClientRect().right -
+          row.getBoundingClientRect().right,
+      ),
+    ).toBeLessThanOrEqual(1);
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+    if (import.meta.env.MODE !== "test") return;
+    const { userEvent: pointer } = await import("vitest/browser");
+    const sample = document.createElement("canvas");
+    sample.width = sample.height = 1;
+    const context = sample.getContext("2d")!;
+    function color(value: string) {
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = value;
+      context.fillRect(0, 0, 1, 1);
+      return [...context.getImageData(0, 0, 1, 1).data];
+    }
+    const difference = (a: number[], b: number[]) =>
+      Math.max(...a.slice(0, 3).map((v, i) => Math.abs(v - b[i]!)));
+    for (const control of [
+      button,
+      within(stack).getByRole("button", { name: "Submit stack feature/api" }),
+    ]) {
+      const parent = control.closest<HTMLElement>(
+        '[data-ui-part="card-header"], .stack-workspace__bookmark-actions',
+      )!;
+      control.scrollIntoView({ block: "nearest", inline: "nearest" });
+      await pointer.hover(parent, { position: { x: 5, y: 5 } });
+      await waitFor(() => expect(parent.matches(":hover")).toBe(true));
+      const rest = color(getComputedStyle(control).backgroundColor);
+      const background = color(getComputedStyle(parent).backgroundColor);
+      await expect(rest[3]).toBe(255);
+      await expect(difference(rest, background)).toBeGreaterThanOrEqual(12);
+      await expect(
+        Number.parseFloat(getComputedStyle(control).borderTopWidth),
+      ).toBeGreaterThanOrEqual(1);
+      await expect(
+        difference(color(getComputedStyle(control).borderTopColor), rest),
+      ).toBeGreaterThanOrEqual(12);
+      await pointer.hover(control);
+      await waitFor(() => {
+        const hover = color(getComputedStyle(control).backgroundColor);
+        expect(control.matches(":hover")).toBe(true);
+        expect(hover[3]).toBe(255);
+        expect(
+          difference(hover, color(getComputedStyle(parent).backgroundColor)),
+          `${control.getAttribute("aria-label")}: button ${getComputedStyle(control).backgroundColor}; row ${getComputedStyle(parent).backgroundColor}`,
+        ).toBeGreaterThanOrEqual(12);
+        expect(difference(hover, rest)).toBeGreaterThanOrEqual(12);
+      });
+    }
+    await pointer.hover(canvasElement, { position: { x: 0, y: 0 } });
+    await userEvent.click(button);
+    await expect(
+      await canvas.findByRole("heading", { name: "Expose repository API" }),
+    ).toBeVisible();
+    await expect(
+      within(stack).getByRole("button", {
+        name: "Show all changes in feature/api",
+      }),
+    ).toHaveAttribute("aria-pressed", "false");
+  }
 </script>
 
 <Story
@@ -126,6 +214,78 @@
     await expect(
       within(preview).getByRole("heading", { name: "API review" }),
     ).toBeVisible();
+    await expect(
+      within(preview).getByRole("button", { name: "Push branches and submit" }),
+    ).toBeEnabled();
+  }}
+/>
+
+<Story
+  name="Forge buttons align with titles and retain hover contrast"
+  args={{ panelOpen: false }}
+  play={verifyForgeTitleButtons}
+/>
+<Story
+  name="Dark forge buttons align with titles and retain hover contrast"
+  args={{ panelOpen: false }}
+  globals={{ colorMode: "dark" }}
+  play={verifyForgeTitleButtons}
+/>
+
+<Story
+  name="Submit stack from column menu"
+  args={{ panelOpen: false }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stack = await canvas.findByRole("region", {
+      name: "Stack feature/api",
+    });
+    const rows = within(stack).getAllByRole("group", {
+      name: /^Branch actions for /,
+    });
+    await expect(rows.length).toBeGreaterThan(1);
+    const submit = within(rows[0]!).getByRole("button", {
+      name: "Submit stack feature/api",
+    });
+    const push = within(rows[0]!).getByRole("button", {
+      name: "Push feature/api",
+    });
+    await expect(push.nextElementSibling).toBe(submit);
+    for (const row of rows.slice(1))
+      await expect(
+        within(row).queryByRole("button", { name: /Submit stack/ }),
+      ).not.toBeInTheDocument();
+    await expect(
+      within(stack.querySelector("header")!).queryByRole("button", {
+        name: /Submit stack/,
+      }),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(stack).getAllByRole("button", { name: /Submit stack/ }),
+    ).toHaveLength(1);
+    const menu = within(stack).getByRole("button", {
+      name: "Actions for feature/api",
+    });
+    await userEvent.click(menu);
+    await waitFor(() => expect(menu).toHaveAttribute("aria-expanded", "true"));
+    const page = within(canvasElement.ownerDocument.body);
+    await expect(
+      await page.findByRole("menuitem", { name: "Submit stack" }),
+    ).toBeVisible();
+    await userEvent.keyboard("{Escape}");
+    await expect(menu).toHaveFocus();
+    await userEvent.click(menu);
+    await userEvent.click(
+      await page.findByRole("menuitem", { name: "Submit stack" }),
+    );
+    const panel = await canvas.findByRole("region", {
+      name: "Pull request details",
+    });
+    const preview = within(panel).getByRole("region", {
+      name: "Stack submission preview",
+    });
+    await expect(preview).toHaveTextContent("feature/model → main");
+    await expect(preview).toHaveTextContent("feature/api → feature/model");
     await expect(
       within(preview).getByRole("button", { name: "Push branches and submit" }),
     ).toBeEnabled();
