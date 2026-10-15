@@ -1,9 +1,13 @@
 <script lang="ts">
+  import { forgeMenuLayout } from "./menu-layout.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Field from "@lapismd/design-core/shadcn/field";
+  import RefreshCw from "@lucide/svelte/icons/refresh-cw";
+  import Settings2 from "@lucide/svelte/icons/settings-2";
+  import GitPullRequest from "@lucide/svelte/icons/git-pull-request";
   import Ellipsis from "@lucide/svelte/icons/ellipsis";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   let { controller }: { controller: ForgeController } = $props();
@@ -27,18 +31,19 @@
           ><Ellipsis aria-hidden="true" /></Button
         >{/snippet}</Menu.Trigger
     >
-    <Menu.Content align="end" preventScroll={false}>
+    <Menu.Content align="end" preventScroll={false} style={forgeMenuLayout}>
       <Menu.Group>
         <Menu.Label>Pull requests</Menu.Label>
         <Menu.Item disabled={blocked} onSelect={() => controller.refresh()}
-          >Refresh PRs</Menu.Item
+          ><RefreshCw aria-hidden="true" />Refresh PRs</Menu.Item
         >
         <Menu.Item
           onSelect={() =>
             controller.accounts.managed &&
             controller.data?.connection?.provider === "github"
               ? controller.accounts.openSettings?.()
-              : (connectionOpen = true)}>Forge connection…</Menu.Item
+              : (connectionOpen = true)}
+          ><Settings2 aria-hidden="true" />Forge connection…</Menu.Item
         >
       </Menu.Group>
       <Menu.Separator />
@@ -47,7 +52,8 @@
         {#each controller.data.pull_requests as pr}<Menu.Item
             disabled={blocked}
             onSelect={() => controller.select(pr.head)}
-            >#{pr.number} {pr.title}</Menu.Item
+            ><GitPullRequest aria-hidden="true" />#{pr.number}
+            {pr.title}</Menu.Item
           >{/each}
       </Menu.Group>
     </Menu.Content>

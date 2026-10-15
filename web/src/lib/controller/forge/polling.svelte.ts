@@ -1,18 +1,17 @@
 import type { ForgeController } from "./controller.svelte.js";
-/** Bounded repository observation; teardown stops every scheduled refresh. */
+/** First-load and explicit repository observation. No background API polling. */
 export class ForgePolling {
-  #timer?: ReturnType<typeof setTimeout>;
   #refreshing = false;
   constructor(readonly owner: ForgeController) {}
-  async refresh() {
-    if (this.owner.closed || this.#refreshing) return;
-    if (this.owner.busy) {
-      clearTimeout(this.#timer);
-      this.#timer = setTimeout(() => void this.owner.refresh(), 15000);
+  #loaded = false;
+  async refresh(force = true) {
+    if (this.owner.closed || this.#refreshing || (!force && this.#loaded))
       return;
-    }
+    if (this.owner.busy) return;
+    if (force) this.owner.connection.invalidate();
     this.#refreshing = true;
     try {
+      this.#loaded = true;
       if (!(await this.owner.connection.discover())) return;
       const response = await this.owner.call({ kind: "status" });
       this.owner.receive(response, true);
@@ -128,15 +127,6 @@ export class ForgePolling {
       if (!this.owner.closed) this.owner.error(error, "refresh");
     } finally {
       this.#refreshing = false;
-      clearTimeout(this.#timer);
-      if (!this.owner.closed)
-        this.#timer = setTimeout(
-          () => void this.owner.refresh(),
-          this.owner.stale ? 60000 : 15000,
-        );
     }
-  }
-  close() {
-    clearTimeout(this.#timer);
   }
 }

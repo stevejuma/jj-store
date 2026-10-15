@@ -1,4 +1,7 @@
 <script lang="ts">
+  import FilePenLine from "@lucide/svelte/icons/file-pen-line";
+  import CircleCheck from "@lucide/svelte/icons/circle-check";
+  import { forgeMenuLayout } from "./menu-layout.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -131,7 +134,10 @@
                   />
                 </Button>{/snippet}</Menu.Trigger
             >
-            <Menu.Content align="end" preventScroll={false}
+            <Menu.Content
+              align="end"
+              preventScroll={false}
+              style={forgeMenuLayout}
               ><Menu.Group
                 ><Menu.Label>Publication status</Menu.Label>
                 <Menu.RadioGroup
@@ -140,9 +146,10 @@
                     if (plan) plan.draft = value === "draft";
                   }}
                 >
-                  <Menu.RadioItem value="draft">Draft PR</Menu.RadioItem
+                  <Menu.RadioItem value="draft"
+                    ><FilePenLine aria-hidden="true" />Draft PR</Menu.RadioItem
                   ><Menu.RadioItem value="ready"
-                    >Ready for review</Menu.RadioItem
+                    ><CircleCheck aria-hidden="true" />Ready for review</Menu.RadioItem
                   >
                 </Menu.RadioGroup>
               </Menu.Group></Menu.Content

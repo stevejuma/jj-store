@@ -1,7 +1,7 @@
 import type { ForgeCheck } from "./types.js";
 export class ChecksPresentation {
   grouped = $state(true);
-  expanded = $state(true);
+  expanded = $state(false);
   collapsed = $state<Record<string, boolean>>({});
   scrollTop = 0;
 }

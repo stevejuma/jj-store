@@ -164,8 +164,8 @@
       within(summary).getByRole("heading", { name: "Expose repository API" }),
     ).toBeVisible();
     await expect(
-      within(summary).queryByRole("region", { name: "CI checks" }),
-    ).not.toBeInTheDocument();
+      within(summary).getByRole("button", { name: "Expand checks" }),
+    ).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(toggle);
     await expect(
       within(details).getByRole("region", { name: "Selected file diff" }),
@@ -187,8 +187,8 @@
       within(floating).getByRole("heading", { name: "Expose repository API" }),
     ).toBeVisible();
     await expect(
-      within(floating).queryByRole("region", { name: "CI checks" }),
-    ).not.toBeInTheDocument();
+      within(floating).getByRole("button", { name: "Expand checks" }),
+    ).toHaveAttribute("aria-expanded", "false");
     await expect(
       within(floating).getByRole("button", {
         name: "Collapse pull request #42",
@@ -228,7 +228,7 @@
       within(details).getByRole("heading", { name: "Expose repository API" }),
     ).toBeVisible();
     await userEvent.click(
-      within(details).getByRole("button", { name: "Inspect checks" }),
+      within(details).getByRole("button", { name: "Expand checks" }),
     );
     await expect(
       await within(details).findByRole("region", { name: "CI checks" }),

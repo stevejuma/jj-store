@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { forgeMenuLayout } from "../store-forge/menu-layout.js";
   import { tick, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
@@ -6,6 +7,7 @@
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import Plus from "@lucide/svelte/icons/plus";
   import Trash2 from "@lucide/svelte/icons/trash-2";
+  import Building2 from "@lucide/svelte/icons/building-2";
   import KeyRound from "@lucide/svelte/icons/key-round";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
@@ -26,11 +28,11 @@
     owner.notifications = notifications.context;
     const app = controller;
     owner.changed = () => {
-      void app.stackWorkspace?.forge?.refresh();
+      void app.stackWorkspace?.forge?.accountsChanged();
     };
-    untrack(() => void owner.refresh());
-    const timer = setInterval(() => void owner.refresh(), 30000);
-    return () => clearInterval(timer);
+    untrack(() => {
+      if (!owner.data) void owner.refresh();
+    });
   });
   const id = $props.id();
   let accountMenuOpen = $state(false);
@@ -131,18 +133,23 @@
                   : "Add account"}<Plus data-icon="inline-end" /></Button
               >{/snippet}</Menu.Trigger
           >
-          <Menu.Content align="end" preventScroll={false}
+          <Menu.Content
+            align="end"
+            preventScroll={false}
+            style={forgeMenuLayout}
             ><Menu.Group>
               <Menu.Item
                 disabled={!manager.data?.oauth_available}
                 onSelect={() => void choose("oauth")}
+                ><span aria-hidden="true"
+                  ><StoreForgeIcon provider="github" /></span
                 >Authorize GitHub Account</Menu.Item
               >
               <Menu.Item onSelect={() => void choose("pat")}
-                >Add Personal Access Token</Menu.Item
+                ><KeyRound aria-hidden="true" />Add Personal Access Token</Menu.Item
               >
               <Menu.Item onSelect={() => void choose("enterprise")}
-                >Add GitHub Enterprise Account</Menu.Item
+                ><Building2 aria-hidden="true" />Add GitHub Enterprise Account</Menu.Item
               >
             </Menu.Group></Menu.Content
           >

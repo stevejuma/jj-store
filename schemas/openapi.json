@@ -94937,7 +94937,12 @@
           "sha": { "type": "string" },
           "url": { "type": ["string", "null"] },
           "run_id": { "type": ["string", "null"] },
-          "log_id": { "type": ["string", "null"] }
+          "log_id": { "type": ["string", "null"] },
+          "started_at": {
+            "type": ["string", "null"],
+            "description": "Provider-reported start and completion, absent when not supplied."
+          },
+          "completed_at": { "type": ["string", "null"] }
         },
         "required": ["id", "name", "state", "sha", "url", "run_id", "log_id"]
       },

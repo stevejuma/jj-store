@@ -35,6 +35,9 @@
       await canvas.findByRole("region", { name: "CI checks" }),
     ).toHaveTextContent("running");
     await userEvent.click(
+      canvas.getByRole("button", { name: "Expand checks" }),
+    );
+    await userEvent.click(
       canvas.getByRole("button", { name: "Actions for Build and test" }),
     );
     await expect(
@@ -43,9 +46,22 @@
       }),
     ).toBeVisible();
     await userEvent.keyboard("{Escape}");
-    await userEvent.click(canvas.getByRole("button", { name: "Jobs" }));
+
     await userEvent.click(
-      await canvas.findByRole("button", { name: "View logs" }),
+      canvas.getByRole("button", { name: "Actions for Build and test" }),
+    );
+    await userEvent.click(
+      within(canvasElement.ownerDocument.body).getByRole("menuitem", {
+        name: "Jobs",
+      }),
+    );
+    await userEvent.click(
+      (await canvas.findAllByRole("button", { name: /^Actions for / }))[0]!,
+    );
+    await userEvent.click(
+      within(canvasElement.ownerDocument.body).getByRole("menuitem", {
+        name: "View logs",
+      }),
     );
     await expect(await canvas.findByLabelText("Job logs")).toHaveTextContent(
       "Assertion failed",
@@ -172,6 +188,12 @@
       canvas.queryByLabelText("Session token"),
     ).not.toBeInTheDocument();
     const checks = await canvas.findByRole("region", { name: "CI checks" });
+    await expect(
+      within(checks).getByRole("button", { name: "Expand checks" }),
+    ).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(
+      within(checks).getByRole("button", { name: "Expand checks" }),
+    );
     await expect(within(checks).getByText("Build and test")).toBeVisible();
     const description = canvas.getByRole("heading", { name: "Review summary" });
     await expect(checks.getBoundingClientRect().top).toBeGreaterThan(

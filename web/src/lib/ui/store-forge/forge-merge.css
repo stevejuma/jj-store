@@ -1,0 +1,51 @@
+.forge-merge {
+  border-top: 1px solid var(--border);
+}
+.forge-merge__status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+.forge-merge__status > svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  color: var(--muted-foreground);
+}
+.forge-merge__status > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.forge-merge__status strong {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.forge-merge__status span {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.forge-merge__bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--muted);
+  border-top: 1px solid var(--border);
+}
+.forge-merge__buttons {
+  display: inline-flex;
+  align-items: stretch;
+}
+.forge-merge__buttons > button:first-child {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+.forge-merge__buttons > button:last-child {
+  border-inline-start: 0;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}

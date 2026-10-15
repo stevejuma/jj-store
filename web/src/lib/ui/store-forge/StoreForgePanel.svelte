@@ -56,9 +56,6 @@
       >
     {/if}
     <ColumnCanvas.HeaderActions class="forge-header-actions">
-      {#if controller.selected}<StoreForgePullRequestActions
-          {controller}
-        />{/if}
       <Tooltip.Provider>
         {#if controller.selected && controller.data}
           <Tooltip.Root>
@@ -80,6 +77,9 @@
           </Tooltip.Root>
         {/if}
         <StoreForgePanelActions {controller} />
+        {#if controller.selected}<StoreForgePullRequestActions
+            {controller}
+          />{/if}
         <Tooltip.Root>
           <Tooltip.Trigger>
             {#snippet child({ props })}

@@ -8514,6 +8514,9 @@ export interface components {
       url: string | null;
       run_id: string | null;
       log_id: string | null;
+      /** @description Provider-reported start and completion, absent when not supplied. */
+      started_at?: string | null;
+      completed_at?: string | null;
     };
     /** @enum {string} */
     ForgeCheckState:

@@ -342,28 +342,35 @@ uses that same column; the relevant PR summary remains above it. Collapsing the
 PR leaves the diff intact, and closing only the file leaves the PR available. No
 PR details section is inserted into the stack lane. The header owns the title,
 linked PR number, draft/state chip and action icons. Merge method, guarded
-merge, draft and Restack controls share its compact actions menu. The body omits
-repeated identity and repository-name metadata, renders Markdown and uses an
-icon-only header pencil for editing; no body Edit details button or Description
-label. Inspect checks expands the PR if needed and toggles revision-bound
-checks, jobs, logs and permitted run actions below its description in the same
-body, including while floating. It never opens a separate column or replaces the
-file diff, authored draft or selected job/log view. Checks start hidden. Header
-actions have visible themed hover, open-menu and keyboard-focus surfaces in both
-themes. The collapsible title trigger stays transparent in docked and floating
-views; only its docked form is interactive. Disabled actions stay inert.
-Merge/draft/Restack actions preserve provider capability and pending guards.
-Checks offer a segmented summary ring, counts, refresh, and expandable nonempty
-status groups ordered failing, in progress, attention, successful and
-skipped/cancelled, with an explicit flat-list option. Results use the released
-Scroll Area, bounded to min(20rem, 45dvh), with corners no larger than 6px; the
-summary stays outside the scroll region. Loading, stale, incomplete and
-unavailable outcomes stay explicit. Group/disclosure choices, selected jobs/logs
-and list scroll survive refresh and float/redock. Successful checks alone grant
-no merge authority. The repository owner serializes forge transport calls,
-including discovery, polling and selected-PR reads, retaining journal admission
-and exact pending effects. Failed observations release the queue; closed views
-do not dispatch queued requests. Creation and details share the
+merge, draft and Restack controls share its compact actions menu. A bottom split
+merge bar shares method selection and retains confirmation, head and receipt
+guards. The body omits repeated identity and repository-name metadata, renders
+Markdown and uses an icon-only header pencil for editing; no body Edit details
+button or Description label. Available checks form a flush, expandable footer
+below the description, including while floating. The footer starts collapsed
+whenever a PR opens, uses a themed hover/focus surface and places its chevron
+after Refresh and display options at the far right. There is no header checks
+toggle; PR actions use an icon-only kebab immediately before Close. All action
+menus have icons and sufficient width for unwrapped labels. Header actions have
+visible themed hover, open-menu and keyboard-focus surfaces in both themes. The
+collapsible title trigger stays transparent in docked and floating views; only
+its docked form is interactive. Disabled actions stay inert. Merge/draft/Restack
+actions preserve provider capability and pending guards. Checks offer a
+segmented summary ring, counts, refresh, and expandable nonempty status groups
+ordered failing, in progress, attention, successful and skipped/cancelled, with
+an explicit flat-list option. Results use the released Scroll Area, bounded to
+min(20rem, 45dvh), with corners no larger than 6px; the summary stays outside
+the scroll region. Loading, stale, incomplete and unavailable outcomes stay
+explicit. Group/disclosure choices, selected jobs/logs and list scroll survive
+refresh and float/redock. Successful checks alone grant no merge authority. The
+repository owner serializes forge transport calls, including discovery and
+selected-PR reads, retaining journal admission and exact pending effects.
+Session-only bounded account/repository/host caches reuse PR/check/job/log reads
+until manual refresh, mutation or identity change. No forge or inventory timer
+refreshes them; device sign-in keeps its polling. Previews and recovery proofs
+are never cached. Single-line check rows keep only a kebab; timing requires
+valid provider start/completion facts. Failed observations release the queue;
+closed views do not dispatch queued requests. Creation and details share the
 forge-independent detachable-panel adapter: released floating window controls
 own moving, resizing, minimizing, maximizing and docking. The same
 content/editor instance and draft remain mounted during float/redock, with

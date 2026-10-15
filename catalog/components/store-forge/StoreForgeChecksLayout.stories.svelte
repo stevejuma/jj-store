@@ -19,7 +19,7 @@
       name: "Pull request for feature/api",
     });
     await userEvent.click(
-      within(pr).getByRole("button", { name: "Inspect checks" }),
+      within(pr).getByRole("button", { name: "Expand checks" }),
     );
     return await within(pr).findByRole("region", { name: "CI checks" });
   }
@@ -30,13 +30,26 @@
   play={async ({ canvasElement }) => {
     const checks = await inspect(canvasElement);
     const c = within(checks);
+    await expect(await c.findAllByText("Failing after 5s")).toHaveLength(2);
+    const row = checks.querySelector<HTMLElement>(".forge-checks__row")!;
+    const title = row.querySelector("strong")!,
+      status = row.querySelector(".forge-checks__name > span")!;
+    await expect(
+      Math.abs(
+        title.getBoundingClientRect().top - status.getBoundingClientRect().top,
+      ),
+    ).toBeLessThan(5);
+    await expect(within(row).getAllByRole("button")).toHaveLength(1);
+
     await expect(
       await c.findByRole("button", { name: "2 failing checks" }),
     ).toBeVisible();
     await expect(
       c
         .getAllByRole("button", { name: /checks$/ })
-        .filter((button) => button.hasAttribute("aria-expanded"))
+        .filter((button) =>
+          button.classList.contains("forge-checks__group-heading"),
+        )
         .map((button) => button.textContent?.trim().replace(/\s+/g, " ")),
     ).toEqual([
       "2 failing checks",

@@ -164,3 +164,122 @@ async fn github_async_merge_retains_receipt_and_never_calls_enqueued_merged() {
     assert_eq!(result.state, "enqueued");
     assert_eq!(result.receipt.as_deref(), Some("queue-1"));
 }
+
+struct TimingFixture;
+#[async_trait::async_trait(?Send)]
+impl Transport for TimingFixture {
+    async fn request(&self, method: &str, path: &str, _: Option<Value>) -> Result<Value> {
+        assert_eq!(method, "GET");
+        let timing = json!({"id": 7, "name":"lint", "head_sha":"a".repeat(40), "status":"completed", "conclusion":"success", "started_at":"2026-10-15T10:00:00Z", "completed_at":"2026-10-15T10:00:04Z", "updated_at":"2026-10-15T11:00:00Z"});
+        if path.contains("/check-runs?") {
+            return Ok(json!([timing]));
+        }
+        if path.ends_with("/jobs?") || path.contains("/jobs?") {
+            return Ok(json!([timing]));
+        }
+        if path.contains("/actions/runs?") {
+            return Ok(
+                json!([{"id":8,"name":"workflow", "head_sha":"a".repeat(40),"run_started_at":"2026-10-15T10:00:00Z","updated_at":"2026-10-15T11:00:00Z"}]),
+            );
+        }
+        if path.contains("/actions/runs/8") {
+            return Ok(json!({"head_sha":"a".repeat(40)}));
+        }
+        if path.contains("/statuses?") {
+            return Ok(json!([]));
+        }
+        panic!("Unexpected {path}");
+    }
+}
+#[tokio::test]
+async fn github_check_and_job_timing_preserves_completion_without_inventing_run_duration() {
+    let client =
+        Client::with_transport(connection(Provider::Github), Arc::new(TimingFixture)).unwrap();
+    let checks = client.checks(&pr(3)).await.unwrap();
+    let run = checks.checks.iter().find(|c| c.id == "8").unwrap();
+    assert_eq!(run.started_at.as_deref(), Some("2026-10-15T10:00:00Z"));
+    assert_eq!(run.completed_at, None);
+    let check = checks.checks.iter().find(|c| c.id == "check:7").unwrap();
+    assert_eq!(check.completed_at.as_deref(), Some("2026-10-15T10:00:04Z"));
+    let jobs = client.jobs(&pr(3), "8").await.unwrap();
+    assert_eq!(jobs.checks[0].started_at, check.started_at);
+    assert_eq!(jobs.checks[0].completed_at, check.completed_at);
+    let old: Check = serde_json::from_value(json!({"id":"old","name":"old","state":"passed","sha":"a","url":null,"run_id":null,"log_id":null})).unwrap();
+    assert!(old.started_at.is_none() && old.completed_at.is_none());
+}
+
+struct LatestChecksFixture;
+#[async_trait::async_trait(?Send)]
+impl Transport for LatestChecksFixture {
+    async fn request(&self, method: &str, path: &str, _: Option<Value>) -> Result<Value> {
+        assert_eq!(method, "GET");
+        if path.contains("/actions/runs?") {
+            return Ok(json!([
+                {"id":900,"workflow_id":10,"check_suite_id":200,"run_number":3,"run_attempt":1,"name":"Mock Checks","event":"pull_request","head_sha":"a".repeat(40),"status":"completed","conclusion":"failure"},
+                {"id":800,"workflow_id":10,"check_suite_id":100,"run_number":2,"run_attempt":1,"name":"Mock Checks","event":"pull_request","head_sha":"a".repeat(40),"status":"completed","conclusion":"failure"},
+                {"id":700,"workflow_id":11,"check_suite_id":300,"run_number":1,"name":"Deploy","event":"push","head_sha":"a".repeat(40),"status":"queued"}
+            ]));
+        }
+        if path.contains("/check-runs?") {
+            let leaf = |id: u64,
+                        suite: u64,
+                        name: &str,
+                        conclusion: &str,
+                        seconds: u8,
+                        app: u64| json!({"id":id,"name":name,"app":{"id":app},"check_suite":{"id":suite},"head_sha":"a".repeat(40),"status":"completed","conclusion":conclusion,"started_at":"2026-10-15T16:59:08Z","completed_at":format!("2026-10-15T16:59:{seconds:02}Z")});
+            return Ok(json!([
+                leaf(902, 200, "mock-lint", "success", 12, 1),
+                leaf(901, 200, "mock-test", "failure", 13, 1),
+                leaf(802, 100, "mock-test", "failure", 12, 1),
+                leaf(801, 100, "mock-lint", "success", 13, 1),
+                leaf(600, 400, "mock-test", "success", 14, 2),
+                leaf(500, 401, "mock-test", "failure", 12, 2)
+            ]));
+        }
+        if path.contains("/statuses?") {
+            return Ok(json!([]));
+        }
+        panic!("Unexpected {path}");
+    }
+}
+#[tokio::test]
+async fn github_current_checks_deduplicate_executions_keep_apps_and_queued_workflows_distinct() {
+    let client =
+        Client::with_transport(connection(Provider::Github), Arc::new(LatestChecksFixture))
+            .unwrap();
+    let result = client.checks(&pr(3)).await.unwrap();
+    assert_eq!(result.checks.len(), 4); // two current leaves, another app, one queued workflow
+    let current: Vec<_> = result
+        .checks
+        .iter()
+        .filter(|c| c.run_id.as_deref() == Some("900"))
+        .collect();
+    assert_eq!(current.len(), 2);
+    let failing = current
+        .iter()
+        .find(|c| c.state == CheckState::Failed)
+        .unwrap();
+    assert_eq!(failing.name, "Mock Checks / mock-test (pull_request)");
+    assert_eq!(
+        failing.completed_at.as_deref(),
+        Some("2026-10-15T16:59:13Z")
+    );
+    assert!(
+        !result
+            .checks
+            .iter()
+            .any(|c| c.run_id.as_deref() == Some("800") || c.id == "900")
+    );
+    assert!(
+        result
+            .checks
+            .iter()
+            .any(|c| c.id == "check:600" && c.run_id.is_none())
+    );
+    assert!(
+        result
+            .checks
+            .iter()
+            .any(|c| c.id == "700" && c.state == CheckState::Queued)
+    );
+}

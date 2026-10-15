@@ -147,7 +147,15 @@ code. Ambiguous account, remote or target selection requires explicit binding.
 An account reference pins submission and Restack previews and pending intents;
 account changes invalidate previews without replaying external effects. Existing
 endpoint identities, request IDs and receipts remain authoritative. Account
-inventory and connection readiness refresh through the existing view lifecycle.
+inventory and connection readiness load initially and refresh manually. Device
+authorization retains required backend-governed polling. ForgeCheck adds
+optional provider-reported `started_at` and `completed_at` timestamp strings.
+Missing fields deserialize compatibly and no duration is inferred from
+`updated_at`. Session-only UI caches contain read presentation data only, never
+previews, effects or uncertain-outcome proofs. Manual refresh and identity
+changes invalidate cached reads. GitHub check names may include actual workflow
+and trigger metadata; workflow aggregates do not duplicate their current check
+jobs.
 
 E-FORGE-AUTH-LIVE-001 confirms JST-API-001/002 wire contracts unchanged:
 repository-owned request serialization prevents overlapping background and

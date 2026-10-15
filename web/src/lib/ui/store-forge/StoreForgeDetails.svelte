@@ -7,7 +7,6 @@
   import ChevronRight from "@lucide/svelte/icons/chevron-right";
   import Pencil from "@lucide/svelte/icons/pencil";
   import PictureInPicture2 from "@lucide/svelte/icons/picture-in-picture-2";
-  import ListChecks from "@lucide/svelte/icons/list-checks";
   import StoreForgeIcon from "./StoreForgeIcon.svelte";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import StoreDetachablePanel from "../store-panels/StoreDetachablePanel.svelte";
@@ -24,7 +23,6 @@
   }: { controller: ForgeController; branch: string; onClose: () => void } =
     $props();
   let editing = $state(false);
-  let checksOpen = $state(false);
   const selected = $derived(
     controller.surface === "inline" && controller.selected?.head === branch,
   );
@@ -37,11 +35,6 @@
       Boolean(controller.pending) ||
       (controller.accounts.managed && !controller.ready),
   );
-  const identity = $derived(pr?.number);
-  $effect(() => {
-    identity;
-    checksOpen = false;
-  });
   $effect(() => controller.watch(branch));
   function expand(open: boolean) {
     if (open && pr) {
@@ -107,7 +100,6 @@
                 >{pr.draft ? "Draft" : pr.state}</CommunityChip
               >
               <div class="forge-inline__actions forge-header-actions">
-                <StoreForgePullRequestActions {controller} {branch} />
                 <Tooltip.Provider>
                   <Tooltip.Root
                     ><Tooltip.Trigger
@@ -154,27 +146,8 @@
                         : "Float PR details"}</Tooltip.Content
                     ></Tooltip.Root
                   >
-                  <Tooltip.Root
-                    ><Tooltip.Trigger
-                      >{#snippet child({ props })}
-                        <Button
-                          {...props}
-                          variant="ghost"
-                          size="icon-sm"
-                          aria-label="Inspect checks"
-                          aria-expanded={expanded && checksOpen}
-                          disabled={blocked}
-                          onclick={() => {
-                            const open = !expanded || !checksOpen;
-                            if (!expanded) expand(true);
-                            checksOpen = open;
-                          }}><ListChecks aria-hidden="true" /></Button
-                        >
-                      {/snippet}</Tooltip.Trigger
-                    ><Tooltip.Content>Inspect checks</Tooltip.Content
-                    ></Tooltip.Root
-                  >
                 </Tooltip.Provider>
+                <StoreForgePullRequestActions {controller} {branch} />
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -186,11 +159,7 @@
             <Collapsible.Content>
               {#if expanded}
                 <div class="forge-inline__details">
-                  <StoreForgePullRequest
-                    {controller}
-                    bind:editing
-                    showChecks={checksOpen}
-                  />
+                  <StoreForgePullRequest {controller} bind:editing />
                 </div>
               {/if}
             </Collapsible.Content>

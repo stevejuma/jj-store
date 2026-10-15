@@ -195,6 +195,11 @@ pub struct Check {
     pub url: Option<String>,
     pub run_id: Option<String>,
     pub log_id: Option<String>,
+    /// Provider-reported start and completion, absent when not supplied.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub started_at: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub completed_at: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "ForgeChecks")]

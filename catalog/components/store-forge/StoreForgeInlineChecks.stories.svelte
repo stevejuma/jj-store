@@ -71,11 +71,9 @@
       name: "Selected file diff",
     });
     const inspect = within(section).getByRole("button", {
-      name: "Inspect checks",
+      name: "Toggle check results",
     });
-    await expect(
-      within(section).queryByRole("region", { name: "CI checks" }),
-    ).not.toBeInTheDocument();
+    await expect(inspect).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(inspect);
     const checks = await within(section).findByRole("region", {
       name: "CI checks",
@@ -89,10 +87,31 @@
     ).not.toBeInTheDocument();
     await expect(file).toBeVisible();
     await userEvent.click(
-      within(checks).getAllByRole("button", { name: "Jobs" })[0]!,
+      within(checks).getAllByRole("button", { name: /^Actions for / })[0]!,
+    );
+    const actionsMenu = within(canvasElement.ownerDocument.body).getByRole(
+      "menu",
+    );
+    for (const item of within(actionsMenu).getAllByRole("menuitem")) {
+      await expect(
+        item.scrollWidth,
+        item.textContent ?? "Check action",
+      ).toBeLessThanOrEqual(item.clientWidth + 1);
+    }
+    await userEvent.click(
+      within(canvasElement.ownerDocument.body).getByRole("menuitem", {
+        name: "Jobs",
+      }),
     );
     await userEvent.click(
-      (await within(checks).findAllByRole("button", { name: "View logs" }))[0]!,
+      (
+        await within(checks).findAllByRole("button", { name: /^Actions for / })
+      )[0]!,
+    );
+    await userEvent.click(
+      within(canvasElement.ownerDocument.body).getByRole("menuitem", {
+        name: "View logs",
+      }),
     );
     const logs = await within(checks).findByLabelText("Job logs");
     await expect(logs).toHaveTextContent("42 passed");
@@ -129,9 +148,7 @@
     ).toBe(file);
     await userEvent.click(inspect);
     await expect(inspect).toHaveAttribute("aria-expanded", "false");
-    await expect(
-      within(section).queryByRole("region", { name: "CI checks" }),
-    ).not.toBeInTheDocument();
+    await expect(logs).not.toBeVisible();
     await userEvent.click(inspect);
     await expect(within(section).getByLabelText("Job logs")).toHaveTextContent(
       "42 passed",
@@ -141,43 +158,57 @@
 />
 
 <Story
-  name="Inspect checks expands a collapsed PR in the same column"
+  name="Checks footer starts collapsed with trailing chevron and hover"
   play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const section = await canvas.findByRole("region", {
+    const section = await within(canvasElement).findByRole("region", {
       name: "Pull request for feature/api",
     });
-    await userEvent.click(
-      within(section).getByRole("button", {
-        name: "Collapse pull request #42",
-      }),
-    );
-    const inspect = within(section).getByRole("button", {
-      name: "Inspect checks",
-    });
-    inspect.focus();
-    await userEvent.keyboard("{Enter}");
+    const header = section.querySelector("header")!;
     await expect(
-      await within(section).findByRole("region", { name: "CI checks" }),
-    ).toBeVisible();
-    await expect(
-      within(section).getByRole("button", {
-        name: "Collapse pull request #42",
-      }),
-    ).toBeVisible();
-    await expect(
-      canvas.queryByRole("region", { name: "Pull requests" }),
+      within(header).queryByRole("button", { name: "Inspect checks" }),
     ).not.toBeInTheDocument();
-    await userEvent.click(
-      within(section).getByRole("button", {
-        name: "Collapse pull request #42",
-      }),
+    const checks = within(section).getByRole("region", { name: "CI checks" });
+    const trigger = within(checks).getByRole("button", {
+      name: "Toggle check results",
+    });
+    const chevron = within(checks).getByRole("button", {
+      name: "Expand checks",
+    });
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await expect(chevron.parentElement!.lastElementChild).toBe(chevron);
+    const pr = within(section).getByRole("region", { name: "PR 42" });
+    await expect(checks.getBoundingClientRect().left).toBe(
+      pr.getBoundingClientRect().left,
     );
-    inspect.focus();
+    await expect(checks.getBoundingClientRect().right).toBe(
+      pr.getBoundingClientRect().right,
+    );
+    if (import.meta.env.MODE === "test") {
+      const { userEvent: pointer } = await import("vitest/browser");
+      const row = trigger.parentElement!;
+      const before = getComputedStyle(row).backgroundColor;
+      await pointer.hover(trigger);
+      await waitFor(() =>
+        expect(getComputedStyle(row).backgroundColor).not.toBe(before),
+      );
+    }
+    chevron.focus();
     await userEvent.keyboard("{Enter}");
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(
+      within(section).getByRole("button", { name: /PR actions:/ }),
+    );
+    const menu = within(canvasElement.ownerDocument.body).getByRole("menu");
+    for (const item of within(menu).getAllByRole("menuitem")) {
+      await expect(item.querySelector("svg")).not.toBeNull();
+      await expect(getComputedStyle(item).whiteSpace).toBe("nowrap");
+      await expect(item.scrollWidth).toBeLessThanOrEqual(item.clientWidth + 1);
+    }
+    await userEvent.keyboard("{Escape}");
+    const actions = header.querySelector(".forge-inline__actions")!;
     await expect(
-      await within(section).findByRole("region", { name: "CI checks" }),
-    ).toBeVisible();
+      actions.lastElementChild?.previousElementSibling,
+    ).toHaveAttribute("title", "PR actions");
   }}
 />
 

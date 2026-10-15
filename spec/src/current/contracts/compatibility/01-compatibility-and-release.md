@@ -233,3 +233,9 @@ same owned types. Ordinary-local JJ 0.45.1 SHA-1 Git transport is the initial
 profile. Existing native formats, WAL, manifest, companion metadata and API/RPC
 contracts remain unchanged. Live forge, platform and packaged release acceptance
 remain separate from fixture and disposable-local-Git qualification.
+
+ForgeCheck optionally returns provider start/completion timestamps; old
+responses without them remain valid. UI elapsed time requires valid ordered
+timestamps. The forge UI now caches observations in session memory and uses
+manual refresh; OAuth authorization polling, mutation guards, recovery journals
+and backend credentials remain unchanged. No native persistence format changes.

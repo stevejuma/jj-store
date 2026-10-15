@@ -94,6 +94,8 @@ export function workspaceForgeTransport(
               url: null,
               run_id: null,
               log_id: null,
+              started_at: "2026-10-15T10:00:00Z",
+              completed_at: "2026-10-15T10:00:04Z",
             }))
           : []),
         {

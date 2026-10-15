@@ -3,6 +3,10 @@
   import { Input } from "@lapismd/design-core/shadcn/input";
   import * as InputGroup from "@lapismd/design-core/shadcn/input-group";
   import * as Field from "@lapismd/design-core/shadcn/field";
+  import { Separator } from "@lapismd/design-core/shadcn/separator";
+  import Copy from "@lucide/svelte/icons/copy";
+  import ArrowUpRight from "@lucide/svelte/icons/arrow-up-right";
+  import X from "@lucide/svelte/icons/x";
   import Eye from "@lucide/svelte/icons/eye";
   import EyeOff from "@lucide/svelte/icons/eye-off";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
@@ -36,22 +40,48 @@
         ? "Add GitHub Enterprise Account"
         : "Add Personal Access Token"}
   >
+    {#snippet badge()}<Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Cancel authorization"
+        onclick={() => manager.cancel()}><X aria-hidden="true" /></Button
+      >{/snippet}
     {#if manager.flow === "oauth"}
       {@const auth = manager.data?.authorization}
       {#if auth}
-        <div class="integration-auth__device" role="status" aria-live="polite">
-          <p>Copy the verification code, then enter it on GitHub.</p>
-          <div>
-            <strong>{auth.user_code}</strong><Button
-              variant="outline"
-              size="sm"
-              onclick={copy}>Copy to Clipboard</Button
-            >
-          </div>
-          <a href={auth.verification_uri} target="_blank" rel="noreferrer"
-            >Open GitHub activation page ↗</a
-          >
-          <p>
+        <div class="integration-auth__device">
+          <ol class="integration-auth__steps">
+            <li>
+              <p>Copy the following verification code:</p>
+              <div class="integration-auth__code">
+                <strong>{auth.user_code}</strong><Button
+                  variant="outline"
+                  size="sm"
+                  onclick={copy}
+                  >Copy to Clipboard<Copy data-icon="inline-end" /></Button
+                >
+              </div>
+            </li>
+            <li>
+              <Separator />
+              <p>
+                Navigate to the GitHub activation page and paste the code you
+                copied.
+              </p>
+              <Button
+                onclick={() =>
+                  window.open(
+                    auth.verification_uri,
+                    "_blank",
+                    "noopener,noreferrer",
+                  )}
+                >Open GitHub activation page<ArrowUpRight
+                  data-icon="inline-end"
+                /></Button
+              >
+            </li>
+          </ol>
+          <p class="integration-auth__waiting" role="status" aria-live="polite">
             {auth.state === "pending"
               ? "Waiting for GitHub authorization…"
               : `Authorization ${auth.state}`}
@@ -60,11 +90,6 @@
       {:else}<p class="integration-auth__device" role="status">
           Requesting verification code…
         </p>{/if}
-      <StoreSettingsFooter
-        ><Button variant="outline" onclick={() => manager.cancel()}
-          >Cancel</Button
-        ></StoreSettingsFooter
-      >
     {:else}
       <form
         onsubmit={(event) => {
@@ -147,18 +172,55 @@
   .integration-auth__device p {
     margin: 0;
   }
-  .integration-auth__device > div {
+  .integration-auth__steps {
+    margin: 0;
+    padding: 0 0 0 1.75rem;
+    list-style: none;
+    border-inline-start: 1px dashed var(--border);
+  }
+  .integration-auth__steps li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-block: 0.25rem 1rem;
+  }
+  .integration-auth__steps li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: -2.05rem;
+    top: 0.65rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--muted-foreground);
+    box-shadow: 0 0 0 4px var(--background);
+  }
+  .integration-auth__steps li :global([data-ui-component="separator"]) {
+    align-self: stretch;
+    margin-block-end: 0.5rem;
+  }
+  .integration-auth__steps li:last-child::before {
+    top: 2.2rem;
+  }
+  .integration-auth__code {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
+    padding: 0.4rem;
+    padding-inline-start: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
   }
-  .integration-auth__device strong {
+  .integration-auth__code strong {
     font-size: 1.35rem;
     letter-spacing: 0.08em;
   }
-  .integration-auth__device a {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+  .integration-auth__waiting {
+    color: var(--muted-foreground);
+    font-size: 0.8rem;
+    padding-inline-start: 1.75rem;
   }
 </style>

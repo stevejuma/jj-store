@@ -91,7 +91,16 @@
           checks: Array.from({ length: 36 }, (_, index) => ({
             ...original,
             id: `check-${index}`,
+            run_id: String(100 + index),
+            url: `https://github.com/team/repo/actions/runs/${100 + index}`,
             name: `Workflow / job ${index + 1}`,
+            started_at: "2026-10-15T10:00:00Z",
+            completed_at:
+              index < 2
+                ? "2026-10-15T10:00:05Z"
+                : index >= 8
+                  ? "2026-10-15T10:00:04Z"
+                  : null,
             state:
               index < 2
                 ? "failed"

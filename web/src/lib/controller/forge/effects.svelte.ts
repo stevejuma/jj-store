@@ -61,7 +61,6 @@ export class ForgeEffects {
         })
       ) {
         this.owner.plan = undefined;
-        await this.owner.refresh();
         this.owner.inline.complete(branch);
         this.owner.select(branch, surface);
       }
@@ -84,7 +83,10 @@ export class ForgeEffects {
         !["checks", "jobs", "logs", "merge_status"].includes(
           action.action.kind,
         ));
-    if (mutating) this.owner.pending = $state.snapshot(action);
+    if (mutating) {
+      this.owner.connection.invalidate();
+      this.owner.pending = $state.snapshot(action);
+    }
     try {
       const response = await this.owner.call(action);
       this.owner.plan = response.plan ?? this.owner.plan;
@@ -137,7 +139,7 @@ export class ForgeEffects {
         if (pr) this.owner.accept(pr);
       }
       this.owner.stale = false;
-      if (mutating) queueMicrotask(() => void this.owner.refresh());
+      if (mutating) this.owner.connection.invalidate();
       return true;
     } catch (error) {
       if (!this.owner.closed)

@@ -156,8 +156,8 @@
       within(header).getByRole("button", { name: "Float PR details" }),
     ).toBeVisible();
     await expect(
-      within(header).getByRole("button", { name: "Inspect checks" }),
-    ).toBeVisible();
+      within(header).queryByRole("button", { name: "Inspect checks" }),
+    ).not.toBeInTheDocument();
     const actions = within(header).getByRole("button", {
       name: "PR actions: Squash",
     });
@@ -205,10 +205,10 @@
       within(panel).getByRole("link", { name: "#41" }),
     ).toHaveAttribute("href", "https://github.com/team/repo/pull/41");
     await expect(
-      within(panel).queryByRole("region", { name: "CI checks" }),
-    ).not.toBeInTheDocument();
+      within(panel).getByRole("region", { name: "CI checks" }),
+    ).toBeVisible();
     await expect(
-      within(panel).getByRole("button", { name: "Inspect checks" }),
+      within(panel).getByRole("button", { name: "Expand checks" }),
     ).toBeEnabled();
     await expect(panel.getBoundingClientRect().bottom).toBeLessThanOrEqual(
       within(details)

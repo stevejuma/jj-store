@@ -86,20 +86,23 @@ section first, then the selected file diff. A badge opens this column without
 requiring a file; selecting or switching files keeps the relevant branch's PR
 above its diff. Collapsing the PR preserves the file view; closing only the file
 preserves the PR. Stack cards contain no duplicate details section. The PR
-header owns its title, linked number, draft/state chip and pencil, float, checks
-and close icons. The body renders branch relationships and safe Markdown,
-omitting repeated title/number/state and repository-name metadata. The compact
-header menu owns Draft, Restack, provider-supported merge methods and explicitly
-confirmed guarded merge. An accessible pencil reveals title/composer editing,
-with no redundant Description label. Inspect checks expands the PR as needed and
-toggles the existing revision-bound checks/jobs/logs below the description in
-its own body, including while floating. Checks start hidden; inspection opens no
-extra column and preserves the file diff, draft and selected job/log view.
-Missing, incomplete or stale checks never imply success. Header actions have
-distinct themed hover, open-menu and keyboard-focus surfaces, retaining disabled
-guards. The title disclosure stays transparent in both hosts and is interactive
-only while docked. Capability and pending guards, merge protection and explicit
-Restack remain unchanged.
+header owns its title, linked number, draft/state chip, pencil and float icons,
+then an icon-only kebab immediately before Close. Every menu option has an icon
+and a content-sized popup that avoids wrapping. The body renders branch
+relationships and safe Markdown, omitting repeated title/number/state and
+repository-name metadata. The compact header menu owns Draft, Restack,
+provider-supported merge methods and explicitly confirmed guarded merge. An
+accessible pencil reveals title/composer editing, with no redundant Description
+label. Available revision-bound checks/jobs/logs always appear as an expandable
+footer below the description, flush with the containing PR card edges, including
+while floating. The footer starts collapsed on PR opening, has a themed
+hover/focus surface and places its chevron last, after Refresh and display
+options. There is no header checks toggle. Expansion preserves the file diff,
+draft and selected job/log view. Missing, incomplete or stale checks never imply
+success. Header actions have distinct themed hover, open-menu and keyboard-focus
+surfaces, retaining disabled guards. The title disclosure stays transparent in
+both hosts and is interactive only while docked. Capability and pending guards,
+merge protection and explicit Restack remain unchanged.
 
 Creation and PR details can float and redock through one application-owned,
 forge-independent detachable-panel adapter over released Design Core floating
@@ -113,17 +116,38 @@ receipts. Connection/session controls and inventory remain in the existing PR
 column menu. The adjacent inspection/submission column retains its shared header
 height, background, accessible icon-only pencil/close controls, composer
 previews and shadcn merge-method menu. Operational failures use shared toasts.
-Bounded polling, selected-revision checks and log isolation remain
-authoritative.
+Manual refresh, selected-revision checks and log isolation remain authoritative.
 
 Checks use a compact expandable summary, a segmented status ring and optional
 status grouping (failing, in progress, attention, successful,
 skipped/cancelled). Nonempty groups initially expand. A grouping menu offers
 status or flat lists. The list scrolls independently at a maximum of min(20rem,
 45dvh); the summary remains outside it. Corners are at most 6px. Grouping,
-disclosure and selected job/log state survive refresh and detachment.
+disclosure and selected job/log state survive refresh and detachment. Rows
+remain on one horizontal line with a truncated name, explicit status and only a
+kebab action. Jobs, logs, external links and capability-gated rerun/cancel
+reside in its icon-bearing, nonwrapping menu. Provider start/completion
+timestamps may supply elapsed time; absent, invalid or negative intervals supply
+no timing. Workflow update timestamps never establish completion.
 Incomplete/stale observations remain unknown, and checks never authorize
 merging.
+
+GitHub check observation selects the latest numbered execution/attempt per
+workflow on the selected SHA, retains current check contexts and avoids counting
+both workflow aggregates and their jobs. Distinct apps/workflows remain
+distinct; a latest workflow with no reported jobs retains an explicit workflow
+row. Current check labels include observed workflow name, check name and trigger
+event. Legacy commit-status contexts remain separate and latest per context.
+These display choices never grant merge authority.
+
+A bottom merge bar remains visible below the checks disclosure. It reports only
+observed mergeability and draft/closed state, offers a split button with the
+provider-supported merge methods and shares method selection with the header.
+Confirmation, expected SHA, protection, dependency order and uncertain-outcome
+guards remain authoritative; queued receipts offer explicit outcome checking and
+disable another merge. App menus size to content within the viewport,
+independently of icon-button anchor width. Check actions use View details,
+clipboard-check for Jobs and refresh-cw-off for rerunning failed jobs.
 
 ## Delivery and evidence
 
@@ -142,16 +166,20 @@ exhaustion fails explicitly; receipts are never silently evicted. A connection
 with history cannot be rebound to another project. Journal archival/migration is
 future work.
 
-The active repository Stacks controller polls every 15 seconds, backs off to 60
-seconds on failure and watches at most 16 visible branches with concurrency
-four. Its transport serializes requests per repository so background observation
-and selected PR reads do not contend for the private journal lease. A rejected
-request releases the queue; queued requests recheck access and view lifetime
-before dispatch and never automatically retry an external effect. Closing its
-owning repository stops polling. Description maintenance operates while that
-controller is active or the CLI explicitly requests status; there is no
-always-on backend maintenance daemon. Historical CI selection and unsaved
-descriptions remain retained.
+The active repository controller loads forge data on first use and explicit
+Refresh only. Session-only repository/account/host-isolated caches reuse PR,
+checks, jobs and logs through navigation and reopening. They are bounded to 64
+entries and 4 MiB, invalidated by manual refresh, credentials/binding changes
+and mutations, and cleared on repository disposal. Previews, effects, merge
+status and recovery proofs are never cached or replayed. Account inventory has
+no periodic refresh; device authorization keeps its contractually required
+polling. Account save/binding changes may verify access and reload the affected
+connection. Its transport serializes requests per repository, rejects stale
+account replies and releases the queue on failure. Manual refresh watches at
+most 16 visible branches with concurrency four. Description maintenance operates
+on first load or explicit app/CLI status; there is no always-on backend
+maintenance daemon. Historical CI selection, unsaved descriptions and exact
+uncertain effects remain retained.
 
 Shared-root or cross-combination Restack is unavailable pending qualification.
 Conflicted Restack retains the applied native operation and stops publication.

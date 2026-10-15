@@ -25,6 +25,7 @@ export class ForgeController {
   open = $state(false);
   surface = $state<"column" | "inline">("column");
   detailsExpanded = $state(true);
+  mergeMethod = $state("squash");
   readonly inline = new ForgeInline(this);
   readonly checksView = new ChecksPresentation();
   busy = $state(false);
@@ -131,6 +132,15 @@ export class ForgeController {
   refresh() {
     return this.#polling.refresh();
   }
+  ensure() {
+    return this.#polling.refresh(false);
+  }
+  refreshChecks() {
+    return this.connection.refreshChecks();
+  }
+  accountsChanged() {
+    return this.connection.accountsChanged();
+  }
   async configure(connection: ForgeConnection) {
     await this.run({ kind: "configure", connection });
     await this.refresh();
@@ -147,6 +157,7 @@ export class ForgeController {
     const pr = this.pr(branch);
     this.selected = pr;
     this.activeRun = "";
+    this.checksView.expanded = false;
     const epoch = ++this.#selectionEpoch;
     if (pr) {
       this.accept(pr);
@@ -247,7 +258,10 @@ export class ForgeController {
     if (success) {
       this.#drafts.delete(number);
       this.draftDirty = false;
-      await this.refresh();
+      const latest = this.data?.pull_requests.find(
+        (pr) => pr.number === number,
+      );
+      if (latest) this.accept(latest);
     } else this.retainDraft();
   }
   async act(action: ForgePrAction) {
@@ -279,7 +293,7 @@ export class ForgeController {
   }
   close() {
     this.#closed = true;
-    this.#polling.close();
+    this.connection.close();
     this.token = "";
     this.inline.clear();
     this.#drafts.clear();

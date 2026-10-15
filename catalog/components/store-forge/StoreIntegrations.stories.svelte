@@ -70,16 +70,32 @@
     await userEvent.click(
       await canvas.findByRole("button", { name: "Add GitHub account" }),
     );
+    const menu = within(canvasElement.ownerDocument.body).getByRole("menu");
+    for (const item of within(menu).getAllByRole("menuitem")) {
+      await expect(item.querySelector("svg")).not.toBeNull();
+      await expect(getComputedStyle(item).whiteSpace).toBe("nowrap");
+      await expect(item.scrollWidth).toBeLessThanOrEqual(item.clientWidth + 1);
+    }
     await userEvent.click(
-      within(canvasElement.ownerDocument.body).getByRole("menuitem", {
-        name: "Authorize GitHub Account",
-      }),
+      within(menu).getByRole("menuitem", { name: "Authorize GitHub Account" }),
     );
     await expect(await canvas.findByText("ABCD-1234")).toBeVisible();
     await expect(
-      canvas.getByRole("link", { name: /Open GitHub activation/ }),
-    ).toHaveAttribute("href", "https://github.com/login/device");
-    await userEvent.click(canvas.getByRole("button", { name: "Cancel" }));
+      canvas
+        .getByRole("button", { name: "Copy to Clipboard" })
+        .querySelector("svg"),
+    ).not.toBeNull();
+    await expect(
+      canvas
+        .getByRole("button", { name: /Open GitHub activation/ })
+        .querySelector("svg"),
+    ).not.toBeNull();
+    await expect(
+      canvas.getByRole("button", { name: /Open GitHub activation/ }),
+    ).toBeEnabled();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Cancel authorization" }),
+    );
     await expect(canvas.queryByText("ABCD-1234")).not.toBeInTheDocument();
   }}
 />

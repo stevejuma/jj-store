@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { forgeMenuLayout } from "./menu-layout.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import RefreshCw from "@lucide/svelte/icons/refresh-cw";
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import ChevronRight from "@lucide/svelte/icons/chevron-right";
+  import ListFilter from "@lucide/svelte/icons/list-filter";
+  import List from "@lucide/svelte/icons/list";
   import Settings2 from "@lucide/svelte/icons/settings-2";
   import StoreForgeChecksRing from "./StoreForgeChecksRing.svelte";
   import StoreForgeCheckRow from "./StoreForgeCheckRow.svelte";
@@ -99,16 +102,13 @@
               : summary}</span
           ><span>{counts}</span></span
         >
-        {#if view.expanded}<ChevronDown
-            aria-hidden="true"
-          />{:else}<ChevronRight aria-hidden="true" />{/if}
       </Button>
       <Button
         variant="ghost"
         size="icon-xs"
         aria-label="Refresh checks"
         disabled={blocked || !controller.data.capabilities.checks}
-        onclick={() => controller.act({ kind: "checks" })}
+        onclick={() => controller.refreshChecks()}
         ><RefreshCw aria-hidden="true" /></Button
       >
       <Menu.Root
@@ -121,16 +121,31 @@
               ><Settings2 aria-hidden="true" /></Button
             >{/snippet}</Menu.Trigger
         >
-        <Menu.Content align="end" preventScroll={false}
+        <Menu.Content align="end" preventScroll={false} style={forgeMenuLayout}
           ><Menu.RadioGroup
             value={view.grouped ? "status" : "none"}
             onValueChange={(value) => (view.grouped = value === "status")}
           >
-            <Menu.RadioItem value="status">Group by status</Menu.RadioItem
-            ><Menu.RadioItem value="none">No grouping</Menu.RadioItem>
+            <Menu.RadioItem value="status"
+              ><ListFilter aria-hidden="true" />Group by status</Menu.RadioItem
+            ><Menu.RadioItem value="none"
+              ><List aria-hidden="true" />No grouping</Menu.RadioItem
+            >
           </Menu.RadioGroup></Menu.Content
         >
       </Menu.Root>
+      <Button
+        variant="ghost"
+        size="icon-xs"
+        class="forge-checks__chevron"
+        aria-label={view.expanded ? "Collapse checks" : "Expand checks"}
+        aria-expanded={view.expanded}
+        aria-controls={`${id}-results`}
+        onclick={() => (view.expanded = !view.expanded)}
+        >{#if view.expanded}<ChevronDown
+            aria-hidden="true"
+          />{:else}<ChevronRight aria-hidden="true" />{/if}</Button
+      >
     </div>
     <div id={`${id}-results`} hidden={!view.expanded}>
       {#if checks}

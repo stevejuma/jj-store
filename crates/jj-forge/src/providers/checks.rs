@@ -3,11 +3,19 @@ use crate::{
     *,
 };
 use reqwest::Method;
-fn web_url(value: String) -> Option<String> {
+pub(super) fn web_url(value: String) -> Option<String> {
     url::Url::parse(&value)
         .ok()
         .filter(|u| u.scheme() == "https" && u.username().is_empty() && u.password().is_none())
         .map(|_| value)
+}
+
+pub(super) fn timestamp(value: &serde_json::Value, key: &str) -> Option<String> {
+    value
+        .get(key)
+        .and_then(serde_json::Value::as_str)
+        .filter(|value| !value.is_empty() && value.len() <= 64)
+        .map(str::to_owned)
 }
 
 pub fn check_state(status: &str, conclusion: &str) -> CheckState {
@@ -34,10 +42,7 @@ impl Client {
     pub async fn checks(&self, pr: &PullRequest) -> Result<Checks> {
         let project = self.project();
         let (path, kind) = match self.connection.provider {
-            Provider::Github => (
-                format!("{project}/actions/runs?head_sha={}", encode(&pr.sha)),
-                "run",
-            ),
+            Provider::Github => return self.github_checks(pr).await,
             Provider::Forgejo => (format!("{project}/actions/runs"), "run"),
             Provider::Gitlab => (format!("{}/pipelines", self.pr_path(pr.number)), "pipeline"),
         };
@@ -75,29 +80,17 @@ impl Client {
                 )),
                 run_id: Some(id),
                 log_id: None,
+                started_at: if kind == "pipeline" {
+                    timestamp(&v, "started_at")
+                } else {
+                    timestamp(&v, "run_started_at")
+                },
+                completed_at: if kind == "pipeline" {
+                    timestamp(&v, "finished_at")
+                } else {
+                    None
+                },
             });
-        }
-        if self.connection.provider == Provider::Github {
-            for v in self
-                .pages(&format!(
-                    "{project}/commits/{}/check-runs?filter=latest",
-                    encode(&pr.sha)
-                ))
-                .await?
-            {
-                if text(&v, "head_sha") != pr.sha {
-                    continue;
-                }
-                checks.push(Check {
-                    id: format!("check:{}", number(&v, "id")),
-                    name: text(&v, "name"),
-                    state: check_state(&text(&v, "status"), &text(&v, "conclusion")),
-                    sha: pr.sha.clone(),
-                    url: web_url(text(&v, "details_url")),
-                    run_id: None,
-                    log_id: None,
-                });
-            }
         }
         if self.connection.provider != Provider::Gitlab {
             let status_path = if self.connection.provider == Provider::Github {
@@ -120,6 +113,8 @@ impl Client {
                     url: web_url(text(&v, "target_url")),
                     run_id: None,
                     log_id: None,
+                    started_at: None,
+                    completed_at: None,
                 });
             }
         }
@@ -174,6 +169,15 @@ impl Client {
                 )),
                 run_id: Some(run.into()),
                 log_id: Some(id),
+                started_at: timestamp(&v, "started_at"),
+                completed_at: timestamp(
+                    &v,
+                    if self.connection.provider == Provider::Gitlab {
+                        "finished_at"
+                    } else {
+                        "completed_at"
+                    },
+                ),
             });
         }
         Ok(Checks {
@@ -232,6 +236,30 @@ pub(crate) fn numeric(v: &str) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn timing_only_uses_explicit_provider_fields() {
+        let v = serde_json::json!({"started_at":"2026-10-15T12:00:00Z", "completed_at":"2026-10-15T12:00:05Z", "updated_at":"2026-10-15T13:00:00Z"});
+        assert_eq!(
+            timestamp(&v, "started_at").as_deref(),
+            Some("2026-10-15T12:00:00Z")
+        );
+        assert_eq!(
+            timestamp(&v, "completed_at").as_deref(),
+            Some("2026-10-15T12:00:05Z")
+        );
+        assert_eq!(timestamp(&v, "finished_at"), None);
+        assert_eq!(
+            timestamp(&serde_json::json!({"completed_at":null}), "completed_at"),
+            None
+        );
+        assert_eq!(
+            timestamp(
+                &serde_json::json!({"completed_at":"x".repeat(65)}),
+                "completed_at"
+            ),
+            None
+        );
+    }
     #[test]
     fn provider_states_do_not_promote_pending_manual_or_unknown_to_passed() {
         assert_eq!(check_state("in_progress", ""), CheckState::Running);
