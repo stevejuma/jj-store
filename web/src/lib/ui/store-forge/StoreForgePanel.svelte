@@ -5,14 +5,14 @@
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import X from "@lucide/svelte/icons/x";
-  import GitPullRequest from "@lucide/svelte/icons/git-pull-request";
+  import StoreForgeIcon from "./StoreForgeIcon.svelte";
+  import StoreForgePanelActions from "./StoreForgePanelActions.svelte";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   import StoreForgeSetup from "./StoreForgeSetup.svelte";
   import StoreForgePullRequest from "./StoreForgePullRequest.svelte";
   import StoreForgeDescription from "./StoreForgeDescription.svelte";
-  import StoreForgeChecks from "./StoreForgeChecks.svelte";
   import "./store-forge.css";
   let { controller }: { controller: ForgeController } = $props();
   const notifications = ownNotifications();
@@ -28,9 +28,10 @@
   aria-busy={controller.busy}
 >
   <ColumnCanvas.Header>
-    <GitPullRequest size={16} aria-hidden="true" />
+    <StoreForgeIcon provider={controller.data?.connection?.provider} />
     <ColumnCanvas.Title>Pull requests</ColumnCanvas.Title>
     <ColumnCanvas.HeaderActions>
+      <StoreForgePanelActions {controller} />
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger>
@@ -55,21 +56,6 @@
     {#if !controller.data?.connection}
       <StoreForgeSetup {controller} />
     {:else}
-      <div class="forge-panel__toolbar">
-        <span>{controller.data.connection.repository}</span><Button
-          variant="outline"
-          size="sm"
-          disabled={blocked}
-          onclick={() => controller.refresh()}>Refresh PRs</Button
-        >
-      </div>
-      <label
-        >Session token<Input
-          type="password"
-          autocomplete="off"
-          bind:value={controller.token}
-        /></label
-      >
       {#if controller.stale}<p role="status">
           Remote information needs refresh.
         </p>{/if}
@@ -143,17 +129,16 @@
         </section>
       {/if}
       <StoreForgePullRequest {controller} />
-      <StoreForgeChecks {controller} />
-      {#if controller.logs}<pre
-          aria-label="Job logs">{controller.logs}</pre>{/if}
-      <nav aria-label="Repository pull requests">
-        {#each controller.data.pull_requests as pr}<Button
-            variant="ghost"
-            disabled={blocked}
-            onclick={() => controller.select(pr.head)}
-            >#{pr.number} {pr.title} · {pr.state}</Button
-          >{/each}
-      </nav>
+      {#if !controller.selected && !controller.plan}<nav
+          aria-label="Repository pull requests"
+        >
+          {#each controller.data.pull_requests as pr}<Button
+              variant="ghost"
+              disabled={blocked}
+              onclick={() => controller.select(pr.head)}
+              >#{pr.number} {pr.title} · {pr.state}</Button
+            >{/each}
+        </nav>{/if}
     {/if}
   </ScrollArea>
 </section>

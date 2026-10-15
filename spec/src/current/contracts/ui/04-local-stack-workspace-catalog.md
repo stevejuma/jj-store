@@ -323,3 +323,10 @@ and use an icon-only close action with an accessible name and tooltip. PR
 descriptions render Markdown with managed stack links; editing and submission
 use the shared chat composer with a retained preview toggle. Merge methods use
 the released shadcn dropdown rather than a native select.
+
+E-FORGE-DETAILS-001 adds forge icons to stack/change PR badges and
+rendered-first PR details. Title/description editing is explicit, with retained
+composer drafts; connection controls and PR inventory live in the column menu. A
+grouped checks summary and per-run status rows follow the description before
+merge actions. Status icons have text equivalents; unavailable/stale data cannot
+appear passed.

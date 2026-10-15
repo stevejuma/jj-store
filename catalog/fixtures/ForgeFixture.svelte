@@ -14,9 +14,15 @@
   import "../../web/src/lib/ui/store-application/store-application.css";
   let {
     failure = false,
+    failureChecks = false,
+    staleChecks = false,
+    provider = "github",
     mergeMethods = ["merge", "squash", "rebase"],
   }: {
     failure?: boolean;
+    failureChecks?: boolean;
+    staleChecks?: boolean;
+    provider?: ForgeConnection["provider"];
     mergeMethods?: string[];
   } = $props();
   const notifications = ownNotifications();
@@ -25,19 +31,29 @@
       "forge-pr": { defaultWidth: 500, minWidth: 360, maxWidth: 800 },
     },
   });
-  const connection: ForgeConnection = {
-    provider: "github",
-    api_url: "https://api.github.com",
+  const connection: ForgeConnection = untrack(() => ({
+    provider,
+    api_url:
+      provider === "github"
+        ? "https://api.github.com"
+        : provider === "gitlab"
+          ? "https://gitlab.example.test/api/v4"
+          : "https://forgejo.example.test/api/v1",
     repository: "team/repo",
     source_repository: "team/repo",
     remote: "origin",
     target_remote: "origin",
     target: "main",
     native_stacks: false,
-  };
+  }));
   let pr: ForgePr = {
     number: 7,
-    url: "https://github.com/team/repo/pull/7",
+    url:
+      connection.provider === "github"
+        ? "https://github.com/team/repo/pull/7"
+        : connection.provider === "gitlab"
+          ? "https://gitlab.example.test/team/repo/-/merge_requests/7"
+          : "https://forgejo.example.test/team/repo/pulls/7",
     title: "Add API",
     body: "## Review summary\n\nAuthored **description** with [review guidance](https://example.com/review).",
     head: "feature",
@@ -83,9 +99,10 @@
           throw new Error("The forge refused this description update");
         pr = { ...pr, title: action.action.title, body: action.action.body };
         result.pull_requests = [{ ...pr }];
-      } else if (action.action.kind === "checks")
+      } else if (action.action.kind === "checks") {
+        if (failureChecks) throw new Error("The forge could not load checks");
         result.checks = {
-          sha: pr.sha,
+          sha: staleChecks ? "f".repeat(40) : pr.sha,
           complete: true,
           checks: [
             {
@@ -99,7 +116,7 @@
             },
           ],
         };
-      else if (action.action.kind === "jobs")
+      } else if (action.action.kind === "jobs")
         result.checks = {
           sha: pr.sha,
           complete: true,

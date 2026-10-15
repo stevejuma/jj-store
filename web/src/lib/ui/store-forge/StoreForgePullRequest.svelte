@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
+  import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import StoreForgeIcon from "./StoreForgeIcon.svelte";
+  import StoreForgeChecks from "./StoreForgeChecks.svelte";
   import StoreForgeDescription from "./StoreForgeDescription.svelte";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   let { controller }: { controller: ForgeController } = $props();
@@ -14,10 +16,11 @@
   const methodLabel = (value: string) =>
     value === "merge" ? "Merge" : value === "squash" ? "Squash" : "Rebase";
   let mergeConfirm = $state(false);
+  const selection = $derived(controller.selected?.number);
   $effect(() => {
-    controller.selected?.number;
+    selection;
     mergeConfirm = false;
-    editing = untrack(() => controller.draftDirty);
+    editing = false;
   });
   $effect(() => {
     if (!methods.includes(method)) method = methods[0] ?? "";
@@ -27,18 +30,31 @@
 {#if controller.selected && controller.data}
   {@const pr = controller.selected}
   <section aria-label={`PR ${pr.number}`}>
-    <h3>
-      <a href={pr.url} target="_blank" rel="noreferrer">#{pr.number}</a> · {pr.state}{pr.draft
-        ? " · Draft"
-        : ""}
-    </h3>
-    <p>{pr.head} → {pr.base}</p>
-    <label
-      >Title<Input
-        bind:value={controller.title}
-        oninput={() => (controller.draftDirty = true)}
-      /></label
-    >
+    <div class="forge-pr__identity">
+      <StoreForgeIcon provider={controller.data.connection?.provider} />
+      <a href={pr.url} target="_blank" rel="noreferrer">#{pr.number}</a>
+      <CommunityChip
+        tone={pr.state === "open" && !pr.draft ? "success" : "neutral"}
+        >{pr.draft ? "Draft" : pr.state}</CommunityChip
+      >
+      <span>{controller.data.connection?.repository}</span>
+    </div>
+    {#if editing}
+      <label
+        >Title<Input
+          bind:value={controller.title}
+          oninput={() => (controller.draftDirty = true)}
+          disabled={blocked || !controller.data.capabilities.edit}
+        /></label
+      >
+    {:else}
+      <h2 class="forge-pr__title">{controller.title}</h2>
+    {/if}
+    <p class="forge-pr__branches">
+      <code>{pr.head}</code><span aria-label="into">→</span><code
+        >{pr.base}</code
+      >
+    </p>
     <StoreForgeDescription
       bind:value={
         () => controller.body,
@@ -48,25 +64,22 @@
         }
       }
       bind:editing
+      editLabel="Edit details"
       disabled={blocked || !controller.data.capabilities.edit}
     />
-    <Button
-      disabled={blocked ||
-        !controller.draftDirty ||
-        !controller.data.capabilities.edit}
-      onclick={async () => {
-        await controller.edit();
-        if (!controller.draftDirty) editing = false;
-      }}>Save PR description</Button
-    >
-    <div class="forge-panel__toolbar">
+    {#if controller.draftDirty || editing}
       <Button
-        variant="outline"
-        disabled={blocked || !controller.data.capabilities.checks}
-        onclick={() => {
-          void controller.act({ kind: "checks" });
-        }}>Checks and runs</Button
+        disabled={blocked ||
+          !controller.draftDirty ||
+          !controller.data.capabilities.edit}
+        onclick={async () => {
+          await controller.edit();
+          if (!controller.draftDirty) editing = false;
+        }}>Save changes</Button
       >
+    {/if}
+    <StoreForgeChecks {controller} />
+    <div class="forge-panel__toolbar">
       {#if controller.data.capabilities.draft}<Button
           variant="outline"
           disabled={blocked || pr.state !== "open"}

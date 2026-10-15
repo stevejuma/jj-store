@@ -66,6 +66,13 @@ export class ForgeController {
   checkSummary(branch: string) {
     const checks = this.ci[branch];
     if (!checks || !checks.complete) return "Checks unknown";
+    const pr = this.pr(branch);
+    if (
+      !pr ||
+      checks.sha !== pr.sha ||
+      checks.checks.some((c) => c.sha !== pr.sha)
+    )
+      return "Checks need refresh";
     if (!checks.checks.length) return "No checks";
     if (checks.checks.some((c) => c.state === "failed")) return "Checks failed";
     if (checks.checks.some((c) => ["queued", "running"].includes(c.state)))
@@ -161,9 +168,30 @@ export class ForgeController {
         this.selected = latest;
         if (!this.draftDirty) this.accept(latest);
       }
+      if (this.data?.capabilities.checks)
+        await this.loadSelectedChecks(latest ?? pr, epoch);
     } catch (error) {
       if (!this.#closed && epoch === this.#selectionEpoch)
         this.error(error, `detail:${pr.number}`);
+    }
+  }
+  private async loadSelectedChecks(pr: ForgePr, epoch: number) {
+    try {
+      const response = await this.call({
+        kind: "pr",
+        request_id: crypto.randomUUID(),
+        number: pr.number,
+        action: { kind: "checks" },
+      });
+      if (epoch !== this.#selectionEpoch || this.selected?.number !== pr.number)
+        return;
+      if (response.checks) {
+        if (!this.checks && !this.activeRun) this.checks = response.checks;
+        this.ci = { ...this.ci, [pr.head]: response.checks };
+      }
+    } catch (error) {
+      if (!this.#closed && epoch === this.#selectionEpoch)
+        this.error(error, `checks:${pr.number}`);
     }
   }
   accept(pr: ForgePr) {

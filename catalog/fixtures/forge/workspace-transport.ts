@@ -72,6 +72,17 @@ export function workspaceForgeTransport() {
       sha: pr.sha,
       complete: true,
       checks: [
+        ...(!jobs
+          ? ["Typecheck", "Unit tests"].map((name, index) => ({
+              id: `${run}-passed-${index}`,
+              name,
+              state: "passed" as const,
+              sha: pr.sha,
+              url: null,
+              run_id: null,
+              log_id: null,
+            }))
+          : []),
         {
           id: jobs ? `${run}1` : run,
           name: jobs ? "Unit tests" : "Build and test",

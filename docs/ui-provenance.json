@@ -3392,6 +3392,26 @@
     {
       "local": "web/src/lib/ui/store-forge/StoreForgeButton.svelte",
       "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeIcon.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeCheckIcon.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeCheckRow.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgePanelActions.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/forge-icons.ts",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
     }
   ],
   "desktopAppearance": {
@@ -3968,7 +3988,10 @@
         "paths": [
           "apps/desktop/src/lib/forge/interface/forge.ts",
           "apps/desktop/src/components/ReviewCreation.svelte",
-          "apps/desktop/src/lib/forge/github/githubChecksMonitor.svelte.ts"
+          "apps/desktop/src/lib/forge/github/githubChecksMonitor.svelte.ts",
+          "apps/desktop/src/components/PullRequestCard.svelte",
+          "apps/desktop/src/components/ChecksPolling.svelte",
+          "packages/ui/src/lib/utils/getForgeLogo.ts"
         ],
         "usage": "Read-only design reference for capability interfaces, contextual creation, PR cards and bounded monitoring; no code copied."
       },
@@ -3977,12 +4000,24 @@
         "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
         "paths": [
           "src/providers/ChangeProvider.ts",
-          "src/vcs/jj/stack-submit.ts"
+          "src/vcs/jj/stack-submit.ts",
+          "packages/vcs/src/components/vcs-pull-request-actions.tsx",
+          "packages/web-ui/src/pull-request.tsx"
         ],
         "usage": "Read-only workflow reference; independently implemented effects and presentation."
       }
     ],
     "communityInspection": "src/components/community-projects/CommunityProjectsPullRequestCreateDialog.svelte and maintained owned Stack components inspected before presentation edits. Existing owned cards/avatars are reused. No new Community-derived component copy.",
-    "designCore": "Released @lapismd/design-core 0.3.2 Button, Input, Textarea, ScrollArea and ColumnCanvas primitives; no foundational package changes."
+    "designCore": "Released @lapismd/design-core 0.3.2 ColumnCanvas, Button, Input, ScrollArea, Field, Dialog, Tooltip and DropdownMenu primitives; no foundational package changes."
+  },
+  "forgeIcons": {
+    "repository": "https://github.com/simple-icons/simple-icons",
+    "revision": "28241d80f8422eaed317ef968ad1e40b6d0d9163",
+    "version": "16.0.0",
+    "license": "CC0-1.0",
+    "licenseFile": "docs/licenses/simple-icons-CC0-1.0.md",
+    "local": ["web/src/lib/ui/store-forge/forge-icons.ts"],
+    "paths": ["icons/github.svg", "icons/gitlab.svg", "icons/forgejo.svg"],
+    "usage": "Locally bundled monochrome SVG paths rendered by the application-owned forge icon; no runtime external icon requests."
   }
 }

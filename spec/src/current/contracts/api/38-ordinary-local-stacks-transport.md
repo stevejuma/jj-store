@@ -136,3 +136,9 @@ Markdown description rendering/composition and the shadcn merge-method picker
 alter presentation only. Forge action shapes, expected-body/head guards,
 capabilities, session credentials and exact pending request identities remain
 unchanged.
+
+E-FORGE-DETAILS-001 retains JST-API-001 action schemas and authority: opening PR
+details performs the existing read-only checks action automatically, guarded by
+the selected PR identity/epoch. It creates no pending mutation and cannot
+replace a newer selection or an explicitly selected job view. Forge tokens
+remain session-only, entered through the column's connection dialog.

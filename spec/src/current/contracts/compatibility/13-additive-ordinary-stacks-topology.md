@@ -18,3 +18,9 @@ Existing optional-field consumers remain compatible. The guarded topology POST
 is a read query with exact operation/target identity, available before TOML
 setup; it creates no durable metadata and changes no format. Incomplete results
 must preserve ordinary bookmark visibility without claiming unproven grouping.
+
+E-FORGE-DETAILS-001 confirms JST-COMPAT-001/003 unchanged: locally bundled
+Simple Icons 16.0.0 brand paths and their CC0-1.0 license add presentation
+assets only. They alter no JJ version, native identity, transport, persistence
+or packaging contract and do not qualify live-provider, platform or release
+gates.

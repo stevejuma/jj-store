@@ -9,11 +9,13 @@
     editing = $bindable(false),
     disabled = false,
     label = "PR description",
+    editLabel = "Edit description",
   }: {
     value?: string;
     editing?: boolean;
     disabled?: boolean;
     label?: string;
+    editLabel?: string;
   } = $props();
 </script>
 
@@ -25,7 +27,7 @@
       size="sm"
       disabled={disabled && !editing}
       onclick={() => (editing = !editing)}
-      >{editing ? "Preview description" : "Edit description"}</Button
+      >{editing ? "Preview description" : editLabel}</Button
     >
   </div>
   {#if editing}

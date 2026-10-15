@@ -33,7 +33,6 @@
   });
   onMount(() => {
     void stackWorkspace.refresh();
-    if (panelOpen) void stackWorkspace.forge!.act({ kind: "checks" });
     return () => {
       stackWorkspace.close();
       controller.actions.destroy();

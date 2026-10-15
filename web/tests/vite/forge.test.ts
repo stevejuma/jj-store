@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { ForgeController } from "../../src/lib/controller/forge/controller.svelte.js";
 import type {
   ForgePr,
@@ -183,3 +183,86 @@ it.each([
     controller.close();
   },
 );
+
+it("loads selected PR checks automatically and discards a late previous selection", async () => {
+  const pending = new Map<number, (result: ForgeResponse) => void>();
+  const first = pr(1),
+    second = { ...pr(2), sha: "b".repeat(40) };
+  const controller = new ForgeController(async ({ action }) => {
+    if (action.kind === "pull_request")
+      return {
+        ...response(),
+        pull_requests: [action.number === 1 ? first : second],
+      };
+    if (action.kind === "pr" && action.action.kind === "checks")
+      return new Promise<ForgeResponse>((resolve) =>
+        pending.set(Number(action.number), resolve),
+      );
+    return response();
+  });
+  controller.data = {
+    ...response(),
+    connection,
+    capabilities: { ...response().capabilities, checks: true },
+    pull_requests: [first, second],
+  };
+  controller.select(first.head);
+  await vi.waitFor(() => expect(pending.has(1)).toBe(true));
+  controller.select(second.head);
+  await vi.waitFor(() => expect(pending.has(2)).toBe(true));
+  const checks = (sha: string, name: string): ForgeResponse => ({
+    ...response(),
+    checks: {
+      sha,
+      complete: true,
+      checks: [
+        {
+          id: name,
+          name,
+          sha,
+          state: "passed",
+          url: null,
+          run_id: null,
+          log_id: null,
+        },
+      ],
+    },
+  });
+  pending.get(2)!(checks(second.sha, "Current revision"));
+  await vi.waitFor(() => expect(controller.checks?.sha).toBe(second.sha));
+  pending.get(1)!(checks(first.sha, "Old selection"));
+  await Promise.resolve();
+  await Promise.resolve();
+  expect(controller.selected?.number).toBe(2);
+  expect(controller.checks?.checks[0]?.name).toBe("Current revision");
+  expect(controller.pending).toBeUndefined();
+  expect(controller.busy).toBe(false);
+  controller.close();
+});
+
+it("does not label stale branch checks as passed", () => {
+  const controller = new ForgeController(async () => response());
+  const selected = pr(1);
+  controller.data = { ...response(), connection, pull_requests: [selected] };
+  controller.ci = {
+    [selected.head]: {
+      sha: "f".repeat(40),
+      complete: true,
+      checks: [
+        {
+          id: "old",
+          name: "Old check",
+          sha: "f".repeat(40),
+          state: "passed",
+          url: null,
+          run_id: null,
+          log_id: null,
+        },
+      ],
+    },
+  };
+  expect(controller.checkSummary(selected.head)).toBe("Checks need refresh");
+  controller.ci[selected.head]!.sha = selected.sha;
+  expect(controller.checkSummary(selected.head)).toBe("Checks need refresh");
+  controller.close();
+});

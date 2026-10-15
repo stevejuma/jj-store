@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import StoreForgeIcon from "./StoreForgeIcon.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceStack } from "../../controller/stack-workspace/types.js";
   let {
@@ -38,8 +39,11 @@
       else void forge.preview(name);
     }}
   >
+    <StoreForgeIcon provider={forge.data?.connection?.provider} />
     {#if mode === "stack"}Submit stack{:else if forge.pr(name)}#{forge.pr(name)!
-        .number} · {forge.pr(name)!.state}{:else}Create PR{/if}
+        .number} · {forge.pr(name)!.draft && forge.pr(name)!.state === "open"
+        ? "Draft"
+        : forge.pr(name)!.state}{:else}Create PR{/if}
   </Button>
   {#if mode === "bookmark" && forge.pr(name)}<CommunityChip variant="muted"
       >{forge.checkSummary(name)}</CommunityChip

@@ -33,7 +33,16 @@ Existing local Stacks undo/redo cannot undo external forge effects.
 
 ## UI and maintenance
 
-Branch and Workspace columns share PR presentation and submission. The PR panel
+Branch and Workspace columns share PR presentation and submission. Change badges
+pair the configured forge icon with the PR number/state. Opening a PR shows its
+rendered title, branch relationship, state and Markdown description; edit fields
+appear only through an explicit action. Connection/session controls and
+inventory navigation stay in the column menu. Checks load automatically for the
+selected remote revision and appear immediately below the description, with an
+aggregate status and individually labelled runs. Late responses for earlier
+selections must not replace the current checks; missing, incomplete, unsupported
+or stale checks must never imply success. CI actions remain capability-gated and
+secondary to the status rows, with merge controls after the checks. The PR panel
 uses the shared column header height, background and title primitives with an
 accessible icon-only close action. Descriptions render safe Markdown by default
 and use the maintained chat composer when editing, including submission drafts;

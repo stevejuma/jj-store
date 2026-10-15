@@ -51,3 +51,102 @@
   display: grid;
   gap: 0.3rem;
 }
+.forge-pr__identity,
+.forge-pr__branches {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.forge-pr__identity {
+  font-size: var(--text-sm, 0.875rem);
+}
+.forge-pr__identity > span:last-child,
+.forge-pr__branches {
+  color: var(--muted-foreground);
+}
+.forge-pr__title {
+  font-size: var(--text-lg, 1.125rem);
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.forge-panel .forge-checks {
+  gap: 0;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.forge-checks__summary,
+.forge-panel .forge-checks__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  margin: 0;
+}
+.forge-checks__summary {
+  background: var(--jj-store-row-background, var(--muted));
+}
+.forge-checks__name {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 0.15rem;
+  overflow-wrap: anywhere;
+}
+.forge-checks__name > span,
+.forge-checks__name > p,
+.forge-panel .forge-checks__revision {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--text-xs, 0.75rem);
+}
+.forge-panel .forge-checks__revision {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.forge-checks__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.forge-panel .forge-checks__row {
+  border-top: 1px solid var(--border);
+}
+.forge-checks__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+.forge-check-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.forge-check-icon[data-state="passed"] {
+  color: var(--success, var(--foreground));
+}
+.forge-check-icon[data-state="failed"] {
+  color: var(--destructive);
+}
+.forge-check-icon:is(
+  [data-state="running"],
+  [data-state="queued"],
+  [data-state="manual"]
+) {
+  color: var(--jj-store-warning-foreground, var(--foreground));
+}
+.forge-checks__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--muted-foreground);
+}
+.forge-checks__link:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}

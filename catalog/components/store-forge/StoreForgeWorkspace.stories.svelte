@@ -30,6 +30,13 @@
       }),
     ).toHaveTextContent("#42");
     await expect(within(stack).getByText("Checks running")).toBeInTheDocument();
+    await expect(
+      within(
+        within(stack).getByRole("button", {
+          name: "Pull request for feature/api",
+        }),
+      ).getByRole("img", { name: "GitHub" }),
+    ).toBeInTheDocument();
     const panel = await canvas.findByRole("region", {
       name: "Pull request details",
     });
@@ -55,11 +62,14 @@
       within(panel).getByRole("link", { name: "#41" }),
     ).toHaveAttribute("href", "https://github.com/team/repo/pull/41");
     await expect(
-      within(panel).getByRole("textbox", { name: "Title" }),
-    ).toHaveValue("Expose repository API");
+      within(panel).getByRole("heading", { name: "Expose repository API" }),
+    ).toBeVisible();
     await expect(
       within(panel).getByRole("region", { name: "CI checks" }),
     ).toHaveTextContent("running");
+    await expect(
+      within(panel).getByRole("region", { name: "CI checks" }),
+    ).toHaveTextContent("2 successful · 1 in progress");
     await expect(panel.getBoundingClientRect().left).toBeGreaterThanOrEqual(
       stack.getBoundingClientRect().right - 1,
     );
@@ -83,8 +93,8 @@
       name: "Pull request details",
     });
     await expect(
-      within(panel).getByRole("textbox", { name: "Title" }),
-    ).toHaveValue("Add workspace toolbar");
+      within(panel).getByRole("heading", { name: "Add workspace toolbar" }),
+    ).toBeVisible();
     await userEvent.click(
       within(panel).getByRole("button", { name: "Close pull requests" }),
     );
