@@ -86,3 +86,8 @@ task/gate and requirement comparisons. Every read uses that selected revision.
 Later governed updates remain checked by the current ledger, specification and
 immutable archive validators; migration evidence never freezes current product
 requirements or implementation progress.
+
+E-CI-RUNTIME-TOOLS-001 retains JST-GOV-003/004/011 unchanged: provisioning a
+missing CI tool and preserving structured storage reports do not waive producer,
+coverage, evidence or publication gates. Hosted failures remain qualification
+gaps even when the workflow and reporting regression tests pass locally.

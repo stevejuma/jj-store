@@ -167,3 +167,9 @@ cannot justify adoption. Routine PR and release checks do not run the trial.
 E-CI-SUITES-FIX-001 confirms JST-ARCH-005 is unchanged by extracting artifact
 layout declarations to satisfy the module-size gate. Source admission, checksum
 verification, coverage and complete qualification remain mandatory.
+
+The embedded runtime producer provisions and reports the protocol compiler
+required by its Pulsar dependency before compilation. Real-storage reports
+retain the fixture test inventory, counts and startup/cleanup failures alongside
+logs. API, native and embedded-storage standalone runs still compile local
+targets; their timings must not be described as execution-only archive reruns.

@@ -18,7 +18,12 @@ import {
   verifyPayload,
   lanePayloads,
 } from "./ci-artifacts.mjs";
-import { secondsBetween, summarizeJobs, junitCases } from "./ci-report.mjs";
+import {
+  secondsBetween,
+  summarizeJobs,
+  junitCases,
+  localResults,
+} from "./ci-report.mjs";
 const expected = {
   source: "a".repeat(40),
   repository: "stevejuma/jj-store",
@@ -214,4 +219,40 @@ test("timing reports retain unknowns, failures and individual JUnit results", ()
     cases.map((row) => row.seconds),
     [1.5, 2, null],
   );
+});
+
+test("timing reports include RustFS counts and preserve startup failures", async () => {
+  const previous = process.cwd();
+  const temp = await mkdtemp(join(tmpdir(), "jj-ci-storage-report-"));
+  try {
+    process.chdir(temp);
+    await mkdir(".release/ci-results", { recursive: true });
+    await mkdir(".scratch");
+    assert.equal(localResults().test_counts_available, false);
+    const report = {
+      result: "fail",
+      failures: 1,
+      tests: [
+        { name: "cas", result: "pass", failures: 0, seconds: 0.1 },
+        { name: "restart", result: "fail", failures: 1, seconds: 0.2 },
+      ],
+    };
+    await writeFile(".scratch/rustfs-contract.json", JSON.stringify(report));
+    const result = localResults();
+    assert.equal(result.test_counts_available, true);
+    assert.deepEqual(result.rustfs[0].counts, {
+      total: 2,
+      passed: 1,
+      failed: 1,
+      skipped: 0,
+    });
+    assert.deepEqual(result.rustfs[0].tests, report.tests);
+    report.tests = [];
+    await writeFile(".scratch/rustfs-contract.json", JSON.stringify(report));
+    assert.equal(localResults().rustfs[0].failures, 1);
+    assert.equal(localResults().rustfs[0].result, "fail");
+  } finally {
+    process.chdir(previous);
+    await rm(temp, { recursive: true, force: true });
+  }
 });

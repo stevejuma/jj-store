@@ -50,6 +50,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - uses: ./.github/actions/setup
+      - name: Install embedded runtime protocol compiler
+        if: inputs.kind == 'runtime'
+        run: |
+          sudo apt-get install --no-install-recommends -y protobuf-compiler
+          protoc --version
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
           workspaces: . -> target

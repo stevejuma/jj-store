@@ -8,6 +8,8 @@
   {{#include E-CI-GOVERNANCE-001/SUMMARY.nav.md}}
 - [E-CI-HEAVY-001](E-CI-HEAVY-001/index.md)
   {{#include E-CI-HEAVY-001/SUMMARY.nav.md}}
+- [E-CI-RUNTIME-TOOLS-001](E-CI-RUNTIME-TOOLS-001/index.md)
+  {{#include E-CI-RUNTIME-TOOLS-001/SUMMARY.nav.md}}
 - [E-CI-STANDARD-001](E-CI-STANDARD-001/index.md)
   {{#include E-CI-STANDARD-001/SUMMARY.nav.md}}
 - [E-CI-SUITES-001](E-CI-SUITES-001/index.md)

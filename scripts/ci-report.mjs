@@ -63,7 +63,7 @@ export function junitCases(xml) {
     };
   });
 }
-function localResults() {
+export function localResults() {
   const reports = [],
     libtest = [];
   for (const dir of [".release/ci-results", "target/nextest/heavy"]) {
@@ -111,10 +111,31 @@ function localResults() {
         ),
       });
   }
+  const storagePath = ".scratch/rustfs-contract.json";
+  const storage = existsSync(storagePath)
+    ? JSON.parse(readFileSync(storagePath, "utf8"))
+    : null;
+  const rustfs = storage
+    ? [
+        {
+          path: storagePath,
+          result: storage.result,
+          failures: storage.failures,
+          counts: {
+            total: storage.tests.length,
+            passed: storage.tests.filter((t) => t.result === "pass").length,
+            failed: storage.tests.filter((t) => t.result === "fail").length,
+            skipped: 0,
+          },
+          tests: storage.tests,
+        },
+      ]
+    : [];
   return {
     junit: reports,
     libtest,
-    test_counts_available: reports.length + libtest.length > 0,
+    rustfs,
+    test_counts_available: reports.length + libtest.length + rustfs.length > 0,
   };
 }
 async function main() {
@@ -197,11 +218,11 @@ async function main() {
         `| ↳ ${step.name.replaceAll("|", "\\|")} | ${show(step.seconds)} | | ${step.conclusion ?? "pending"} |`,
       );
   }
-  for (const result of report.results.junit)
+  for (const result of [...report.results.junit, ...report.results.rustfs])
     lines.push(
       "",
       `Tests (${result.path}): ${result.counts.passed} passed, ${result.counts.failed} failed, ${result.counts.skipped} skipped.`,
-      ...result.slowest
+      ...(result.slowest || result.tests)
         .slice(0, 5)
         .map((t) => `- ${t.name}: ${show(t.seconds)} (${t.result})`),
     );

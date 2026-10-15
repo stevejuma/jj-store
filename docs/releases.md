@@ -89,13 +89,13 @@ qualification to replace them. Standalone results do not replace the publication
 gate.
 
 Compare `qualification-results-*` artifacts and job summaries. Archive consumers
-reuse compilation; API contracts and native checks still compile locally, so
-those reruns are not execution-only measurements. Reports retain command logs,
-available JUnit/Playwright results, source/runner identity and job/step timings.
-Missing queue/dependency timestamps remain unknown. Runner minutes count
-parallel execution separately from elapsed duration. Download completed-run job
-timestamps when measuring cache-save steps that execute after a job's report
-snapshot.
+reuse compilation; API contracts, native checks and embedded-storage test
+binaries still compile locally, so those reruns are not execution-only
+measurements. Reports retain command logs, available JUnit/Playwright results,
+source/runner identity and job/step timings. Missing queue/dependency timestamps
+remain unknown. Runner minutes count parallel execution separately from elapsed
+duration. Download completed-run job timestamps when measuring cache-save steps
+that execute after a job's report snapshot.
 
 During the explicitly authorized CI rollout, administrator enforcement may be
 disabled only around each verified direct main push. Snapshot protection first,

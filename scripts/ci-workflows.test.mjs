@@ -3,6 +3,22 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { parse as parseYaml } from "yaml";
+test("embedded runtime installs protoc before compiling its Pulsar dependency", () => {
+  const { steps } = parseYaml(
+    readFileSync(".github/workflows/ci-qualification-build.yml", "utf8"),
+  ).jobs.produce;
+  const install = steps.findIndex((step) =>
+    step.run?.includes(
+      "apt-get install --no-install-recommends -y protobuf-compiler",
+    ),
+  );
+  const build = steps.findIndex((step) =>
+    step.run?.includes("pnpm build:embedded-rustfs"),
+  );
+  assert.ok(install >= 0 && install < build);
+  assert.equal(steps[install].if, "inputs.kind == 'runtime'");
+  assert.match(steps[install].run, /protoc --version/);
+});
 test("required check rejects missing or failed shared runtime production", () => {
   const jobs = Object.fromEntries(
     [

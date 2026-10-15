@@ -21,6 +21,7 @@ runs:
         name: qualification-results-${{ inputs.name }}-${{ github.run_attempt }}
         path: |
           .release/ci-results
+          .scratch/rustfs-contract.json
           target/nextest/heavy/*.xml
           web/test-results*
           test-results

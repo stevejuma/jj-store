@@ -20,9 +20,10 @@ not a completion gate selection.
 | [E-CI-CACHE-TRIAL-001](../../../../../history/2026/10/15/E-CI-CACHE-TRIAL-001/index.md)               | 2026-10-15 | pending         | Original outcome |
 | [E-CI-GOVERNANCE-001](../../../../../history/2026/10/15/E-CI-GOVERNANCE-001/index.md)                 | 2026-10-15 | pass            | Original outcome |
 | [E-CI-HEAVY-001](../../../../../history/2026/10/15/E-CI-HEAVY-001/index.md)                           | 2026-10-15 | pass            | Original outcome |
+| [E-CI-RUNTIME-TOOLS-001](../../../../../history/2026/10/15/E-CI-RUNTIME-TOOLS-001/index.md)           | 2026-10-15 | pending         | Original outcome |
 | [E-CI-STANDARD-001](../../../../../history/2026/10/15/E-CI-STANDARD-001/index.md)                     | 2026-10-15 | pending         | Original outcome |
 | [E-CI-SUITES-001](../../../../../history/2026/10/15/E-CI-SUITES-001/index.md)                         | 2026-10-15 | pending         | Original outcome |
-| [E-CI-SUITES-FIX-001](../../../../../history/2026/10/15/E-CI-SUITES-FIX-001/index.md)                 | 2026-10-15 | pending         | Original outcome |
+| [E-CI-SUITES-FIX-001](../../../../../history/2026/10/15/E-CI-SUITES-FIX-001/index.md)                 | 2026-10-15 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 
