@@ -143,6 +143,12 @@ are no automatic or nightly heavy runs. Publication requires complete
 qualification. See [release instructions](docs/releases.md) for manual dispatch
 and remaining qualification gaps.
 
+The
+[parallel-suite measurement record](spec/src/history/2026/10/15/E-CI-SUITES-MEASURE-001/index.md)
+retains complete run results, standalone timings and unresolved test failures.
+Producer reuse accelerates diagnosis; a failed qualification still blocks
+release.
+
 Initialize the private development fixture once with `pnpm dev:restart`, then
 use `pnpm dev:ui` for Vite HMR at `http://127.0.0.1:7460/`. After Rust edits run
 `pnpm dev:backend:build` and `pnpm dev:backend:restart`. `pnpm dev:stop`

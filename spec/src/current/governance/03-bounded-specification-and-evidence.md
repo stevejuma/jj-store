@@ -91,3 +91,11 @@ E-CI-RUNTIME-TOOLS-001 retains JST-GOV-003/004/011 unchanged: provisioning a
 missing CI tool and preserving structured storage reports do not waive producer,
 coverage, evidence or publication gates. Hosted failures remain qualification
 gaps even when the workflow and reporting regression tests pass locally.
+
+Qualification measurement evidence distinguishes complete-run timings from
+in-job snapshots, scheduler waiting from unavailable runner-only queueing, and
+artifact reuse from suites that still compile targets. TAP, libtest and browser
+counts retain failures and ignored tests; missing output never means zero tests
+or a pass. Comparing workflow layouts requires the same source, inventory and
+completed coverage. An earlier canceled or producer-failed run is not a complete
+performance baseline.

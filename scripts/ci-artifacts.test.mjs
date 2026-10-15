@@ -23,6 +23,8 @@ import {
   summarizeJobs,
   junitCases,
   localResults,
+  tapCounts,
+  cargoPreparation,
 } from "./ci-report.mjs";
 const expected = {
   source: "a".repeat(40),
@@ -206,6 +208,7 @@ test("timing reports retain unknowns, failures and individual JUnit results", ()
   ]);
   assert.equal(job.execution_seconds, 60);
   assert.equal(job.queue_seconds, null);
+  assert.equal(job.runner_queue_seconds, null);
   assert.equal(job.dependency_wait_seconds, null);
   assert.equal(job.conclusion, "failure");
   const cases = junitCases(
@@ -251,6 +254,43 @@ test("timing reports include RustFS counts and preserve startup failures", async
     await writeFile(".scratch/rustfs-contract.json", JSON.stringify(report));
     assert.equal(localResults().rustfs[0].failures, 1);
     assert.equal(localResults().rustfs[0].result, "fail");
+  } finally {
+    process.chdir(previous);
+    await rm(temp, { recursive: true, force: true });
+  }
+});
+test("timing reports retain Node TAP counts without inventing missing results", () => {
+  assert.deepEqual(tapCounts("compilation failed before tests"), []);
+  assert.deepEqual(
+    tapCounts(
+      "# tests 8\n# suites 0\n# pass 6\n# fail 1\n# cancelled 1\n# skipped 0\n# todo 0\n",
+    ),
+    [{ total: 8, passed: 6, failed: 1, cancelled: 1, skipped: 0, todo: 0 }],
+  );
+});
+test("native timing separates target preparation from test execution", async () => {
+  assert.deepEqual(
+    cargoPreparation(
+      "\x1b[1mFinished\x1b[0m `test` profile [unoptimized] target(s) in 9m 46s",
+    ),
+    [{ profile: "test", seconds: 586 }],
+  );
+  assert.deepEqual(cargoPreparation("compile failed"), []);
+  const previous = process.cwd(),
+    temp = await mkdtemp(join(tmpdir(), "jj-ci-native-report-"));
+  try {
+    process.chdir(temp);
+    await mkdir(".release/ci-results", { recursive: true });
+    await writeFile(
+      ".release/ci-results/tests.log",
+      "test result: ok. 5 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.45s\n",
+    );
+    assert.equal(localResults().libtest[0].execution_seconds, 4.45);
+    assert.deepEqual(localResults().libtest[0].counts, {
+      passed: 5,
+      failed: 0,
+      skipped: 1,
+    });
   } finally {
     process.chdir(previous);
     await rm(temp, { recursive: true, force: true });

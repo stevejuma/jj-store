@@ -8,6 +8,7 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { stripVTControlCharacters } from "node:util";
 import { sourceSha } from "./ci-inventory.mjs";
 
 export function secondsBetween(start, end) {
@@ -33,6 +34,8 @@ export function summarizeJobs(jobs) {
     started_at: job.started_at,
     completed_at: job.completed_at,
     queue_seconds: secondsBetween(job.created_at, job.started_at),
+    // Creation-to-start may also include workflow concurrency waiting.
+    runner_queue_seconds: null,
     // GitHub does not always expose dependency-ready timestamps. Never label
     // time since workflow dispatch as runner queueing.
     dependency_wait_seconds: null,
@@ -63,9 +66,43 @@ export function junitCases(xml) {
     };
   });
 }
+export function tapCounts(log) {
+  return [
+    ...log.matchAll(
+      /^# tests (\d+)\r?\n# suites \d+\r?\n# pass (\d+)\r?\n# fail (\d+)\r?\n# cancelled (\d+)\r?\n# skipped (\d+)\r?\n# todo (\d+)/gm,
+    ),
+  ].map(([, total, passed, failed, cancelled, skipped, todo]) =>
+    Object.fromEntries(
+      Object.entries({ total, passed, failed, cancelled, skipped, todo }).map(
+        ([key, value]) => [key, Number(value)],
+      ),
+    ),
+  );
+}
+export function cargoPreparation(log) {
+  return [
+    ...stripVTControlCharacters(log).matchAll(
+      /Finished `([^`]+)` profile[^\r\n]*?target\(s\) in ([^\r\n]+)/g,
+    ),
+  ].map(([, profile, duration]) => {
+    const match = duration
+      .trim()
+      .match(/^(?:(\d+)h\s*)?(?:(\d+)m\s*)?(\d+(?:\.\d+)?)s$/);
+    return {
+      profile,
+      seconds: match
+        ? Number(match[1] || 0) * 3600 +
+          Number(match[2] || 0) * 60 +
+          Number(match[3])
+        : null,
+    };
+  });
+}
 export function localResults() {
   const reports = [],
-    libtest = [];
+    libtest = [],
+    tap = [],
+    cargo = [];
   for (const dir of [".release/ci-results", "target/nextest/heavy"]) {
     if (!existsSync(dir)) continue;
     for (const name of readdirSync(dir).filter((name) =>
@@ -93,14 +130,21 @@ export function localResults() {
     name.endsWith(".log"),
   )) {
     const log = readFileSync(join(".release/ci-results", name), "utf8");
+    for (const counts of tapCounts(log)) tap.push({ path: name, counts });
+    for (const phase of cargoPreparation(log))
+      cargo.push({ path: name, ...phase });
     const matches = [
       ...log.matchAll(
-        /test result: (?:ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored;/g,
+        /test result: (?:ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored;[^\r\n]*?finished in ([\d.]+)s/g,
       ),
     ];
     if (matches.length)
       libtest.push({
         path: name,
+        execution_seconds: matches.reduce(
+          (sum, row) => sum + Number(row[4]),
+          0,
+        ),
         counts: matches.reduce(
           (sum, [, p, f, s]) => ({
             passed: sum.passed + Number(p),
@@ -135,7 +179,10 @@ export function localResults() {
     junit: reports,
     libtest,
     rustfs,
-    test_counts_available: reports.length + libtest.length + rustfs.length > 0,
+    tap,
+    cargo,
+    test_counts_available:
+      reports.length + libtest.length + rustfs.length + tap.length > 0,
   };
 }
 async function main() {
@@ -200,9 +247,9 @@ async function main() {
     "",
     `Source: \`${report.source}\`. Run/attempt: ${report.run}/${report.attempt}.`,
     "",
-    "Execution includes setup, cache and transfers. Queue time is unknown when GitHub omits job creation; dependency waiting is not queue time. Runner minutes sum parallel execution, not elapsed time or cost. Running jobs and post-job cache saves may be incomplete in this snapshot.",
+    "Execution includes setup, cache and transfers. Scheduler queue measures job creation to start and may include workflow concurrency waits. Runner-only queueing and dependency waiting are unknown without readiness timestamps. Runner minutes sum parallel execution, not elapsed time or cost. Running jobs and post-job cache saves may be incomplete in this snapshot.",
     "",
-    "| Job | Execution | Queue | Result |",
+    "| Job | Execution | Scheduler queue | Result |",
     "| --- | ---: | ---: | --- |",
   ];
   for (const job of report.jobs) {
@@ -218,11 +265,15 @@ async function main() {
         `| ↳ ${step.name.replaceAll("|", "\\|")} | ${show(step.seconds)} | | ${step.conclusion ?? "pending"} |`,
       );
   }
-  for (const result of [...report.results.junit, ...report.results.rustfs])
+  for (const result of [
+    ...report.results.junit,
+    ...report.results.rustfs,
+    ...report.results.tap,
+  ])
     lines.push(
       "",
       `Tests (${result.path}): ${result.counts.passed} passed, ${result.counts.failed} failed, ${result.counts.skipped} skipped.`,
-      ...(result.slowest || result.tests)
+      ...(result.slowest || result.tests || [])
         .slice(0, 5)
         .map((t) => `- ${t.name}: ${show(t.seconds)} (${t.result})`),
     );
@@ -230,6 +281,14 @@ async function main() {
     lines.push(
       "",
       "No structured test counts were produced by this job; consult its command logs. Missing reports do not establish a pass.",
+    );
+  for (const phase of report.results.cargo)
+    lines.push(
+      `Cargo target preparation (${phase.path}, ${phase.profile}): ${show(phase.seconds)}. Includes compilation and dependency preparation.`,
+    );
+  for (const result of report.results.libtest)
+    lines.push(
+      `Libtest execution (${result.path}): ${show(result.execution_seconds)} across completed test binaries; excludes compilation and harness startup.`,
     );
   if (process.env.GITHUB_STEP_SUMMARY)
     appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");

@@ -173,3 +173,12 @@ required by its Pulsar dependency before compilation. Real-storage reports
 retain the fixture test inventory, counts and startup/cleanup failures alongside
 logs. API, native and embedded-storage standalone runs still compile local
 targets; their timings must not be described as execution-only archive reruns.
+
+Timing reports retain Node TAP counts and separate Cargo target preparation from
+completed libtest execution. Job creation-to-start measures scheduler waiting,
+which may include workflow concurrency waits; runner-only queueing and
+dependency waiting remain unknown without readiness timestamps. Completed-run
+measurements include post-job cache saves. A failed producer requires a fresh
+coordinator run: partial reruns cannot combine receipts or payloads from
+different attempts. Standalone test retries may reuse the original successful
+producer attempt, even when unrelated tests failed.

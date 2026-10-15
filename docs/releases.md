@@ -88,12 +88,20 @@ produced inputs. Expired or mismatched artifacts fail; start fresh full
 qualification to replace them. Standalone results do not replace the publication
 gate.
 
+Retry failed tests through the standalone suite using the original successful
+producer attempt. A failed producer needs a fresh coordinator invocation:
+GitHub's partial coordinator rerun increments the attempt and cannot mix earlier
+source, gate or payload artifacts into that new attempt.
+
 Compare `qualification-results-*` artifacts and job summaries. Archive consumers
 reuse compilation; API contracts, native checks and embedded-storage test
 binaries still compile locally, so those reruns are not execution-only
 measurements. Reports retain command logs, available JUnit/Playwright results,
-source/runner identity and job/step timings. Missing queue/dependency timestamps
-remain unknown. Runner minutes count parallel execution separately from elapsed
+source/runner identity and job/step timings. Creation-to-start timing is
+scheduler waiting and can include workflow concurrency queues. Runner-only
+queueing and dependency waits remain unknown without readiness timestamps.
+Native reports separate Cargo target preparation from completed libtest
+execution. Runner minutes count parallel execution separately from elapsed
 duration. Download completed-run job timestamps when measuring cache-save steps
 that execute after a job's report snapshot.
 
@@ -109,6 +117,17 @@ on the obsolete `mongodb-kingfisher@2.7.0` identity expectation. Its other
 shards were canceled and downstream qualification did not run. These remain
 historical failures; restructuring does not qualify those gaps or promote M30 to
 Done.
+
+The
+[parallel-suite measurements](../spec/src/history/2026/10/15/E-CI-SUITES-MEASURE-001/index.md)
+record coordinator run 38730859426 at `2d9cdf20` and six independent reruns
+using its verified producer attempt. The coordinator took 53m18s and 265.92
+runner-minutes. All producers, API contracts, storage acceptance and native
+platforms passed. Backend and UI failures remain; cold browser fixture setup
+failed before tests with `agent commands require a JJ workspace`. Profile
+restart and real-RustFS Git round-trip passed. These results do not establish
+release qualification. Earlier runs that skipped downstream suites are not
+complete performance baselines.
 
 ## Initial Cargo bootstrap
 
