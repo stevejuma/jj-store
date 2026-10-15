@@ -163,3 +163,7 @@ identity and passing baseline/cached-build tests are prerequisites. Adoption
 requires at least 10 percent improvement in median complete build-job duration,
 including setup, cache and artifact overhead. A failed or incomplete experiment
 cannot justify adoption. Routine PR and release checks do not run the trial.
+
+E-CI-SUITES-FIX-001 confirms JST-ARCH-005 is unchanged by extracting artifact
+layout declarations to satisfy the module-size gate. Source admission, checksum
+verification, coverage and complete qualification remain mandatory.

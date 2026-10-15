@@ -1,8 +1,8 @@
 # M30 public release
 
-| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                                       | Evidence                                                                                                                                                                                                                                                                                                                   |
-| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Complete release infrastructure qualification; bot governance exemptions verified | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001 |
+| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                                       | Evidence                                                                                                                                                                                                                                                                                                                                       |
+| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Complete release infrastructure qualification; bot governance exemptions verified | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001 |
 
 E-AUTOMATION-GOVERNANCE-001 qualifies the generated release/dependency PR
 exception. Static spec checks, all planned tests and publication gates remain;
@@ -65,6 +65,10 @@ complete diagnostics and timing evidence. M30 remains In progress: the
 Kingfisher identity regression exposed by run 38716420649 and unqualified
 downstream lanes are not waived. New hosted timing and standalone-suite results
 remain required before claiming measured coverage.
+
+E-CI-SUITES-FIX-001 records the first hosted governance failure and the
+behavior-preserving artifact-layout extraction. M30 remains In progress;
+complete hosted and standalone measurements are still required.
 <!-- generated-navigation -->
 
 ## Pages
