@@ -55,6 +55,7 @@
         title={`Checks for PR #${pr.number} · ${pr.sha.slice(0, 12)}`}
       >
         <CommunityChip
+          class="forge-branch-status__check"
           variant="muted"
           size="compact"
           tone={checks.state === "passed"
@@ -90,5 +91,22 @@
   .forge-branch-status__push,
   .forge-branch-status__separator {
     color: var(--muted-foreground);
+  }
+  .forge-branch-status :global(.forge-branch-status__check) {
+    height: calc(var(--spacing) * 6);
+    min-height: calc(var(--spacing) * 6);
+    border-radius: min(var(--radius-md), 8px);
+    padding-inline: calc(var(--spacing) * 2);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-medium);
+  }
+  .forge-branch-status
+    :global(.forge-branch-status__check[data-chip-tone="neutral"]) {
+    background-color: color-mix(
+      in srgb,
+      var(--foreground) 16%,
+      var(--background)
+    );
+    border-color: color-mix(in srgb, var(--foreground) 30%, var(--background));
   }
 </style>

@@ -1,8 +1,8 @@
 # M31 forge-agnostic stack submission
 
-| ID  | Status      | Depends | Requirements                                                                                      | Gate                                                            | Next                                                                        | Evidence                                                                                                                                                                                                                                                                |
-| --- | ----------- | ------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M31 | In progress | M21     | JST-FORGE-001,JST-FORGE-002,JST-FORGE-003,JST-FORGE-004,JST-FORGE-005,JST-FORGE-006,JST-FORGE-007 | Focused CLI/app submission, editing, CI and merge qualification | Run credentialed disposable-forge acceptance and packaged app qualification | E-FORGE-STACKS-001,E-FORGE-WORKSPACE-001,E-FORGE-PANEL-001,E-FORGE-DETAILS-001,E-FORGE-BUTTONS-001,E-FORGE-UNSUBMITTED-001,E-FORGE-EDIT-001,E-FORGE-INLINE-001,E-FORGE-FLOAT-STYLE-001,E-FORGE-FLOAT-DISCLOSURE-001,E-FORGE-BRANCH-STATUS-001,E-FORGE-INLINE-CHECKS-001 |
+| ID  | Status      | Depends | Requirements                                                                                      | Gate                                                            | Next                                                                        | Evidence                                                                                                                                                                                                                                                                                          |
+| --- | ----------- | ------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M31 | In progress | M21     | JST-FORGE-001,JST-FORGE-002,JST-FORGE-003,JST-FORGE-004,JST-FORGE-005,JST-FORGE-006,JST-FORGE-007 | Focused CLI/app submission, editing, CI and merge qualification | Run credentialed disposable-forge acceptance and packaged app qualification | E-FORGE-STACKS-001,E-FORGE-WORKSPACE-001,E-FORGE-PANEL-001,E-FORGE-DETAILS-001,E-FORGE-BUTTONS-001,E-FORGE-UNSUBMITTED-001,E-FORGE-EDIT-001,E-FORGE-INLINE-001,E-FORGE-FLOAT-STYLE-001,E-FORGE-FLOAT-DISCLOSURE-001,E-FORGE-BRANCH-STATUS-001,E-FORGE-INLINE-CHECKS-001,E-FORGE-BRANCH-STATUS-002 |
 
 The ordinary-local implementation includes submission, managed navigation,
 editing, CI controls, guarded merge and explicit Restack. Focused automated and
@@ -43,6 +43,9 @@ promoted. E-FORGE-INLINE-CHECKS-001 places explicit CI inspection in the
 existing PR body and qualifies visible header-action hover surfaces in both
 themes. Drafts, file diffs and floating lifecycle stay retained. M31 remains In
 progress; live provider, native/platform, packaged and visual gates remain open.
+E-FORGE-BRANCH-STATUS-002 extends under-title PR/status rows to dependent
+bookmarks and matches the running badge to compact PR controls. M31 remains In
+progress; provider, native/platform, packaged and visual gates remain open.
 <!-- generated-navigation -->
 
 ## Pages

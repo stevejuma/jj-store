@@ -43,7 +43,8 @@
     branch: card.branch,
   });
   const statusRow = $derived(
-    top && Boolean(controller.forge?.data?.connection),
+    Boolean(controller.forge?.data?.connection) &&
+      (top || Boolean(controller.forge?.pr(name))),
   );
 </script>
 

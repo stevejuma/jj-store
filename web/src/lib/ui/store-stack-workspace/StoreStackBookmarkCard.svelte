@@ -144,7 +144,7 @@
         {#if submitStack && controller.forge?.data?.connection && !controller.forge.pr(name)}
           <Button
             variant="outline"
-            size="sm"
+            size="xs"
             aria-label={`Create PR for ${name}`}
             disabled={controller.locked ||
               controller.forge.busy ||
@@ -161,6 +161,7 @@
       {#snippet afterPush()}{#if submitStack && controller.forge?.pr(name)}<StoreForgeButton
             {controller}
             {stack}
+            compact
           />{/if}{/snippet}
     </StoreStackBookmarkActions>{/if}
   <!-- Native drag events delegate to the owned graph's revision rows. -->

@@ -183,3 +183,8 @@ toggles the existing selected-revision CI/jobs/logs within the PR body, without
 changing its surface or reselecting an active PR. Header hover styling and local
 disclosure state preserve drafts, diff pins, capabilities, request identities,
 transport schemas and remote-effect guards.
+
+E-FORGE-BRANCH-STATUS-002 confirms JST-API-001 unchanged: dependent bookmark
+status rows reuse the same observed local/remote heads, CI snapshots and PR
+activation. Matching badge/button styling changes no reads, action schemas,
+publication guards, pending identities, drafts or operation-pinned selections.

@@ -38,9 +38,10 @@
     const lower = within(stack).getByRole("button", {
       name: "Pull request for feature/model",
     });
-    await expect(
-      lower.closest(".stack-workspace__branch-title-row"),
-    ).toBeInTheDocument();
+    const lowerRow = within(stack).getByRole("group", {
+      name: "Branch status for feature/model",
+    });
+    await expect(lower.parentElement).toBe(lowerRow);
     if (import.meta.env.MODE !== "test") return;
     const { userEvent: pointer } = await import("vitest/browser");
     const sample = document.createElement("canvas");

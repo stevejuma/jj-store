@@ -316,10 +316,12 @@ immediately before Push. It opens an inline title and Markdown chat composer
 above commits; new PR titles default to branch names. Dependency plans and
 Draft/Ready selection retain the existing guarded, explicit push/submit action.
 Cancel/reopen and refresh retain authored drafts and exact pending operations.
-The topmost submitted change places a compact, neutral bordered PR button in a
-wrapping status row immediately below its title, alongside push status and a CI
-badge. Lower changes retain trailing title-row PR buttons and CI metadata. Both
-button sizes retain opaque surfaces and distinct light/dark hover/focus. Push
+Every submitted change, including lower dependent changes, places a compact,
+neutral bordered PR button in a wrapping status row immediately below its title,
+alongside push status and a CI badge. The checks badge matches the compact PR
+button height and corner radius; Running uses the same neutral background and
+border, retaining its spinner. Passed/Failed retain their distinct status tones.
+PR controls retain opaque surfaces and distinct light/dark hover/focus. Push
 status compares exact local and last-observed open-PR SHA-1 heads: matching
 heads show Nothing to push and different heads show Changes to push. Missing,
 incomparable or stale observations show Push status unknown; these labels never
@@ -329,7 +331,9 @@ Capability, revision and completeness checks preserve explicit unavailable,
 unknown, stale, attention, no-checks and skipped states; absent or skipped
 checks never imply a pass. Text and icons distinguish status independently of
 colour. Submit stack stays in the column menu and beside Push on submitted top
-cards.
+cards. Submit stack, Create PR, Push and the branch action-bar icon buttons use
+the same compact height as the PR number control, preserving their capability,
+pending and command guards.
 
 A branch's PR appears as an expandable section above its selected file diff in
 the same adjacent details column, following the Op Log's separate-card layout.

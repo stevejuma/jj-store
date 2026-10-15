@@ -47,25 +47,28 @@ retain session-only authored drafts and pending identities; closing an unknown
 action never replaces or replays it. Cached plans retain their original guards
 and may be rejected as stale; explicit reopening never weakens server admission.
 
-Topmost submitted bookmarks place a compact neutral forge/PR button below the
-title, beside observed push status and a Passed/Failed/Running checks badge.
-Running/queued checks use a spinner. Lower bookmarks retain trailing title-row
-PR controls. Missing, stale or incomparable heads/checks remain explicitly
-unknown or unavailable; skipped checks do not imply success. Local versus
-observed open-PR head comparison supplies display-only push status, with no
-ancestor/ahead-count claim or additional mutation authority. PR/create/submit
-controls retain opaque bordered surfaces and distinct light/dark hover/focus.
-Submit stack remains in the column menu and beside Push for an already submitted
-top bookmark. PR details and file diffs share one adjacent details column per
-origin, mirroring the Op Log's separate cards: an expandable PR section first,
-then the selected file diff. A badge opens this column without requiring a file;
-selecting or switching files keeps the relevant branch's PR above its diff.
-Collapsing the PR preserves the file view; closing only the file preserves the
-PR. Stack cards contain no duplicate details section. The PR header owns its
-title, linked number, draft/state chip and pencil, float, checks and close
-icons. The body renders branch relationships and safe Markdown, omitting
-repeated title/number/state and repository-name metadata. The compact header
-menu owns Draft, Restack, provider-supported merge methods and explicitly
+All submitted bookmarks, including lower dependent segments, place a compact
+neutral forge/PR button below the title, beside observed push status and a
+Passed/Failed/Running checks badge. Checks badges share the PR control height
+and radius; Running shares its neutral bordered surface and retains a spinner.
+Passed/Failed retain distinct status tones. Missing, stale or incomparable
+heads/checks remain explicitly unknown or unavailable; skipped checks do not
+imply success. Local versus observed open-PR head comparison supplies
+display-only push status, with no ancestor/ahead-count claim or additional
+mutation authority. PR/create/submit controls retain opaque bordered surfaces
+and distinct light/dark hover/focus. Submit stack remains in the column menu and
+beside Push for an already submitted top bookmark. Submit/Create PR, Push and
+branch action-bar icons share the compact PR-button height and keep their
+existing command guards. PR details and file diffs share one adjacent details
+column per origin, mirroring the Op Log's separate cards: an expandable PR
+section first, then the selected file diff. A badge opens this column without
+requiring a file; selecting or switching files keeps the relevant branch's PR
+above its diff. Collapsing the PR preserves the file view; closing only the file
+preserves the PR. Stack cards contain no duplicate details section. The PR
+header owns its title, linked number, draft/state chip and pencil, float, checks
+and close icons. The body renders branch relationships and safe Markdown,
+omitting repeated title/number/state and repository-name metadata. The compact
+header menu owns Draft, Restack, provider-supported merge methods and explicitly
 confirmed guarded merge. An accessible pencil reveals title/composer editing,
 with no redundant Description label. Inspect checks expands the PR as needed and
 toggles the existing revision-bound checks/jobs/logs below the description in

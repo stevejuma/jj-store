@@ -36,7 +36,7 @@
       name: "Pull request for feature/api",
     });
     await expect(pr).toHaveTextContent("PR #42");
-    await expect(pr.getBoundingClientRect().height).toBeLessThan(
+    await expect(pr.getBoundingClientRect().height).toBe(
       within(stack)
         .getByRole("button", { name: "Submit stack feature/api" })
         .getBoundingClientRect().height,
@@ -70,6 +70,37 @@
     await expect(
       checks.querySelector('[data-ui-component="spinner"]'),
     ).toBeNull();
+  }}
+/>
+<Story
+  name="Dependent branch shows compact PR and checks below its title"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stack = await canvas.findByRole("region", {
+      name: "Stack feature/api",
+    });
+    const row = await within(stack).findByRole("group", {
+      name: "Branch status for feature/model",
+    });
+    const title = within(stack).getByRole("button", {
+      name: "Show all changes in feature/model",
+    });
+    await expect(row.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      title.getBoundingClientRect().bottom,
+    );
+    const pr = within(row).getByRole("button", {
+      name: "Pull request for feature/model",
+    });
+    await expect(pr).toHaveTextContent("PR #41");
+    await expect(within(row).getByText("Nothing to push")).toBeVisible();
+    await expect(
+      within(row).getByRole("status", { name: "Checks passed" }),
+    ).toBeVisible();
+    await userEvent.click(pr);
+    await expect(
+      await canvas.findByRole("region", { name: "PR 41" }),
+    ).toBeVisible();
+    await expect(title).toHaveAttribute("aria-pressed", "false");
   }}
 />
 <Story
