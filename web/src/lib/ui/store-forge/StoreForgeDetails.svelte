@@ -16,6 +16,7 @@
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   import X from "@lucide/svelte/icons/x";
   import "./forge-inline.css";
+  import "./store-forge.css";
   let {
     controller,
     branch,
@@ -23,6 +24,7 @@
   }: { controller: ForgeController; branch: string; onClose: () => void } =
     $props();
   let editing = $state(false);
+  let checksOpen = $state(false);
   const selected = $derived(
     controller.surface === "inline" && controller.selected?.head === branch,
   );
@@ -31,6 +33,11 @@
     Boolean(selected && pr && controller.detailsExpanded),
   );
   const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const identity = $derived(pr?.number);
+  $effect(() => {
+    identity;
+    checksOpen = false;
+  });
   $effect(() => controller.watch(branch));
   function expand(open: boolean) {
     if (open && pr) {
@@ -95,7 +102,7 @@
               <CommunityChip variant="muted"
                 >{pr.draft ? "Draft" : pr.state}</CommunityChip
               >
-              <div class="forge-inline__actions">
+              <div class="forge-inline__actions forge-header-actions">
                 <StoreForgePullRequestActions {controller} {branch} />
                 <Tooltip.Provider>
                   <Tooltip.Root
@@ -151,9 +158,12 @@
                           variant="ghost"
                           size="icon-sm"
                           aria-label="Inspect checks"
+                          aria-expanded={expanded && checksOpen}
                           disabled={blocked}
                           onclick={() => {
-                            if (pr) controller.select(pr.head);
+                            const open = !expanded || !checksOpen;
+                            if (!expanded) expand(true);
+                            checksOpen = open;
                           }}><ListChecks aria-hidden="true" /></Button
                         >
                       {/snippet}</Tooltip.Trigger
@@ -175,7 +185,7 @@
                   <StoreForgePullRequest
                     {controller}
                     bind:editing
-                    showChecks={false}
+                    showChecks={checksOpen}
                   />
                 </div>
               {/if}

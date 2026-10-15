@@ -341,8 +341,13 @@ linked PR number, draft/state chip and action icons. Merge method, guarded
 merge, draft and Restack controls share its compact actions menu. The body omits
 repeated identity and repository-name metadata, renders Markdown and uses an
 icon-only header pencil for editing; no body Edit details button or Description
-label. Detailed checks are omitted from this section and remain available
-through explicit Inspect checks in the existing adjacent column.
+label. Inspect checks expands the PR if needed and toggles revision-bound
+checks, jobs, logs and permitted run actions below its description in the same
+body, including while floating. It never opens a separate column or replaces the
+file diff, authored draft or selected job/log view. Checks start hidden. Header
+actions have visible themed hover, open-menu and keyboard-focus surfaces in both
+themes. The collapsible title trigger stays transparent in docked and floating
+views; only its docked form is interactive. Disabled actions stay inert.
 Merge/draft/Restack actions preserve provider capability and pending guards.
 Creation and details share the forge-independent detachable-panel adapter:
 released floating window controls own moving, resizing, minimizing, maximizing

@@ -231,7 +231,7 @@
       within(details).getByRole("button", { name: "Inspect checks" }),
     );
     await expect(
-      await canvas.findByRole("region", { name: "CI checks" }),
+      await within(details).findByRole("region", { name: "CI checks" }),
     ).toBeVisible();
   }}
 />

@@ -15,7 +15,6 @@
   border-block-end: 1px solid var(--border);
 }
 .forge-inline--floating .forge-inline__title button {
-  background: transparent;
   pointer-events: none;
   opacity: 1;
 }
@@ -37,6 +36,7 @@
   font-size: var(--text-sm, 0.875rem);
 }
 .forge-inline__title button {
+  background: transparent;
   width: 100%;
   min-width: 0;
   justify-content: flex-start;

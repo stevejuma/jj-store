@@ -177,3 +177,9 @@ status row uses existing local bookmark heads, observed PR heads and revision-
 bound check snapshots. It adds no reads, mutation eligibility or schema, and
 unknown/incomparable data remains explicit. Forge actions and pending guards are
 unchanged.
+
+E-FORGE-INLINE-CHECKS-001 confirms JST-API-001 unchanged: inspecting checks
+toggles the existing selected-revision CI/jobs/logs within the PR body, without
+changing its surface or reselecting an active PR. Header hover styling and local
+disclosure state preserve drafts, diff pins, capabilities, request identities,
+transport schemas and remote-effect guards.

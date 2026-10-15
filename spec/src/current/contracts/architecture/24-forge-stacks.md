@@ -67,11 +67,15 @@ icons. The body renders branch relationships and safe Markdown, omitting
 repeated title/number/state and repository-name metadata. The compact header
 menu owns Draft, Restack, provider-supported merge methods and explicitly
 confirmed guarded merge. An accessible pencil reveals title/composer editing,
-with no redundant Description label. Detailed checks are absent from this inline
-or floating PR section. Inspect checks explicitly opens the existing
-revision-bound CI/job/log/actions column; missing, incomplete or stale checks
-never imply success. Capability and pending guards, merge protection and
-explicit Restack remain unchanged.
+with no redundant Description label. Inspect checks expands the PR as needed and
+toggles the existing revision-bound checks/jobs/logs below the description in
+its own body, including while floating. Checks start hidden; inspection opens no
+extra column and preserves the file diff, draft and selected job/log view.
+Missing, incomplete or stale checks never imply success. Header actions have
+distinct themed hover, open-menu and keyboard-focus surfaces, retaining disabled
+guards. The title disclosure stays transparent in both hosts and is interactive
+only while docked. Capability and pending guards, merge protection and explicit
+Restack remain unchanged.
 
 Creation and PR details can float and redock through one application-owned,
 forge-independent detachable-panel adapter over released Design Core floating

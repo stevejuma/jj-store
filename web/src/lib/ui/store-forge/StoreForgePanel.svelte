@@ -51,7 +51,7 @@
           : controller.selected.state}</CommunityChip
       >
     {/if}
-    <ColumnCanvas.HeaderActions>
+    <ColumnCanvas.HeaderActions class="forge-header-actions">
       {#if controller.selected}<StoreForgePullRequestActions
           {controller}
         />{/if}
