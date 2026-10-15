@@ -82,6 +82,7 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
         | Command::Squash { .. }
         | Command::Uncommit { .. }
         | Command::Rebase { .. }
+        | Command::ForgeRestack { .. }
         | Command::SquashBranch { .. }) => {
             graph::validate(
                 &repo,

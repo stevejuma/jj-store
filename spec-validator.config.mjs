@@ -189,6 +189,12 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^crates/jj-forge/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/24-forge-stacks\\.md$",
+          ],
+        },
+        {
           pattern: "^crates/jj-workflow/",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/21-workflow-host\\.md$",

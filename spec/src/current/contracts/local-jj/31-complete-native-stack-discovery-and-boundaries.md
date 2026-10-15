@@ -15,3 +15,12 @@ stack; grouped unapply retains explicit members shared with another active lane.
 Existing commit/create controls admit proven dependencies of applied heads while
 retaining native immutable, target, operation and configuration guards. No
 membership migration is implied.
+
+JST-FORGE-006 adds an explicit ordinary-local forge Restack action. Its preview
+pins the operation, configuration, first remaining segment boundary and fetched
+target head. Execution imports that exact target and uses native descendant
+rebasing, retaining WIP/change identities and native conflicts. It selects the
+approved remote-tracking target for the active combination and removes only
+observed landed membership. Shared-root and cross-combination rewrites remain
+unavailable until their affected-selection preview is qualified. Unknown local
+outcomes require operation inspection and are never automatically replayed.

@@ -136,7 +136,7 @@ Usage: jj-store stack [OPTIONS] [COMMAND]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -157,7 +157,378 @@ Usage: jj-store stack status [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack submit
+
+Push the exact dependency chain and create/update its forge PRs
+
+```text
+Usage: jj-store stack submit [OPTIONS] <BOOKMARK>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `bookmark` | Exact source bookmark name, where the selected workflow trigger requires one. Required. |  |
+| `--ready <READY>` | Create ready-for-review PRs; drafts are the default | Default: false; Values: true, false |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack restack
+
+Preview or explicitly rebase and publish the remaining stack
+
+```text
+Usage: jj-store stack restack [OPTIONS] <BOOKMARK>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `bookmark` | Exact source bookmark name, where the selected workflow trigger requires one. Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr
+
+Inspect and manage forge pull/merge requests
+
+```text
+Usage: jj-store stack pr [OPTIONS] <COMMAND>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr list
+
+Show the configured forge, PRs and current capabilities
+
+```text
+Usage: jj-store stack pr list [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr configure
+
+Approve this device-local forge connection (token comes from JJ_STORE_FORGE_TOKEN)
+
+```text
+Usage: jj-store stack pr configure [OPTIONS] --provider <PROVIDER> --api-url <API_URL> --repository <REPOSITORY>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--provider <PROVIDER>` | Forge provider for this connection Required. | Values: github, gitlab, forgejo |
+| `--api-url <API_URL>` | Explicit approved HTTPS API root Required. |  |
+| `--repository <REPOSITORY>` | Target repository path, including GitLab subgroups Required. |  |
+| `--source-repository <SOURCE_REPOSITORY>` | Source repository path when submitting from a fork |  |
+| `--remote <REMOTE>` | Approved remote for publishing branch heads | Default: origin |
+| `--target-remote <TARGET_REMOTE>` | Approved remote containing the upstream target branch | Default: origin |
+| `--target <TARGET>` | Upstream target branch name | Default: main |
+| `--native-stacks <NATIVE_STACKS>` | Use native GitHub membership for eligible same-repository chains | Default: false; Values: true, false |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr show
+
+```text
+Usage: jj-store stack pr show [OPTIONS] <NUMBER>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr edit
+
+Update authored title/body against an exact current body
+
+```text
+Usage: jj-store stack pr edit [OPTIONS] --title <TITLE> --body-file <BODY_FILE> <NUMBER>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `--title <TITLE>` | Complete new authored PR title Required. |  |
+| `--body-file <BODY_FILE>` | File containing the complete intended PR description Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr draft
+
+```text
+Usage: jj-store stack pr draft [OPTIONS] <NUMBER>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `--ready <READY>` | Mark ready for review instead of draft | Default: false; Values: true, false |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr checks
+
+```text
+Usage: jj-store stack pr checks [OPTIONS] <NUMBER>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr jobs
+
+```text
+Usage: jj-store stack pr jobs [OPTIONS] <NUMBER> <RUN>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `run` | Exact run or pipeline ID belonging to the PR revision Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr logs
+
+```text
+Usage: jj-store stack pr logs [OPTIONS] <NUMBER> <RUN> <JOB>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `run` | Exact run or pipeline ID belonging to the PR revision Required. |  |
+| `job` | Exact job ID belonging to the selected run Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr rerun
+
+```text
+Usage: jj-store stack pr rerun [OPTIONS] <NUMBER> <RUN>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `run` | Exact run or pipeline ID belonging to the PR revision Required. |  |
+| `--failed-only <FAILED_ONLY>` | Retry failed jobs using the supported provider operation | Default: false; Values: true, false |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr cancel
+
+```text
+Usage: jj-store stack pr cancel [OPTIONS] <NUMBER> <RUN>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `run` | Exact run or pipeline ID belonging to the PR revision Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr merge
+
+```text
+Usage: jj-store stack pr merge [OPTIONS] <NUMBER>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `--method <METHOD>` | Merge method supported by the configured forge | Default: squash; Values: merge, squash, rebase |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr merge-status
+
+```text
+Usage: jj-store stack pr merge-status [OPTIONS] <NUMBER> <RECEIPT>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `number` | Pull request or merge request number in the target repository Required. |  |
+| `receipt` | Original asynchronous merge receipt identifier Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr recover
+
+Observe and resume known-unexecuted steps; never replay an unknown effect
+
+```text
+Usage: jj-store stack pr recover [OPTIONS] <REQUEST_ID>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `request_id` | Original retained request identity for observation and recovery Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack pr operation-status
+
+```text
+Usage: jj-store stack pr operation-status [OPTIONS] <REQUEST_ID>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `request_id` | Original retained request identity for observation and recovery Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -180,7 +551,7 @@ Usage: jj-store stack list [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -206,7 +577,7 @@ Usage: jj-store stack show [OPTIONS] <BOOKMARK>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -229,7 +600,7 @@ Usage: jj-store stack init [OPTIONS] --name <NAME> --target <TARGET>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -250,7 +621,7 @@ Usage: jj-store stack workspace [OPTIONS] <COMMAND>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -271,7 +642,7 @@ Usage: jj-store stack workspace list [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -293,7 +664,7 @@ Usage: jj-store stack workspace create [OPTIONS] <NAME>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -315,7 +686,7 @@ Usage: jj-store stack workspace switch [OPTIONS] <WORKSPACE>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -338,7 +709,7 @@ Usage: jj-store stack workspace update [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -360,7 +731,7 @@ Usage: jj-store stack workspace delete [OPTIONS] <WORKSPACE>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -382,7 +753,7 @@ Usage: jj-store stack apply [OPTIONS] <BOOKMARK>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -405,7 +776,7 @@ Usage: jj-store stack unapply [OPTIONS] <BOOKMARK>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -428,7 +799,7 @@ Usage: jj-store stack create [OPTIONS] <NAME>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -449,7 +820,7 @@ Usage: jj-store stack branch [OPTIONS] <COMMAND>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -473,7 +844,7 @@ Usage: jj-store stack branch create [OPTIONS] <--above <ABOVE>|--below <BELOW>> 
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -496,7 +867,7 @@ Usage: jj-store stack branch rename [OPTIONS] <OLD> <NEW>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -518,7 +889,7 @@ Usage: jj-store stack branch delete [OPTIONS] <NAME>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -540,7 +911,7 @@ Usage: jj-store stack rebase [OPTIONS] <BOOKMARK>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -562,7 +933,7 @@ Usage: jj-store stack squash-branch [OPTIONS] <BOOKMARK>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -592,7 +963,7 @@ Usage: jj-store stack commit [OPTIONS] --branch <BRANCH> <--message <MESSAGE>|--
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -622,7 +993,7 @@ Usage: jj-store stack edit [OPTIONS] <--message <MESSAGE>|--message-file <MESSAG
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -652,7 +1023,7 @@ Usage: jj-store stack split [OPTIONS] <--message <MESSAGE>|--message-file <MESSA
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -680,7 +1051,7 @@ Usage: jj-store stack transfer [OPTIONS] --to <TO> [-- <PATHS>...]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -704,7 +1075,7 @@ Usage: jj-store stack reword [OPTIONS] <--message <MESSAGE>|--message-file <MESS
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -729,7 +1100,7 @@ Usage: jj-store stack empty [OPTIONS] <--above <ABOVE>|--below <BELOW>> <--messa
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -753,7 +1124,7 @@ Usage: jj-store stack move [OPTIONS] <--above <ABOVE>|--below <BELOW>> <REVISION
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -776,7 +1147,7 @@ Usage: jj-store stack squash [OPTIONS] --into <INTO> <REVISION>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -798,7 +1169,7 @@ Usage: jj-store stack uncommit [OPTIONS] <REVISION>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -820,7 +1191,7 @@ Usage: jj-store stack abandon [OPTIONS] <REVISION>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -846,7 +1217,7 @@ Usage: jj-store stack diff [OPTIONS] [PATH]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -869,7 +1240,7 @@ Usage: jj-store stack hunks [OPTIONS] <PATH>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -896,7 +1267,7 @@ Usage: jj-store stack discard [OPTIONS] [-- <PATHS>...]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -918,7 +1289,7 @@ Usage: jj-store stack conflicts [OPTIONS] [PATH]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -941,7 +1312,7 @@ Usage: jj-store stack resolve [OPTIONS] --file <FILE> <PATH>
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -962,7 +1333,7 @@ Usage: jj-store stack refresh [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -983,7 +1354,7 @@ Usage: jj-store stack reconcile [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -1004,7 +1375,7 @@ Usage: jj-store stack undo [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
@@ -1025,7 +1396,7 @@ Usage: jj-store stack redo [OPTIONS]
 | `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
 | `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
 | `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
-| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm destructive local actions, forge merge or Restack Inherited by subcommands. | Default: false; Values: true, false |
 | `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
 | `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |

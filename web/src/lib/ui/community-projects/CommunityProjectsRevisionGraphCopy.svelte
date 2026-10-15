@@ -1,4 +1,8 @@
 <script lang="ts">
+  import {
+    TagList,
+    type TagListItem,
+  } from "@lapismd/design-core/shadcn/tag-list";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { RepositoryLogGraphRow } from "../../projects/repository-log-graph.js";
@@ -33,16 +37,55 @@
       ? revisionCollaboration(row.revision, collaborationContext)
       : undefined,
   );
+  const tags = $derived.by((): TagListItem[] => {
+    const revision = row.revision;
+    return [
+      ...(revision.reason === "merge"
+        ? [{ id: "merge", label: "Merge", variant: "secondary" as const }]
+        : []),
+      ...(revision.divergent
+        ? [{ id: "divergent", label: "Divergent", tone: "warning" as const }]
+        : []),
+      ...(revision.conflicted
+        ? [{ id: "conflicted", label: "Conflicted", tone: "danger" as const }]
+        : []),
+      ...revision.bookmarks.map((bookmark) => ({
+        id: `bookmark:${JSON.stringify([bookmark.name, bookmark.remote, bookmark.added, bookmark.removed])}`,
+        label: `${bookmark.name}${bookmark.remote ? `@${bookmark.remote}` : ""}`,
+        tone: bookmark.conflicted
+          ? ("danger" as const)
+          : bookmark.remote
+            ? ("neutral" as const)
+            : ("accent" as const),
+      })),
+      ...revision.workspaces.map((workspace) => ({
+        id: `workspace:${workspace}`,
+        label:
+          workspace === "default"
+            ? "Working copy"
+            : `Working copy · ${workspace}`,
+        tone: "success" as const,
+      })),
+      ...(revision.operationSnapshot
+        ? [{ id: "snapshot", label: "Snapshot", variant: "secondary" as const }]
+        : []),
+      ...row.deviceAliases.map((alias) => ({
+        id: `device:${alias}`,
+        label: alias,
+        tone: "accent" as const,
+      })),
+    ];
+  });
 </script>
 
-<span class="community-revision-graph-copy">
+<div class="community-revision-graph-copy">
   <CommunityProjectsGitAuthorAvatar
     {members}
     email={row.revision.authorEmail}
     name={row.revision.author}
     size={avatarSize}
   />
-  <span class="community-revision-graph-copy__body">
+  <div class="community-revision-graph-copy__body">
     <span class="community-revision-graph-copy__message">
       {#if selected}<CommunityChip size="compact" variant="muted"
           >Selected</CommunityChip
@@ -56,66 +99,14 @@
     <span class="community-revision-graph-copy__meta">
       <CommunityRelativeTime timestamp={row.revision.createdAt} {now} />
     </span>
-    {#if row.revision.reason === "merge" || row.revision.divergent || row.revision.conflicted || row.revision.bookmarks.length > 0 || row.revision.workspaces.length > 0 || row.revision.operationSnapshot || row.deviceAliases.length > 0}
-      <span class="community-revision-graph-copy__chips">
-        {#if row.revision.reason === "merge"}
-          <CommunityChip size="compact" variant="muted" ariaHidden
-            >Merge</CommunityChip
-          >
-        {/if}
-        {#if row.revision.divergent}
-          <CommunityChip size="compact" tone="warning">Divergent</CommunityChip>
-        {/if}
-        {#if row.revision.conflicted}
-          <CommunityChip size="compact" tone="danger">Conflicted</CommunityChip>
-        {/if}
-        {#each row.revision.bookmarks as bookmark (`${bookmark.name}:${bookmark.remote ?? "local"}:${bookmark.added}:${bookmark.removed}`)}
-          <CommunityChip
-            size="compact"
-            tone={bookmark.conflicted
-              ? "danger"
-              : bookmark.remote
-                ? "neutral"
-                : "accent"}
-            title={bookmark.removed && !bookmark.added
-              ? `Removed bookmark target · ${bookmark.name}${bookmark.remote ? `@${bookmark.remote}` : ""}`
-              : bookmark.remote
-                ? `Remote bookmark · ${bookmark.name}@${bookmark.remote}`
-                : `Local bookmark · ${bookmark.name}`}
-            ><span class="community-revision-graph-copy__chip-label"
-              >{bookmark.name}{bookmark.remote
-                ? `@${bookmark.remote}`
-                : ""}</span
-            ></CommunityChip
-          >
-        {/each}
-        {#each row.revision.workspaces as workspace (workspace)}
-          <CommunityChip
-            size="compact"
-            tone="success"
-            title={`Workspace ${workspace}`}
-            ><span class="community-revision-graph-copy__chip-label"
-              >{workspace === "default"
-                ? "Working copy"
-                : `Working copy · ${workspace}`}</span
-            ></CommunityChip
-          >
-        {/each}
-        {#if row.revision.operationSnapshot}
-          <CommunityChip size="compact" variant="muted">Snapshot</CommunityChip>
-        {/if}
-        {#each row.deviceAliases as alias (alias)}
-          <CommunityChip size="compact" tone="accent" title={alias}
-            ><span class="community-revision-graph-copy__chip-label"
-              >{alias}</span
-            ></CommunityChip
-          >
-        {/each}
-      </span>
-    {/if}
-  </span>
+    <TagList
+      {tags}
+      label="Revision tags"
+      onclick={(event) => event.stopPropagation()}
+    />
+  </div>
   {#if activity}<CommunityProjectsRevisionCollaboration {activity} />{/if}
-</span>
+</div>
 
 <style>
   .community-revision-graph-copy {
@@ -153,23 +144,5 @@
     align-items: center;
     color: var(--muted-foreground);
     font-size: var(--community-text-secondary);
-  }
-
-  .community-revision-graph-copy__chips {
-    display: flex;
-    min-width: 0;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.3rem;
-  }
-  .community-revision-graph-copy__chips :global(.community-chip) {
-    max-inline-size: min(16rem, 100%);
-    min-inline-size: 0;
-  }
-  .community-revision-graph-copy__chip-label {
-    min-inline-size: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 </style>

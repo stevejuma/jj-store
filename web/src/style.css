@@ -1,3 +1,4 @@
+@import "./utilities.css";
 @import "@lapismd/design-core/styles.css";
 @import "./lib/ui/community-typography.css";
 @import "./lib/appearance/theme-palettes.css";

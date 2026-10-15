@@ -95,6 +95,9 @@
     const replyInput = within(replies).getByRole("textbox", {
       name: "Markdown editor",
     });
+    await waitFor(() =>
+      expect(getComputedStyle(replyInput).pointerEvents).not.toBe("none"),
+    );
     await userEvent.click(replyInput);
     await userEvent.type(replyInput, "A reply{Control>}{Enter}{/Control}");
     await expect(
@@ -220,9 +223,11 @@
     );
     const actionRow = create.closest(".community-settings__option-row")!;
     await expect(actionRow).not.toContainElement(title);
-    await expect(create.getBoundingClientRect().right).toBeGreaterThan(
-      actionRow.getBoundingClientRect().left +
-        actionRow.getBoundingClientRect().width / 2,
+    await waitFor(() =>
+      expect(create.getBoundingClientRect().right).toBeGreaterThan(
+        actionRow.getBoundingClientRect().left +
+          actionRow.getBoundingClientRect().width / 2,
+      ),
     );
     await userEvent.type(title, "Shared planning");
     const picker = within(dialog).getByRole("combobox", {
@@ -283,6 +288,9 @@
     const input = within(composer).getByRole("textbox", {
       name: "Markdown editor",
     });
+    await waitFor(() =>
+      expect(getComputedStyle(input).pointerEvents).not.toBe("none"),
+    );
     await userEvent.click(input);
     await userEvent.clear(input);
     await userEvent.type(input, "An edited message");

@@ -14,16 +14,19 @@ it requires no external image request. Existing SVG media type, bundle size/path
 validation, strict CSP and API authorization remain unchanged. No API, schema,
 publication or preference format is added.
 
-Device appearance is browser-owned presentation state under JST-UI-018. It is
-independent of server settings revisions, repository operations and receipts.
-Settings font-family, heading and row-text alignment retains the existing device
-preference schema, save/preview behavior and public palette tokens. Appearance
-changes make no repository mutation or website metadata requests. Merge
-qualification retains physical working-copy actions, native tool review reads
-and local repository review creation in the shared controller contract.
-Confirmed WorkStore reactions reload only their exact target through existing
-authorized reads; request identities and observed slot preconditions are
-unchanged.
+Device appearance is browser-owned presentation state under JST-UI-018. The v1
+links preference accepts Inline, Compact and Rich; unset/invalid values use
+Inline while existing valid card choices survive. Link classification and
+locally bundled site icons introduce no backend endpoint, metadata requests or
+credential access. It is independent of server settings revisions, repository
+operations and receipts. Settings font-family, heading and row-text alignment
+retains the existing device preference schema, save/preview behavior and public
+palette tokens. Appearance changes make no repository mutation or website
+metadata requests. Merge qualification retains physical working-copy actions,
+native tool review reads and local repository review creation in the shared
+controller contract. Confirmed WorkStore reactions reload only their exact
+target through existing authorized reads; request identities and observed slot
+preconditions are unchanged.
 
 E-CHAT-CARET-001 changes only browser-owned Document caret geometry and draft
 insets. Thread and agent source identities, UTF-8 selectors, retained drafts and

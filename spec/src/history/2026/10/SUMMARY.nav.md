@@ -24,7 +24,9 @@
   {{#include 12/SUMMARY.nav.md}}
 - [13](13/index.md)
   {{#include 13/SUMMARY.nav.md}}
-- [Evidence — 2026-10-14](14/index.md)
+- [2026-10-14](14/index.md)
   {{#include 14/SUMMARY.nav.md}}
 - [Evidence — 2026-10-15](15/index.md)
   {{#include 15/SUMMARY.nav.md}}
+- [16](16/index.md)
+  {{#include 16/SUMMARY.nav.md}}

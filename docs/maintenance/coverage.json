@@ -53,8 +53,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed shared bounded native cache admission. Ordinary graph construction now evicts only idle managed code namespaces, with repository-scoped eviction and active locks retained. Native identities, membership, limits and durable source state remain unchanged.",
-      "fingerprint": "2df19eeefeaa1495da559225f86d2877f6ee5b730beee5998b12134e62adca03"
+      "reason": "Reviewed ordinary-local forge transport and real-Git acceptance: automatic managed links update after landing without local code/base mutation; explicit Restack retains change identity and drafts. Git guide describes limits; native storage/publication semantics are unchanged.",
+      "fingerprint": "f4689d6acdd3f14864df0539efa91dd73b8950ea0a477f5e6c5080ea3bc05670"
     }
   },
   {
@@ -66,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed unchanged physical permission masks and PATH-resolved JJ in the test-only WorkStore cache fixture. Bounds, physical fingerprints, authorization, immutable source selection and API responses are unchanged; generated CLI reference now also includes its existing version option.",
-      "fingerprint": "8ea328815d0f2b6b42a01a0a59c9dc570532695f42d0e194ebd10941db3a6807"
+      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
+      "fingerprint": "b0ae129678c10c67d9fd9a43bc146b809cff228ff491585b192965891c7d5210"
     }
   },
   {
@@ -110,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed collision-safe jj-store/jj-store-jj public executables and package-owned help. Updated installation examples to the managed Cargo entry point and coordinated Cargo package.",
-      "fingerprint": "2d25ea318269f8b18fb556d2c0c13fbe9a6e8f673d52f41f67b2c8b716d44c50"
+      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
+      "fingerprint": "578e7264c187102d8ed21a078348d225d7982c93c6a02137051286e6540f3950"
     }
   },
   {
@@ -123,8 +123,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed equivalent LocalTrusted binding validation and source formatting. No routes, admission policies, wire responses or browser capabilities changed.",
-      "fingerprint": "bd9df34676d4386cfe46d06aefc97139c49a9e658057d8c90599f24396731732"
+      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
+      "fingerprint": "ac27450d69e3702b5604f445da656fad7515a45152e974de15f7898d5de38090"
     }
   },
   {
@@ -137,7 +137,7 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Search save failures remain visible through status refresh until the draft is cancelled or an explicit save succeeds.",
+      "reason": "Prior Search review: Search save failures remain visible through status refresh until the draft is cancelled or an explicit save succeeds. Prior forge review: Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates. Combined-source review remains unqualified; tests were skipped by user request.",
       "fingerprint": "137fc87a106bc9ac81ced8a59ebbe7ccc8786d55f6fad68fe684e50df259e0de"
     }
   },
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated GitHub executor, skipped status, optional event/context/log scope and bounded step report contracts plus workflow source CLI help; paired readers must upgrade.",
-      "fingerprint": "529c9859a159ca00dad6f82cae07388741599f10bea6d96d057ad027a904ffa0"
+      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
+      "fingerprint": "9e9ed6a627a65cff249162f844e6604dc6b6d1cc15eb7bf5c084dfb4564c13f1"
     }
   },
   {
@@ -194,6 +194,15 @@
     "review": {
       "reason": "Reviewed Cargo distribution metadata only; read-index source, exact-root fingerprints, posting invariants, bounded retention and native authority separation remain unchanged.",
       "fingerprint": "6269ce044ebe95a7a454a2c6e0a7f8cdb0c4b2c3b07d0368dd0b9ef8db16f784"
+    }
+  },
+  {
+    "id": "forge-stacks",
+    "sources": ["crates/jj-forge/src"],
+    "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
+    "review": {
+      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
+      "fingerprint": "d7e8ba2512c371878acf7b0ef2d2584a3514a4a9d7e5abc7c2373ff59bf65aea"
     }
   }
 ]

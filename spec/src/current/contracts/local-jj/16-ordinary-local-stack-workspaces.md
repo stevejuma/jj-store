@@ -80,3 +80,15 @@ requiring HTTP registration. Non-snapshot inspections and dry runs load exactly
 one existing operation head and never reconcile heads. CLI execution snapshots
 before resolving selectors, then retains the existing operation/configuration
 and native selection guards; stale outcomes are not automatically retried.
+
+GitHub integration accounts and repository forge bindings are device-local
+external-service state, separate from workspace TOML and portable companion
+metadata. JST-LOCAL-005's native commit, WIP, operation/configuration and
+checkout contracts remain unchanged. Detecting or binding a forge must not
+snapshot, rewrite or reconcile the code repository. Credentials never enter
+checkout; OS-keychain references and account metadata live outside it. Binding
+an account to an existing connection preserves endpoint identities, submission
+receipts, uncertain outcomes and authored UI drafts. Forget disables linked
+access without deleting those journals or automatically retrying any external
+effect. This addition does not qualify manifest-backed/native-storage stack
+submission.

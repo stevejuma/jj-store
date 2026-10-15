@@ -7,6 +7,7 @@
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import ServerIcon from "@lucide/svelte/icons/server";
   import CpuIcon from "@lucide/svelte/icons/cpu";
+  import PlugIcon from "@lucide/svelte/icons/plug";
   import type { StoreSettingsSection } from "./model.js";
   import "./StoreSettingsNavigation.css";
 
@@ -37,6 +38,7 @@
       label: "App",
       items: [
         { id: "service", label: "Local service", icon: ServerIcon },
+        { id: "integrations", label: "Integrations", icon: PlugIcon },
         { id: "agents", label: "Agents", icon: BotIcon },
         { id: "compute", label: "Compute", icon: CpuIcon },
       ],

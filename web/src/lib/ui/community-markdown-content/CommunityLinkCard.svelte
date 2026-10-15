@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { useAppearance } from "../../appearance/store.svelte.js";
   import { localLink } from "../../appearance/local-link.js";
-  let { href, label = "" }: { href: string; label?: string } = $props();
-  const appearance = useAppearance();
+  let {
+    href,
+    label = "",
+    layout,
+  }: { href: string; label?: string; layout: "compact" | "rich" } = $props();
   const link = $derived(localLink(href, label));
 </script>
 
 {#if link}<a
     class="store-link-card"
-    data-layout={appearance?.live.links ?? "compact"}
+    data-layout={layout}
     href={link.href}
     aria-label={link.label}
     target="_blank"

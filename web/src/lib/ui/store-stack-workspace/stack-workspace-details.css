@@ -1,0 +1,25 @@
+/* The same two-card composition as the repository Op Log details column. */
+.stack-workspace-details[data-ui-part="column"] {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.stack-workspace-details__sections {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.stack-workspace-details__file {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--ui-column-canvas-radius, var(--radius));
+  background: var(--background);
+}
+.stack-workspace-details__patch {
+  padding: 0.5rem;
+}
+.stack-workspace-details__empty {
+  min-height: 12rem;
+  padding: 1.5rem;
+}

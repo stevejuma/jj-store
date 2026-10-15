@@ -21,7 +21,6 @@
 - [Interactive agent execution](20-interactive-agent-execution.md)
 - [Local compute resources](21-local-compute-resources.md)
 - [Lightweight workflow host (M28)](21-workflow-host.md)
-
 - [Custom data index ownership](22-custom-data-indexes.md)
-
 - [Public distribution and release orchestration](23-public-distribution.md)
+- [Forge-agnostic stack submission](24-forge-stacks.md)

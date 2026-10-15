@@ -36,3 +36,5 @@ rows record requirement coverage; milestone task status remains in Progress.
 - [Workflows verification](workflows.md)
 
 - [Public distribution verification](public-distribution.md)
+
+- [FORGE verification](forge.md)

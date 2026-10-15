@@ -120,3 +120,104 @@ Stacks presentation distinguishes `stackWorkspaceLoading` binding discovery from
 seed passes `initialLoaded: false`; successful reads mark contents loaded
 without resetting that state during refresh. These frontend states change no
 HTTP/RPC contracts, repository identities, commands or persisted TOML.
+
+## Forge transport
+
+POST `/v1/local/repos/{repo}/forge` adds the version-1 JST-FORGE-001/007
+contract to the same LocalTrusted bound-folder, same-origin and protocol-header
+admission. Service consumers use owned forge types; only jj-store-jj imports
+upstream JJ. Explicit automation tokens are transient request input. Saved
+GitHub credentials are resolved only by the backend using an opaque account
+reference; tokens never enter the binding, response or browser persistence.
+Status may maintain owned remote navigation; it never mutates local code. PR
+details, plans, CI, merge queue receipts and original-effect recovery remain
+separate typed actions. Operational failures use application toasts.
+
+GET/POST `/v1/local/integrations` adds installation-owned account capabilities,
+inventory, validated PAT/Enterprise registration, device authorization
+start/status/cancel and Forget. The boundary requires LocalTrusted Admin and
+same-origin admission. Responses contain account metadata and opaque handles,
+never saved access/refresh tokens or provider device secrets. Device sign-in is
+unavailable without the jj-store public OAuth client ID; PAT remains available.
+
+Repository forge requests add an optional `account_id`, Detect and BindAccount;
+responses add optional detection/readiness metadata. Detection may verify and
+bind one unambiguous account/remote match, but cannot snapshot or publish local
+code. Ambiguous account, remote or target selection requires explicit binding.
+An account reference pins submission and Restack previews and pending intents;
+account changes invalidate previews without replaying external effects. Existing
+endpoint identities, request IDs and receipts remain authoritative. Account
+inventory and connection readiness load initially and refresh manually. Device
+authorization retains required backend-governed polling. ForgeCheck adds
+optional provider-reported `started_at` and `completed_at` timestamp strings.
+Missing fields deserialize compatibly and no duration is inferred from
+`updated_at`. Session-only UI caches contain read presentation data only, never
+previews, effects or uncertain-outcome proofs. Manual refresh and identity
+changes invalidate cached reads. GitHub check names may include actual workflow
+and trigger metadata; workflow aggregates do not duplicate their current check
+jobs.
+
+E-FORGE-AUTH-LIVE-001 confirms JST-API-001/002 wire contracts unchanged:
+repository-owned request serialization prevents overlapping background and
+selected-PR observations from competing for the existing journal lease. It
+introduces no retry, credential fallback, new endpoint or authorization bypass;
+request/account identities, exact pending intents and revision guards remain
+authoritative.
+
+E-FORGE-PANEL-001 confirms JST-API-001 unchanged: shared column headers,
+Markdown description rendering/composition and the shadcn merge-method picker
+alter presentation only. Forge action shapes, expected-body/head guards,
+capabilities, session credentials and exact pending request identities remain
+unchanged.
+
+E-FORGE-DETAILS-001 retains JST-API-001 action schemas and authority: opening PR
+details performs the existing read-only checks action automatically, guarded by
+the selected PR identity/epoch. It creates no pending mutation and cannot
+replace a newer selection or an explicitly selected job view. Forge tokens
+remain session-only, entered through the column's connection dialog.
+
+E-FORGE-BUTTONS-001 confirms JST-API-001 unchanged: title-row forge controls and
+their contextual hover surfaces, top-card submission beside Push and column
+kebab-menu entry alter presentation only. Both submission entries use the same
+preview and exact pending/conflict guards. PR selection, submission preview, CI
+observation and exact pending actions are unchanged; clicking the control cannot
+also select the containing branch row.
+
+E-FORGE-EDIT-001 confirms JST-API-001 unchanged: the column header pencil and
+label-free description presentation share the existing title/composer editing
+state, authored drafts, capability gates and exact pending actions. Save,
+expected-body guards and transport formats are unchanged.
+
+E-FORGE-INLINE-001 confirms JST-API-001 unchanged: inline creation uses the
+existing pinned ForgePlan and explicit submit action, with branch-name title
+defaults as authored UI input. Per-branch session drafts and floating hosts do
+not become transport or repository authority. Inline PR details omit checks;
+explicit inspection retains the same selected-revision reads, capabilities,
+expected body/head guards and pending receipt recovery.
+
+E-FORGE-FLOAT-STYLE-001 confirms JST-API-001 unchanged: float/dock icons,
+floating PR surfaces and inline-owned spacing are presentation only. Existing
+forge actions, authored drafts, capabilities, expected body/head guards, exact
+pending operations and operation-pinned file/hunk sources remain unchanged.
+
+E-FORGE-FLOAT-DISCLOSURE-001 confirms JST-API-001 unchanged: disabling the
+floating title disclosure and its pointer/hover styling changes presentation
+only. Forge actions, retained editor/drafts and exact pending intents are
+unchanged; redocking re-enables the existing inline disclosure.
+
+E-FORGE-BRANCH-STATUS-001 confirms JST-API-001 unchanged: the compact top-change
+status row uses existing local bookmark heads, observed PR heads and revision-
+bound check snapshots. It adds no reads, mutation eligibility or schema, and
+unknown/incomparable data remains explicit. Forge actions and pending guards are
+unchanged.
+
+E-FORGE-INLINE-CHECKS-001 confirms JST-API-001 unchanged: inspecting checks
+toggles the existing selected-revision CI/jobs/logs within the PR body, without
+changing its surface or reselecting an active PR. Header hover styling and local
+disclosure state preserve drafts, diff pins, capabilities, request identities,
+transport schemas and remote-effect guards.
+
+E-FORGE-BRANCH-STATUS-002 confirms JST-API-001 unchanged: dependent bookmark
+status rows reuse the same observed local/remote heads, CI snapshots and PR
+activation. Matching badge/button styling changes no reads, action schemas,
+publication guards, pending identities, drafts or operation-pinned selections.

@@ -166,7 +166,13 @@
       threads: "focus",
     });
     const link = c.getByRole("link", { name: /Existing product updates/ });
-    await expect(link).toHaveAttribute("data-layout", "rich");
+    await expect(link).not.toHaveAttribute("data-layout");
+    await expect(link.querySelector("svg")).not.toBeNull();
+    await expect(
+      c
+        .getByRole("group", { name: "Link preview examples" })
+        .querySelector('[data-layout="rich"]'),
+    ).not.toBeNull();
     await expect(
       c.getByText("https://example.com/code", { exact: true }),
     ).toBeVisible();
@@ -237,4 +243,46 @@
 <Story
   name="Dark paired appearance"
   args={{ preferences: { mode: "dark", theme: "catppuccin-mocha" } }}
+/>
+
+<Story
+  name="Inline default and temporary link previews"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("tab", { name: "Preferences" }));
+    const examples = canvas.getByRole("group", {
+      name: "Link preview examples",
+    });
+    const choices = within(
+      canvas.getByRole("radiogroup", { name: "Link previews" }),
+    );
+    await expect(
+      choices.getByRole("radio", { name: "Inline" }),
+    ).toHaveAttribute("aria-checked", "true");
+    await expect(examples.querySelectorAll(".store-link-card")).toHaveLength(0);
+    const before = saved(canvasElement);
+    await userEvent.hover(choices.getByRole("radio", { name: "Rich" }));
+    await waitFor(() =>
+      expect(examples.querySelector('[data-layout="rich"]')).not.toBeNull(),
+    );
+    await expect(saved(canvasElement)).toEqual(before);
+    await userEvent.unhover(choices.getByRole("radio", { name: "Rich" }));
+    await waitFor(() =>
+      expect(examples.querySelectorAll(".store-link-card")).toHaveLength(0),
+    );
+    await userEvent.click(choices.getByRole("radio", { name: "Compact" }));
+    await expect(saved(canvasElement).links).toBe("compact");
+    await expect(
+      examples.querySelectorAll('.store-link-card[data-layout="compact"]'),
+    ).toHaveLength(1);
+    const labelled = within(examples).getByRole("link", {
+      name: "#42",
+    });
+    await expect(labelled).not.toHaveAttribute("data-layout");
+    choices.getByRole("radio", { name: "Compact" }).focus();
+    await userEvent.keyboard("{Home}");
+    await expect(saved(canvasElement).links).toBe("inline");
+    await expect(choices.getByRole("radio", { name: "Inline" })).toHaveFocus();
+    await expect(examples.querySelectorAll(".store-link-card")).toHaveLength(0);
+  }}
 />

@@ -40,7 +40,10 @@ live-tail coverage. Users may inspect a previous import request ID without
 selecting a different source, including when its receipt is unavailable.
 
 Global Settings opens from the profile menu and contains Profile, Custom emoji,
-Appearance, Local service, Agents and Compute. Local service owns
+Appearance, Integrations, Local service, Agents and Compute. Integrations owns
+GitHub account setup and repository access, using native OS credential custody.
+Its accounts destination retains the same history/Back behavior, with no secret
+or repository context in navigation preferences. Local service owns
 installation-wide Protection, authority storage and backup configuration, and
 folder registration. Its destination is recorded as
 `#/settings?section=agents&tab=runtimes`. Missing fields select Local service /
