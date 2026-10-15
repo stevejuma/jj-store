@@ -81,6 +81,13 @@ arguments. JJ workspace stack qualification therefore enumerates the actual
 `jj diff` paths and passes all of them through the supported `--file` interface,
 alongside the default JJ gate for the integration change.
 
+Git-only CI and native JJ progress checks use the same selected revision and
+direct-parent baselines for both changed paths and evidence freshness. A CI
+pull-request base does not silently replace the progress comparison. Spec-first
+range confirmation explicitly selects its base for both paths and prior
+evidence, so a qualified tip cannot hide unqualified changes earlier in the PR.
+Every merge parent and committed evidence payload remains audited.
+
 Bounded-read integration rebases the completed slices onto committed main while
 preserving its repository conversion, terminal, capture settings and bundled
 Help surfaces. Integration verifies the combined native/local routes and

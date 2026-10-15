@@ -1,9 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { execFileSync } from "node:child_process";
-export function revisionReader(root, requested = "@") {
+export function revisionReader(root, requested = "@", { base } = {}) {
   if (!existsSync(resolve(root, ".jj")))
-    return gitRevisionReader(root, requested);
+    return gitRevisionReader(root, requested, base);
   const jj = (args) =>
     execFileSync("jj", ["--no-pager", "--color=never", ...args], {
       cwd: root,
@@ -66,7 +66,7 @@ export function revisionReader(root, requested = "@") {
     .filter(Boolean);
   const changed = [
     ...new Set(
-      parents.flatMap((parent) =>
+      (base ? [base] : parents).flatMap((parent) =>
         jj(["diff", "--name-only", "--from", parent, "--to", revision])
           .trim()
           .split("\n")
@@ -85,7 +85,7 @@ export function revisionReader(root, requested = "@") {
   return { read, files, revision, parents, changed, verify };
 }
 
-function gitRevisionReader(root, requested) {
+function gitRevisionReader(root, requested, base) {
   const git = (args) =>
     execFileSync("git", args, {
       cwd: root,
@@ -119,25 +119,21 @@ function gitRevisionReader(root, requested) {
         .trim()
         .split(/\s+/)
         .slice(1);
-  const baseline = process.env.JJ_STORE_CHECK_BASE;
+  // Same-change validation compares both paths and evidence with the direct
+  // parents. Range consumers must opt in with the same explicit baseline they
+  // use for evidence freshness; CI environment variables cannot change it.
   const changed = empty
     ? []
-    : baseline &&
-        (requested === "@" || revision === process.env.JJ_STORE_CHECK_REVISION)
-      ? git(["diff", "--name-only", baseline, revision])
-          .trim()
-          .split("\n")
-          .filter(Boolean)
-      : [
-          ...new Set(
-            parents.flatMap((p) =>
-              git(["diff", "--name-only", p, revision])
-                .trim()
-                .split("\n")
-                .filter(Boolean),
-            ),
+    : [
+        ...new Set(
+          (base ? [base] : parents).flatMap((p) =>
+            git(["diff", "--name-only", p, revision])
+              .trim()
+              .split("\n")
+              .filter(Boolean),
           ),
-        ];
+        ),
+      ];
   const verify = () => {
     if (git(["rev-parse", "HEAD"]).trim() !== head)
       throw Error("Git selection changed during validation");
