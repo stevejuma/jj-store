@@ -9,7 +9,11 @@
   let { controller }: { controller: ForgeController } = $props();
   let connectionOpen = $state(false);
   const id = $props.id();
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
 </script>
 
 {#if controller.data?.connection}
@@ -29,8 +33,12 @@
         <Menu.Item disabled={blocked} onSelect={() => controller.refresh()}
           >Refresh PRs</Menu.Item
         >
-        <Menu.Item onSelect={() => (connectionOpen = true)}
-          >Forge connection…</Menu.Item
+        <Menu.Item
+          onSelect={() =>
+            controller.accounts.managed &&
+            controller.data?.connection?.provider === "github"
+              ? controller.accounts.openSettings?.()
+              : (connectionOpen = true)}>Forge connection…</Menu.Item
         >
       </Menu.Group>
       <Menu.Separator />

@@ -23,7 +23,11 @@
     controller.notifications = notifications.context;
   });
   let editing = $state(false);
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
 </script>
 
 <section

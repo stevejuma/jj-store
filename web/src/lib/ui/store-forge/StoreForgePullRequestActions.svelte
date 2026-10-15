@@ -17,7 +17,11 @@
       : selected,
   );
   const merge = $derived(pr ? controller.merges[String(pr.number)] : undefined);
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
   const methods = $derived(controller.data?.capabilities.merge_methods ?? []);
   const methodLabel = (value: string) =>
     value === "merge" ? "Merge" : value === "squash" ? "Squash" : "Rebase";

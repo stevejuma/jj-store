@@ -10,6 +10,8 @@ use std::{
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct State {
+    #[serde(default)]
+    account_id: Option<String>,
     #[serde(default = "version")]
     version: u32,
     connection: Option<Connection>,
@@ -24,6 +26,7 @@ fn version() -> u32 {
 impl Default for State {
     fn default() -> Self {
         Self {
+            account_id: None,
             version: 1,
             connection: None,
             receipts: vec![],
@@ -98,6 +101,34 @@ impl Device {
     }
     pub fn connection(&self) -> Option<Connection> {
         self.state.connection.clone()
+    }
+    pub fn account_id(&self) -> Option<String> {
+        self.state.account_id.clone()
+    }
+    pub fn bind_account(&mut self, id: String) -> Result<()> {
+        if self.state.account_id.as_ref() == Some(&id) {
+            return Ok(());
+        }
+        if self
+            .state
+            .receipts
+            .iter()
+            .any(|r| !matches!(r.outcome, Outcome::Complete | Outcome::Rejected))
+            || self
+                .state
+                .operations
+                .iter()
+                .any(|r| !matches!(r.outcome, Outcome::Complete | Outcome::Rejected))
+            || self
+                .state
+                .restacks
+                .iter()
+                .any(|r| !matches!(r.outcome, Outcome::Complete | Outcome::Rejected))
+        {
+            return Err(Error::Stale);
+        }
+        self.state.account_id = Some(id);
+        self.save()
     }
     pub fn configure(&mut self, c: Connection) -> Result<()> {
         c.validate()?;

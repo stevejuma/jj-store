@@ -141,7 +141,7 @@
       {onCommand}
     >
       {#snippet beforePush()}
-        {#if submitStack && controller.forge?.data?.connection && !controller.forge.pr(name)}
+        {#if submitStack && controller.forge?.ready && !controller.forge.pr(name)}
           <Button
             variant="outline"
             size="xs"

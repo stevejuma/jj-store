@@ -11,5 +11,6 @@
 }
 
 .store-detachable-panel[data-detached] > .store-detachable-panel__content {
-  display: none;
+  /* Keep scroll offsets while the same node moves between its two hosts. */
+  visibility: hidden;
 }

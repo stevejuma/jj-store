@@ -9,6 +9,8 @@ export function globalSettingsSkeletonCards(
   tab: string,
 ): Card[] {
   switch (section) {
+    case "integrations":
+      return [{ rows: ["preview"], actions: 1 }];
     case "profile":
       return [{ rows: ["preview", "input", "textarea", "input"], actions: 2 }];
     case "custom-emoji":

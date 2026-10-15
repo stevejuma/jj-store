@@ -13,6 +13,7 @@ export class ForgePolling {
     }
     this.#refreshing = true;
     try {
+      if (!(await this.owner.connection.discover())) return;
       const response = await this.owner.call({ kind: "status" });
       this.owner.receive(response, true);
       this.owner.stale = false;

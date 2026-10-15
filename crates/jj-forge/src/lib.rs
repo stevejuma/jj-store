@@ -1,5 +1,6 @@
 //! Forge integrations are external effects; repository code remains JJ-owned.
 #![forbid(unsafe_code)]
+pub mod accounts;
 pub mod client;
 pub mod engine;
 pub mod journal;

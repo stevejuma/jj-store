@@ -1,4 +1,5 @@
 //! Ordinary-local forge composition; reads never snapshot or reconcile JJ heads.
+mod connection;
 mod restack;
 mod templates;
 use super::*;
@@ -12,6 +13,7 @@ pub struct LocalForge {
     root: PathBuf,
     connection: f::Connection,
     credential: Option<zeroize::Zeroizing<String>>,
+    account_id: Option<String>,
 }
 impl LocalForge {
     async fn git(&self, args: Vec<String>) -> f::Result<String> {
@@ -302,6 +304,9 @@ impl f::engine::Local for LocalForge {
         self.access.authorize().await.map_err(|_| f::Error::Denied)
     }
     async fn validate(&self, plan: &f::Plan, resuming: bool) -> f::Result<()> {
+        if plan.account_id != self.account_id {
+            return Err(f::Error::Stale);
+        }
         let read = ReadSession::open(self.access.clone(), self.root.clone())
             .await
             .map_err(|_| f::Error::Stale)?;
@@ -410,6 +415,47 @@ pub async fn handle(
         return Err(f::Error::Unsupported);
     }
     let mut device = Device::open(&metadata)?;
+    if let f::Action::Detect { auto_connect } = &request.action {
+        let local = LocalForge {
+            access,
+            root,
+            connection: device.connection().unwrap_or_else(connection::provisional),
+            credential: None,
+            account_id: None,
+        };
+        let detection = connection::detect(&local, &mut device, *auto_connect).await?;
+        return Ok(f::Response {
+            connection: device.connection(),
+            detection: Some(detection),
+            ..Default::default()
+        });
+    }
+    if let f::Action::BindAccount {
+        account,
+        connection: selected,
+    } = &request.action
+    {
+        let local = LocalForge {
+            access,
+            root,
+            connection: selected.clone(),
+            credential: None,
+            account_id: None,
+        };
+        connection::bind(
+            &local,
+            f::accounts::native()?,
+            &mut device,
+            account.clone(),
+            selected.clone(),
+        )
+        .await?;
+        return Ok(f::Response {
+            connection: device.connection(),
+            detection: Some(connection::detect(&local, &mut device, false).await?),
+            ..Default::default()
+        });
+    }
     if let f::Action::Configure { connection } = request.action {
         device.configure(connection)?;
         return Ok(f::Response {
@@ -420,11 +466,33 @@ pub async fn handle(
     let Some(connection) = device.connection() else {
         return Ok(f::Response::default());
     };
-    let token = request
+    let supplied = request
         .token
         .take()
-        .or_else(|| std::env::var("JJ_STORE_FORGE_TOKEN").ok())
-        .unwrap_or_default();
+        .or_else(|| std::env::var("JJ_STORE_FORGE_TOKEN").ok());
+    let account_id = request.account_id.clone().or_else(|| {
+        if supplied.is_none() {
+            device.account_id()
+        } else {
+            None
+        }
+    });
+    let token = if let Some(id) = &account_id {
+        if device.account_id().as_ref() != Some(id) {
+            return Err(f::Error::Stale);
+        }
+        let manager = f::accounts::native()?;
+        if manager.account(id)?.api_url != connection.api_url {
+            return Err(f::Error::Denied);
+        }
+        manager
+            .credential(id, f::accounts::now()?)
+            .await?
+            .access_token
+            .clone()
+    } else {
+        supplied.unwrap_or_default()
+    };
     let secret = zeroize::Zeroizing::new(token);
     let client = f::Client::new(connection.clone(), secret.to_string())?;
     let credential = if secret.is_empty() {
@@ -443,6 +511,7 @@ pub async fn handle(
         root,
         connection: connection.clone(),
         credential,
+        account_id,
     };
     let mut response = f::Response {
         connection: Some(connection.clone()),
@@ -489,6 +558,9 @@ pub async fn handle(
                     .as_nanos()
             );
             response.plan = Some(f::planner::plan(id, op, connection, segments, &prs, draft)?);
+            if let Some(plan) = response.plan.as_mut() {
+                plan.account_id = local.account_id.clone();
+            }
         }
         f::Action::Submit { plan } => {
             response.receipt =
@@ -654,7 +726,9 @@ pub async fn handle(
                 }
             }
         }
-        f::Action::Configure { .. } => unreachable!(),
+        f::Action::Configure { .. } | f::Action::Detect { .. } | f::Action::BindAccount { .. } => {
+            unreachable!()
+        }
     }
     access.authorize().await.map_err(|_| f::Error::Denied)?;
     Ok(response)

@@ -135,6 +135,8 @@ pub struct PlanItem {
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "ForgePlan")]
 pub struct Plan {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub account_id: Option<String>,
     pub request_id: String,
     pub operation: String,
     pub connection: Connection,
@@ -247,6 +249,13 @@ pub enum PrAction {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 #[schemars(rename = "ForgeAction")]
 pub enum Action {
+    Detect {
+        auto_connect: bool,
+    },
+    BindAccount {
+        account: String,
+        connection: Connection,
+    },
     Status,
     RestackPreview {
         bookmark: String,
@@ -286,11 +295,15 @@ pub enum Action {
 pub struct Request {
     pub version: u32,
     pub token: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub account_id: Option<String>,
     pub action: Action,
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "ForgeResponse")]
 pub struct Response {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub detection: Option<crate::accounts::Detection>,
     pub notice: Option<String>,
     pub connection: Option<Connection>,
     pub capabilities: Capabilities,
@@ -308,6 +321,8 @@ pub struct Response {
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "ForgeRestackPlan")]
 pub struct RestackPlan {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub account_id: Option<String>,
     pub request_id: String,
     pub operation: String,
     pub revision: u64,

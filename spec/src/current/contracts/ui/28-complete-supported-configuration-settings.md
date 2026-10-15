@@ -1,5 +1,15 @@
 # Complete supported configuration settings
 
+Global Integrations / Accounts owns GitHub device sign-in, personal tokens and
+explicit Enterprise API endpoints. Shared cards show non-secret account
+identity, method and availability with Forget and Add account footers. Token
+forms use masked bordered fields with an explicit visibility toggle. Device
+sign-in presents Copy/Open/Cancel and neutral waiting/expiry state. Operational
+failures use the shared toast service. Repository access retains account,
+source/push remote, target repository/remote and default-or-explicit branch
+drafts through refresh/navigation. Tokens are backend-owned OS credentials;
+browser token drafts are session-only and successful save/cancel clears them.
+
 JST-UI-016 includes typed editors in Local service (resource limits), Local
 service / Protection (installation-wide protected bookmarks/commits), Sync
 (repository upstream, credential environment reference, CA path and every

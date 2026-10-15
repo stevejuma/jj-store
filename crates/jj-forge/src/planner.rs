@@ -134,6 +134,7 @@ pub fn plan(
             .push(StepKind::NativeStack);
     }
     Ok(Plan {
+        account_id: None,
         request_id,
         operation,
         connection,

@@ -126,10 +126,28 @@ HTTP/RPC contracts, repository identities, commands or persisted TOML.
 POST `/v1/local/repos/{repo}/forge` adds the version-1 JST-FORGE-001/007
 contract to the same LocalTrusted bound-folder, same-origin and protocol-header
 admission. Service consumers use owned forge types; only jj-store-jj imports
-upstream JJ. Tokens are request/session input, never retained in the binding or
-response. Status may maintain owned remote navigation; it never mutates local
-code. PR details, plans, CI, merge queue receipts and original-effect recovery
-remain separate typed actions. Operational failures use application toasts.
+upstream JJ. Explicit automation tokens are transient request input. Saved
+GitHub credentials are resolved only by the backend using an opaque account
+reference; tokens never enter the binding, response or browser persistence.
+Status may maintain owned remote navigation; it never mutates local code. PR
+details, plans, CI, merge queue receipts and original-effect recovery remain
+separate typed actions. Operational failures use application toasts.
+
+GET/POST `/v1/local/integrations` adds installation-owned account capabilities,
+inventory, validated PAT/Enterprise registration, device authorization
+start/status/cancel and Forget. The boundary requires LocalTrusted Admin and
+same-origin admission. Responses contain account metadata and opaque handles,
+never saved access/refresh tokens or provider device secrets. Device sign-in is
+unavailable without the jj-store public OAuth client ID; PAT remains available.
+
+Repository forge requests add an optional `account_id`, Detect and BindAccount;
+responses add optional detection/readiness metadata. Detection may verify and
+bind one unambiguous account/remote match, but cannot snapshot or publish local
+code. Ambiguous account, remote or target selection requires explicit binding.
+An account reference pins submission and Restack previews and pending intents;
+account changes invalidate previews without replaying external effects. Existing
+endpoint identities, request IDs and receipts remain authoritative. Account
+inventory and connection readiness refresh through the existing view lifecycle.
 
 E-FORGE-PANEL-001 confirms JST-API-001 unchanged: shared column headers,
 Markdown description rendering/composition and the shadcn merge-method picker

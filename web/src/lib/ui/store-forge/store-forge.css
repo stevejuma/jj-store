@@ -85,7 +85,7 @@
   gap: 0;
   margin: 0;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: min(var(--radius-sm, 6px), 6px);
   overflow: hidden;
 }
 .forge-checks__summary,
@@ -97,7 +97,7 @@
   margin: 0;
 }
 .forge-checks__summary {
-  background: var(--jj-store-row-background, var(--muted));
+  background: var(--background);
 }
 .forge-checks__name {
   display: flex;
@@ -172,4 +172,94 @@
 .forge-checks__link:hover {
   color: var(--foreground);
   text-decoration: underline;
+}
+
+.forge-checks__disclosure[data-ui-component="button"] {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  justify-content: flex-start;
+  background: transparent;
+  text-align: start;
+  white-space: normal;
+}
+.forge-checks__disclosure .forge-checks__name {
+  align-items: flex-start;
+}
+.forge-checks__disclosure .forge-checks__name > strong {
+  font-size: 0.85rem;
+}
+.forge-checks__scroll {
+  max-block-size: min(20rem, 45dvh);
+  background: var(--muted);
+}
+.forge-checks__group + .forge-checks__group {
+  border-top: 1px solid var(--border);
+}
+.forge-checks__group-heading[data-ui-component="button"] {
+  margin: 0.25rem 0.5rem;
+  height: auto;
+  padding: 0.35rem 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.forge-checks .forge-checks__row {
+  padding: 0.45rem 0.75rem;
+  border: 0;
+  gap: 0.5rem;
+}
+.forge-checks__name > strong {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.forge-checks .forge-checks__actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.forge-checks__list[hidden] {
+  display: none;
+}
+.forge-checks pre {
+  max-block-size: min(16rem, 35dvh);
+  overflow: auto;
+}
+.forge-checks-ring {
+  flex: none;
+  transform: rotate(-90deg);
+}
+.forge-checks-ring__segment {
+  stroke: var(--muted-foreground);
+}
+.forge-checks-ring__segment[data-state="failed"] {
+  stroke: var(--jj-store-danger-foreground, var(--destructive));
+}
+.forge-checks-ring__segment[data-state="passed"] {
+  stroke: var(--jj-store-success-foreground, var(--foreground));
+}
+.forge-checks-ring__segment[data-state="running"] {
+  stroke: var(--jj-store-warning-foreground, var(--foreground));
+}
+.forge-checks-ring[data-state="running"] {
+  animation: forge-check-spin 1.8s linear infinite;
+}
+@keyframes forge-check-spin {
+  to {
+    transform: rotate(270deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .forge-checks-ring {
+    animation: none !important;
+  }
+}
+.forge-checks__scroll > [data-ui-part="scroll-area-viewport"] {
+  max-block-size: inherit;
+}
+.forge-checks__name > [role="heading"] {
+  font-size: 0.85rem;
+  font-weight: 600;
 }

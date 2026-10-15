@@ -12,7 +12,11 @@
     editing?: boolean;
     showChecks?: boolean;
   } = $props();
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
   import { Input } from "@lapismd/design-core/shadcn/input";
   const selection = $derived(controller.selected?.number);
   $effect(() => {

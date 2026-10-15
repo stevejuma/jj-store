@@ -31,6 +31,27 @@ outside checkouts. Secrets are supplied per session or through automation
 credentials. GETs and previews never snapshot/reconcile code or publish state.
 Existing local Stacks undo/redo cannot undo external forge effects.
 
+Global Integrations initially manages GitHub accounts, including device OAuth,
+personal tokens and explicit Enterprise API endpoints. Native OS credential
+facilities own saved tokens and optional OAuth refresh tokens; private atomic
+device metadata contains only account identity, endpoint and credential handles.
+There is no plaintext fallback. Saved secrets and device codes never return to
+the browser. Account operations require LocalTrusted Admin admission. GitHub's
+device interval, slowdown, expiry, cancellation and token refresh are enforced
+by the backend; the public OAuth client ID is operator configured using
+`JJ_STORE_GITHUB_OAUTH_CLIENT_ID` or the `github-oauth-client-id` file in the
+private device `forges/integrations` directory. The file contains only the
+public client ID, never a token. Environment configuration takes precedence.
+
+GitHub repository detection normalizes HTTPS/SSH/SCP remotes and recognizes only
+GitHub.com or approved Enterprise hosts. One verified account/remote match may
+bind automatically; ambiguous choices require explicit selection. The observed
+target default branch is retained. A session-deduplicated detection toast links
+to Integrations while setup is needed. GitHub PR entry points require a saved
+account binding. Reconnect preserves drafts and exact uncertain intents; account
+switches cannot reinterpret existing receipts or publish cached previews under a
+different identity. CLI automation credentials remain explicitly supported.
+
 ## UI and maintenance
 
 Branch and Workspace columns share PR presentation and submission. When an
@@ -94,6 +115,15 @@ height, background, accessible icon-only pencil/close controls, composer
 previews and shadcn merge-method menu. Operational failures use shared toasts.
 Bounded polling, selected-revision checks and log isolation remain
 authoritative.
+
+Checks use a compact expandable summary, a segmented status ring and optional
+status grouping (failing, in progress, attention, successful,
+skipped/cancelled). Nonempty groups initially expand. A grouping menu offers
+status or flat lists. The list scrolls independently at a maximum of min(20rem,
+45dvh); the summary remains outside it. Corners are at most 6px. Grouping,
+disclosure and selected job/log state survive refresh and detachment.
+Incomplete/stale observations remain unknown, and checks never authorize
+merging.
 
 ## Delivery and evidence
 

@@ -2,7 +2,11 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   let { controller }: { controller: ForgeController } = $props();
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
   import { Input } from "@lapismd/design-core/shadcn/input";
   import type { ForgeConnection } from "../../controller/forge/types.js";
   let provider = $state<ForgeConnection["provider"]>("github");

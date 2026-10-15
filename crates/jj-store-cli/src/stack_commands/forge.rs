@@ -15,6 +15,7 @@ async fn call(ctx: &Context, action: f::Action) -> AuthorityResult<f::Response> 
         ctx.root.clone(),
         f::Request {
             version: 1,
+            account_id: None,
             token: None,
             action,
         },

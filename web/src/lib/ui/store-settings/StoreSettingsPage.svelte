@@ -1,5 +1,6 @@
 <script lang="ts">
   import WorkflowIcon from "@lucide/svelte/icons/workflow";
+  import PlugIcon from "@lucide/svelte/icons/plug";
   import UserIcon from "@lucide/svelte/icons/user";
   import SmileIcon from "@lucide/svelte/icons/smile";
   import ShieldIcon from "@lucide/svelte/icons/shield";
@@ -93,48 +94,52 @@
   );
   const titleId = $props.id();
   const title = $derived(
-    section === "profile"
-      ? "Profile"
-      : section === "custom-emoji"
-        ? "Custom emoji"
-        : section === "appearance"
-          ? "Appearance"
-          : section === "service"
-            ? "Local service"
-            : section === "agents"
-              ? "Agents"
-              : section === "compute"
-                ? "Compute"
-                : section === "repository"
-                  ? "General"
-                  : section === "folders"
-                    ? "Local folders"
-                    : section === "advanced"
-                      ? "Advanced"
-                      : section === "storage"
-                        ? "Storage"
-                        : section === "sync"
-                          ? "Sync"
-                          : "Search",
+    section === "integrations"
+      ? "Integrations"
+      : section === "profile"
+        ? "Profile"
+        : section === "custom-emoji"
+          ? "Custom emoji"
+          : section === "appearance"
+            ? "Appearance"
+            : section === "service"
+              ? "Local service"
+              : section === "agents"
+                ? "Agents"
+                : section === "compute"
+                  ? "Compute"
+                  : section === "repository"
+                    ? "General"
+                    : section === "folders"
+                      ? "Local folders"
+                      : section === "advanced"
+                        ? "Advanced"
+                        : section === "storage"
+                          ? "Storage"
+                          : section === "sync"
+                            ? "Sync"
+                            : "Search",
   );
   const PageIcon = $derived(
-    section === "profile"
-      ? UserIcon
-      : section === "custom-emoji"
-        ? SmileIcon
-        : section === "appearance"
-          ? PaletteIcon
-          : section === "service" || section === "compute"
-            ? ServerIcon
-            : section === "agents"
-              ? BotIcon
-              : section === "repository"
-                ? DatabaseIcon
-                : section === "storage"
+    section === "integrations"
+      ? PlugIcon
+      : section === "profile"
+        ? UserIcon
+        : section === "custom-emoji"
+          ? SmileIcon
+          : section === "appearance"
+            ? PaletteIcon
+            : section === "service" || section === "compute"
+              ? ServerIcon
+              : section === "agents"
+                ? BotIcon
+                : section === "repository"
                   ? DatabaseIcon
-                  : section === "sync"
-                    ? RefreshCwIcon
-                    : SearchIcon,
+                  : section === "storage"
+                    ? DatabaseIcon
+                    : section === "sync"
+                      ? RefreshCwIcon
+                      : SearchIcon,
   );
 </script>
 

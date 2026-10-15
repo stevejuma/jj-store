@@ -2388,6 +2388,25 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/integrations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_integrations"];
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_integrations_command"];
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_integrations_head"];
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repos/{repo}/forge": {
     parameters: {
       query?: never;
@@ -8308,7 +8327,41 @@ export interface components {
       summary: string;
       paths: string[];
     };
+    ForgeIntegrationInventory: {
+      accounts: components["schemas"]["ForgeIntegrationAccount"][];
+      oauth_available: boolean;
+      keychain_supported: boolean;
+      authorization:
+        components["schemas"]["ForgeIntegrationAuthorization"] | null;
+    };
+    /** @description Non-secret identity. The numeric provider ID survives username changes. */
+    ForgeIntegrationAccount: {
+      id: string;
+      api_url: string;
+      user_id: string;
+      login: string;
+      name: string | null;
+      email: string | null;
+      avatar_url: string | null;
+      method: components["schemas"]["ForgeIntegrationMethod"];
+      /** Format: uint64 */
+      revision: number;
+      available: boolean;
+    };
+    /** @enum {string} */
+    ForgeIntegrationMethod: "oauth" | "pat" | "enterprise";
+    ForgeIntegrationAuthorization: {
+      session: string;
+      user_code: string;
+      verification_uri: string;
+      /** Format: uint64 */
+      expires_at: number;
+      /** Format: uint64 */
+      interval: number;
+      state: string;
+    };
     ForgeResponse: {
+      detection?: components["schemas"]["ForgeIntegrationDetection"] | null;
       notice: string | null;
       connection: components["schemas"]["ForgeConnection"] | null;
       capabilities: components["schemas"]["ForgeCapabilities"];
@@ -8324,6 +8377,20 @@ export interface components {
       };
       operation: components["schemas"]["ForgeOperation"] | null;
     };
+    ForgeIntegrationDetection: {
+      provider: components["schemas"]["ForgeProvider"] | null;
+      remotes: components["schemas"]["ForgeIntegrationRemote"][];
+      accounts: components["schemas"]["ForgeIntegrationAccount"][];
+      readiness: string;
+      account_id: string | null;
+    };
+    /** @enum {string} */
+    ForgeProvider: "github" | "gitlab" | "forgejo";
+    ForgeIntegrationRemote: {
+      name: string;
+      api_url: string;
+      repository: string;
+    };
     ForgeConnection: {
       provider: components["schemas"]["ForgeProvider"];
       /** @description Approved API root, e.g. https://api.github.com or https://forge.example/api/v1/. */
@@ -8337,8 +8404,6 @@ export interface components {
       target: string;
       native_stacks: boolean;
     };
-    /** @enum {string} */
-    ForgeProvider: "github" | "gitlab" | "forgejo";
     ForgeCapabilities: {
       edit: boolean;
       draft: boolean;
@@ -8359,6 +8424,7 @@ export interface components {
       submission: components["schemas"]["ForgePlan"] | null;
     };
     ForgeRestackPlan: {
+      account_id?: string | null;
       request_id: string;
       operation: string;
       /** Format: uint64 */
@@ -8373,6 +8439,7 @@ export interface components {
     /** @enum {string} */
     ForgeOutcome: "pending" | "running" | "complete" | "rejected" | "unknown";
     ForgePlan: {
+      account_id?: string | null;
       request_id: string;
       operation: string;
       connection: components["schemas"]["ForgeConnection"];
@@ -48103,6 +48170,393 @@ export interface operations {
       };
     };
   };
+  local_integrations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ForgeIntegrationInventory"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_integrations_command: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json":
+          | {
+              api_url: string;
+              token: string;
+              /** @constant */
+              kind: "add_token";
+            }
+          | {
+              account: string;
+              /** @constant */
+              kind: "forget";
+            }
+          | {
+              /** @constant */
+              kind: "begin_oauth";
+            }
+          | {
+              session: string;
+              /** @constant */
+              kind: "poll_oauth";
+            }
+          | {
+              session: string;
+              /** @constant */
+              kind: "cancel_oauth";
+            };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ForgeIntegrationInventory"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_integrations_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   local_forge: {
     parameters: {
       query?: never;
@@ -48118,7 +48572,32 @@ export interface operations {
           /** Format: uint32 */
           version: number;
           token?: string | null;
+          account_id?: string | null;
           action:
+            | {
+                auto_connect: boolean;
+                /** @constant */
+                kind: "detect";
+              }
+            | {
+                account: string;
+                connection: {
+                  /** @enum {string} */
+                  provider: "github" | "gitlab" | "forgejo";
+                  /** @description Approved API root, e.g. https://api.github.com or https://forge.example/api/v1/. */
+                  api_url: string;
+                  /** @description Slash-separated project path; GitLab subgroups are preserved. */
+                  repository: string;
+                  source_repository: string;
+                  remote: string;
+                  /** @default origin */
+                  target_remote?: string;
+                  target: string;
+                  native_stacks: boolean;
+                };
+                /** @constant */
+                kind: "bind_account";
+              }
             | {
                 /** @constant */
                 kind: "status";
@@ -48130,6 +48609,7 @@ export interface operations {
               }
             | {
                 plan: {
+                  account_id?: string | null;
                   request_id: string;
                   operation: string;
                   /** Format: uint64 */
@@ -48183,6 +48663,7 @@ export interface operations {
               }
             | {
                 plan: {
+                  account_id?: string | null;
                   request_id: string;
                   operation: string;
                   connection: {

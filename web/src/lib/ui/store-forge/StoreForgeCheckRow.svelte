@@ -4,13 +4,18 @@
   import Ellipsis from "@lucide/svelte/icons/ellipsis";
   import ExternalLink from "@lucide/svelte/icons/external-link";
   import StoreForgeCheckIcon from "./StoreForgeCheckIcon.svelte";
+  import StoreForgeIcon from "./StoreForgeIcon.svelte";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   import type { ForgeCheck } from "../../controller/forge/types.js";
   let {
     controller,
     check,
   }: { controller: ForgeController; check: ForgeCheck } = $props();
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
   const capabilities = $derived(controller.data!.capabilities);
   const label = $derived(
     check.state === "running"
@@ -23,6 +28,7 @@
 
 <li class="forge-checks__row">
   <StoreForgeCheckIcon state={check.state} />
+  <StoreForgeIcon provider={controller.data?.connection?.provider} />
   <div class="forge-checks__name">
     <strong>{check.name}</strong><span
       >{label}{check.sha !== controller.selected?.sha
@@ -34,7 +40,7 @@
     {#if check.log_id}
       <Button
         variant="ghost"
-        size="sm"
+        size="xs"
         disabled={blocked || !capabilities.logs}
         onclick={() =>
           controller.act({
@@ -46,7 +52,7 @@
     {:else if check.run_id}
       <Button
         variant="ghost"
-        size="sm"
+        size="xs"
         disabled={blocked}
         onclick={() => controller.act({ kind: "jobs", run: check.run_id! })}
         >Jobs</Button

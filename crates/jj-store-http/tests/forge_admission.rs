@@ -45,3 +45,37 @@ async fn forge_endpoint_rejects_foreign_origin_before_credentials_or_device_stat
     let bytes = to_bytes(response.into_body(), 8192).await.unwrap();
     assert!(!String::from_utf8_lossy(&bytes).contains(token));
 }
+
+#[tokio::test]
+async fn integration_accounts_require_local_admin_and_reject_foreign_origin_without_echoing_secrets()
+ {
+    for (permission, origin) in [
+        (Permission::Read, "http://127.0.0.1:7443"),
+        (Permission::Admin, "https://foreign.example"),
+    ] {
+        let root = tempfile::tempdir().unwrap();
+        let api = HttpApi::with_search(
+            None,
+            root.path().join("cache"),
+            Config {
+                access: Access::LocalTrusted {
+                    principal: PrincipalId::new([1; 16]),
+                    permission,
+                },
+                ..Default::default()
+            },
+            Default::default(),
+        )
+        .unwrap();
+        for method in ["GET", "POST"] {
+            let request = Request::builder().method(method).uri("/v1/local/integrations")
+                .header("host","127.0.0.1:7443").header("origin",origin)
+                .header("content-type","application/json").header("x-jj-store-protocol","1")
+                .body(if method == "POST" { Body::from(r#"{"kind":"add_token","api_url":"https://api.github.com","token":"canary-never-echo"}"#) } else {Body::empty()}).unwrap();
+            let response = api.router().oneshot(request).await.unwrap();
+            assert_eq!(response.status(), StatusCode::FORBIDDEN);
+            let body = to_bytes(response.into_body(), 8192).await.unwrap();
+            assert!(!String::from_utf8_lossy(&body).contains("canary-never-echo"));
+        }
+    }
+}

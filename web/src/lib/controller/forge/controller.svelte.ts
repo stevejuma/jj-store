@@ -1,4 +1,9 @@
 import { ForgeInline } from "./inline.svelte.js";
+import { ForgeConnectionLifecycle } from "./connection.svelte.js";
+import {
+  ChecksPresentation,
+  summarizeChecks,
+} from "./checks-presentation.svelte.js";
 import { ForgePolling } from "./polling.svelte.js";
 import { ForgeEffects } from "./effects.svelte.js";
 import type {
@@ -12,7 +17,7 @@ import type {
 } from "./types.js";
 import type { NotificationContext } from "../../notifications/notification-context.svelte.js";
 
-/** One owner per bound repository. Credentials and edits are memory-only. */
+/** One repository owner. Explicit tokens and authored edits are memory-only. */
 export class ForgeController {
   data = $state<ForgeResponse>();
   selected = $state<ForgePr>();
@@ -21,6 +26,7 @@ export class ForgeController {
   surface = $state<"column" | "inline">("column");
   detailsExpanded = $state(true);
   readonly inline = new ForgeInline(this);
+  readonly checksView = new ChecksPresentation();
   busy = $state(false);
   stale = $state(false);
   token = $state("");
@@ -68,26 +74,7 @@ export class ForgeController {
     };
   }
   checkSummary(branch: string) {
-    const checks = this.ci[branch];
-    if (!checks || !checks.complete) return "Checks unknown";
-    const pr = this.pr(branch);
-    if (
-      !pr ||
-      checks.sha !== pr.sha ||
-      checks.checks.some((c) => c.sha !== pr.sha)
-    )
-      return "Checks need refresh";
-    if (!checks.checks.length) return "No checks";
-    if (checks.checks.some((c) => c.state === "failed")) return "Checks failed";
-    if (checks.checks.some((c) => ["queued", "running"].includes(c.state)))
-      return "Checks running";
-    if (
-      checks.checks.some((c) =>
-        ["unknown", "manual", "cancelled"].includes(c.state),
-      )
-    )
-      return "Checks need attention";
-    return "Checks passed";
+    return summarizeChecks(this, branch);
   }
   pending = $state<ForgeAction>();
   notifications?: NotificationContext;
@@ -105,12 +92,22 @@ export class ForgeController {
   }
   readonly #polling = new ForgePolling(this);
   readonly #effects = new ForgeEffects(this);
+  readonly connection = new ForgeConnectionLifecycle(this);
+  get ready() {
+    return this.connection.ready;
+  }
   constructor(
     readonly transport: ForgeTransport,
     readonly dispose?: () => void,
     readonly restacked?: (operation: string) => void,
+    readonly accounts: {
+      managed?: boolean;
+      scope?: string;
+      openSettings?: () => void;
+    } = {},
   ) {}
   pr(branch: string) {
+    if (this.accounts.managed && !this.ready) return undefined;
     return (
       this.data?.pull_requests.find(
         (p) => p.head === branch && p.state === "open",
@@ -129,9 +126,13 @@ export class ForgeController {
     });
   }
   async call(action: ForgeAction) {
+    this.connection.assertReady(action);
     const response = await this.transport({
       version: 1,
       token: this.token || null,
+      ...(this.accounts.managed && this.data?.detection?.account_id
+        ? { account_id: this.data.detection.account_id }
+        : {}),
       action,
     });
     if (this.#closed) throw new Error("Forge view closed");

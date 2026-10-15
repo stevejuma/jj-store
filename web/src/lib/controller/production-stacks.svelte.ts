@@ -19,6 +19,7 @@ export function createProductionStacks(options: {
   fetcher?: typeof fetch;
   acceptedOperation?: (repository: string, operation: string) => void;
   released?: (repository: string) => void;
+  configureForge?: () => void;
 }) {
   let controller = $state<StackWorkspaceController>();
   let adapter: ProductionStackWorkspaceAdapter | undefined;
@@ -117,6 +118,11 @@ export function createProductionStacks(options: {
               adapter.setOperation(operation);
               void controller.refresh();
             }
+          },
+          {
+            managed: true,
+            scope: source.repository,
+            openSettings: options.configureForge,
           },
         );
         controller = new StackWorkspaceController(adapter, {

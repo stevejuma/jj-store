@@ -13,7 +13,11 @@
   let { controller, branch }: { controller: ForgeController; branch: string } =
     $props();
   const id = $props.id();
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
   const plan = $derived(controller.plan);
   const item = $derived(
     plan?.items.find((item) => item.segment.branch === branch),

@@ -33,7 +33,7 @@
   }
 </script>
 
-{#if forge}
+{#if forge?.ready}
   {#if menuItem}
     <Menu.Item {disabled} onSelect={open} aria-label="Submit stack">
       <StoreForgeIcon provider={forge.data?.connection?.provider} />Submit stack

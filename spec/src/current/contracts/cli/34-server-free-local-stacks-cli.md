@@ -34,3 +34,14 @@ describe all commands. Forge submission and PR commands are governed separately
 by JST-FORGE-001/007; interactive pickers remain outside this local CLI slice.
 Development acceptance uses disposable repositories and explicit binaries, and
 does not replace installed executables.
+
+GitHub forge commands share the installation-owned backend account resolver with
+the app. Explicit CLI automation credentials retain precedence; otherwise the
+repository's selected saved account supplies the credential. An unavailable or
+forgotten saved account requires reconnect and cannot silently select another
+account. Saved credentials and refresh state stay in the OS credential store,
+outside checkout and command output. Existing GitLab/Forgejo configuration paths
+and adapters remain supported. No new interactive authentication picker or
+native-storage submission support is implied. Account identity participates in
+submission/Restack intent guards; reconnect never automatically retries an
+uncertain push, submission or merge.

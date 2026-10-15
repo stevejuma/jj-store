@@ -75,6 +75,7 @@ pub(super) async fn preview(
         .ok_or(f::Error::Invalid)?;
     Ok(f::RestackReceipt {
         plan: f::RestackPlan {
+            account_id: local.account_id.clone(),
             request_id: format!(
                 "restack-{:x}",
                 std::time::SystemTime::now()
@@ -117,6 +118,7 @@ fn target_local(local: &LocalForge, remote: &str) -> LocalForge {
     approved.remote = remote.into();
     approved.source_repository = approved.repository.clone();
     LocalForge {
+        account_id: local.account_id.clone(),
         access: local.access.clone(),
         root: local.root.clone(),
         connection: approved,
@@ -132,7 +134,7 @@ pub(super) async fn apply(
     device: &mut Device,
     plan: f::RestackPlan,
 ) -> f::Result<(f::RestackReceipt, Option<f::Receipt>)> {
-    if plan.connection != local.connection {
+    if plan.connection != local.connection || plan.account_id != local.account_id {
         return Err(f::Error::Stale);
     }
     let mut record = if let Some(old) = device.restack(&plan.request_id) {
@@ -241,7 +243,7 @@ pub(super) async fn apply(
         saved.clone()
     } else {
         let (op, segments) = local.segments(&plan.bookmark).await?;
-        let p = f::planner::plan(
+        let mut p = f::planner::plan(
             format!("{}-submit", plan.request_id),
             op,
             plan.connection.clone(),
@@ -249,6 +251,7 @@ pub(super) async fn apply(
             &client.list().await?,
             true,
         )?;
+        p.account_id = local.account_id.clone();
         record.submission = Some(p.clone());
         device.put_restack(record.clone())?;
         p

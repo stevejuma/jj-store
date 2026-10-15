@@ -36,7 +36,7 @@
   );
 </script>
 
-{#if forge?.data?.connection}
+{#if forge?.ready}
   <div
     class="forge-branch-status"
     role="group"

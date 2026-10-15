@@ -178,6 +178,7 @@ async fn frozen_local_chain_pushes_only_members_and_restacks_after_squash() {
         root: root.clone(),
         connection: connection.clone(),
         credential: None,
+        account_id: None,
     });
     let op = stock(
         &root,
@@ -333,4 +334,188 @@ async fn frozen_local_chain_pushes_only_members_and_restacks_after_squash() {
         )
     );
     assert_eq!(transport.prs.lock().unwrap()[1]["base"]["ref"], "main");
+}
+
+#[derive(Default)]
+struct AccountSecrets(Mutex<std::collections::HashMap<String, String>>);
+impl f::accounts::store::SecretStore for AccountSecrets {
+    fn get(&self, id: &str) -> f::Result<Option<String>> {
+        Ok(self.0.lock().unwrap().get(id).cloned())
+    }
+    fn set(&self, id: &str, value: &str) -> f::Result<()> {
+        self.0.lock().unwrap().insert(id.into(), value.into());
+        Ok(())
+    }
+    fn remove(&self, id: &str) -> f::Result<()> {
+        self.0.lock().unwrap().remove(id);
+        Ok(())
+    }
+}
+#[derive(Default)]
+struct AccountApi {
+    identity: Mutex<u64>,
+    denied: Mutex<bool>,
+}
+#[async_trait::async_trait(?Send)]
+impl f::accounts::http::Transport for AccountApi {
+    async fn request(&self, url: &str, _: Option<&str>, _: Option<Value>) -> f::Result<Value> {
+        if *self.denied.lock().unwrap() {
+            return Err(f::Error::Denied);
+        }
+        if url.ends_with("/user") {
+            return Ok(json!({"id":*self.identity.lock().unwrap(),"login":"fixture"}));
+        }
+        Ok(json!({"default_branch":"trunk","fork":false}))
+    }
+}
+#[tokio::test]
+async fn github_detection_binds_one_verified_account_and_preserves_ambiguity_and_pending_intent() {
+    let source = tempfile::tempdir().unwrap();
+    let root = source.path().canonicalize().unwrap();
+    stock(&root, &["git", "init", "--colocate"]);
+    stock(
+        &root,
+        &[
+            "git",
+            "remote",
+            "add",
+            "origin",
+            "https://github.com/team/repo.git",
+        ],
+    );
+    let before = stock(
+        &root,
+        &[
+            "--ignore-working-copy",
+            "op",
+            "log",
+            "--no-graph",
+            "-n",
+            "1",
+            "-T",
+            "id",
+        ],
+    );
+    let state = tempfile::tempdir().unwrap();
+    let metadata = root.join(".jj/repo").canonicalize().unwrap();
+    let access: Arc<dyn Access> = Arc::new(AccessFixture(metadata.clone()));
+    let local = LocalForge {
+        access,
+        root: root.clone(),
+        connection: connection::provisional(),
+        credential: None,
+        account_id: None,
+    };
+    let secrets = Arc::new(AccountSecrets::default());
+    let api = Arc::new(AccountApi {
+        identity: Mutex::new(42),
+        ..Default::default()
+    });
+    let manager = f::accounts::Manager::new(
+        state.path().join("accounts"),
+        secrets.clone(),
+        api.clone(),
+        None,
+    );
+    let mut device = Device::at(&state.path().join("device"), &metadata).unwrap();
+    let result = connection::detect_with(&local, &mut device, true, &manager)
+        .await
+        .unwrap();
+    assert_eq!(result.readiness, "unconfigured");
+    assert!(device.connection().is_none());
+    manager
+        .execute(
+            f::accounts::Command::AddToken {
+                api_url: "https://api.github.com".into(),
+                token: "fixture-secret".into(),
+            },
+            1,
+        )
+        .await
+        .unwrap();
+    let result = connection::detect_with(&local, &mut device, true, &manager)
+        .await
+        .unwrap();
+    assert_eq!(result.readiness, "connected");
+    assert_eq!(device.connection().unwrap().target, "trunk");
+    let account = device.account_id().unwrap();
+    *api.denied.lock().unwrap() = true;
+    assert_eq!(
+        connection::detect_with(&local, &mut device, true, &manager)
+            .await
+            .unwrap()
+            .readiness,
+        "reconnect_required"
+    );
+    *api.denied.lock().unwrap() = false;
+    let after = stock(
+        &root,
+        &[
+            "--ignore-working-copy",
+            "op",
+            "log",
+            "--no-graph",
+            "-n",
+            "1",
+            "-T",
+            "id",
+        ],
+    );
+    assert_eq!(before, after, "discovery must not snapshot or publish code");
+    *api.identity.lock().unwrap() = 43;
+    manager
+        .execute(
+            f::accounts::Command::AddToken {
+                api_url: "https://api.github.com".into(),
+                token: "other-secret".into(),
+            },
+            1,
+        )
+        .await
+        .unwrap();
+    let mut other = Device::at(&state.path().join("ambiguous"), &metadata).unwrap();
+    assert_eq!(
+        connection::detect_with(&local, &mut other, true, &manager)
+            .await
+            .unwrap()
+            .readiness,
+        "selection_required"
+    );
+    assert!(other.connection().is_none());
+    // Existing pending external work retains its original account even after another login.
+    let action = f::PrAction::Draft { draft: true };
+    device
+        .begin_operation("pending-account-operation", 1, &action)
+        .unwrap();
+    assert!(matches!(
+        device.bind_account("different-account".into()),
+        Err(f::Error::Stale)
+    ));
+    assert_eq!(device.account_id(), Some(account));
+    stock(
+        &root,
+        &[
+            "git",
+            "remote",
+            "add",
+            "upstream",
+            "https://github.com/team/upstream.git",
+        ],
+    );
+    manager
+        .execute(
+            f::accounts::Command::Forget {
+                account: manager.inventory().unwrap().accounts[1].id.clone(),
+            },
+            1,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        connection::detect_with(&local, &mut other, true, &manager)
+            .await
+            .unwrap()
+            .readiness,
+        "selection_required"
+    );
 }

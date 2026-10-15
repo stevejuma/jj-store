@@ -7,6 +7,8 @@
   import { MockStackWorkspaceAdapter } from "./stack-workspace/adapter.js";
   import { workspaceStoryFixture } from "./stack-workspace/data.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
+  import { ownAppearance } from "../../web/src/lib/appearance/runtime.svelte.js";
+  import { createAppearanceStore } from "../../web/src/lib/appearance/store.svelte.js";
   import { workspaceForgeTransport } from "./forge/workspace-transport.js";
   import type { ForgeCheck } from "../../web/src/lib/controller/forge/types.js";
   let {
@@ -18,6 +20,8 @@
     pushState = "changes",
     apiCheckState = "running",
     apiChecksComplete = true,
+    manyChecks = false,
+    colorMode,
   }: {
     panelOpen?: boolean;
     workspacePullRequest?: boolean;
@@ -27,6 +31,8 @@
     pushState?: "changes" | "synced" | "unknown";
     apiCheckState?: ForgeCheck["state"];
     apiChecksComplete?: boolean;
+    manyChecks?: boolean;
+    colorMode?: "light" | "dark";
   } = $props();
   const controller = untrack(() => {
     const value = createInMemoryStoreController("stacks");
@@ -34,6 +40,12 @@
     return value;
   });
   const layoutStorage = untrack(createMemoryStoryStorage);
+  const requestedColorMode = untrack(() => colorMode);
+  if (requestedColorMode) {
+    const appearance = createAppearanceStore(layoutStorage);
+    appearance.mode(requestedColorMode);
+    ownAppearance(appearance, layoutStorage);
+  }
   const stackWorkspace = untrack(() => {
     const snapshot = workspaceStoryFixture();
     snapshot.repository = controller.state.route.repository;
@@ -65,7 +77,40 @@
         apiLocalHead: pushState === "unknown" ? undefined : apiHead,
       },
     );
-    const forge = new ForgeController(fixture.transport);
+    const forge = new ForgeController(async (request) => {
+      const response = await fixture.transport(request);
+      if (
+        manyChecks &&
+        response.checks &&
+        request.action.kind === "pr" &&
+        request.action.action.kind === "checks"
+      ) {
+        const original = response.checks.checks[0]!;
+        response.checks = {
+          ...response.checks,
+          checks: Array.from({ length: 36 }, (_, index) => ({
+            ...original,
+            id: `check-${index}`,
+            name: `Workflow / job ${index + 1}`,
+            state:
+              index < 2
+                ? "failed"
+                : index < 4
+                  ? "running"
+                  : index === 4
+                    ? "manual"
+                    : index === 5
+                      ? "unknown"
+                      : index === 6
+                        ? "skipped"
+                        : index === 7
+                          ? "cancelled"
+                          : "passed",
+          })),
+        };
+      }
+      return response;
+    });
     forge.data = fixture.initial;
     forge.ci = fixture.ci;
     if (panelOpen) forge.select("feature/api", "inline");

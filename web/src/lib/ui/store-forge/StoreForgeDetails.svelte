@@ -32,7 +32,11 @@
   const expanded = $derived(
     Boolean(selected && pr && controller.detailsExpanded),
   );
-  const blocked = $derived(controller.busy || Boolean(controller.pending));
+  const blocked = $derived(
+    controller.busy ||
+      Boolean(controller.pending) ||
+      (controller.accounts.managed && !controller.ready),
+  );
   const identity = $derived(pr?.number);
   $effect(() => {
     identity;
