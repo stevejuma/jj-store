@@ -7,6 +7,7 @@ final-status-level = "fail"
 
 [profile.heavy]
 inherits = "ci"
+fail-fast = false
 test-threads = 1
 slow-timeout = { period = "240s", terminate-after = 4 }
 

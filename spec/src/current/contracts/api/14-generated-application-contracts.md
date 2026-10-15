@@ -1,5 +1,10 @@
 # Generated application contracts
 
+E-CI-SUITES-001 preserves JST-API-006: the independently dispatched API suite
+still regenerates contracts and validates the same actual HTTP captures. Suite
+separation, artifact verification and timing reports change qualification
+orchestration only; transport schemas and assertions are unchanged.
+
 The HTTP route inventory also generates OpenAPI 3.1. JSON schemas derive from
 the exact owned Rust request and response types, using deserialization rules for
 requests and serialization rules for responses. Optional request fields are

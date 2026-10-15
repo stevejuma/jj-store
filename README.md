@@ -133,12 +133,15 @@ checks, then all heavy tests, native platforms, real storage and browser suites
 at one immutable source SHA. Heavy Rust uses eight shards; cold browser uses
 four isolated shards, Storybook three and served-browser tests two. Profile
 restart, real RustFS Git-cycle, static catalog and dual-engine Help have
-separate lanes. Failures block later stages and cancel matrix siblings.
-Artifacts come from the same workflow run; ignored subprocess helpers run
-through their owning acceptance parents. There are no automatic or nightly heavy
-runs. Publication requires complete qualification. See
-[release instructions](docs/releases.md) for manual dispatch and remaining
-qualification gaps.
+separate lanes. Independent suites finish after failures; only failed build
+inputs block their consumers. Full qualification still requires every suite. Six
+named workflows support standalone dispatch with a source SHA, producer run and
+attempt. They verify successful producers and artifact checksums before reuse.
+Reports retain logs, test results, inventories and machine-readable timings.
+Ignored subprocess helpers run through their owning acceptance parents. There
+are no automatic or nightly heavy runs. Publication requires complete
+qualification. See [release instructions](docs/releases.md) for manual dispatch
+and remaining qualification gaps.
 
 Initialize the private development fixture once with `pnpm dev:restart`, then
 use `pnpm dev:ui` for Vite HMR at `http://127.0.0.1:7460/`. After Rust edits run

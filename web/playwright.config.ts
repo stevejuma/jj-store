@@ -9,8 +9,18 @@ export default defineConfig({
   workers: 1,
   timeout: 30000,
   retries: 0,
-  maxFailures: process.env.CI === "true" ? 1 : 0,
-  reporter: process.env.CI ? "line" : "list",
+  maxFailures:
+    process.env.JJ_STORE_CI_REPORTS === "1"
+      ? 0
+      : process.env.CI === "true"
+        ? 1
+        : 0,
+  reporter:
+    process.env.JJ_STORE_CI_REPORTS === "1"
+      ? [["line"], ["junit"]]
+      : process.env.CI
+        ? "line"
+        : "list",
   use: {
     baseURL: "http://127.0.0.1:7458",
     browserName: "chromium",

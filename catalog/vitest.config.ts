@@ -30,7 +30,12 @@ export default defineConfig({
         ],
         test: {
           name: "storybook",
-          bail: process.env.CI === "true" ? 1 : 0,
+          bail:
+            process.env.JJ_STORE_CI_REPORTS === "1"
+              ? 0
+              : process.env.CI === "true"
+                ? 1
+                : 0,
           setupFiles: [".storybook/vitest.setup.ts"],
           testTimeout: 60000,
           browser: {

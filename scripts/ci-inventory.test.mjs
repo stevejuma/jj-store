@@ -68,7 +68,13 @@ test("selected packages reach both build and shard consumers and all archive upl
       ci.jobs[name].env.CI_PACKAGES,
       "${{ needs.plan.outputs.packages }}",
     );
-  for (const file of ["ci.yml", "ci-heavy.yml"]) {
+  for (const file of [
+    "ci.yml",
+    "ci-qualification-build.yml",
+    "ci-heavy-native.yml",
+    "ci-heavy-contracts.yml",
+    "ci-heavy-storage.yml",
+  ]) {
     const { jobs } = parse(readFileSync(`.github/workflows/${file}`, "utf8"));
     for (const job of Object.values(jobs))
       for (const step of job.steps ?? []) {
@@ -77,7 +83,7 @@ test("selected packages reach both build and shard consumers and all archive upl
           assert.equal(step.with["cache-on-failure"], "false");
           assert.match(
             step.with["save-if"],
-            /needs\.(plan|resolve)\.outputs.cache_write/,
+            /needs\.plan\.outputs.cache_write|inputs\.cache_write/,
           );
         }
         if (

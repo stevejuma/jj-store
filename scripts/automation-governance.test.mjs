@@ -120,11 +120,14 @@ test("bot PRs retain static spec and planned test lanes", () => {
   assert.equal(ci.jobs.required.if, "always()");
   for (const name of [
     "build",
-    "tests",
+    "backend",
     "runtime",
-    "storage",
+    "external",
+    "embedded",
+    "contracts",
     "assets",
-    "browser",
+    "ui",
+    "cold",
     "native",
   ]) {
     assert.ok(heavyCi.jobs.complete.needs.includes(name), name);

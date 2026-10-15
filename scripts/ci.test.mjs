@@ -96,6 +96,36 @@ test("parallel cold shards use disjoint result directories and CI stops on failu
   });
   assert.equal(new Set(directories).size, 4);
 });
+test("heavy browser reporting keeps all tests and emits JUnit", () => {
+  for (const file of [
+    "playwright.config.ts",
+    "playwright.real.config.ts",
+    "playwright.docs.config.ts",
+  ]) {
+    const output = execFileSync(
+      process.execPath,
+      [
+        "--import",
+        "tsx",
+        "--input-type=module",
+        "-e",
+        `import config from "./web/${file}"; console.log(JSON.stringify({failures:config.maxFailures,reporter:config.reporter}));`,
+      ],
+      {
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          CI: "true",
+          JJ_STORE_CI_REPORTS: "1",
+          JJ_STORE_REAL_BASE_URL: "http://127.0.0.1:7530",
+        },
+      },
+    );
+    const config = JSON.parse(output);
+    assert.equal(config.failures, 0);
+    assert.deepEqual(config.reporter, [["line"], ["junit"]]);
+  }
+});
 test("the complete cold suite isolates profile shutdown and cleans both fixtures", (t) => {
   const harness = coldHarness(t);
   harness.run();
@@ -118,73 +148,56 @@ test("cold shard failures clean their fixture and do not launch the later profil
   assert.equal(calls.filter((call) => call.args[0] === "dev:stop").length, 1);
   assert.equal(existsSync(calls[0].root), false);
 });
-test("browser and storage lanes consume same-run assets without overwriting them with caches", () => {
-  const { jobs } = parseYaml(
-    readFileSync(".github/workflows/ci-heavy.yml", "utf8"),
-  );
-  const downloads = jobs.browser.steps.filter(
-    (step) =>
-      step.uses?.startsWith("actions/download-artifact@") &&
-      step.with.name !== "tests-heavy",
-  );
-  assert.deepEqual(downloads.map((step) => step.with.name).sort(), [
-    "linux-development-tools",
-    "linux-storage-runtime",
-    "native-browser-fixtures",
-    "storybook-bundle",
-    "web-bundle",
-  ]);
+test("browser and storage suites preserve coverage and consume only their inputs", () => {
+  const load = (file) =>
+    parseYaml(readFileSync(`.github/workflows/${file}.yml`, "utf8")).jobs;
+  const heavy = load("ci-heavy"),
+    cold = load("ci-heavy-cold").tests,
+    ui = load("ci-heavy-ui").tests;
+  assert.ok(heavy.cold.needs.includes("runtime"));
+  assert.ok(heavy.embedded.needs.includes("runtime"));
+  assert.ok(heavy.complete.needs.includes("runtime"));
+  assert.equal(heavy.ui.needs.includes("runtime"), false);
+  const lanes = [
+    ...cold.strategy.matrix.include,
+    ...ui.strategy.matrix.include,
+  ];
+  for (const [lane, shards] of [
+    ["cold", ["1/4", "2/4", "3/4", "4/4"]],
+    ["storybook", ["1/3", "2/3", "3/3"]],
+    ["browser", ["1/2", "2/2"]],
+  ])
+    assert.deepEqual(
+      lanes.filter((item) => item.lane === lane).map((item) => item.shard),
+      shards,
+    );
+  for (const lane of ["cold-profile", "git-cycle", "catalog", "help"])
+    assert.equal(lanes.filter((item) => item.lane === lane).length, 1);
+  for (const job of [cold, ui]) {
+    assert.equal(
+      job.steps.some((step) => step.uses?.includes("rust-cache")),
+      false,
+    );
+    assert.ok(
+      job.steps.some((step) => step.run?.includes("ci-artifacts.mjs consume")),
+    );
+    assert.ok(
+      job.steps.some((step) => step.run?.endsWith("--with-deps chromium")),
+    );
+    const setup = job.steps.find(
+      (step) => step.uses === "./.github/actions/setup",
+    );
+    assert.equal(setup.with["native-dependencies"], "false");
+    assert.match(setup.with["build-tools"], /matrix\.lane == 'git-cycle'/);
+  }
   assert.equal(
-    jobs.browser.steps.some((step) =>
-      step.uses?.startsWith("Swatinem/rust-cache@"),
-    ),
-    false,
-  );
-  assert.ok(jobs.browser.needs.includes("runtime"));
-  assert.ok(jobs.storage.needs.includes("runtime"));
-  assert.ok(jobs.complete.needs.includes("runtime"));
-  const installer = jobs.browser.steps.find(
-    (step) => step.run === "node scripts/ci-setup-acp.mjs",
+    ui.steps.find((step) => step.run?.endsWith("--with-deps webkit")).if,
+    "matrix.lane == 'help'",
   );
   assert.equal(
-    installer.if,
+    cold.steps.find((step) => step.run === "node scripts/ci-setup-acp.mjs").if,
     "matrix.lane == 'cold' || matrix.lane == 'cold-profile'",
   );
-  const lanes = jobs.browser.strategy.matrix.include;
-  assert.deepEqual(
-    lanes.filter((lane) => lane.lane === "cold").map((lane) => lane.shard),
-    ["1/4", "2/4", "3/4", "4/4"],
-  );
-  assert.equal(lanes.filter((lane) => lane.lane === "cold-profile").length, 1);
-  assert.equal(lanes.filter((lane) => lane.lane === "git-cycle").length, 1);
-  assert.deepEqual(
-    lanes.filter((lane) => lane.lane === "storybook").map((lane) => lane.shard),
-    ["1/3", "2/3", "3/3"],
-  );
-  assert.deepEqual(
-    lanes.filter((lane) => lane.lane === "browser").map((lane) => lane.shard),
-    ["1/2", "2/2"],
-  );
-  assert.equal(lanes.filter((lane) => lane.lane === "catalog").length, 1);
-  assert.equal(lanes.filter((lane) => lane.lane === "help").length, 1);
-  const archive = jobs.browser.steps.find(
-    (step) => step.with?.name === "tests-heavy",
-  );
-  assert.equal(archive.if, "matrix.lane == 'git-cycle'");
-  assert.ok(
-    jobs.browser.steps.some((step) =>
-      step.run?.endsWith("--with-deps chromium"),
-    ),
-  );
-  const webkit = jobs.browser.steps.find((step) =>
-    step.run?.endsWith("--with-deps webkit"),
-  );
-  assert.equal(webkit.if, "matrix.lane == 'help'");
-  const setup = jobs.browser.steps.find(
-    (step) => step.uses === "./.github/actions/setup",
-  );
-  assert.equal(setup.with["native-dependencies"], "false");
-  assert.match(setup.with["build-tools"], /matrix\.lane == 'git-cycle'/);
 });
 test("browser orchestration selects one suite per lane and forwards real shard arguments", (t) => {
   const root = mkdtempSync(join(tmpdir(), "jj-store-ci-browser-"));

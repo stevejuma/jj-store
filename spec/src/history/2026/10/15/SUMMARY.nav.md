@@ -1,12 +1,14 @@
 - [E-CI-ACTIONLINT-001](E-CI-ACTIONLINT-001/index.md)
   {{#include E-CI-ACTIONLINT-001/SUMMARY.nav.md}}
-- [E-CI-GOVERNANCE-001](E-CI-GOVERNANCE-001/index.md)
-  {{#include E-CI-GOVERNANCE-001/SUMMARY.nav.md}}
-- [E-CI-STANDARD-001](E-CI-STANDARD-001/index.md)
-  {{#include E-CI-STANDARD-001/SUMMARY.nav.md}}
 - [E-CI-AFFECTED-001](E-CI-AFFECTED-001/index.md)
   {{#include E-CI-AFFECTED-001/SUMMARY.nav.md}}
 - [E-CI-CACHE-TRIAL-001](E-CI-CACHE-TRIAL-001/index.md)
   {{#include E-CI-CACHE-TRIAL-001/SUMMARY.nav.md}}
+- [E-CI-GOVERNANCE-001](E-CI-GOVERNANCE-001/index.md)
+  {{#include E-CI-GOVERNANCE-001/SUMMARY.nav.md}}
 - [E-CI-HEAVY-001](E-CI-HEAVY-001/index.md)
   {{#include E-CI-HEAVY-001/SUMMARY.nav.md}}
+- [E-CI-STANDARD-001](E-CI-STANDARD-001/index.md)
+  {{#include E-CI-STANDARD-001/SUMMARY.nav.md}}
+- [E-CI-SUITES-001](E-CI-SUITES-001/index.md)
+  {{#include E-CI-SUITES-001/SUMMARY.nav.md}}

@@ -10,7 +10,18 @@ const shard = process.env.JJ_STORE_BROWSER_SHARD;
 if (shard && !/^[1-9]\d*\/[1-9]\d*$/.test(shard))
   throw Error("invalid browser shard");
 const shardArgs = shard ? [`--shard=${shard}`] : [];
-if (lane === "storybook") pnpm("test:storybook", ...shardArgs);
+if (lane === "storybook")
+  pnpm(
+    "test:storybook",
+    ...shardArgs,
+    ...(process.env.JJ_STORE_CI_REPORTS === "1"
+      ? [
+          "--reporter=default",
+          "--reporter=junit",
+          "--outputFile=.release/ci-results/storybook.xml",
+        ]
+      : []),
+  );
 else if (lane === "browser" && prebuilt) {
   pnpm(
     "exec",
@@ -24,7 +35,20 @@ else if (lane === "browser" && prebuilt) {
   pnpm("web:test:browser", ...shardArgs);
 } else if (lane === "catalog") {
   if (prebuilt)
-    pnpm("exec", "node", "--test", "scripts/catalog-browser.test.mjs");
+    pnpm(
+      "exec",
+      "node",
+      "--test",
+      ...(process.env.JJ_STORE_CI_REPORTS === "1"
+        ? [
+            "--test-reporter=spec",
+            "--test-reporter-destination=stdout",
+            "--test-reporter=junit",
+            "--test-reporter-destination=.release/ci-results/catalog.xml",
+          ]
+        : []),
+      "scripts/catalog-browser.test.mjs",
+    );
   else pnpm("catalog:test:browser");
 } else if (lane === "help") {
   if (prebuilt)

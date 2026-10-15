@@ -1,5 +1,12 @@
 # Bounded specification and evidence
 
+E-CI-SUITES-001 retains JST-GOV-003/004/011: independent suite results and
+reused build artifacts never establish a complete qualification pass. Evidence
+records source and producer run/attempt, unavailable timing fields, failed or
+canceled tests and remaining gates. The temporary direct-main exception is
+explicitly user-authorized and governed by JST-ARCH-005; ordinary protection
+returns immediately after each push attempt.
+
 JST-GOV-010 governs all authored specification Markdown, including navigation,
 progress and evidence detail pages: at most 400 physical lines and 32,768 UTF-8
 bytes. Counts include examples, frontmatter and tables. Generated book staging

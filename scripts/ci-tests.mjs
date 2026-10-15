@@ -41,6 +41,23 @@ if (mode === "build") {
     throw Error("invalid test shard");
   const inventory = await readInventory(archive, cohort, packages);
   const expected = inventory.partitions[shard - 1].length;
+  if (process.env.JJ_STORE_CI_REPORTS === "1") {
+    mkdirSync(".release/ci-results", { recursive: true });
+    writeFileSync(
+      ".release/ci-results/inventory.json",
+      JSON.stringify(
+        {
+          source: inventory.source,
+          cohort,
+          shard,
+          expected,
+          tests: inventory.partitions[shard - 1],
+        },
+        null,
+        2,
+      ),
+    );
+  }
   console.log(
     `Verified source and archive; shard ${shard}/${count} expects ${expected} runnable tests.`,
   );

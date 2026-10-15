@@ -61,15 +61,54 @@ gh workflow run ci-heavy.yml --ref main -f ref=COMMIT_SHA
 ```
 
 Omitting `ref` qualifies the workflow's selected revision. Qualification pins
-that revision once, runs all standard checks, then every heavy lane. No subset
-switches or scheduled heavy runs are enabled. The separate `publish-release.yml`
-workflow calls this complete qualification at its exact source SHA before any
-publication. Changesets release orchestration remains disabled until initial
-qualification is ready; running qualification alone does not publish anything.
+that revision once, runs all standard checks, then every heavy suite.
+Independent suites continue after failures, while missing build inputs block
+their consumers. No scheduled heavy runs are enabled. The separate
+`publish-release.yml` workflow calls this complete qualification at its exact
+source SHA before any publication. Changesets release orchestration remains
+disabled until initial qualification is ready; running qualification alone does
+not publish anything.
 
-Run 38700726811 passed standard checks at `199969c8` but failed heavy shard 5;
-its siblings were canceled and later qualification lanes did not run. This
-workflow split does not qualify those gaps or promote M30 to Done.
+Six workflows can also run independently: `ci-heavy-backend.yml`,
+`ci-heavy-contracts.yml`, `ci-heavy-storage.yml`, `ci-heavy-ui.yml`,
+`ci-heavy-cold.yml` and `ci-heavy-native.yml`. For each, provide the exact
+source and the coordinator's producer run/attempt:
+
+```sh
+gh workflow run ci-heavy-ui.yml --ref main \
+  -f source=COMMIT_SHA -f producer_run=RUN_ID -f producer_attempt=1
+```
+
+Storage defaults to both embedded and external acceptance; its internal `lane`
+input also lets the coordinator start external checks before runtime
+compilation. All standalone suites verify the successful standard gate and
+relevant producer jobs. Artifacts use attempt-specific names and checksummed
+source receipts. A failed unrelated suite does not prevent reusing successfully
+produced inputs. Expired or mismatched artifacts fail; start fresh full
+qualification to replace them. Standalone results do not replace the publication
+gate.
+
+Compare `qualification-results-*` artifacts and job summaries. Archive consumers
+reuse compilation; API contracts and native checks still compile locally, so
+those reruns are not execution-only measurements. Reports retain command logs,
+available JUnit/Playwright results, source/runner identity and job/step timings.
+Missing queue/dependency timestamps remain unknown. Runner minutes count
+parallel execution separately from elapsed duration. Download completed-run job
+timestamps when measuring cache-save steps that execute after a job's report
+snapshot.
+
+During the explicitly authorized CI rollout, administrator enforcement may be
+disabled only around each verified direct main push. Snapshot protection first,
+restore it immediately even after push failure, and verify the restored state.
+PR requirements, required checks and tag immutability remain configured.
+
+Run 38700726811 passed standard checks at `199969c8` but failed heavy shard 5.
+Run 38716420649 subsequently passed standard checks and built heavy artifacts in
+17m15s, then failed `kingfisher_redacts_secrets_and_normalizes_workspace_paths`
+on the obsolete `mongodb-kingfisher@2.7.0` identity expectation. Its other
+shards were canceled and downstream qualification did not run. These remain
+historical failures; restructuring does not qualify those gaps or promote M30 to
+Done.
 
 ## Initial Cargo bootstrap
 

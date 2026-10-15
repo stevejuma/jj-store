@@ -1,0 +1,119 @@
+name: Storage acceptance qualification
+run-name:
+  Storage acceptance qualification · ${{ inputs.source }} · producer ${{
+  inputs.producer_run || github.run_id }}/${{ inputs.producer_attempt ||
+  github.run_attempt }}
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        type: string
+        required: true
+        description: Exact source commit SHA
+      producer_run:
+        type: string
+        required: true
+        description: Full qualification producer run ID
+      producer_attempt:
+        type: string
+        required: true
+        description: Producer run attempt
+      lane: &a1
+        type: string
+        default: all
+        description: all, embedded or external
+  workflow_call:
+    inputs:
+      source:
+        type: string
+        required: true
+        description: Exact source commit SHA
+      producer_run:
+        type: string
+        required: false
+        description: Full qualification producer run ID
+        default: ""
+      producer_attempt:
+        type: string
+        required: false
+        description: Producer run attempt
+        default: ""
+      cache_write:
+        type: string
+        default: "false"
+      lane: *a1
+permissions:
+  contents: read
+  actions: read
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
+  CI_SOURCE: ${{ inputs.source }}
+  CI_PRODUCER_RUN: ${{ inputs.producer_run || github.run_id }}
+  CI_PRODUCER_ATTEMPT: ${{ inputs.producer_attempt || github.run_attempt }}
+  JJ_STORE_CI_REPORTS: "1"
+  PLAYWRIGHT_JUNIT_OUTPUT_FILE:
+    ${{ github.workspace }}/.release/ci-results/playwright.xml
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          ${{ fromJSON(inputs.lane == 'external' &&
+          '[{"lane":"external","name":"Real RustFS storage acceptance"}]' ||
+          inputs.lane == 'embedded' && '[{"lane":"embedded","name":"Embedded
+          storage lifecycle"}]' || '[{"lane":"embedded","name":"Embedded storage
+          lifecycle"},{"lane":"external","name":"Real RustFS storage
+          acceptance"}]') }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source }}
+          fetch-depth: 0
+      - name: Validate storage selection
+        run: case "$STORAGE_LANE" in all|embedded|external) ;; *) exit 1 ;; esac
+        env:
+          STORAGE_LANE: ${{ inputs.lane }}
+      - name: Verify source, successful producers and artifact checksums
+        run:
+          node scripts/ci-exec.mjs artifact-download -- node
+          scripts/ci-artifacts.mjs consume ${{ matrix.lane }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: . -> target
+          save-if:
+            ${{ inputs.cache_write == 'true' && inputs.producer_run == '' }}
+          key: storage-${{ matrix.lane }}-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Run storage acceptance
+        run:
+          node scripts/ci-exec.mjs storage -- node scripts/ci-storage.mjs ${{
+          matrix.lane }}
+        env:
+          JJ_STORE_CI_PREBUILT: "1"
+          JJ_STORE_RUSTFS_RUNTIME:
+            ${{ github.workspace
+            }}/runtime/embedded-rustfs/target/debug/jj-store-rustfs
+      - name: Preserve results and timing evidence
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: storage-${{ matrix.lane }}
+    name: ${{ matrix.name }}
+concurrency:
+  group:
+    qualification-storage-${{ inputs.source }}-${{ inputs.lane }}-${{
+    github.event_name }}
+  cancel-in-progress: false

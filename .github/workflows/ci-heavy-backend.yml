@@ -1,0 +1,98 @@
+name: Backend Rust qualification
+run-name:
+  Backend Rust qualification · ${{ inputs.source }} · producer ${{
+  inputs.producer_run || github.run_id }}/${{ inputs.producer_attempt ||
+  github.run_attempt }}
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        type: string
+        required: true
+        description: Exact source commit SHA
+      producer_run:
+        type: string
+        required: true
+        description: Full qualification producer run ID
+      producer_attempt:
+        type: string
+        required: true
+        description: Producer run attempt
+  workflow_call:
+    inputs:
+      source:
+        type: string
+        required: true
+        description: Exact source commit SHA
+      producer_run:
+        type: string
+        required: false
+        description: Full qualification producer run ID
+        default: ""
+      producer_attempt:
+        type: string
+        required: false
+        description: Producer run attempt
+        default: ""
+      cache_write:
+        type: string
+        default: "false"
+permissions:
+  contents: read
+  actions: read
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
+  CI_SOURCE: ${{ inputs.source }}
+  CI_PRODUCER_RUN: ${{ inputs.producer_run || github.run_id }}
+  CI_PRODUCER_ATTEMPT: ${{ inputs.producer_attempt || github.run_attempt }}
+  JJ_STORE_CI_REPORTS: "1"
+  PLAYWRIGHT_JUNIT_OUTPUT_FILE:
+    ${{ github.workspace }}/.release/ci-results/playwright.xml
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+    env:
+      CARGO_TARGET_DIR: target
+      CI_SHARD: ${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source }}
+          fetch-depth: 0
+      - name: Verify source, successful producers and artifact checksums
+        run:
+          node scripts/ci-exec.mjs artifact-download -- node
+          scripts/ci-artifacts.mjs consume backend
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: ./.github/actions/setup
+      - name: Run archived backend tests
+        run:
+          node scripts/ci-exec.mjs tests -- node scripts/ci-tests.mjs run heavy
+      - name: Preserve results and timing evidence
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: backend-${{ matrix.shard }}
+    name: Server, CLI and capture tests (shard ${{ matrix.shard }}/8)
+concurrency:
+  group: qualification-backend-${{ inputs.source }}-${{ github.event_name }}
+  cancel-in-progress: false

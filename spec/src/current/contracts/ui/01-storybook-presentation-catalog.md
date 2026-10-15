@@ -1,5 +1,11 @@
 # Storybook presentation catalog
 
+E-CI-SUITES-001 preserves JST-UI-001: qualification retains every existing
+interaction, accessibility and browser scenario with isolated fixtures. Heavy
+runners collect remaining failures and JUnit reports instead of stopping after
+the first failure. This changes diagnostic completeness, not UI assertions,
+production behavior or the separate visual-baseline approval requirement.
+
 Recorded text files expose Blame when a live provider is available. Source and
 Markdown Preview keep their existing defaults when no display mode is encoded.
 Source loads independently and switching display never refetches its content.

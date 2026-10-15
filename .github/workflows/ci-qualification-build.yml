@@ -1,0 +1,188 @@
+name: Qualification artifact producer
+on:
+  workflow_call:
+    inputs:
+      source:
+        type: string
+        required: true
+      kind:
+        type: string
+        required: true
+      cache_write:
+        type: string
+        default: "false"
+permissions:
+  contents: read
+  actions: read
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
+  CI_SOURCE: ${{ inputs.source }}
+  CI_PRODUCER_RUN: ${{ github.run_id }}
+  CI_PRODUCER_ATTEMPT: ${{ github.run_attempt }}
+  JJ_STORE_CI_REPORTS: "1"
+  PLAYWRIGHT_JUNIT_OUTPUT_FILE:
+    ${{ github.workspace }}/.release/ci-results/playwright.xml
+  JJ_STORE_DOC_REFERENCE:
+    ${{ github.workspace }}/target/debug/examples/docs_reference
+jobs:
+  produce:
+    name: ${{ inputs.kind }} artifact producer
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source }}
+          fetch-depth: 0
+      - name: Validate producer kind
+        run: case "$PRODUCER_KIND" in build|runtime|assets) ;; *) exit 1 ;; esac
+        env:
+          PRODUCER_KIND: ${{ inputs.kind }}
+      - name: Verify source, successful producers and artifact checksums
+        run:
+          node scripts/ci-exec.mjs artifact-download -- node
+          scripts/ci-artifacts.mjs consume ${{ inputs.kind == 'assets' &&
+          'assets' || 'standard' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: . -> target
+          save-if: ${{ inputs.cache_write == 'true' }}
+          key: heavy-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: cache-build
+        name: Restore Rust dependency cache
+        if: inputs.kind == 'build'
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.cache-build.outputs.cache-hit }}
+        if: inputs.kind == 'build'
+      - run: node scripts/ci-exec.mjs build -- node scripts/ci-build.mjs heavy
+        if: inputs.kind == 'build'
+        name: Compile, lint, archive and build browser tools
+      - if: inputs.kind == 'build'
+        name: Hash build payloads
+        run: node scripts/ci-artifacts.mjs pack build
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: tests-heavy-${{ github.run_attempt }}
+          path: .release/tests-heavy.tar.zst*
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+          compression-level: 0
+        if: inputs.kind == 'build'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: linux-development-tools-${{ github.run_attempt }}
+          path: |
+            target/debug/jj-store
+            target/debug/jj-store-jj
+            target/debug/examples/docs_reference
+            target/debug/examples/browser_preview
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+        if: inputs.kind == 'build'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: native-browser-fixtures-${{ github.run_attempt }}
+          path: .scratch/web-responses.json
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+        if: inputs.kind == 'build'
+      - name: Upload build provenance
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: qualification-build-${{ github.run_attempt }}
+          path: .release/qualification/build.json
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: true
+        if: inputs.kind == 'build'
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: runtime/embedded-rustfs -> target
+          save-if: ${{ inputs.cache_write == 'true' }}
+          key: embedded-runtime-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: cache-runtime
+        name: Restore Rust dependency cache
+        if: inputs.kind == 'runtime'
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.cache-runtime.outputs.cache-hit }}
+        if: inputs.kind == 'runtime'
+      - run: |-
+          node scripts/ci-exec.mjs runtime-build -- pnpm build:embedded-rustfs
+          node scripts/ci-exec.mjs runtime-lint -- pnpm check:embedded-rustfs
+        if: inputs.kind == 'runtime'
+      - if: inputs.kind == 'runtime'
+        name: Hash runtime payloads
+        run: node scripts/ci-artifacts.mjs pack runtime
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: linux-storage-runtime-${{ github.run_attempt }}
+          path: runtime/embedded-rustfs/target/debug/jj-store-rustfs
+          retention-days: 7
+          if-no-files-found: error
+          include-hidden-files: true
+        if: inputs.kind == 'runtime'
+      - name: Upload runtime provenance
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: qualification-runtime-${{ github.run_attempt }}
+          path: .release/qualification/runtime.json
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: true
+        if: inputs.kind == 'runtime'
+      - run: |-
+          pnpm exec playwright install --with-deps chromium
+          node scripts/ci-exec.mjs web-build -- pnpm web:build
+          node scripts/ci-exec.mjs catalog-build -- pnpm build-storybook
+        if: inputs.kind == 'assets'
+      - if: inputs.kind == 'assets'
+        name: Hash assets payloads
+        run: node scripts/ci-artifacts.mjs pack assets
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: web-bundle-${{ github.run_attempt }}
+          path: web/dist
+          retention-days: 7
+          if-no-files-found: error
+          include-hidden-files: true
+        if: inputs.kind == 'assets'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: storybook-bundle-${{ github.run_attempt }}
+          path: storybook-static
+          retention-days: 7
+          if-no-files-found: error
+          include-hidden-files: true
+        if: inputs.kind == 'assets'
+      - name: Upload assets provenance
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: qualification-assets-${{ github.run_attempt }}
+          path: .release/qualification/assets.json
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: true
+        if: inputs.kind == 'assets'
+      - name: Preserve results and timing evidence
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: producer-${{ inputs.kind }}

@@ -22,11 +22,14 @@ const conditional =
           resolve: true,
           standard: true,
           build: true,
-          tests: true,
+          backend: true,
           runtime: true,
-          storage: true,
+          contracts: true,
+          external: true,
+          embedded: true,
           assets: true,
-          browser: true,
+          ui: true,
+          cold: true,
           native: true,
         }
       : {

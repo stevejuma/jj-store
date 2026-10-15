@@ -42,10 +42,14 @@ or populate trusted release caches. Interrupted tests never establish a pass.
 
 Canonical `main` changes go through pull requests. GitHub Actions' `required`
 check MUST pass against an up-to-date base before merge; conversation resolution
-is required and administrators cannot bypass the rule. Force pushes and branch
-deletion are disabled. Version tags cannot be rewritten or deleted. Automatic
-publication remains disabled until the initial release qualification is ready;
-CI and Pages qualification continue independently.
+is required and administrators normally cannot bypass the rule. The
+user-authorized CI rollout may temporarily disable administrator enforcement
+only around each locally verified direct main push; enforcement MUST be restored
+and verified immediately after the push attempt. All other protection settings
+remain intact. Force pushes and branch deletion are disabled. Version tags
+cannot be rewritten or deleted. Automatic publication remains disabled until the
+initial release qualification is ready; CI and Pages qualification continue
+independently.
 
 Native CI verifies the runner's compiler triple and builds/tests its native
 debug profile in one shared target root. This avoids a second optimized build
@@ -53,16 +57,17 @@ and duplicate native compilation during qualification. Release archives still
 require the separately qualified optimized build and complete publication gates.
 
 Browser CI consumes the server/client, embedded runtime and browser/Help/catalog
-artifacts from the same workflow run and selected source revision. The embedded
-runtime builds and passes strict lint on an independent runner; storage and cold
-browser acceptance reuse it. An explicit CI-only prebuilt profile validates
-regular executable files and complete browser/Help manifests before replacing
-any disposable process. Ordinary development retains its build path. Cold
-acceptance uses a fresh isolated fixture, checksum-pinned published jj-acp 0.1.0
-with control-version-3 prepared-context admission, and the collision-safe
-`jj-store-jj` client. No fixture ACP, installed CLI or interactive state may be
-substituted. Missing resources fail; existing tests and acceptance assertions
-remain required. The complete qualification gate includes the runtime producer.
+artifacts from the selected source revision and verified producer run/attempt.
+The embedded runtime builds and passes strict lint on an independent runner;
+storage and cold browser acceptance reuse it. An explicit CI-only prebuilt
+profile validates regular executable files and complete browser/Help manifests
+before replacing any disposable process. Ordinary development retains its build
+path. Cold acceptance uses a fresh isolated fixture, checksum-pinned published
+jj-acp 0.1.0 with control-version-3 prepared-context admission, and the
+collision-safe `jj-store-jj` client. No fixture ACP, installed CLI or
+interactive state may be substituted. Missing resources fail; existing tests and
+acceptance assertions remain required. The complete qualification gate includes
+the runtime producer.
 
 Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
 calls. It first plans impact and checks formatting, then runs independent
@@ -75,23 +80,44 @@ prerequisites. Main pushes and `all_checks` select the complete standard cohort.
 Superseded PR runs are canceled. No automatic or scheduled standard run starts
 heavy qualification.
 
-Manual qualification resolves its source once to an immutable commit, runs all
-standard checks, then runs every existing heavy lane. Publication calls this
-same complete workflow at the selected release SHA. Heavy archived shards remain
-parallel and serial within each runner. Runtime/native qualification and assets
-wait for heavy tests; storage waits for the verified runtime, and browser
-acceptance waits for storage and assets. All qualification lanes are mandatory.
-Failure or cancellation cannot satisfy the final qualification gate. Same-run
-artifacts always use the selected source. Automatic publication stays disabled.
+Manual qualification resolves its source once to an immutable commit and runs
+all standard checks before heavy work. Six manual/reusable workflows own backend
+Rust, API contracts, storage acceptance, UI acceptance, cold application and
+native compatibility. A shared producer definition builds backend tools/tests,
+embedded runtime and browser assets. Runtime, API, external storage and native
+checks start independently after standard checks; assets need backend tools,
+embedded tests need runtime, and browser consumers wait only for their required
+artifacts. Backend failures do not block unrelated consumers. Every producer,
+suite and shard remains mandatory for complete qualification and publication.
+
+Standalone suites require an exact source SHA, producer run and attempt. Reuse
+requires a successful source-resolution job, standard gate and relevant artifact
+producers in the canonical qualification/publication workflow. Receipts bind
+source, repository, run, attempt and payload checksums; missing files, unsafe
+paths, symlinks and mismatches fail. Payload names include the attempt. An
+unrelated failed test does not invalidate successful producers, but artifacts
+never establish a test pass. Publication consumes the same-run browser payload
+and still waits for complete qualification. No automatic heavy scheduling or
+publication is enabled.
+
+Heavy matrices and test runners collect independent results after failures;
+standard CI retains its early failure gates. Existing shard counts, serial Rust
+execution within each heavy shard, isolated fixtures and ignored acceptance
+parents remain unchanged. Logs, inventories, available JUnit/browser results and
+machine-readable timing reports are retained on success and failure. Reports
+identify source, run/attempt and runner, distinguish execution from queueing and
+dependency waits, and leave unavailable measurements unknown. Runner minutes are
+distinct from elapsed time. Missing reports or interrupted execution cannot
+establish acceptance. Standalone reruns distinguish execution-only archive reuse
+from suites that still compile contracts or native targets.
 
 Shared setup omits native headers and build-only tools for early and web checks.
 The Ubuntu amd64 governance runner installs actionlint from its pinned official
 Linux release archive, verifies the tracked SHA-256 before extraction and
 exposes only the verified executable directory through the runner's PATH file.
-Fail-fast applies within archived shards and matrices. Storybook and Playwright
-likewise stop on their first failure; unrun tests never establish acceptance.
-Job names identify the tested cohort, browser suite or native platform and
-shard.
+Standard CI retains fail-fast; heavy qualification collects all independent
+results. Unrun tests never establish acceptance. Job names identify the tested
+cohort, browser suite or native platform and shard.
 
 Cold browser acceptance is partitioned into four complete Playwright shards,
 each with its own disposable server/storage fixture. Profile restart acceptance

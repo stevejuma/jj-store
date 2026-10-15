@@ -11,7 +11,12 @@ test("required check rejects missing or failed shared runtime production", () =>
       "plan",
       "fast",
       "build",
-      "tests",
+      "backend",
+      "contracts",
+      "external",
+      "embedded",
+      "ui",
+      "cold",
       "rust",
       "heavy",
       "runtime",
@@ -96,20 +101,45 @@ test("manual and release qualification pin one source and require every lane", (
   assert.equal(jobs.standard.with.all_checks, true);
   assert.equal(jobs.standard.with.ref, "${{ needs.resolve.outputs.source }}");
   assert.ok(jobs.build.needs.includes("standard"));
-  for (const name of ["runtime", "assets", "native"])
-    assert.ok(jobs[name].needs.includes("tests"));
-  assert.ok(jobs.browser.needs.includes("storage"));
+  for (const name of ["runtime", "contracts", "external", "native"])
+    assert.ok(jobs[name].needs.includes("standard"));
+  assert.deepEqual(jobs.assets.needs, ["resolve", "build"]);
+  assert.deepEqual(jobs.ui.needs, ["resolve", "assets"]);
+  assert.deepEqual(jobs.cold.needs, ["resolve", "assets", "runtime"]);
+  assert.deepEqual(jobs.embedded.needs, ["resolve", "runtime"]);
   for (const [name, job] of Object.entries(jobs)) {
-    if (["resolve", "standard"].includes(name)) continue;
-    assert.ok(job.needs.includes("resolve"));
-    if (name !== "complete") assert.equal(job.if, undefined);
-    for (const step of job.steps ?? []) {
-      if (step.uses?.startsWith("actions/checkout@"))
-        assert.equal(step.with.ref, "${{ needs.resolve.outputs.source }}");
+    if (["resolve", "standard", "complete"].includes(name)) continue;
+    assert.equal(job.with.source, "${{ needs.resolve.outputs.source }}");
+    assert.equal(job.if, undefined);
+    assert.equal(job.needs.includes("backend"), false);
+  }
+  for (const lane of [
+    "backend",
+    "contracts",
+    "storage",
+    "ui",
+    "cold",
+    "native",
+  ]) {
+    const workflow = parseYaml(
+      readFileSync(`.github/workflows/ci-heavy-${lane}.yml`, "utf8"),
+    );
+    assert.deepEqual(Object.keys(workflow.on).sort(), [
+      "workflow_call",
+      "workflow_dispatch",
+    ]);
+    for (const key of ["source", "producer_run", "producer_attempt"])
+      assert.equal(workflow.on.workflow_dispatch.inputs[key].required, true);
+    for (const job of Object.values(workflow.jobs)) {
+      if (job.strategy) assert.equal(job.strategy["fail-fast"], false);
+      assert.ok(
+        job.steps.some((step) =>
+          step.run?.includes("ci-artifacts.mjs consume"),
+        ),
+      );
+      assert.equal(job.steps.at(-1).if, "always()");
     }
   }
-  for (const name of ["tests", "storage", "browser", "native"])
-    assert.equal(jobs[name].strategy["fail-fast"], true);
   const release = parseYaml(
     readFileSync(".github/workflows/publish-release.yml", "utf8"),
   );
@@ -120,6 +150,16 @@ test("manual and release qualification pin one source and require every lane", (
   });
   assert.deepEqual(release.jobs.qualify.with, { ref: "${{ inputs.source }}" });
   assert.equal(release.jobs.archives.needs, "qualify");
+  assert.equal(
+    release.jobs.archives.steps.find((step) =>
+      step.uses?.startsWith("actions/download-artifact@"),
+    ).with.name,
+    "web-bundle-${{ github.run_attempt }}",
+  );
+  assert.match(
+    readFileSync(".config/nextest.toml", "utf8"),
+    /\[profile.heavy\][\s\S]*?fail-fast = false[\s\S]*?test-threads = 1/,
+  );
   assert.match(
     readFileSync(".github/workflows/release.yml", "utf8"),
     /-f all_checks=true/,
@@ -157,11 +197,14 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
         "resolve",
         "standard",
         "build",
-        "tests",
+        "backend",
         "runtime",
-        "storage",
+        "contracts",
+        "external",
+        "embedded",
         "assets",
-        "browser",
+        "ui",
+        "cold",
         "native",
       ],
     ],
