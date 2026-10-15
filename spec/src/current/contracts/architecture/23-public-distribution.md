@@ -49,7 +49,7 @@ CI and Pages qualification continue independently.
 
 Native CI verifies the runner's compiler triple and builds/tests its native
 debug profile in one shared target root. This avoids a second optimized build
-and duplicate native compilation during PR checks. Release archives still
+and duplicate native compilation during qualification. Release archives still
 require the separately qualified optimized build and complete publication gates.
 
 Browser CI consumes the server/client, embedded runtime and browser/Help/catalog
@@ -62,7 +62,7 @@ acceptance uses a fresh isolated fixture, checksum-pinned published jj-acp 0.1.0
 with control-version-3 prepared-context admission, and the collision-safe
 `jj-store-jj` client. No fixture ACP, installed CLI or interactive state may be
 substituted. Missing resources fail; existing tests and acceptance assertions
-remain required. The aggregate required check includes the runtime producer.
+remain required. The complete qualification gate includes the runtime producer.
 
 Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
 calls. It first plans impact and checks formatting, then runs independent

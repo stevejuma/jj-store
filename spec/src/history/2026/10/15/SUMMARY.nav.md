@@ -8,3 +8,5 @@
   {{#include E-CI-AFFECTED-001/SUMMARY.nav.md}}
 - [E-CI-CACHE-TRIAL-001](E-CI-CACHE-TRIAL-001/index.md)
   {{#include E-CI-CACHE-TRIAL-001/SUMMARY.nav.md}}
+- [E-CI-HEAVY-001](E-CI-HEAVY-001/index.md)
+  {{#include E-CI-HEAVY-001/SUMMARY.nav.md}}

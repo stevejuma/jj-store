@@ -146,7 +146,7 @@ async fn provenance_unknown_outcome_restarts_with_exact_original_request() {
 }
 
 #[tokio::test]
-async fn original_local_agent_descriptor_remains_readable_before_v2_publication() {
+async fn legacy_local_agent_descriptor_is_rejected_without_rewrite() {
     use jj_store_jj::local_metadata::{Domain, Preparation, PublishOutcome, Update};
     use jj_store_wal::records::RecordRef;
     #[derive(serde::Serialize, serde::Deserialize)]
@@ -156,7 +156,7 @@ async fn original_local_agent_descriptor_remains_readable_before_v2_publication(
         root: RecordRef,
         records: std::collections::BTreeMap<String, jj_store_jj::local_metadata::GitOid>,
     }
-    let (_root, repo, input, _, session) = fixture().await;
+    let (root, repo, input, _, session) = fixture().await;
     let selected = repo.metadata_store().read().unwrap().unwrap();
     let bytes = repo
         .metadata_store()
@@ -165,6 +165,7 @@ async fn original_local_agent_descriptor_remains_readable_before_v2_publication(
         .unwrap();
     let mut legacy: V1 = serde_json::from_slice(&bytes).unwrap();
     legacy.version = 1;
+    let legacy_bytes = serde_json::to_vec(&legacy).unwrap();
     let update = Update {
         repository: selected.repository(),
         actor: repo.actor().unwrap().unwrap(),
@@ -172,7 +173,7 @@ async fn original_local_agent_descriptor_remains_readable_before_v2_publication(
         intent: m::IntentDigest::new([90; 32]),
         domain: Domain::Agent,
         expected: selected.selection(Domain::Agent).cloned(),
-        bytes: serde_json::to_vec(&legacy).unwrap(),
+        bytes: legacy_bytes.clone(),
         result: vec![],
         retained: Default::default(),
     };
@@ -187,37 +188,39 @@ async fn original_local_agent_descriptor_remains_readable_before_v2_publication(
         repo.metadata_store().publish(*candidate).unwrap(),
         PublishOutcome::Committed(_)
     ));
-    assert_eq!(
-        repo.agent_store()
-            .await
-            .unwrap()
-            .reads()
-            .list_sessions(None, 20)
-            .await
-            .unwrap()
-            .selections
-            .len(),
-        1
-    );
-    repo.apply_agent_command(&request(
+    let legacy_pin = repo.metadata_store().read().unwrap().unwrap().commit();
+    let command = request(
         2,
         None,
         AgentObjectV1::PortableAssociation(association(&input, &session, 2)),
         vec![input],
-    ))
-    .await
-    .unwrap();
-    let selected = repo.metadata_store().read().unwrap().unwrap();
-    let bytes = repo
-        .metadata_store()
-        .read_domain(&selected, Domain::Agent)
-        .unwrap()
-        .unwrap();
-    assert_eq!(
-        serde_json::from_slice::<serde_json::Value>(&bytes).unwrap()["version"],
-        2
     );
-    repo.agent_store().await.unwrap();
+    let restart = reopen(root.path());
+    for provider in [&repo, &restart] {
+        assert!(matches!(
+            provider.agent_store().await,
+            Err(LocalError::Corrupt)
+        ));
+        assert!(matches!(
+            provider.apply_agent_command(&command).await,
+            Err(LocalError::Corrupt)
+        ));
+        // Rejecting the selected legacy format does not invalidate a supported pin.
+        provider
+            .browser_agent_session(selected.commit(), session.session_id)
+            .await
+            .unwrap();
+        let unchanged = provider.metadata_store().read().unwrap().unwrap();
+        assert_eq!(unchanged.commit(), legacy_pin);
+        assert_eq!(
+            provider
+                .metadata_store()
+                .read_domain(&unchanged, Domain::Agent)
+                .unwrap()
+                .unwrap(),
+            legacy_bytes
+        );
+    }
 }
 
 #[tokio::test]
