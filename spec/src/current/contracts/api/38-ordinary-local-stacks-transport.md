@@ -166,3 +166,8 @@ E-FORGE-FLOAT-STYLE-001 confirms JST-API-001 unchanged: float/dock icons,
 floating PR surfaces and inline-owned spacing are presentation only. Existing
 forge actions, authored drafts, capabilities, expected body/head guards, exact
 pending operations and operation-pinned file/hunk sources remain unchanged.
+
+E-FORGE-FLOAT-DISCLOSURE-001 confirms JST-API-001 unchanged: disabling the
+floating title disclosure and its pointer/hover styling changes presentation
+only. Forge actions, retained editor/drafts and exact pending intents are
+unchanged; redocking re-enables the existing inline disclosure.

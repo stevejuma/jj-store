@@ -53,7 +53,11 @@
           data-forge-summary
           aria-label={`Pull request for ${branch}`}
         >
-          <Collapsible.Root open={expanded} onOpenChange={expand}>
+          <Collapsible.Root
+            open={expanded}
+            onOpenChange={expand}
+            disabled={floating}
+          >
             <header class="forge-inline__summary">
               <StoreForgeIcon
                 provider={controller.data?.connection?.provider}

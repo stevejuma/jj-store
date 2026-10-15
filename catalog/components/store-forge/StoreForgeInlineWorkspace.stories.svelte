@@ -189,6 +189,11 @@
     await expect(
       within(floating).queryByRole("region", { name: "CI checks" }),
     ).not.toBeInTheDocument();
+    await expect(
+      within(floating).getByRole("button", {
+        name: "Collapse pull request #42",
+      }),
+    ).toBeDisabled();
     const fileDiff = within(details).getByRole("region", {
       name: "Selected file diff",
     });
@@ -210,6 +215,11 @@
     await expect(fileDiff.getBoundingClientRect().top).toBeGreaterThan(
       summary.getBoundingClientRect().bottom,
     );
+    await expect(
+      within(details).getByRole("button", {
+        name: "Collapse pull request #42",
+      }),
+    ).toBeEnabled();
     await userEvent.click(
       within(details).getByRole("button", { name: "Close file diff" }),
     );

@@ -340,9 +340,12 @@ float/redock, with focused Escape and return focus. Floating layout is
 session-only, viewport-bounded and cleaned up with the owning view. Float/dock
 controls use the picture-in-picture-2 icon. Floating PR content has no outer
 component border or corner radius; its header matches the body background and
-uses a bottom divider. The inline PR component owns its bottom spacing, so
-floating it leaves the file diff aligned to the top of the shared column;
-redocking restores the separation between cards.
+uses a bottom divider. Its title disclosure hides the collapse chevron, uses a
+transparent background, ignores pointer input through CSS and disables keyboard
+activation while floating; redocking restores normal disclosure. The inline PR
+component owns its bottom spacing, so floating it leaves the file diff aligned
+to the top of the shared column; redocking restores the separation between
+cards.
 
 The adjacent PR inspection/submission column retains matching shared headers,
 icon-only pencil/close controls and its connection/inventory menu. Descriptions

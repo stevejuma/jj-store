@@ -14,6 +14,14 @@
   background: var(--background);
   border-block-end: 1px solid var(--border);
 }
+.forge-inline--floating .forge-inline__title button {
+  background: transparent;
+  pointer-events: none;
+  opacity: 1;
+}
+.forge-inline--floating .forge-inline__title button svg {
+  display: none;
+}
 .forge-inline__summary {
   display: flex;
   align-items: center;
