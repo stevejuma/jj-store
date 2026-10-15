@@ -237,8 +237,9 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   await expect(page.getByText("Capture outcome unknown")).toBeVisible();
   const beforeRecovery = inspections;
   receiptReady = true;
-  // Visible imports observe the original request automatically. A second click
-  // races that recovery and can target a button that has correctly disappeared.
+  // Request observation explicitly: this fixture emits no receipt-change event.
+  // This control remains available even if background recovery wins the race.
+  await page.getByRole("button", { name: "Refresh import status" }).click();
   await expect.poll(() => inspections).toBeGreaterThan(beforeRecovery);
   await expect(page.getByText("Capture outcome unknown")).toHaveCount(0);
   expect(paths.filter((path) => path.endsWith("/import"))).toHaveLength(1);

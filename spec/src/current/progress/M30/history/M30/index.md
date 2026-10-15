@@ -26,6 +26,7 @@ not a completion gate selection.
 | [E-CI-SUITES-FIX-001](../../../../../history/2026/10/15/E-CI-SUITES-FIX-001/index.md)                 | 2026-10-15 | pass            | Original outcome |
 | [E-CI-SUITES-MEASURE-001](../../../../../history/2026/10/15/E-CI-SUITES-MEASURE-001/index.md)         | 2026-10-15 | pending         | Original outcome |
 | [E-UI-CI-001](../../../../../history/2026/10/15/E-UI-CI-001/index.md)                                 | 2026-10-15 | pending         | Original outcome |
+| [E-UI-CI-002](../../../../../history/2026/10/15/E-UI-CI-002/index.md)                                 | 2026-10-15 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 

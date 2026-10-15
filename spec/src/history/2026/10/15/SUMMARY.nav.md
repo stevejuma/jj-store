@@ -20,3 +20,5 @@
   {{#include E-CI-SUITES-MEASURE-001/SUMMARY.nav.md}}
 - [E-UI-CI-001](E-UI-CI-001/index.md)
   {{#include E-UI-CI-001/SUMMARY.nav.md}}
+- [E-UI-CI-002](E-UI-CI-002/index.md)
+  {{#include E-UI-CI-002/SUMMARY.nav.md}}
