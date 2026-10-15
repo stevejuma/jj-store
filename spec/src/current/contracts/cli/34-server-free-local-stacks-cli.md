@@ -30,6 +30,7 @@ JSON results carry operation and configuration identities. Exit codes are 0 for
 success, 1 for execution failure, 2 for invalid arguments, and 3 for an applied
 operation requiring checkout/settings attention; the latter includes the applied
 operation and a no-retry warning. Help, keyword guidance and completions
-describe all commands. Remote/PR workflows and interactive pickers remain
-outside this local CLI slice. Development acceptance uses disposable
-repositories and explicit binaries, and does not replace installed executables.
+describe all commands. Forge submission and PR commands are governed separately
+by JST-FORGE-001/007; interactive pickers remain outside this local CLI slice.
+Development acceptance uses disposable repositories and explicit binaries, and
+does not replace installed executables.

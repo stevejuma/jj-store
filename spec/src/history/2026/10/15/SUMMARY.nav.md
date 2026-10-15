@@ -16,3 +16,5 @@
   {{#include E-CI-SUITES-001/SUMMARY.nav.md}}
 - [E-CI-SUITES-FIX-001](E-CI-SUITES-FIX-001/index.md)
   {{#include E-CI-SUITES-FIX-001/SUMMARY.nav.md}}
+- [E-FORGE-STACKS-001](E-FORGE-STACKS-001/index.md)
+  {{#include E-FORGE-STACKS-001/SUMMARY.nav.md}}

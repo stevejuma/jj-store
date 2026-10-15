@@ -1,0 +1,66 @@
+.forge-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.forge-panel header,
+.forge-panel .forge-panel__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.forge-panel header {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.forge-panel h2,
+.forge-panel h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.forge-panel .forge-panel__body {
+  flex: 1;
+  min-height: 0;
+  padding: 1rem;
+}
+.forge-panel form,
+.forge-panel section,
+.forge-panel fieldset {
+  display: grid;
+  gap: 0.75rem;
+}
+.forge-panel section,
+.forge-panel fieldset {
+  margin-bottom: 1rem;
+}
+.forge-panel label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+.forge-panel select {
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  padding: 0.4rem;
+  border-radius: 0.3rem;
+}
+.forge-panel p,
+.forge-panel li {
+  font-size: 0.8rem;
+}
+.forge-panel li {
+  margin: 0.5rem 0;
+}
+.forge-panel pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
+.forge-panel nav {
+  display: grid;
+  gap: 0.3rem;
+}

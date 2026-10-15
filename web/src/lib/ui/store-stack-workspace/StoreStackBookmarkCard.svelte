@@ -1,6 +1,8 @@
 <script lang="ts">
+  import StoreForgeButton from "../store-forge/StoreForgeButton.svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Card from "@lapismd/design-core/shadcn/card";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import GitBranch from "@lucide/svelte/icons/git-branch";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
@@ -140,6 +142,7 @@
         >{/if}
       <div class="stack-workspace__branch-chips">
         <CommunityChip variant="muted">Local bookmark</CommunityChip>
+        <StoreForgeButton {controller} bookmark={name} />
         {#if shared}<CommunityChip variant="muted">Shared</CommunityChip>{/if}
         {#each aliases as alias}<CommunityChip variant="muted"
             >{alias}</CommunityChip

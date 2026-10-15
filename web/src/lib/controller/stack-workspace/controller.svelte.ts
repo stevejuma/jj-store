@@ -281,6 +281,9 @@ export class StackWorkspaceController {
       this.validation = error.message;
     else this.error = error instanceof Error ? error.message : String(error);
   }
+  get forge() {
+    return this.adapter.forge;
+  }
   close() {
     this.conflictOpen = false;
     this.physical.close();

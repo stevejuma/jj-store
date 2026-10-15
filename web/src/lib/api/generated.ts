@@ -2388,6 +2388,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/forge": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_forge"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repositories/conversion/preview": {
     parameters: {
       query?: never;
@@ -8291,6 +8308,219 @@ export interface components {
       summary: string;
       paths: string[];
     };
+    ForgeResponse: {
+      notice: string | null;
+      connection: components["schemas"]["ForgeConnection"] | null;
+      capabilities: components["schemas"]["ForgeCapabilities"];
+      restack: components["schemas"]["ForgeRestackReceipt"] | null;
+      pull_requests: components["schemas"]["ForgePullRequest"][];
+      plan: components["schemas"]["ForgePlan"] | null;
+      receipt: components["schemas"]["ForgeReceipt"] | null;
+      checks: components["schemas"]["ForgeChecks"] | null;
+      log: string | null;
+      merge: components["schemas"]["ForgeMergeResult"] | null;
+      merges: {
+        [key: string]: components["schemas"]["ForgeMergeResult"];
+      };
+      operation: components["schemas"]["ForgeOperation"] | null;
+    };
+    ForgeConnection: {
+      provider: components["schemas"]["ForgeProvider"];
+      /** @description Approved API root, e.g. https://api.github.com or https://forge.example/api/v1/. */
+      api_url: string;
+      /** @description Slash-separated project path; GitLab subgroups are preserved. */
+      repository: string;
+      source_repository: string;
+      remote: string;
+      /** @default origin */
+      target_remote: string;
+      target: string;
+      native_stacks: boolean;
+    };
+    /** @enum {string} */
+    ForgeProvider: "github" | "gitlab" | "forgejo";
+    ForgeCapabilities: {
+      edit: boolean;
+      draft: boolean;
+      merge: boolean;
+      auto_merge: boolean;
+      checks: boolean;
+      logs: boolean;
+      rerun: boolean;
+      rerun_all: boolean;
+      cancel: boolean;
+      merge_methods: string[];
+      native_stacks: boolean;
+    };
+    ForgeRestackReceipt: {
+      plan: components["schemas"]["ForgeRestackPlan"];
+      outcome: components["schemas"]["ForgeOutcome"];
+      operation: string | null;
+      submission: components["schemas"]["ForgePlan"] | null;
+    };
+    ForgeRestackPlan: {
+      request_id: string;
+      operation: string;
+      /** Format: uint64 */
+      revision: number;
+      connection: components["schemas"]["ForgeConnection"];
+      bookmark: string;
+      branch: string;
+      expected_base: string;
+      target_head: string;
+      merged: string[];
+    };
+    /** @enum {string} */
+    ForgeOutcome: "pending" | "running" | "complete" | "rejected" | "unknown";
+    ForgePlan: {
+      request_id: string;
+      operation: string;
+      connection: components["schemas"]["ForgeConnection"];
+      draft: boolean;
+      cumulative: boolean;
+      items: components["schemas"]["ForgePlanItem"][];
+    };
+    ForgePlanItem: {
+      segment: components["schemas"]["ForgeSegment"];
+      pr: components["schemas"]["ForgePullRequest"] | null;
+      steps: components["schemas"]["ForgeStepKind"][];
+    };
+    ForgeSegment: {
+      branch: string;
+      head: string;
+      base: string;
+      title: string;
+      body: string;
+      remote_head: string | null;
+      shared: boolean;
+    };
+    ForgePullRequest: {
+      /** Format: uint64 */
+      number: number;
+      url: string;
+      title: string;
+      body: string;
+      head: string;
+      sha: string;
+      base: string;
+      draft: boolean;
+      state: components["schemas"]["ForgePrState"];
+      mergeable: boolean | null;
+      /** Format: uint64 */
+      native_stack: number | null;
+      updated_at: string;
+    };
+    /** @enum {string} */
+    ForgePrState: "open" | "closed" | "merged";
+    /** @enum {string} */
+    ForgeStepKind:
+      | "unstack"
+      | "push"
+      | "create"
+      | "retarget"
+      | "description"
+      | "native_stack";
+    ForgeReceipt: {
+      plan: components["schemas"]["ForgePlan"];
+      steps: components["schemas"]["ForgeStep"][];
+      outcome: components["schemas"]["ForgeOutcome"];
+      pull_requests: components["schemas"]["ForgePullRequest"][];
+      message: string | null;
+    };
+    ForgeStep: {
+      /** @default null */
+      fingerprint: string | null;
+      branch: string;
+      kind: components["schemas"]["ForgeStepKind"];
+      outcome: components["schemas"]["ForgeOutcome"];
+    };
+    ForgeChecks: {
+      sha: string;
+      checks: components["schemas"]["ForgeCheck"][];
+      complete: boolean;
+    };
+    ForgeCheck: {
+      id: string;
+      name: string;
+      state: components["schemas"]["ForgeCheckState"];
+      sha: string;
+      url: string | null;
+      run_id: string | null;
+      log_id: string | null;
+    };
+    /** @enum {string} */
+    ForgeCheckState:
+      | "queued"
+      | "running"
+      | "passed"
+      | "failed"
+      | "cancelled"
+      | "skipped"
+      | "manual"
+      | "unknown";
+    ForgeMergeResult: {
+      state: string;
+      receipt: string | null;
+      sha: string | null;
+    };
+    ForgeOperation: {
+      id: string;
+      /** Format: uint64 */
+      number: number;
+      action: components["schemas"]["ForgePrAction"];
+      outcome: components["schemas"]["ForgeOutcome"];
+      merge: components["schemas"]["ForgeMergeResult"] | null;
+    };
+    ForgePrAction:
+      | {
+          title: string;
+          body: string;
+          expected_body: string;
+          /** @constant */
+          kind: "edit";
+        }
+      | {
+          draft: boolean;
+          /** @constant */
+          kind: "draft";
+        }
+      | {
+          method: string;
+          expected_sha: string;
+          /** @constant */
+          kind: "merge";
+        }
+      | {
+          receipt: string;
+          /** @constant */
+          kind: "merge_status";
+        }
+      | {
+          /** @constant */
+          kind: "checks";
+        }
+      | {
+          run: string;
+          /** @constant */
+          kind: "jobs";
+        }
+      | {
+          run: string;
+          job: string;
+          /** @constant */
+          kind: "logs";
+        }
+      | {
+          run: string;
+          failed_only: boolean;
+          /** @constant */
+          kind: "rerun";
+        }
+      | {
+          run: string;
+          /** @constant */
+          kind: "cancel";
+        };
     ConversionPreview: {
       /** Format: uint32 */
       version: number;
@@ -47761,6 +47991,340 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["LocalStacksPreview"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_forge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          token?: string | null;
+          action:
+            | {
+                /** @constant */
+                kind: "status";
+              }
+            | {
+                bookmark: string;
+                /** @constant */
+                kind: "restack_preview";
+              }
+            | {
+                plan: {
+                  request_id: string;
+                  operation: string;
+                  /** Format: uint64 */
+                  revision: number;
+                  connection: {
+                    /** @enum {string} */
+                    provider: "github" | "gitlab" | "forgejo";
+                    /** @description Approved API root, e.g. https://api.github.com or https://forge.example/api/v1/. */
+                    api_url: string;
+                    /** @description Slash-separated project path; GitLab subgroups are preserved. */
+                    repository: string;
+                    source_repository: string;
+                    remote: string;
+                    /** @default origin */
+                    target_remote?: string;
+                    target: string;
+                    native_stacks: boolean;
+                  };
+                  bookmark: string;
+                  branch: string;
+                  expected_base: string;
+                  target_head: string;
+                  merged: string[];
+                };
+                /** @constant */
+                kind: "restack";
+              }
+            | {
+                connection: {
+                  /** @enum {string} */
+                  provider: "github" | "gitlab" | "forgejo";
+                  /** @description Approved API root, e.g. https://api.github.com or https://forge.example/api/v1/. */
+                  api_url: string;
+                  /** @description Slash-separated project path; GitLab subgroups are preserved. */
+                  repository: string;
+                  source_repository: string;
+                  remote: string;
+                  /** @default origin */
+                  target_remote?: string;
+                  target: string;
+                  native_stacks: boolean;
+                };
+                /** @constant */
+                kind: "configure";
+              }
+            | {
+                bookmark: string;
+                draft: boolean;
+                /** @constant */
+                kind: "preview";
+              }
+            | {
+                plan: {
+                  request_id: string;
+                  operation: string;
+                  connection: {
+                    /** @enum {string} */
+                    provider: "github" | "gitlab" | "forgejo";
+                    /** @description Approved API root, e.g. https://api.github.com or https://forge.example/api/v1/. */
+                    api_url: string;
+                    /** @description Slash-separated project path; GitLab subgroups are preserved. */
+                    repository: string;
+                    source_repository: string;
+                    remote: string;
+                    /** @default origin */
+                    target_remote?: string;
+                    target: string;
+                    native_stacks: boolean;
+                  };
+                  draft: boolean;
+                  cumulative: boolean;
+                  items: {
+                    segment: {
+                      branch: string;
+                      head: string;
+                      base: string;
+                      title: string;
+                      body: string;
+                      remote_head?: string | null;
+                      shared: boolean;
+                    };
+                    pr?: {
+                      /** Format: uint64 */
+                      number: number;
+                      url: string;
+                      title: string;
+                      body: string;
+                      head: string;
+                      sha: string;
+                      base: string;
+                      draft: boolean;
+                      /** @enum {string} */
+                      state: "open" | "closed" | "merged";
+                      mergeable?: boolean | null;
+                      /** Format: uint64 */
+                      native_stack?: number | null;
+                      updated_at: string;
+                    } | null;
+                    steps: (
+                      | "unstack"
+                      | "push"
+                      | "create"
+                      | "retarget"
+                      | "description"
+                      | "native_stack"
+                    )[];
+                  }[];
+                };
+                /** @constant */
+                kind: "submit";
+              }
+            | {
+                request_id: string;
+                /** @constant */
+                kind: "recover";
+              }
+            | {
+                request_id: string;
+                /** @constant */
+                kind: "operation_status";
+              }
+            | {
+                /** Format: uint64 */
+                number: number;
+                /** @constant */
+                kind: "pull_request";
+              }
+            | {
+                request_id: string;
+                /** Format: uint64 */
+                number: number;
+                action:
+                  | {
+                      title: string;
+                      body: string;
+                      expected_body: string;
+                      /** @constant */
+                      kind: "edit";
+                    }
+                  | {
+                      draft: boolean;
+                      /** @constant */
+                      kind: "draft";
+                    }
+                  | {
+                      method: string;
+                      expected_sha: string;
+                      /** @constant */
+                      kind: "merge";
+                    }
+                  | {
+                      receipt: string;
+                      /** @constant */
+                      kind: "merge_status";
+                    }
+                  | {
+                      /** @constant */
+                      kind: "checks";
+                    }
+                  | {
+                      run: string;
+                      /** @constant */
+                      kind: "jobs";
+                    }
+                  | {
+                      run: string;
+                      job: string;
+                      /** @constant */
+                      kind: "logs";
+                    }
+                  | {
+                      run: string;
+                      failed_only: boolean;
+                      /** @constant */
+                      kind: "rerun";
+                    }
+                  | {
+                      run: string;
+                      /** @constant */
+                      kind: "cancel";
+                    };
+                /** @constant */
+                kind: "pr";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ForgeResponse"];
         };
       };
       /** @description Invalid request, unknown query field or invalid cursor. */

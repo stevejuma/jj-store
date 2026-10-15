@@ -83,3 +83,9 @@ unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
 branch comparisons remain read-only. Undo/Redo remains available without a
 selected named workspace.
+
+JST-FORGE-001/007 extends the ordinary-local adapter with the owned jj-forge
+contracts and external transport. Upstream JJ imports, graph inspection and
+Restack transactions remain inside jj-store-jj; forge clients never import JJ or
+become native persistence authority. Existing JJ identity and manifest/WAL
+contracts are unchanged. M31 owns the separate live-forge qualification.

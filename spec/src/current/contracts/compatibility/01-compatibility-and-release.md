@@ -224,3 +224,12 @@ Public native bundles target macOS/GNU Linux on ARM64/x86-64. Their separate
 embedded RustFS runtime preserves allocator and native identity boundaries; each
 platform requires native cold qualification. Windows and desktop distribution
 remain independent gates.
+
+## Ordinary-local forge profile
+
+JST-FORGE-001/007 adds the version-1 local forge action/response contract and
+private version-1 device receipts. Generated OpenAPI and TypeScript describe the
+same owned types. Ordinary-local JJ 0.45.1 SHA-1 Git transport is the initial
+profile. Existing native formats, WAL, manifest, companion metadata and API/RPC
+contracts remain unchanged. Live forge, platform and packaged release acceptance
+remain separate from fixture and disposable-local-Git qualification.

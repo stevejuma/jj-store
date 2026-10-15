@@ -120,3 +120,13 @@ Stacks presentation distinguishes `stackWorkspaceLoading` binding discovery from
 seed passes `initialLoaded: false`; successful reads mark contents loaded
 without resetting that state during refresh. These frontend states change no
 HTTP/RPC contracts, repository identities, commands or persisted TOML.
+
+## Forge transport
+
+POST `/v1/local/repos/{repo}/forge` adds the version-1 JST-FORGE-001/007
+contract to the same LocalTrusted bound-folder, same-origin and protocol-header
+admission. Service consumers use owned forge types; only jj-store-jj imports
+upstream JJ. Tokens are request/session input, never retained in the binding or
+response. Status may maintain owned remote navigation; it never mutates local
+code. PR details, plans, CI, merge queue receipts and original-effect recovery
+remain separate typed actions. Operational failures use application toasts.

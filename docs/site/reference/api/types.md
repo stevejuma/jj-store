@@ -21500,6 +21500,987 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## ForgeResponse
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "notice": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connection": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeConnection"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "capabilities": {
+      "$ref": "#/components/schemas/ForgeCapabilities"
+    },
+    "restack": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeRestackReceipt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "pull_requests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgePullRequest"
+      }
+    },
+    "plan": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgePlan"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "receipt": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeReceipt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "checks": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeChecks"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "log": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "merge": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeMergeResult"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "merges": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^\\d+$": {
+          "$ref": "#/components/schemas/ForgeMergeResult"
+        }
+      }
+    },
+    "operation": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeOperation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "notice",
+    "connection",
+    "capabilities",
+    "restack",
+    "pull_requests",
+    "plan",
+    "receipt",
+    "checks",
+    "log",
+    "merge",
+    "merges",
+    "operation"
+  ]
+}
+```
+
+## ForgeConnection
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "provider": {
+      "$ref": "#/components/schemas/ForgeProvider"
+    },
+    "api_url": {
+      "type": "string",
+      "description": "Approved API root, e.g. https://api.github.com or https://forge.example/api/v1/."
+    },
+    "repository": {
+      "type": "string",
+      "description": "Slash-separated project path; GitLab subgroups are preserved."
+    },
+    "source_repository": {
+      "type": "string"
+    },
+    "remote": {
+      "type": "string"
+    },
+    "target_remote": {
+      "type": "string",
+      "default": "origin"
+    },
+    "target": {
+      "type": "string"
+    },
+    "native_stacks": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "provider",
+    "api_url",
+    "repository",
+    "source_repository",
+    "remote",
+    "target_remote",
+    "target",
+    "native_stacks"
+  ]
+}
+```
+
+## ForgeProvider
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "github",
+    "gitlab",
+    "forgejo"
+  ]
+}
+```
+
+## ForgeCapabilities
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "edit": {
+      "type": "boolean"
+    },
+    "draft": {
+      "type": "boolean"
+    },
+    "merge": {
+      "type": "boolean"
+    },
+    "auto_merge": {
+      "type": "boolean"
+    },
+    "checks": {
+      "type": "boolean"
+    },
+    "logs": {
+      "type": "boolean"
+    },
+    "rerun": {
+      "type": "boolean"
+    },
+    "rerun_all": {
+      "type": "boolean"
+    },
+    "cancel": {
+      "type": "boolean"
+    },
+    "merge_methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "native_stacks": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "edit",
+    "draft",
+    "merge",
+    "auto_merge",
+    "checks",
+    "logs",
+    "rerun",
+    "rerun_all",
+    "cancel",
+    "merge_methods",
+    "native_stacks"
+  ]
+}
+```
+
+## ForgeRestackReceipt
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "plan": {
+      "$ref": "#/components/schemas/ForgeRestackPlan"
+    },
+    "outcome": {
+      "$ref": "#/components/schemas/ForgeOutcome"
+    },
+    "operation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "submission": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgePlan"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "plan",
+    "outcome",
+    "operation",
+    "submission"
+  ]
+}
+```
+
+## ForgeRestackPlan
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "operation": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "connection": {
+      "$ref": "#/components/schemas/ForgeConnection"
+    },
+    "bookmark": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "expected_base": {
+      "type": "string"
+    },
+    "target_head": {
+      "type": "string"
+    },
+    "merged": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "request_id",
+    "operation",
+    "revision",
+    "connection",
+    "bookmark",
+    "branch",
+    "expected_base",
+    "target_head",
+    "merged"
+  ]
+}
+```
+
+## ForgeOutcome
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "pending",
+    "running",
+    "complete",
+    "rejected",
+    "unknown"
+  ]
+}
+```
+
+## ForgePlan
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "operation": {
+      "type": "string"
+    },
+    "connection": {
+      "$ref": "#/components/schemas/ForgeConnection"
+    },
+    "draft": {
+      "type": "boolean"
+    },
+    "cumulative": {
+      "type": "boolean"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgePlanItem"
+      }
+    }
+  },
+  "required": [
+    "request_id",
+    "operation",
+    "connection",
+    "draft",
+    "cumulative",
+    "items"
+  ]
+}
+```
+
+## ForgePlanItem
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "segment": {
+      "$ref": "#/components/schemas/ForgeSegment"
+    },
+    "pr": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgePullRequest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgeStepKind"
+      }
+    }
+  },
+  "required": [
+    "segment",
+    "pr",
+    "steps"
+  ]
+}
+```
+
+## ForgeSegment
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "branch": {
+      "type": "string"
+    },
+    "head": {
+      "type": "string"
+    },
+    "base": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "remote_head": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "shared": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "branch",
+    "head",
+    "base",
+    "title",
+    "body",
+    "remote_head",
+    "shared"
+  ]
+}
+```
+
+## ForgePullRequest
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "number": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "url": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "head": {
+      "type": "string"
+    },
+    "sha": {
+      "type": "string"
+    },
+    "base": {
+      "type": "string"
+    },
+    "draft": {
+      "type": "boolean"
+    },
+    "state": {
+      "$ref": "#/components/schemas/ForgePrState"
+    },
+    "mergeable": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "native_stack": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    },
+    "updated_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "number",
+    "url",
+    "title",
+    "body",
+    "head",
+    "sha",
+    "base",
+    "draft",
+    "state",
+    "mergeable",
+    "native_stack",
+    "updated_at"
+  ]
+}
+```
+
+## ForgePrState
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "open",
+    "closed",
+    "merged"
+  ]
+}
+```
+
+## ForgeStepKind
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "unstack",
+    "push",
+    "create",
+    "retarget",
+    "description",
+    "native_stack"
+  ]
+}
+```
+
+## ForgeReceipt
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "plan": {
+      "$ref": "#/components/schemas/ForgePlan"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgeStep"
+      }
+    },
+    "outcome": {
+      "$ref": "#/components/schemas/ForgeOutcome"
+    },
+    "pull_requests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgePullRequest"
+      }
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "plan",
+    "steps",
+    "outcome",
+    "pull_requests",
+    "message"
+  ]
+}
+```
+
+## ForgeStep
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "fingerprint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "branch": {
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/components/schemas/ForgeStepKind"
+    },
+    "outcome": {
+      "$ref": "#/components/schemas/ForgeOutcome"
+    }
+  },
+  "required": [
+    "fingerprint",
+    "branch",
+    "kind",
+    "outcome"
+  ]
+}
+```
+
+## ForgeChecks
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "sha": {
+      "type": "string"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ForgeCheck"
+      }
+    },
+    "complete": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "sha",
+    "checks",
+    "complete"
+  ]
+}
+```
+
+## ForgeCheck
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/components/schemas/ForgeCheckState"
+    },
+    "sha": {
+      "type": "string"
+    },
+    "url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "log_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "state",
+    "sha",
+    "url",
+    "run_id",
+    "log_id"
+  ]
+}
+```
+
+## ForgeCheckState
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "queued",
+    "running",
+    "passed",
+    "failed",
+    "cancelled",
+    "skipped",
+    "manual",
+    "unknown"
+  ]
+}
+```
+
+## ForgeMergeResult
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "state": {
+      "type": "string"
+    },
+    "receipt": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "state",
+    "receipt",
+    "sha"
+  ]
+}
+```
+
+## ForgeOperation
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "number": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "action": {
+      "$ref": "#/components/schemas/ForgePrAction"
+    },
+    "outcome": {
+      "$ref": "#/components/schemas/ForgeOutcome"
+    },
+    "merge": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ForgeMergeResult"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "number",
+    "action",
+    "outcome",
+    "merge"
+  ]
+}
+```
+
+## ForgePrAction
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "expected_body": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "edit"
+        }
+      },
+      "required": [
+        "kind",
+        "title",
+        "body",
+        "expected_body"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "draft": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string",
+          "const": "draft"
+        }
+      },
+      "required": [
+        "kind",
+        "draft"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "expected_sha": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "merge"
+        }
+      },
+      "required": [
+        "kind",
+        "method",
+        "expected_sha"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "receipt": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "merge_status"
+        }
+      },
+      "required": [
+        "kind",
+        "receipt"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "checks"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "jobs"
+        }
+      },
+      "required": [
+        "kind",
+        "run"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run": {
+          "type": "string"
+        },
+        "job": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "logs"
+        }
+      },
+      "required": [
+        "kind",
+        "run",
+        "job"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run": {
+          "type": "string"
+        },
+        "failed_only": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string",
+          "const": "rerun"
+        }
+      },
+      "required": [
+        "kind",
+        "run",
+        "failed_only"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "cancel"
+        }
+      },
+      "required": [
+        "kind",
+        "run"
+      ]
+    }
+  ]
+}
+```
+
 ## ConversionPreview
 
 ```text

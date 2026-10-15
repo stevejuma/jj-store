@@ -309,3 +309,11 @@ insertion/squash; unsupported hunk transfers remain explicitly disabled until
 qualified. Loaded Unstaged summaries are retained in the draft selection model
 without eagerly reading patches. Remote tracking and PR actions remain outside
 the local UI scope.
+
+JST-FORGE-001/007 add capability-owned PR badges, Submit stack and an adjacent
+PR panel to both Branches and Workspace. The shared forge controller retains
+session credentials, authored drafts and exact pending requests across refresh
+and focused navigation. Editing, checks/logs, permitted rerun/cancel, merge and
+explicit Restack use the same typed service as the standalone CLI. Operational
+failures belong to application notifications; stale/unknown operation status may
+remain beside the controls. Native repository forge commands are unavailable.

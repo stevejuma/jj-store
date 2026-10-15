@@ -42,5 +42,5 @@ adds a Markdown record and an explicit milestone review.
 - [M27 remote server connections and authenticated agents](M27/index.md)
 - [M28 lightweight workflows](M28/index.md)
 - [M29 custom data indexing](M29/index.md)
-
 - [M30 public release](M30/index.md)
+- [M31 forge-agnostic stack submission](M31/index.md)

@@ -3364,6 +3364,30 @@
     {
       "local": "web/src/lib/ui/store-workflows/workflow-card.css",
       "reason": "Owned workflow summary, stacked icon and description presentation with released Design Core; Buzz desktop references and Apache-2.0 attribution are recorded in desktopWorkflows. No external source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgePanel.svelte",
+      "reason": "Independently implemented forge controls using released Design Core; jjbutler and Changeyard are design references only. No source copied from their checkouts."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgePullRequest.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/store-forge.css",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeChecks.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeSetup.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeButton.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
     }
   ],
   "desktopAppearance": {
@@ -3917,5 +3941,44 @@
       "web/src/lib/ui/store-workflows/workflow-history-tree.css"
     ],
     "adaptations": "Selectable source repositories and workflows, All workflows, flat runs, avatar-backed author filters, bookmark/status/manual-event filters, bounded paging, full-width pinned details and accessible mobile/resize controls. Repository Actions fixes scope to its source repository and provides full-body pinned details. Workflow navigation and overview cards share an owned action menu; the repository page owns the Actions-only full-width divider."
+  },
+  "forgeStacks": {
+    "local": [
+      "web/src/lib/ui/store-forge/StoreForgePullRequest.svelte",
+      "web/src/lib/ui/store-forge/store-forge.css",
+      "web/src/lib/ui/store-forge/StoreForgeChecks.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeSetup.svelte",
+      "web/src/lib/ui/store-forge/StoreForgePanel.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeButton.svelte",
+      "web/src/lib/controller/forge/effects.svelte.ts",
+      "web/src/lib/controller/forge/view-lifecycle.ts",
+      "web/src/lib/controller/forge/polling.svelte.ts",
+      "web/src/lib/controller/forge/controller.svelte.ts",
+      "web/src/lib/controller/forge/types.ts"
+    ],
+    "references": [
+      {
+        "project": "jjbutler",
+        "revision": "a9763eebc79c17c75edc9c903c6cf6ff68003d5a",
+        "license": "FSL-1.1-MIT",
+        "paths": [
+          "apps/desktop/src/lib/forge/interface/forge.ts",
+          "apps/desktop/src/components/ReviewCreation.svelte",
+          "apps/desktop/src/lib/forge/github/githubChecksMonitor.svelte.ts"
+        ],
+        "usage": "Read-only design reference for capability interfaces, contextual creation, PR cards and bounded monitoring; no code copied."
+      },
+      {
+        "project": "changeyard",
+        "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+        "paths": [
+          "src/providers/ChangeProvider.ts",
+          "src/vcs/jj/stack-submit.ts"
+        ],
+        "usage": "Read-only workflow reference; independently implemented effects and presentation."
+      }
+    ],
+    "communityInspection": "src/components/community-projects/CommunityProjectsPullRequestCreateDialog.svelte and maintained owned Stack components inspected before presentation edits. Existing owned cards/avatars are reused. No new Community-derived component copy.",
+    "designCore": "Released @lapismd/design-core 0.3.2 Button, Input, Textarea, ScrollArea and ColumnCanvas primitives; no foundational package changes."
   }
 }

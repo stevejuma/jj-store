@@ -1,5 +1,10 @@
 # Change map
 
+E-FORGE-STACKS-001 introduces JST-FORGE-001/007 and M31. Forge adapters and
+external-effect journals stay outside storage/model/WAL authority; jj-store-jj
+owns local JJ, sharing owned contracts with CLI/HTTP. The user limits checks to
+changed components and defers wider test-suite changes and fixes.
+
 E-CUSTOM-INDEX-001 introduces the isolated derived read-index crate under
 JST-ADAPT-008. The dependency allowlist permits service-to-read-index only;
 native/model/WAL authority remains independent. New crate/manifest boundaries

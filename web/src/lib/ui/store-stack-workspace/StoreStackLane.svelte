@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreForgeButton from "../store-forge/StoreForgeButton.svelte";
   import { toggleStackSource } from "../../controller/stack-workspace/selection-actions.js";
   import { untrack } from "svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
@@ -87,6 +88,7 @@
     {#if stack.conflicts}<CommunityChip tone="warning">Conflicts</CommunityChip
       >{/if}
     <ColumnCanvas.HeaderActions>
+      <StoreForgeButton {controller} {stack} />
       <Menu.Root
         ><Menu.Trigger
           >{#snippet child({ props })}<Button

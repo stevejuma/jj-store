@@ -10,6 +10,10 @@ homepage.workspace = true
 readme = "README.md"
 
 [dependencies]
+base64 = "0.22"
+zeroize = "1"
+url = "2"
+jj-forge.workspace = true
 schemars.workspace = true
 jj-lib.workspace = true
 jj-store-model.workspace = true

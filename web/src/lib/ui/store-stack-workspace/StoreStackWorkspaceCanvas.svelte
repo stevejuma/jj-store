@@ -9,6 +9,7 @@
   import CommunityRepositoryBranchCommand from "../community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
   import StoreStackUnstaged from "./StoreStackUnstaged.svelte";
   import StoreStackWorkspaceSpacer from "./StoreStackWorkspaceSpacer.svelte";
+  import StoreForgePanel from "../store-forge/StoreForgePanel.svelte";
   import StoreStackLane from "./StoreStackLane.svelte";
   import StoreStackTargetHistory from "./StoreStackTargetHistory.svelte";
   import StoreStackWorkspaceDiff from "./StoreStackWorkspaceDiff.svelte";
@@ -60,6 +61,14 @@
         maxWidth: 640,
         pathLevel: 0,
         collapsible: true,
+      },
+      "forge-pr": {
+        resizable: true,
+        defaultWidth: 480,
+        minWidth: 360,
+        maxWidth: 800,
+        pathLevel: 0,
+        closeable: false,
       },
       working: {
         resizable: true,
@@ -227,5 +236,11 @@
         <StoreStackWorkspaceDiff {controller} {diff} {onCommand} />
       {/each}
     {/each}
+    {#if controller.forge?.open}<ColumnCanvas.Column
+        id="forge-pr"
+        resizable
+        aria-label="Pull request details"
+        ><StoreForgePanel controller={controller.forge} /></ColumnCanvas.Column
+      >{/if}
   </ColumnCanvas.Root>
 </ScrollArea>

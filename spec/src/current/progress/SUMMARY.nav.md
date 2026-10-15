@@ -63,6 +63,7 @@
   {{#include M28/SUMMARY.nav.md}}
 - [M29 custom data indexing](M29/index.md)
   {{#include M29/SUMMARY.nav.md}}
-
 - [M30 public release](M30/index.md)
   {{#include M30/SUMMARY.nav.md}}
+- [M31 forge-agnostic stack submission](M31/index.md)
+  {{#include M31/SUMMARY.nav.md}}

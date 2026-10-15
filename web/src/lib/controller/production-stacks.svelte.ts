@@ -1,3 +1,4 @@
+import { ForgeController } from "./forge/controller.svelte.js";
 import { LocalClient } from "../api/local-client.js";
 import { ApiError, type Model } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -107,6 +108,17 @@ export function createProductionStacks(options: {
           heads: [...captured.heads],
           operation,
         };
+        const forgeClient = new LocalClient(source.repository, options.fetcher);
+        adapter.forge = new ForgeController(
+          (request) => forgeClient.request("forge", request),
+          () => forgeClient.close(),
+          (operation) => {
+            if (owner === source && adapter && controller) {
+              adapter.setOperation(operation);
+              void controller.refresh();
+            }
+          },
+        );
         controller = new StackWorkspaceController(adapter, {
           acceptedOperation: options.acceptedOperation,
           initialLoaded: false,
