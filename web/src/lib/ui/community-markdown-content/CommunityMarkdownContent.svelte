@@ -72,6 +72,7 @@
   );
 
   const communityMarkdownExtension = createCommunityMarkdownExtension({
+    source: () => preview.content,
     members: () => preview.members,
     rooms: () => rooms,
     emojis: () => communityEmojis,

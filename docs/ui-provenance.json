@@ -3412,6 +3412,18 @@
     {
       "local": "web/src/lib/ui/store-forge/forge-icons.ts",
       "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/community-markdown-content/CommunityExternalLink.svelte",
+      "reason": "Application-owned inline external links and selective standalone local cards using released Mira extension points and Design Core Tooltip. Independently authored; Buzz is a read-only behavior reference."
+    },
+    {
+      "local": "web/src/lib/ui/community-markdown-content/CommunityLinkPreview.svelte",
+      "reason": "Application-owned inline external links and selective standalone local cards using released Mira extension points and Design Core Tooltip. Independently authored; Buzz is a read-only behavior reference."
+    },
+    {
+      "local": "web/src/lib/ui/community-markdown-content/syntax-external-links.ts",
+      "reason": "Application-owned inline external links and selective standalone local cards using released Mira extension points and Design Core Tooltip. Independently authored; Buzz is a read-only behavior reference."
     }
   ],
   "desktopAppearance": {
@@ -4028,7 +4040,10 @@
     "version": "16.0.0",
     "license": "CC0-1.0",
     "licenseFile": "docs/licenses/simple-icons-CC0-1.0.md",
-    "local": ["web/src/lib/ui/store-forge/forge-icons.ts"],
+    "local": [
+      "web/src/lib/links/site-icons.ts",
+      "web/src/lib/ui/store-forge/forge-icons.ts"
+    ],
     "paths": ["icons/github.svg", "icons/gitlab.svg", "icons/forgejo.svg"],
     "usage": "Locally bundled monochrome SVG paths rendered by the application-owned forge icon; no runtime external icon requests."
   },
@@ -4061,5 +4076,54 @@
     ],
     "communityInspection": "CommunityProjectsPullRequestCreateDialog and maintained chat composer additionalActions seam inspected. Existing owned components are reused; no new Community-derived source copy.",
     "designCore": "Released 0.3.2 WorkspaceFloatingLayer, WorkspaceShellController, imperative view registry, Dialog.Portal and shadcn primitives. Independent application adapter preserves one DOM/editor instance; foundation owns window geometry and controls."
+  },
+  "siteLinks": {
+    "local": [
+      "web/src/lib/links/site-links.ts",
+      "web/src/lib/links/site-icons.ts"
+    ],
+    "reference": {
+      "repository": "https://github.com/block/buzz",
+      "revision": "ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be",
+      "paths": [
+        "desktop/src/shared/ui/markdown/ExternalLinkAnchor.tsx",
+        "desktop/src/shared/ui/markdown/useMessageLinkPreviews.ts",
+        "desktop/src/shared/lib/linkPreview.ts",
+        "desktop/src/shared/ui/link-preview-list.tsx"
+      ],
+      "usage": "Read-only comparison: ordinary anchors remain inline, cards render separately from prepared metadata. Local icons and standalone-only eligibility are jj-store adaptations; no Buzz code copied."
+    },
+    "icons": [
+      {
+        "repository": "https://github.com/simple-icons/simple-icons",
+        "revision": "28241d80f8422eaed317ef968ad1e40b6d0d9163",
+        "version": "16.0.0",
+        "license": "CC0-1.0",
+        "licenseFile": "docs/licenses/simple-icons-CC0-1.0.md",
+        "paths": [
+          "icons/codeberg.svg",
+          "icons/bitbucket.svg",
+          "icons/facebook.svg",
+          "icons/x.svg",
+          "icons/google.svg",
+          "icons/linear.svg",
+          "icons/notion.svg",
+          "icons/figma.svg",
+          "icons/youtube.svg",
+          "icons/discord.svg",
+          "icons/reddit.svg",
+          "icons/stackoverflow.svg"
+        ]
+      },
+      {
+        "repository": "https://github.com/simple-icons/simple-icons",
+        "version": "15.0.0",
+        "source": "https://cdn.jsdelivr.net/npm/simple-icons@15.0.0/icons/slack.svg",
+        "license": "CC0-1.0",
+        "licenseFile": "docs/licenses/simple-icons-CC0-1.0.md",
+        "paths": ["icons/slack.svg"]
+      }
+    ],
+    "usage": "Locally bundled monochrome paths; no metadata, external images or favicon services. Existing forge icons share the same registry."
   }
 }

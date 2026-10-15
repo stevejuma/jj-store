@@ -18,9 +18,11 @@ import CommunityEntityReference from "./CommunityEntityReference.svelte";
 
 import CommunityMemberReference from "./CommunityMemberReference.svelte";
 
-import CommunityLinkCard from "./CommunityLinkCard.svelte";
+import CommunityExternalLink from "./CommunityExternalLink.svelte";
+import CommunityLinkPreview from "./CommunityLinkPreview.svelte";
 import CommunitySpoiler from "./CommunitySpoiler.svelte";
 import { remarkNativeEntityLinks } from "./syntax-entity.js";
+import { remarkStandaloneLinks } from "./syntax-external-links.js";
 
 import {
   applyCommunityMarkdownSyntax,
@@ -39,13 +41,20 @@ export interface CommunityMarkdownSyntaxOptions {
   rooms(): readonly CommunityRoomModel[];
   emojis(): readonly CommunityCustomEmoji[];
   mentionPubkeys(): readonly string[];
+  source?(): string;
 }
 
 export function createCommunityMarkdownExtension(
   options: CommunityMarkdownSyntaxOptions,
 ): MiraExtension {
+  const standaloneLinks = new Map<number, string>();
   const rehypeCommunitySyntax = () => (tree: CommunityMarkdownHastNode) => {
-    applyCommunityMarkdownSyntax(tree, options, tokenizeCommunityMarkdownText);
+    applyCommunityMarkdownSyntax(
+      tree,
+      options,
+      tokenizeCommunityMarkdownText,
+      standaloneLinks,
+    );
   };
 
   return defineMiraExtension({
@@ -55,11 +64,21 @@ export function createCommunityMarkdownExtension(
       communityemoji: CommunityEmojiReference,
       communityentity: CommunityEntityReference,
       communitymember: CommunityMemberReference,
-      communitylinkcard: CommunityLinkCard,
+      communityexternallink: CommunityExternalLink,
+      communitylinkpreview: CommunityLinkPreview,
       communityspoiler: CommunitySpoiler,
     },
     rehypePlugins: [rehypeCommunitySyntax],
-    remarkPlugins: [remarkNativeEntityLinks],
+    remarkPlugins: [
+      remarkNativeEntityLinks,
+      [
+        remarkStandaloneLinks,
+        {
+          source: () => options.source?.() ?? "",
+          paragraphs: standaloneLinks,
+        },
+      ],
+    ],
   });
 }
 

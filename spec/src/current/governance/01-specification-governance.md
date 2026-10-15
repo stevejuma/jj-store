@@ -1,5 +1,14 @@
 # Specification governance
 
+E-UI-INLINE-LINKS-001 retains JST-GOV-002/008 presentation ownership. The
+inline/standalone link renderer is application-owned and uses released Mira
+extension points and Design Core Tooltip. Buzz's inline anchors and prepared
+preview separation are read-only references. Local Simple Icons 16.0.0 paths,
+plus the 15.0.0 Slack path, retain CC0 source/version/license provenance; forge
+buttons share the same local registry. No reference-checkout dependency or
+ownership-policy change is introduced. JST-UI-018 owns the new default and card
+eligibility behavior.
+
 The generated release/dependency PR exception in JST-ARCH-005 applies to the
 same-change topic, evidence and milestone obligations in
 JST-GOV-002/003/004/011. It covers only `changeset-release/main` and

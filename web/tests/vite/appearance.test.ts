@@ -24,6 +24,25 @@ import { createMemoryStoryStorage } from "../../../catalog/fixtures/memory-stora
 import { createThemeVars } from "../../src/lib/appearance/adaptive-theme.js";
 
 describe("device appearance", () => {
+  it("defaults new link preferences to inline without resetting saved card styles", () => {
+    expect(parseAppearance(null).links).toBe("inline");
+    expect(parseAppearance('{"version":1,"links":"invalid"}').links).toBe(
+      "inline",
+    );
+    for (const links of ["inline", "compact", "rich"] as const) {
+      const storage = createMemoryStoryStorage();
+      const store = createAppearanceStore(storage);
+      store.update({ links });
+      expect(createAppearanceStore(storage).saved.links).toBe(links);
+      const saved = storage.getItem(appearanceStorageKey);
+      store.preview({ links: "rich" });
+      expect(storage.getItem(appearanceStorageKey)).toBe(saved);
+      store.resetPreview();
+      expect(store.live.links).toBe(links);
+      store.restore('{"version":1,"links":"compact"}');
+      expect(store.live.links).toBe("compact");
+    }
+  });
   it.each([
     ["#ffffff", "#24292e", "#6a737d"],
     ["#0d1117", "#c9d1d9", "#8b949e"],
@@ -180,7 +199,7 @@ describe("local link cards", () => {
       },
       (v) => [{ kind: "text", value: v }],
     );
-    expect(tree.children![0]!.tagName).toBe("communitylinkcard");
+    expect(tree.children![0]!.tagName).toBe("communityexternallink");
     expect(tree.children![1]!.tagName).not.toBe("communitylinkcard");
     expect(tree.children![2]!.children![0]!.tagName).toBe("a");
   });
