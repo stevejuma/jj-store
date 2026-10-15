@@ -360,21 +360,24 @@ Scroll Area, bounded to min(20rem, 45dvh), with corners no larger than 6px; the
 summary stays outside the scroll region. Loading, stale, incomplete and
 unavailable outcomes stay explicit. Group/disclosure choices, selected jobs/logs
 and list scroll survive refresh and float/redock. Successful checks alone grant
-no merge authority. Creation and details share the forge-independent
-detachable-panel adapter: released floating window controls own moving,
-resizing, minimizing, maximizing and docking. The same content/editor instance
-and draft remain mounted during float/redock, with focused Escape and return
-focus. Floating layout is session-only, viewport-bounded and cleaned up with the
-owning view. Float/dock preserves nested scrolling after the content node moves
-between hosts; temporary host hiding must not discard its scroll offsets.
-Float/dock controls use the picture-in-picture-2 icon. Floating PR content has
-no outer component border or corner radius; its header matches the body
-background and uses a bottom divider. Its title disclosure hides the collapse
-chevron, uses a transparent background, ignores pointer input through CSS and
-disables keyboard activation while floating; redocking restores normal
-disclosure. The inline PR component owns its bottom spacing, so floating it
-leaves the file diff aligned to the top of the shared column; redocking restores
-the separation between cards.
+no merge authority. The repository owner serializes forge transport calls,
+including discovery, polling and selected-PR reads, retaining journal admission
+and exact pending effects. Failed observations release the queue; closed views
+do not dispatch queued requests. Creation and details share the
+forge-independent detachable-panel adapter: released floating window controls
+own moving, resizing, minimizing, maximizing and docking. The same
+content/editor instance and draft remain mounted during float/redock, with
+focused Escape and return focus. Floating layout is session-only,
+viewport-bounded and cleaned up with the owning view. Float/dock preserves
+nested scrolling after the content node moves between hosts; temporary host
+hiding must not discard its scroll offsets. Float/dock controls use the
+picture-in-picture-2 icon. Floating PR content has no outer component border or
+corner radius; its header matches the body background and uses a bottom divider.
+Its title disclosure hides the collapse chevron, uses a transparent background,
+ignores pointer input through CSS and disables keyboard activation while
+floating; redocking restores normal disclosure. The inline PR component owns its
+bottom spacing, so floating it leaves the file diff aligned to the top of the
+shared column; redocking restores the separation between cards.
 
 The adjacent PR inspection/submission column retains matching shared headers,
 icon-only pencil/close controls and its connection/inventory menu. Descriptions

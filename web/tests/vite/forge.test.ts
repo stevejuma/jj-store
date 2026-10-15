@@ -210,7 +210,7 @@ it("loads selected PR checks automatically and discards a late previous selectio
   controller.select(first.head);
   await vi.waitFor(() => expect(pending.has(1)).toBe(true));
   controller.select(second.head);
-  await vi.waitFor(() => expect(pending.has(2)).toBe(true));
+  expect(pending.has(2)).toBe(false);
   const checks = (sha: string, name: string): ForgeResponse => ({
     ...response(),
     checks: {
@@ -229,11 +229,12 @@ it("loads selected PR checks automatically and discards a late previous selectio
       ],
     },
   });
+  pending.get(1)!(checks(first.sha, "Old selection"));
+  await vi.waitFor(() => expect(pending.has(2)).toBe(true));
+  expect(controller.checks).toBeUndefined();
+  expect(controller.selected?.number).toBe(2);
   pending.get(2)!(checks(second.sha, "Current revision"));
   await vi.waitFor(() => expect(controller.checks?.sha).toBe(second.sha));
-  pending.get(1)!(checks(first.sha, "Old selection"));
-  await Promise.resolve();
-  await Promise.resolve();
   expect(controller.selected?.number).toBe(2);
   expect(controller.checks?.checks[0]?.name).toBe("Current revision");
   expect(controller.pending).toBeUndefined();

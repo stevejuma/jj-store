@@ -149,6 +149,13 @@ account changes invalidate previews without replaying external effects. Existing
 endpoint identities, request IDs and receipts remain authoritative. Account
 inventory and connection readiness refresh through the existing view lifecycle.
 
+E-FORGE-AUTH-LIVE-001 confirms JST-API-001/002 wire contracts unchanged:
+repository-owned request serialization prevents overlapping background and
+selected-PR observations from competing for the existing journal lease. It
+introduces no retry, credential fallback, new endpoint or authorization bypass;
+request/account identities, exact pending intents and revision guards remain
+authoritative.
+
 E-FORGE-PANEL-001 confirms JST-API-001 unchanged: shared column headers,
 Markdown description rendering/composition and the shadcn merge-method picker
 alter presentation only. Forge action shapes, expected-body/head guards,

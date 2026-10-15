@@ -10,7 +10,27 @@ export class ForgeConnectionLifecycle {
     target: "",
   });
   initialized = false;
+  private requests: Promise<unknown> = Promise.resolve();
   constructor(readonly owner: ForgeController) {}
+  call(action: ForgeAction) {
+    const result = this.requests.then(async () => {
+      if (this.owner.closed) throw new Error("Forge view closed");
+      this.assertReady(action);
+      const response = await this.owner.transport({
+        version: 1,
+        token: this.owner.token || null,
+        ...(this.owner.accounts.managed &&
+        this.owner.data?.detection?.account_id
+          ? { account_id: this.owner.data.detection.account_id }
+          : {}),
+        action,
+      });
+      if (this.owner.closed) throw new Error("Forge view closed");
+      return response;
+    });
+    this.requests = result.catch(() => undefined);
+    return result;
+  }
   get ready() {
     return this.owner.accounts.managed
       ? ["connected", "legacy"].includes(

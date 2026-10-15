@@ -125,18 +125,8 @@ export class ForgeController {
       lifetime: "dismiss",
     });
   }
-  async call(action: ForgeAction) {
-    this.connection.assertReady(action);
-    const response = await this.transport({
-      version: 1,
-      token: this.token || null,
-      ...(this.accounts.managed && this.data?.detection?.account_id
-        ? { account_id: this.data.detection.account_id }
-        : {}),
-      action,
-    });
-    if (this.#closed) throw new Error("Forge view closed");
-    return response;
+  call(action: ForgeAction) {
+    return this.connection.call(action);
   }
   refresh() {
     return this.#polling.refresh();

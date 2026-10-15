@@ -9,6 +9,70 @@ import { ForgeController } from "../../src/lib/controller/forge/controller.svelt
 import { workspaceForgeTransport } from "../../../catalog/fixtures/forge/workspace-transport.js";
 import { createStoreRouteHistory } from "../../src/lib/controller/store-route-history.svelte.js";
 
+it("repository forge observations do not collide with the journal lease", async () => {
+  const fixture = workspaceForgeTransport();
+  let active = 0;
+  let peak = 0;
+  const forge = new ForgeController(async () => {
+    peak = Math.max(peak, ++active);
+    await Promise.resolve();
+    active--;
+    return fixture.initial;
+  });
+  await Promise.all([
+    forge.call({ kind: "status" }),
+    forge.call({ kind: "pull_request", number: 42n }),
+    forge.call({
+      kind: "pr",
+      number: 42n,
+      request_id: "check-read",
+      action: { kind: "checks" },
+    }),
+  ]);
+  expect(peak).toBe(1);
+  forge.close();
+});
+
+it("a rejected forge observation does not prevent the next request", async () => {
+  const fixture = workspaceForgeTransport();
+  let calls = 0;
+  const forge = new ForgeController(async () => {
+    if (++calls === 1) throw new Error("Access temporarily unavailable");
+    return fixture.initial;
+  });
+  const results = await Promise.allSettled([
+    forge.call({ kind: "status" }),
+    forge.call({ kind: "pull_request", number: 42n }),
+  ]);
+  expect(results.map((r) => r.status)).toEqual(["rejected", "fulfilled"]);
+  forge.close();
+});
+
+it("closing the repository prevents queued forge requests from dispatching", async () => {
+  const fixture = workspaceForgeTransport();
+  let finish!: () => void;
+  let calls = 0;
+  const forge = new ForgeController(async () => {
+    calls++;
+    await new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    return fixture.initial;
+  });
+  const results = Promise.allSettled([
+    forge.call({ kind: "status" }),
+    forge.call({ kind: "pull_request", number: 42n }),
+  ]);
+  await Promise.resolve();
+  forge.close();
+  finish();
+  expect((await results).map((r) => r.status)).toEqual([
+    "rejected",
+    "rejected",
+  ]);
+  expect(calls).toBe(1);
+});
+
 it("failed account setup retains its transient draft and publishes one actionable failure", async () => {
   const service = new NotificationService();
   const manager = new Integrations(

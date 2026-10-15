@@ -144,10 +144,14 @@ future work.
 
 The active repository Stacks controller polls every 15 seconds, backs off to 60
 seconds on failure and watches at most 16 visible branches with concurrency
-four. Closing its owning repository stops polling. Description maintenance
-operates while that controller is active or the CLI explicitly requests status;
-there is no always-on backend maintenance daemon. Historical CI selection and
-unsaved descriptions remain retained.
+four. Its transport serializes requests per repository so background observation
+and selected PR reads do not contend for the private journal lease. A rejected
+request releases the queue; queued requests recheck access and view lifetime
+before dispatch and never automatically retry an external effect. Closing its
+owning repository stops polling. Description maintenance operates while that
+controller is active or the CLI explicitly requests status; there is no
+always-on backend maintenance daemon. Historical CI selection and unsaved
+descriptions remain retained.
 
 Shared-root or cross-combination Restack is unavailable pending qualification.
 Conflicted Restack retains the applied native operation and stops publication.

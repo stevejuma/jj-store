@@ -1,8 +1,8 @@
 # M31 forge-agnostic stack submission
 
-| ID  | Status      | Depends | Requirements                                                                                      | Gate                                                            | Next                                                                        | Evidence                                                                                                                                                                                                                                                                                                                   |
-| --- | ----------- | ------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M31 | In progress | M21     | JST-FORGE-001,JST-FORGE-002,JST-FORGE-003,JST-FORGE-004,JST-FORGE-005,JST-FORGE-006,JST-FORGE-007 | Focused CLI/app submission, editing, CI and merge qualification | Run credentialed disposable-forge acceptance and packaged app qualification | E-FORGE-STACKS-001,E-FORGE-WORKSPACE-001,E-FORGE-PANEL-001,E-FORGE-DETAILS-001,E-FORGE-BUTTONS-001,E-FORGE-UNSUBMITTED-001,E-FORGE-EDIT-001,E-FORGE-INLINE-001,E-FORGE-FLOAT-STYLE-001,E-FORGE-FLOAT-DISCLOSURE-001,E-FORGE-BRANCH-STATUS-001,E-FORGE-INLINE-CHECKS-001,E-FORGE-BRANCH-STATUS-002,E-FORGE-INTEGRATIONS-001 |
+| ID  | Status      | Depends | Requirements                                                                                      | Gate                                                            | Next                                                                        | Evidence                                                                                                                                                                                                                                                                                                                                         |
+| --- | ----------- | ------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M31 | In progress | M21     | JST-FORGE-001,JST-FORGE-002,JST-FORGE-003,JST-FORGE-004,JST-FORGE-005,JST-FORGE-006,JST-FORGE-007 | Focused CLI/app submission, editing, CI and merge qualification | Run credentialed disposable-forge acceptance and packaged app qualification | E-FORGE-STACKS-001,E-FORGE-WORKSPACE-001,E-FORGE-PANEL-001,E-FORGE-DETAILS-001,E-FORGE-BUTTONS-001,E-FORGE-UNSUBMITTED-001,E-FORGE-EDIT-001,E-FORGE-INLINE-001,E-FORGE-FLOAT-STYLE-001,E-FORGE-FLOAT-DISCLOSURE-001,E-FORGE-BRANCH-STATUS-001,E-FORGE-INLINE-CHECKS-001,E-FORGE-BRANCH-STATUS-002,E-FORGE-INTEGRATIONS-001,E-FORGE-AUTH-LIVE-001 |
 
 The ordinary-local implementation includes submission, managed navigation,
 editing, CI controls, guarded merge and explicit Restack. Focused automated and
@@ -52,9 +52,14 @@ credential custody, device OAuth/PAT/Enterprise setup, repository detection and
 account-bound submission previews, and compact grouped in-body checks. Targeted
 account, transport, native-discovery, controller and browser acceptance is
 recorded separately from live sign-in. The jj-store OAuth app is registered;
-permission approval and cold authenticated restart/read acceptance remain open
-until observed. M31 remains In progress; GitLab/Forgejo live qualification,
-native submission, packaged/platform and visual gates are not promoted.
+permission approval and cold authenticated restart/read acceptance were
+initially open. E-FORGE-AUTH-LIVE-001 records subsequent user-approved GitHub
+OAuth, macOS Keychain persistence across backend restarts, automatic binding to
+the existing sample connection with target `trunk`, and live PR/check reads. It
+also qualifies serialized repository forge requests after a live journal-lease
+collision, preserving exact pending effects. M31 remains In progress;
+GitLab/Forgejo live qualification, native submission, packaged/platform and
+visual gates are not promoted.
 
 <!-- generated-navigation -->
 
