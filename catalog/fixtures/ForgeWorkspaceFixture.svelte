@@ -8,7 +8,13 @@
   import { workspaceStoryFixture } from "./stack-workspace/data.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   import { workspaceForgeTransport } from "./forge/workspace-transport.js";
-  let { panelOpen = true }: { panelOpen?: boolean } = $props();
+  let {
+    panelOpen = true,
+    workspacePullRequest = false,
+  }: {
+    panelOpen?: boolean;
+    workspacePullRequest?: boolean;
+  } = $props();
   const controller = untrack(() => {
     const value = createInMemoryStoreController("stacks");
     value.actions.selectStacksView("workspace");
@@ -20,7 +26,7 @@
     snapshot.repository = controller.state.route.repository;
     snapshot.folder = "/Users/demo/code/repository";
     snapshot.workspaces[0]!.applied = ["ui", "api"];
-    const fixture = workspaceForgeTransport();
+    const fixture = workspaceForgeTransport(workspacePullRequest);
     const forge = new ForgeController(fixture.transport);
     forge.data = fixture.initial;
     forge.ci = fixture.ci;

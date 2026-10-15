@@ -20,8 +20,8 @@ const connection: ForgeConnection = {
 };
 const navigation =
   "\n\n<!-- jj-store:stack:v1 -->\n\n### Stack\n\n1. [#41](https://github.com/team/repo/pull/41) · Open\n2. [#42](https://github.com/team/repo/pull/42) · Open\n<!-- /jj-store:stack -->";
-export function workspaceForgeTransport() {
-  const prs: ForgePr[] = [
+export function workspaceForgeTransport(workspacePullRequest = false) {
+  const examples: ForgePr[] = [
     {
       number: 41,
       head: "feature/model",
@@ -59,6 +59,9 @@ export function workspaceForgeTransport() {
     native_stack: null,
     updated_at: "2026-10-15T10:00:00Z",
   }));
+  const prs = examples.filter(
+    (pr) => workspacePullRequest || pr.head !== "feature/workspace",
+  );
   const states = new Map<string, "running" | "passed" | "failed" | "cancelled">(
     [
       ["feature/model", "passed"],
@@ -127,8 +130,8 @@ export function workspaceForgeTransport() {
     if (action.kind === "preview") {
       const members =
         action.bookmark === "feature/api"
-          ? prs.slice(0, 2)
-          : prs.filter((p) => p.head === action.bookmark);
+          ? examples.slice(0, 2)
+          : examples.filter((p) => p.head === action.bookmark);
       return {
         ...response(),
         plan: {
@@ -137,23 +140,39 @@ export function workspaceForgeTransport() {
           connection,
           draft: action.draft,
           cumulative: false,
-          items: members.map((p) => ({
-            segment: {
-              branch: p.head,
-              head: p.sha,
-              base: p.base,
-              title: p.title,
-              body: p.body,
-              remote_head: "0".repeat(40),
-              shared: false,
-            },
-            pr: { ...p },
-            steps: ["push", "description"],
-          })),
+          items: members.map((p) => {
+            const pr = prs.find((item) => item.head === p.head);
+            return {
+              segment: {
+                branch: p.head,
+                head: p.sha,
+                base: p.base,
+                title: p.title,
+                body: p.body,
+                remote_head: pr ? "0".repeat(40) : null,
+                shared: false,
+              },
+              pr: pr ? { ...pr } : null,
+              steps: pr
+                ? ["push", "description"]
+                : ["push", "create", "description"],
+            };
+          }),
         },
       };
     }
     if (action.kind === "submit") {
+      for (const item of action.plan.items) {
+        if (prs.some((pr) => pr.head === item.segment.branch)) continue;
+        const example = examples.find((pr) => pr.head === item.segment.branch);
+        if (example)
+          prs.push({
+            ...example,
+            title: item.segment.title,
+            body: item.segment.body,
+            draft: action.plan.draft,
+          });
+      }
       const plan: ForgePlan = {
         ...action.plan,
         connection,

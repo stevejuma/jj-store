@@ -109,9 +109,20 @@
     const stack = await canvas.findByRole("region", {
       name: "Stack feature/api",
     });
+    const unsubmitted = canvas.getByRole("region", {
+      name: "Stack feature/workspace",
+    });
     await expect(
-      canvas.getByRole("region", { name: "Stack feature/workspace" }),
-    ).toBeInTheDocument();
+      canvas.getAllByRole("region", { name: /^Stack feature\// })[0],
+    ).toBe(unsubmitted);
+    await expect(
+      within(unsubmitted).getByRole("button", {
+        name: "Pull request for feature/workspace",
+      }),
+    ).toHaveTextContent("Create PR");
+    await expect(
+      within(unsubmitted).queryByText(/Checks /),
+    ).not.toBeInTheDocument();
     await expect(
       within(stack).getByRole("button", {
         name: "Pull request for feature/api",
@@ -166,7 +177,7 @@
 
 <Story
   name="Open another PR and preview stack submission"
-  args={{ panelOpen: false }}
+  args={{ panelOpen: false, workspacePullRequest: true }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const stack = await canvas.findByRole("region", {
@@ -289,5 +300,40 @@
     await expect(
       within(preview).getByRole("button", { name: "Push branches and submit" }),
     ).toBeEnabled();
+  }}
+/>
+
+<Story
+  name="Preview and create PR for unsubmitted stack"
+  args={{ panelOpen: false }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stack = await canvas.findByRole("region", {
+      name: "Stack feature/workspace",
+    });
+    const create = within(stack).getByRole("button", {
+      name: "Pull request for feature/workspace",
+    });
+    await expect(create).toHaveTextContent("Create PR");
+    await userEvent.click(create);
+    const panel = await canvas.findByRole("region", {
+      name: "Pull request details",
+    });
+    const preview = within(panel).getByRole("region", {
+      name: "Stack submission preview",
+    });
+    await expect(preview).toHaveTextContent("feature/workspace → main");
+    await expect(preview).toHaveTextContent("push, create, description");
+    await expect(create).toHaveTextContent("Create PR");
+    await userEvent.click(
+      within(preview).getByRole("button", { name: "Push branches and submit" }),
+    );
+    await waitFor(() => expect(create).toHaveTextContent("#43"));
+    await userEvent.click(create);
+    await expect(
+      await within(panel).findByRole("heading", {
+        name: "Add workspace toolbar",
+      }),
+    ).toBeVisible();
   }}
 />

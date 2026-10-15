@@ -342,3 +342,10 @@ bookmark card only, using the displayed group order. The column kebab menu also
 offers Submit stack through the same preview and pending/conflict guards; its
 header omits the separate button. Both entry points retain the existing explicit
 Push branches and submit step.
+
+E-FORGE-UNSUBMITTED-001 retains JST-UI-020 and JST-FORGE-001 behavior: the
+contextual catalog starts with an unsubmitted Workspace bookmark showing Create
+PR without a PR number or CI status, followed by a submitted stack and its PR
+details. The fixture previews creation from local changes independently of
+remote PR inventory; only explicit simulated submission adds the fixture PR.
+Production components, forge actions and authority are unchanged.
