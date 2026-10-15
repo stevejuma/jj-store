@@ -1,8 +1,8 @@
 # M30 public release
 
-| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                         | Evidence                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002 |
+| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                         | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002,E-UI-CI-003 |
 
 E-AUTOMATION-GOVERNANCE-001 qualifies the generated release/dependency PR
 exception. Static spec checks, all planned tests and publication gates remain;
@@ -96,7 +96,13 @@ second application shard exposed an unrequested capture receipt observation. The
 test now explicitly inspects the original request through the retained refresh
 control, preserving identity and the single-import assertion. M30 stays In
 progress pending hosted confirmation and the existing full qualification gaps;
-the full heavy workflow remains idle.
+the full heavy workflow remains idle. E-UI-CI-003 records the post-merge Search
+save-error race in both main standard checks and manual qualification. A status
+read could erase the failed save notice while retaining its dirty draft. The
+controller now retains that failure until Cancel or a successful explicit Save;
+neither observation nor dismissal replays a command. M30 remains In progress:
+the failed standard gate prevented heavy suites from starting, and prior
+backend/cold failures remain unresolved.
 <!-- generated-navigation -->
 
 ## Pages

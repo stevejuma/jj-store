@@ -9,7 +9,7 @@ import {
   type SearchConfiguration,
   type SearchSettings,
 } from "../../src/lib/controller/search-settings.js";
-import { Client } from "../../src/lib/api/client.js";
+import { ApiError, Client } from "../../src/lib/api/client.js";
 import type { StoreDataSource } from "../../src/lib/controller/native-data-source.js";
 const configuration: SearchConfiguration = {
   ...searchAdvancedDefaults,
@@ -79,7 +79,7 @@ test("save preserves draft and its revision through stale failure and refresh", 
   const f = fixture();
   await f.settings.refreshSearchSettings();
   f.settings.setSearchDraft({ exclude: "private" });
-  f.save.mockRejectedValueOnce(new Error("search settings changed"));
+  f.save.mockRejectedValueOnce(new ApiError("search_settings_changed"));
   await f.settings.saveSearchSettings();
   expect(f.data.searchSettings.draft?.exclude).toBe("private");
   await f.settings.saveSearchSettings();
@@ -114,6 +114,39 @@ test("pending edits block apply and late replies cannot affect another repositor
   deliver(f.value);
   await pending;
   expect(f.data.searchSettings.value).toBeNull();
+});
+
+test("a successful status read cannot resolve a failed save with a retained draft", async () => {
+  const f = fixture();
+  await f.settings.refreshSearchSettings();
+  f.settings.setSearchDraft({ exclude: "private" });
+  f.save.mockRejectedValueOnce(new ApiError("search_settings_changed"));
+  await f.settings.saveSearchSettings();
+  const failure = f.data.searchSettings.error;
+  expect(failure).toMatch(/search settings changed/);
+  f.status.mockResolvedValueOnce({ ...f.value, revision: "b" });
+  await f.settings.refreshSearchSettings();
+  expect(f.data.searchSettings.error).toBe(failure);
+  expect(f.data.searchSettings.draft?.exclude).toBe("private");
+  expect(f.data.searchSettings.state).toBe("ready");
+  expect(f.save).toHaveBeenCalledOnce();
+  f.settings.cancelSearchDraft();
+  expect(f.data.searchSettings.error).toBe("");
+  expect(f.data.searchSettings.draft?.exclude).toBe("");
+});
+
+test("a successful explicit save resolves its retained failure", async () => {
+  const f = fixture();
+  await f.settings.refreshSearchSettings();
+  f.settings.setSearchDraft({ exclude: "private" });
+  f.save.mockRejectedValueOnce(new ApiError("search_settings_changed"));
+  await f.settings.saveSearchSettings();
+  await f.settings.refreshSearchSettings();
+  expect(f.data.searchSettings.error).toMatch(/search settings changed/);
+  await f.settings.saveSearchSettings();
+  expect(f.data.searchSettings.error).toBe("");
+  expect(f.data.searchSettings.dirty).toBe(false);
+  expect(f.save).toHaveBeenCalledTimes(2);
 });
 
 test("automatic status reads retain the revision that started a dirty search draft", async () => {

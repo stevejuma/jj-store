@@ -52,6 +52,11 @@ observed revision. Control intents are apply, retry and rebuild. Browser
 requests cannot select configuration paths or credentials. Accepted lifecycle
 operations continue after HTTP disconnect and remain queryable through status.
 
+E-UI-CI-003 retains JST-API-001: successful Search status reads do not prove
+that a failed Save succeeded. Browser feedback retains the original dirty draft
+and conditional revision until explicit cancellation or save acceptance. The
+repair changes no request, response, admission or storage format.
+
 Sidebar disclosure persistence is presentation state only: versioned boolean
 maps for Projects/Repositories sections and individual projects. It cannot
 restore authorization, credentials, repository snapshots or capability claims.

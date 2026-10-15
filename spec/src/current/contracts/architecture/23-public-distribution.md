@@ -199,3 +199,8 @@ measurements include post-job cache saves. A failed producer requires a fresh
 coordinator run: partial reruns cannot combine receipts or payloads from
 different attempts. Standalone test retries may reuse the original successful
 producer attempt, even when unrelated tests failed.
+
+E-UI-CI-003 retains JST-ARCH-005: the Search notification repair uses an
+ordinary patch Changeset and PR checks. The failed standard browser gate
+prevented the new heavy run from starting its heavy suites; those suites remain
+unqualified.
