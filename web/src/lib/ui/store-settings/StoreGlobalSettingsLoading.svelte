@@ -25,6 +25,7 @@
     launch: "Launch",
     protection: "Protection",
     storage: "Storage",
+    workflows: "Workflows",
     runtimes: "Runtimes",
     capture: "Capture",
     configuration: "Configuration",

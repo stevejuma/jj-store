@@ -8,7 +8,12 @@ export function createProductionReadServices(
   > & {
     history: Parameters<typeof createProductionStoreSearch>[0]["history"];
     restoreRoute(): Promise<void>;
-    restore(): Promise<void>;
+    restore(
+      retainedGraph?: Pick<
+        import("./production-store-state.svelte.js").ProductionStoreState,
+        "graphAtTimeMillis" | "historyEmail"
+      >,
+    ): Promise<void>;
   },
 ) {
   const settings = createProductionStoreSettings({
@@ -18,6 +23,11 @@ export function createProductionReadServices(
     current: (_ticket, active) => options.current(options.version(), active),
     // Repository disconnect calls clear(); ordinary view changes retain tasks.
     signal: undefined,
+    restore: () =>
+      options.restore({
+        graphAtTimeMillis: options.data.graphAtTimeMillis,
+        historyEmail: options.data.historyEmail,
+      }),
   });
   watchCodeIndexRecovery(() => settings.recoverCodeIndex());
   return {

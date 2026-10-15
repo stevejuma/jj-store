@@ -1,5 +1,11 @@
 # Scoped application freshness
 
+Native version-1 `threads` witnesses include the committed reaction root and
+reaction-state version as well as ThreadStore state. Visible WorkStore task
+comments therefore consume this existing domain for reaction freshness, with
+home-scoped query invalidation. Hidden task views retain that dirtiness until
+visible restoration; no additional event domain or persisted format is added.
+
 Application freshness uses bounded process-local semantic notices, separate from
 repository authority and the existing durable native WAL event cursors. Shared
 monitors compare committed manifest/domain witnesses and external local heads

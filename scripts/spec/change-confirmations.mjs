@@ -13,7 +13,9 @@ export function confirmationIsQualified(entry) {
 }
 export function changeConfirmations(root, selection) {
   if (selection.files?.length) return [];
-  const current = revisionReader(root, selection.head ?? "@");
+  const current = revisionReader(root, selection.head ?? "@", {
+    base: selection.base,
+  });
   const ledger = loadLedger(current);
   const parentReaders = (
     selection.base ? [selection.base] : current.parents

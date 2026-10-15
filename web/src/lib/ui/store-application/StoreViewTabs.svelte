@@ -94,11 +94,20 @@
     const element = space;
     const probe = probeList;
     if (!mounted || !element || !probe) return;
-    const observer = new ResizeObserver(fitTabs);
+    let frame: number | undefined;
+    const observer = new ResizeObserver(() => {
+      frame ??= requestAnimationFrame(() => {
+        frame = undefined;
+        fitTabs();
+      });
+    });
     observer.observe(element);
     observer.observe(probe);
     untrack(fitTabs);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (frame !== undefined) cancelAnimationFrame(frame);
+    };
   });
   onMount(() => {
     mounted = true;

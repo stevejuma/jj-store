@@ -103,7 +103,7 @@ test("native conflict editor stages and previews one complete atomic selection",
   });
 
   await page.goto(`/#/repos/${repo}/log?at_op=${operation}&commit=${commit}`);
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page.getByRole("menuitem", { name: "Resolve conflicts" }).click();
   const dialog = page.getByRole("region", { name: "Resolve native conflicts" });
   const header = dialog.locator('[data-ui-part="surface-layer-header"]');
@@ -211,7 +211,7 @@ test("native conflict editor stages and previews one complete atomic selection",
     ),
   ).not.toHaveAttribute("inert", "");
   await expect(
-    page.getByRole("button", { name: "Repository actions" }),
+    page.getByRole("button", { name: "Application menu" }),
   ).toBeFocused();
 });
 
@@ -248,7 +248,7 @@ for (const [side, term] of [
       await route.fulfill({ json: value });
     });
     await page.goto(`/#/repos/${repo}/log?at_op=${operation}&commit=${commit}`);
-    await page.getByRole("button", { name: "Repository actions" }).click();
+    await page.getByRole("button", { name: "Application menu" }).click();
     await page.getByRole("menuitem", { name: "Resolve conflicts" }).click();
     const sheet = page.getByRole("region", {
       name: "Resolve native conflicts",

@@ -53,6 +53,14 @@ snapshot authority. Rebuilding a corrupt or evicted cache never selects newer
 heads or publishes a native operation. Busy graph-cache workers return an
 explicit retryable result rather than queuing unbounded work.
 
+Ordinary graph construction and automatic code-index namespaces share the same
+bounded cache quota. Either profile may evict an idle managed code namespace
+when its slots or bytes prevent admission. A repository byte limit evicts only
+that repository's data. Active writer locks and retained ordinary reader locks
+remain protected; unavailable capacity still returns an explicit limit. Cache
+eviction never changes source membership, operation selection or repository
+state (JST-API-001/004).
+
 Dropping an in-flight graph/content request cancels its native worker budget.
 Pending authorization and storage waits terminate promptly; synchronous native
 steps observe cancellation at their next bounded checkpoint. An already returned

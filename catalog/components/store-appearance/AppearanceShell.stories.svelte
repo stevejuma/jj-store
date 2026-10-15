@@ -137,7 +137,7 @@
       await verify(button);
     await verify(search);
     const menuTrigger = within(header).queryByRole("button", {
-      name: "Repository actions",
+      name: "Application menu",
     });
     if (menuTrigger && !menuTrigger.hasAttribute("disabled")) {
       await userEvent.click(menuTrigger);

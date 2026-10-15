@@ -1,5 +1,6 @@
 <script lang="ts">
   import StoreAgentPromptQueue from "../store-agent-chat/StoreAgentPromptQueue.svelte";
+  import StoreRecordedMessageMenu from "./StoreRecordedMessageMenu.svelte";
   import type { Snippet } from "svelte";
   let inputActions = $state<Snippet>();
   import { useLinkedConversation } from "../../conversations/linked-conversation.svelte.js";
@@ -239,6 +240,14 @@
   onReact={conversation.host.onReact}
   onInspectTool={conversation.host.onInspectTool}
 >
+  {#snippet messageActions(id)}<StoreRecordedMessageMenu
+      {id}
+      {sessionId}
+      {activity}
+      {legacy}
+      transcriptId={controller.state.agentSession?.transcripts[0]
+        ?.transcript_id}
+    />{/snippet}
   {#snippet queuedMessages()}{#if controller.execution}<StoreAgentPromptQueue
         manager={controller.execution}
         sessions={linked.sessions}

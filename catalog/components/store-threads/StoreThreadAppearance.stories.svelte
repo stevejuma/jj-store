@@ -4,11 +4,15 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/StoreThreadsFixture.svelte";
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   const { Story } = defineMeta({
     title: "JJ Store/Threads",
     component: Fixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
+    beforeEach: async () => {
+      await views.settings();
+    },
   });
 </script>
 

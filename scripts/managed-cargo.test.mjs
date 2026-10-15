@@ -11,6 +11,7 @@ import {
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { stripVTControlCharacters } from "node:util";
 import { cargoSelection, cargoCommand } from "./managed-cargo.mjs";
 import { storageContext, run } from "./build-storage-inventory.mjs";
 
@@ -120,8 +121,9 @@ test("two managed workspaces reuse unchanged builds and keep independent executa
     "--offline",
     "--verbose",
   ]);
-  assert.match(again.stderr, /Fresh managed-proof/);
-  assert.doesNotMatch(again.stderr, /Compiling managed-proof/);
+  const buildLog = stripVTControlCharacters(again.stderr);
+  assert.match(buildLog, /Fresh managed-proof/);
+  assert.doesNotMatch(buildLog, /Compiling managed-proof/);
   assert.equal(
     (
       await run(join(first.root, "target/debug/managed-proof"), [])

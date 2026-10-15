@@ -15,7 +15,12 @@ export function createEntitySearch(options: {
   async function openRoute(route: StoreRoute) {
     if (options.canOpen && !options.canOpen(route)) return;
     options.push(route);
-    if (route.page === "workflows" || route.agentsHub || (route.threadsHub && !route.repository)) return;
+    if (
+      route.page === "workflows" ||
+      route.agentsHub ||
+      (route.threadsHub && !route.repository)
+    )
+      return;
     if (route.page === "projects") await options.projects.restore();
     else if (options.repository() !== route.repository)
       await options.connectRepository(route.repository, options.token());

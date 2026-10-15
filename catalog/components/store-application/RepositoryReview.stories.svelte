@@ -238,7 +238,7 @@
       0,
     );
     const operationHeaders = canvasElement.querySelectorAll(
-      '[data-ui-part="column"][data-column-id="revisions"] > [data-ui-part="column-header"]',
+      '[data-ui-part="column"][data-column-id="revisions"] [data-ui-part="column-header"]',
     );
     await expect(operationHeaders).toHaveLength(1);
     await expect(getComputedStyle(operationHeaders[0]!).backgroundColor).toBe(

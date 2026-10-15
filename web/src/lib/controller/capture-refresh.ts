@@ -18,6 +18,8 @@ export function createCaptureRefresh(options: {
     setActive(active: boolean) {
       if (active && options.available()) {
         if (lifetime) return;
+        interests = undefined;
+        revision++;
         lifetime = new AbortController();
         if (options.freshness) {
           subscription = options.freshness.watch({

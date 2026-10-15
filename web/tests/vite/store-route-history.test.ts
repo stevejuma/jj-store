@@ -438,3 +438,45 @@ test("settings history retains tabs and refuses guarded external owner changes",
   expect(history.route.repository).toBe("ef".repeat(16));
   history.destroy();
 });
+
+test("a guarded browser Back preserves its original entry for a later accepted Back", () => {
+  const initial = `#/repos/${repository}/files?at_op=${operation}`;
+  const entries = [{ hash: initial, id: "root" }];
+  let position = 0,
+    notify: (() => void) | undefined;
+  const browser: StoreRouteBrowser = {
+    hash: () => entries[position].hash,
+    entryId: () => entries[position].id,
+    push(hash, id) {
+      entries.splice(++position);
+      entries.push({ hash, id: id! });
+    },
+    replace(hash, id) {
+      entries[position] = { hash, id: id! };
+    },
+    go(delta) {
+      position += delta;
+      notify?.();
+      notify?.();
+    },
+    listen(listener) {
+      notify = listener;
+      return () => {
+        notify = undefined;
+      };
+    },
+  };
+  const history = createStoreRouteHistory(browser);
+  history.push({ ...history.route, path: "bin" });
+  history.setNavigationGuard("draft", () => "Finish editing");
+  browser.go(-1);
+  expect(history.route.path).toBe("bin");
+  expect(entries[0].hash).toBe(initial);
+  expect(position).toBe(1);
+  expect(history.error).toBe("Finish editing");
+  history.setNavigationGuard("draft");
+  browser.go(-1);
+  expect(history.route.path).toBeNull();
+  expect(position).toBe(0);
+  history.destroy();
+});

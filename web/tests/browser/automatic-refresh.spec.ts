@@ -12,21 +12,41 @@ for (const historical of [false, true]) {
     page,
   }) => {
     await api(page, { access: "local_trusted" });
+    await page.route("**/v1/bootstrap", (route) =>
+      route.fulfill({
+        json: {
+          version: 1,
+          access_mode: "local_trusted",
+          capabilities: { ...sample("capabilities"), application_events: true },
+          storage: { ready: true },
+          repositories: [],
+          backups: [],
+        },
+      }),
+    );
     const retained = historical ? "aa".repeat(64) : operation,
       next = "bb".repeat(64);
     let changed = false,
-      refreshedReferences = 0;
+      refreshedReferences = 0,
+      changedSnapshots = 0;
     const head = () => {
       const value = sample("snapshot");
       if (changed) {
+        changedSnapshots++;
         value.heads = [next];
         value.published_seq++;
         value.manifest_revision++;
       }
       return value;
     };
+    await page.route(/\/v1\/events(?:\?|$)/, (route) =>
+      route.fulfill({
+        contentType: "text/event-stream",
+        body: `id: jse1:${"11".repeat(16)}:${"22".repeat(16)}:${changed ? 2 : 1}\nevent: ready\ndata: ${JSON.stringify({ version: 1, type: "ready", witnesses: [{ repository: repo, domain: "code", witness: changed ? next : operation }] })}\n\n`,
+      }),
+    );
     await page.route("**/snapshot", (route) => route.fulfill({ json: head() }));
-    await page.route("**/events", (route) => {
+    await page.route(`**/v1/repos/${repo}/events`, (route) => {
       const ready = sample("events");
       ready.snapshot = head();
       ready.cursor.position = ready.snapshot.published_seq;
@@ -66,8 +86,9 @@ for (const historical of [false, true]) {
         .toBe(next);
     else {
       await expect
-        .poll(() => refreshedReferences, { timeout: 15000 })
+        .poll(() => changedSnapshots, { timeout: 15000 })
         .toBeGreaterThan(0);
+      expect(refreshedReferences).toBe(0);
       expect(new URLSearchParams(page.url().split("?")[1]).get("at_op")).toBe(
         retained,
       );

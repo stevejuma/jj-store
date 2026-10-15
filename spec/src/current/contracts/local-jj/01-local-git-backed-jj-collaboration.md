@@ -96,4 +96,6 @@ retain their prior interpretation.
 
 ## Public release integration
 
-The released custom CLI is named jj-store-jj and preserves upstream JJ handling and the existing companion provider. Equivalent Rust 1.99 test iteration does not change native graph ordering or repository authority.
+The released custom CLI is named jj-store-jj and preserves upstream JJ handling
+and the existing companion provider. Equivalent Rust 1.99 test iteration does
+not change native graph ordering or repository authority.

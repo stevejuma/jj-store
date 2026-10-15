@@ -5,6 +5,7 @@ import { highlightTree } from "@lezer/highlight";
 import { miraClassHighlighter } from "@lapismd/mira/codemirror";
 import {
   capturedLinePrefixes,
+  capturedCodeLanguage,
   fileCodeLanguage,
   numberedCodeHighlights,
 } from "../../../web/src/lib/ui/store-agent-chat-body/captured-code.js";
@@ -100,4 +101,22 @@ test("highlights workspace source languages without shifting source coordinates"
         json.slice(r.from, r.to).includes("café 🦀"),
     ),
   ).toBe(true);
+});
+
+test("captured TypeScript provides its grammar without an editable file host", () => {
+  const text = "export const greeting = 'café 🦀';";
+  const grammar = EditorState.create({
+    doc: text,
+    extensions: capturedCodeLanguage("src/captured.ts"),
+  }).facet(language);
+  expect(grammar).not.toBeNull();
+  const tokens: string[] = [];
+  highlightTree(
+    grammar!.parser.parse(text),
+    miraClassHighlighter,
+    (from, to, classes) => {
+      if (classes.includes("cm-keyword")) tokens.push(text.slice(from, to));
+    },
+  );
+  expect(tokens).toContainEqual(expect.stringContaining("export"));
 });

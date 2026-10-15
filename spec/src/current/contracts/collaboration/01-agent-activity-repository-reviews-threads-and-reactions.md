@@ -129,4 +129,7 @@ retain visibility.
 
 ## Public release integration
 
-Public distribution uses released Kingfisher core 1.0.3, rules 1.2.1 and scanner 1.4.0 on Rust 1.99. Sanitization policy identities distinguish this rule set; scanning remains offline, validation and Base64 decoding stay disabled, and failures withhold publication. Historical sanitized native records are retained.
+Public distribution uses released Kingfisher core 1.0.3, rules 1.2.1 and scanner
+1.4.0 on Rust 1.99. Sanitization policy identities distinguish this rule set;
+scanning remains offline, validation and Base64 decoding stay disabled, and
+failures withhold publication. Historical sanitized native records are retained.

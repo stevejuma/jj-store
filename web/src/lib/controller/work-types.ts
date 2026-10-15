@@ -54,6 +54,7 @@ export interface WorkController {
   restore(refresh?: boolean): Promise<void>;
   refresh(): Promise<void>;
   invalidate?(): void;
+  invalidateReactions?(): void;
   reset(): void;
   select(project: string | null, task?: string | null): Promise<void>;
   more(kind: "projects" | "tasks" | "comments"): Promise<void>;

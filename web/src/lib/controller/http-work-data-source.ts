@@ -7,7 +7,9 @@ import type { StoreDataSource } from "./native-data-source.js";
 import type { NativeActivityQuery } from "./native-activity-types.js";
 import { HttpWorkflows } from "./http-workflows.js";
 export class HttpWorkDataSource implements WorkTransport {
-  get workflows() { return new HttpWorkflows(this.client); }
+  get workflows() {
+    return new HttpWorkflows(this.client);
+  }
   constructor(
     private client: Client,
     private native?: StoreDataSource,

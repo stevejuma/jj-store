@@ -1,6 +1,22 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { applicationAssets } from "./web-manifest.mjs";
+import { applicationAssets, boundedBrowserManifest } from "./web-manifest.mjs";
+test("browser manifest generation enforces server count and byte limits", () => {
+  const files = [
+    "index.html",
+    ...Array.from({ length: 255 }, (_, i) => `assets/${i}.js`),
+  ];
+  assert.equal(boundedBrowserManifest(files).files.length, 256);
+  assert.throws(
+    () => boundedBrowserManifest([...files, "assets/extra.js"]),
+    /bounded inventory/,
+  );
+  assert.throws(
+    () =>
+      boundedBrowserManifest(["index.html", `assets/${"a".repeat(16384)}.js`]),
+    /bounded inventory/,
+  );
+});
 test("browser manifest retains dynamic chunks and fonts while excluding unreferenced workers", () => {
   const manifest = {
     "index.html": {

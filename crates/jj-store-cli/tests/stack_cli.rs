@@ -6,7 +6,7 @@ use std::{
     process::{Command, Output},
 };
 fn stock(root: &Path, args: &[&str]) -> String {
-    let out = Command::new("/opt/homebrew/bin/jj")
+    let out = Command::new("jj")
         .current_dir(root)
         .args([
             "--no-pager",

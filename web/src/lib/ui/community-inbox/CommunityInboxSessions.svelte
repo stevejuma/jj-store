@@ -52,10 +52,12 @@
   <div
     class="inbox-session-tree"
     role="status"
-    aria-label="Loading sessions"
+    aria-label={kind === "thread" ? "Loading threads" : "Loading sessions"}
     aria-busy="true"
   >
-    <span class="sr-only">Loading sessions</span>
+    <span class="sr-only"
+      >{kind === "thread" ? "Loading threads" : "Loading sessions"}</span
+    >
     <div class="inbox-session-tree__skeleton-groups" aria-hidden="true">
       {#each [3, 2] as count, index (index)}
         <div>

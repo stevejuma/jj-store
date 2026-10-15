@@ -174,8 +174,21 @@ for (const narrow of [false, true]) {
         .locator(
           '.store-settings--repository:visible input[type="number"]:visible',
         )
-        .all())
-        expect((await input.boundingBox())!.width).toBeLessThanOrEqual(180);
+        .all()) {
+        const joined = input.locator(
+          "xpath=ancestor::*[contains(@class,'store-numeric-setting__input')]",
+        );
+        if (await joined.count()) {
+          const entry = (await joined.boundingBox())!;
+          const control = (await input.boundingBox())!;
+          expect(control.x).toBeGreaterThanOrEqual(entry.x);
+          expect(control.x + control.width).toBeLessThanOrEqual(
+            entry.x + entry.width,
+          );
+          if (!narrow) expect(entry.width).toBeLessThanOrEqual(248);
+        } else
+          expect((await input.boundingBox())!.width).toBeLessThanOrEqual(180);
+      }
       const save = page.getByRole("button", {
         name: "Save settings",
         exact: true,

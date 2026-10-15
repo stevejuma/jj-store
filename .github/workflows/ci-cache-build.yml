@@ -1,0 +1,103 @@
+name: Compilation cache sample
+on:
+  workflow_call:
+    inputs:
+      source:
+        type: string
+        required: true
+      sample:
+        type: string
+        required: true
+      backend:
+        type: string
+        required: true
+      seed:
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  actions: read
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TARGET_DIR: target
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
+jobs:
+  build:
+    name: Cache build ${{ inputs.sample }}
+    if:
+      github.event_name == 'workflow_dispatch' && github.ref !=
+      'refs/heads/main' && github.repository == 'stevejuma/jj-store'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        id: rust-cache
+        name: Restore matched dependency cache
+        with:
+          workspaces: . -> target
+          shared-key: trial-${{ inputs.source }}-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+          save-if: ${{ inputs.seed }}
+      - uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba
+        if: inputs.backend == 'sccache'
+        with:
+          version: v0.18.0
+      - name: Compile standard test archive, Clippy and doctests
+        run: node scripts/ci-cache-sample.mjs build
+        env:
+          CI_SAMPLE: ${{ inputs.sample }}
+          CI_CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
+          RUSTC_WRAPPER: ${{ inputs.backend == 'sccache' && 'sccache' || '' }}
+          SCCACHE_GHA_ENABLED: "on"
+          SCCACHE_GHA_VERSION: jj-store-trial-${{ inputs.source }}
+          SCCACHE_GHA_RW_MODE: ${{ inputs.seed && 'READ_WRITE' || 'READ_ONLY' }}
+      - name: Record compiler cache statistics
+        if: inputs.backend == 'sccache'
+        run:
+          sccache --show-stats --stats-format json > .release/sccache-stats.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cache-trial-tests-${{ inputs.sample }}
+          path: .release/tests-ordinary.tar.zst*
+          retention-days: 1
+          include-hidden-files: true
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cache-trial-metrics-${{ inputs.sample }}
+          path: .release/cache-trial/*.json
+          retention-days: 14
+          include-hidden-files: true
+          if-no-files-found: error
+      - if: inputs.backend == 'sccache'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cache-trial-stats-${{ inputs.sample }}
+          path: .release/sccache-stats.json
+          retention-days: 14
+          include-hidden-files: true
+          if-no-files-found: error
+  tests:
+    name: Verify cached build ${{ inputs.sample }}
+    needs: build
+    if: inputs.sample == 'baseline-1' || inputs.sample == 'sccache-1'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source }}
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: cache-trial-tests-${{ inputs.sample }}
+          path: .release
+      - run: node scripts/ci-cache-sample.mjs test

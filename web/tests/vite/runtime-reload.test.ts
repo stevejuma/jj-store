@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { RuntimeReload } from "../../src/lib/controller/runtime-reload.svelte.js";
 import { connectionBlocked } from "../../src/lib/connections/management.js";
 import type { StoreController } from "../../src/lib/controller/contracts.js";
@@ -11,6 +11,28 @@ const status = {
   original: null,
   outcome: null,
 };
+test("idle reload owners make no periodic requests and explicit observation reads fresh status", async () => {
+  vi.useFakeTimers();
+  const fetcher = vi.fn(async () => Response.json(status));
+  const manager = new RuntimeReload(
+    () => true,
+    () => null,
+    fetcher,
+  );
+  try {
+    const release = manager.watch();
+    await vi.waitFor(() => expect(manager.value).not.toBeNull());
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(310000);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    await manager.observe();
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    release();
+  } finally {
+    manager.destroy();
+    vi.useRealTimers();
+  }
+});
 test("lost reload acknowledgement checks original intent and never reposts", async () => {
   let submissions = 0;
   let original: unknown;

@@ -21,6 +21,7 @@ export function legacyRecordedItems(
         String(chunk.sequence),
         "Assistant message",
         chunk.content,
+        true,
       ).map((block) => ({ ...block, commentable: false })),
       turn: {
         id,

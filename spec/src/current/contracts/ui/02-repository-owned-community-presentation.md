@@ -30,11 +30,17 @@ matching entity icon with a plus badge. These decorations are hidden from
 assistive technology; labels, keyboard selection, permission gates and exact
 navigation remain authoritative. Search result icons retain their entity type.
 
-The Thread toolbar supplies the page's level-one heading with the copied channel
-typography. Its header and the standard settings, contributor and reply headers
-share the shell geometry tokens and aligned separator; consumer header content
-does not add vertical padding. The separate outer rail retains its own
-treatment. The application owns a fixed viewport with no document scrolling. Its
+The selected Thread inbox supplies the page's level-one heading and current
+status. Its title and embedded Conversation details use the same 3.25rem minimum
+header geometry. Outer contributor and reply panels retain the standard public
+shell header; their top edges align with the inbox while their heights remain
+independent. Consumer content adds no vertical padding to the public header. The
+application owns a fixed viewport with no document scrolling.
+
+Thread reply navigation scrolls and focuses the exact shared conversation item,
+including a selected search result; focus never targets the inner immutable
+reader or resets a draft.
+
 Threads settings/create and search dialogs retain modal focus/overlay behavior
 while disabling redundant document scroll locking through the public
 `preventScroll` option. Cold built-asset acceptance checks that closing them

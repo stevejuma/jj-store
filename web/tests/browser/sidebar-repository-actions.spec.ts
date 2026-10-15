@@ -26,9 +26,7 @@ test("sidebar add actions open the matching existing dialogs without writes", as
   });
   await expect(actions).toHaveCount(1);
   await expect(
-    page
-      .locator(".lc-community-navigation__section-header")
-      .getByRole("button", { name: "Browse threads", exact: true }),
+    page.getByRole("button", { name: "Threads", exact: true }),
   ).toHaveCount(1);
   for (const label of ["Add project", "Add repository"]) {
     const project = label === "Add project";

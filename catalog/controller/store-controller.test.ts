@@ -1,6 +1,29 @@
 import { expect, test } from "vitest";
 import { createInMemoryStoreController } from "./in-memory-store-controller.svelte.js";
 import { IDS, revisions } from "../fixtures/repository.js";
+test("committed file edits adopt their destination while draft navigation remains guarded", async () => {
+  const controller = createInMemoryStoreController("files");
+  controller.actions.selectRef("bookmark:main");
+  controller.actions.selectFile("README.md");
+  controller.actions.setNavigationGuard?.("draft", () => "Finish editing");
+  controller.actions.selectDirectory("");
+  expect(controller.state.route.path).toBe("README.md");
+  await controller.actions.previewMutation({
+    type: "edit_file",
+    bookmark: "main",
+    expected: [IDS.current],
+    source: "README.md",
+    destination: "NOTES.md",
+    contents: "# Verified notes",
+    description: "Rename notes",
+  });
+  await controller.actions.applyMutation();
+  expect(controller.state.route.path).toBe("NOTES.md");
+  expect(controller.state.blob?.contents).toBe("# Verified notes");
+  expect(controller.state.mutation.status).toBe("committed");
+  controller.actions.selectDirectory("");
+  expect(controller.state.route.path).toBe("NOTES.md");
+});
 test("controller_restores_snapshot_history", () => {
   const controller = createInMemoryStoreController();
   controller.actions.openRepository("jj-store");

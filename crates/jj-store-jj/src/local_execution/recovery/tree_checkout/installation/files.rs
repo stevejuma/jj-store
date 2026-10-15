@@ -9,15 +9,15 @@ pub(in crate::local_execution::recovery::tree_checkout) struct Snapshot {
 }
 fn stamp(stat: &fs::Stat) -> [u64; 9] {
     [
-        stat.st_dev as u64,
+        i128::from(stat.st_dev) as u64,
         stat.st_ino,
         stat.st_mode as u64,
-        stat.st_nlink as u64,
+        i128::from(stat.st_nlink) as u64,
         stat.st_size as u64,
         stat.st_mtime as u64,
-        stat.st_mtime_nsec as u64,
+        i128::from(stat.st_mtime_nsec) as u64,
         stat.st_ctime as u64,
-        stat.st_ctime_nsec as u64,
+        i128::from(stat.st_ctime_nsec) as u64,
     ]
 }
 pub(in crate::local_execution::recovery::tree_checkout) fn directory_stamp(
@@ -25,14 +25,14 @@ pub(in crate::local_execution::recovery::tree_checkout) fn directory_stamp(
 ) -> Result<[u64; 8]> {
     let s = fs::fstat(dir).map_err(|_| Error::Unavailable)?;
     Ok([
-        s.st_dev as u64,
+        i128::from(s.st_dev) as u64,
         s.st_ino,
         s.st_size as u64,
         s.st_mode as u64,
         s.st_mtime as u64,
-        s.st_mtime_nsec as u64,
+        i128::from(s.st_mtime_nsec) as u64,
         s.st_ctime as u64,
-        s.st_ctime_nsec as u64,
+        i128::from(s.st_ctime_nsec) as u64,
     ])
 }
 pub(in crate::local_execution::recovery::tree_checkout) fn entries(

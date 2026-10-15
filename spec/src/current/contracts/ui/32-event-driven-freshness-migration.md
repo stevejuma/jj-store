@@ -1,5 +1,12 @@
 # Event-driven freshness migration
 
+JST-UI-005/015 also covers the persistent application-menu reload owner. Its
+initial capture, explicit dialog opening and command outcome recovery observe
+current status; merely keeping the owner mounted MUST NOT start a status timer.
+Task comment reaction notices refresh the visible home-owned reaction capture
+without changing the retained task, draft or code operation. Hidden reaction
+dirtiness is retained for the next visible restore.
+
 The application freshness migration preserves explicit historical selections,
 prepared commands and exact unknown request identities. Threads accepts a
 successfully refreshed head independently of its route pin, preventing one
@@ -106,6 +113,11 @@ UTF-16 units. One observer leaving cannot cancel another's read; the last
 observer releases transport. Failed and cancelled reads are not successful
 captures. Compute configuration settlement follows execution events and retains
 pending identities when its bounded wait expires; it does not poll status.
+
+Restored pending conversion observes its durable receipt once, then waits for
+matching publication notices or an explicit status action. Observation setup
+must not track its own busy flag and recreate the subscription on each read.
+Unknown outcomes retain the original request and never start another conversion.
 
 Unrelated notices MUST NOT postpone an already queued event read. Deferred or
 failed healthy reads retain dirtiness and retry serially with bounded 500ms-5s

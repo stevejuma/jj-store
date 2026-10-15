@@ -1,5 +1,12 @@
 import { markdownLanguage } from "@codemirror/lang-markdown";
 import type { ChatBodyBlock } from "./model.js";
+import {
+  maskPromptTags,
+  matchPromptElements,
+  outsideRanges,
+  promptTags,
+  type SourceRange,
+} from "../store-collaboration/prompt-element-ranges.js";
 
 /** Native text stays selectable; Mira reading views own complex rendered blocks. */
 export function markdownBlocks(
@@ -7,8 +14,30 @@ export function markdownBlocks(
   revision: string,
   label: string,
   text: string,
+  promptElements = false,
 ): ChatBodyBlock[] {
   if (!text.trim()) return [];
+  const tags = promptElements ? promptTags(text) : [];
+  if (tags.length) {
+    const ignored: SourceRange[] = [];
+    markdownLanguage.parser.parse(maskPromptTags(text, tags)).iterate({
+      enter(node) {
+        if (["FencedCode", "CodeBlock", "InlineCode"].includes(node.name))
+          ignored.push({ start: node.from, end: node.to });
+      },
+    });
+    if (matchPromptElements(outsideRanges(tags, ignored)).length)
+      return [
+        {
+          id: `${id}/context`,
+          revision,
+          label,
+          text,
+          kind: "context",
+          sourceFrom: 0,
+        },
+      ];
+  }
   const result: ChatBodyBlock[] = [];
   const cursor = markdownLanguage.parser.parse(text).cursor();
   if (!cursor.firstChild())

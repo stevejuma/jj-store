@@ -241,6 +241,19 @@
 />
 
 <Story
+  name="Loading Threads announces its domain"
+  args={{ loading: true, kind: "thread" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    expect(c.getByRole("status", { name: "Loading threads" })).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+    expect(c.queryByRole("status", { name: "Loading sessions" })).toBeNull();
+  }}
+/>
+
+<Story
   name="Loading sessions matches repository groups and compact chat rows"
   args={{ loading: true }}
   play={async ({ canvasElement }) => {

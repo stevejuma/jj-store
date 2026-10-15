@@ -56,7 +56,11 @@
     await userEvent.click(
       c.getByRole("button", { name: "Save configuration" }),
     );
-    await expect(await c.findByText(/Restart required/)).toBeVisible();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByText(
+        /Configuration saved. Use Reload saved settings/,
+      ),
+    ).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
     await userEvent.click(
       c.getByRole("button", { name: "Cursor configuration" }),

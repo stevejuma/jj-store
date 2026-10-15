@@ -38,6 +38,7 @@ Usage: jj-store [OPTIONS] [COMMAND]
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
 | `-h, --help` | Print help (see a summary with '-h') |  |
+| `-V, --version` | Print version |  |
 
 ## jj-store workflow-host
 

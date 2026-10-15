@@ -51,6 +51,9 @@ test("a failed view chunk offers explicit retry without reloading or replaying c
   ).toBeVisible();
   expect(imports).toBe(2);
   expect(mutations).toBe(0);
+  await page
+    .getByRole("button", { name: "Back to jj-store", exact: true })
+    .click();
   expect(new URL(page.url()).hash).toContain(`at_op=${operation}`);
 });
 
@@ -129,7 +132,7 @@ test("navigation away from a delayed view cannot render its obsolete completion"
   ).toBeVisible();
   await settings(page);
   await expect(
-    page.getByRole("status", { name: "Loading Settings", exact: true }),
+    page.getByRole("status", { name: "Loading service settings", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Back to jj-store" }).click();
   release();
@@ -280,7 +283,10 @@ for (const view of [
     try {
       await page.goto(view.url);
       const status = page.getByRole("status", {
-        name: `Loading ${view.label}`,
+        name:
+          view.module === "CommunityProjectsRepositoryFiles"
+            ? "Loading repository files"
+            : `Loading ${view.label}`,
         exact: true,
       });
       await expect(status).toBeVisible();
@@ -290,7 +296,12 @@ for (const view of [
         view.module === "StoreAgentSessions"
           ? '.store-collaboration-skeleton[data-kind="agent"]'
           : view.selector;
-      await expect(status.locator(selector)).toBeVisible();
+      if (view.module === "CommunityProjectsRepositoryFiles")
+        await expect(status).toHaveAttribute(
+          "data-layout",
+          selector.match(/data-layout="([^"]+)"/)![1],
+        );
+      else await expect(status.locator(selector)).toBeVisible();
       await expect(
         status.locator('.community-skeleton[data-layout="details"]'),
       ).toHaveCount(0);
@@ -380,7 +391,7 @@ test("saved open file tree is represented before the Files module loads", async 
   await api(page, { access: "local_trusted" });
   await page.addInitScript(() =>
     localStorage.setItem(
-      "jj-store/layout/v1/file-tree",
+      "jj-store/connection/local/jj-store/layout/v1/file-tree",
       JSON.stringify({ version: 1, open: true, width: 300 }),
     ),
   );
@@ -398,7 +409,10 @@ test("saved open file tree is represented before the Files module loads", async 
   try {
     await page.goto(`/#/repos/${repo}/files?at_op=${operation}`);
     await expect(
-      page.getByRole("status", { name: "Loading Files", exact: true }),
+      page.getByRole("status", {
+        name: "Loading repository files",
+        exact: true,
+      }),
     ).toBeVisible();
     const tree = page.getByRole("complementary", {
       name: "Repository file tree",

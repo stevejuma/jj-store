@@ -23,7 +23,7 @@
   async function sheetFor(canvasElement: HTMLElement) {
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      page.getByRole("button", { name: "Repository actions" }),
+      page.getByRole("button", { name: "Application menu" }),
     );
     await userEvent.click(
       page.getByRole("menuitem", { name: "Resolve conflicts" }),
@@ -272,7 +272,7 @@
     )!;
     await expect(left).toHaveAttribute("inert");
     await expect(
-      page.getByRole("button", { name: "Repository actions" }),
+      page.getByRole("button", { name: "Application menu" }),
     ).toBeDisabled();
     await expect(
       page.getByRole("button", { name: "Refresh snapshot" }),
@@ -319,7 +319,7 @@
     await expect(main).not.toHaveAttribute("inert");
     await expect(left).not.toHaveAttribute("inert");
     await expect(
-      page.getByRole("button", { name: "Repository actions" }),
+      page.getByRole("button", { name: "Application menu" }),
     ).toHaveFocus();
   }}
 >

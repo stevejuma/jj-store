@@ -67,10 +67,10 @@ export function createInMemoryStoreController(
   );
   const conflictController = createInMemoryStoreConflicts(() => route);
   const navigationGuards = createStoreNavigationGuards(() => route);
-  function push(next: StoreContract.StoreRoute) {
+  function push(next: StoreContract.StoreRoute, committed = false) {
     if (
       JSON.stringify(next) === JSON.stringify(route) ||
-      navigationGuards.reason(next)
+      (!committed && navigationGuards.reason(next))
     )
       return;
     history = [...history.slice(0, index + 1), next];
@@ -86,7 +86,7 @@ export function createInMemoryStoreController(
         route.commitId,
       );
       const next = storeRoute.mutationCommittedRoute(route, change);
-      if (next) push(next);
+      if (next) push(next, true);
     },
     firstApply: options.mutationOutcome,
     previewFailure: options.mutationFailure,

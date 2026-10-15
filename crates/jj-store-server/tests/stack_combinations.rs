@@ -204,7 +204,7 @@ async fn selected_metadata_and_retained_code_reopen_after_source_loss_and_gc() {
     let physical = f.folder.state();
     std::fs::remove_dir_all(f.folder.root().join(".jj/repo/op_store")).unwrap();
     std::fs::remove_dir_all(f.folder.root().join(".jj/repo/index")).unwrap();
-    let gc = std::process::Command::new("/opt/homebrew/bin/git")
+    let gc = std::process::Command::new("git")
         .args(["gc", "--prune=now"])
         .current_dir(f.folder.root())
         .output()

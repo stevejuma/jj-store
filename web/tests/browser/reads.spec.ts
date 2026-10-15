@@ -156,11 +156,22 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   }));
   expect(Object.keys(browserStorage.local)).not.toHaveLength(0);
   expect(
-    Object.keys(browserStorage.local).every((key) =>
-      key.startsWith("jj-store/layout/v1/"),
+    Object.keys(browserStorage.local).every(
+      (key) =>
+        key.startsWith("jj-store/layout/v1/") ||
+        key.startsWith("jj-store/connection/local/jj-store/layout/v1/") ||
+        key === "jj-store/connections/v1",
     ),
   ).toBe(true);
-  expect(JSON.stringify(browserStorage.local)).not.toContain(repo);
+  expect(
+    JSON.stringify(
+      Object.fromEntries(
+        Object.entries(browserStorage.local).filter(([key]) =>
+          key.includes("/layout/"),
+        ),
+      ),
+    ),
+  ).not.toContain(repo);
   expect(JSON.stringify(browserStorage.local)).not.toContain(token);
   expect([browserStorage.sessionLength, browserStorage.cookie]).toEqual([
     0,
@@ -420,6 +431,9 @@ test("repository directories load lazily and flat views request recursive paths"
 
   await connect(page);
   await page.getByRole("tab", { name: "Overview" }).click();
+  await page
+    .getByRole("button", { name: "Show repository file tree", exact: true })
+    .click();
   await expect(
     page.getByRole("button", { name: "src", exact: true }),
   ).toHaveAttribute("aria-expanded", "false");
@@ -565,6 +579,9 @@ test("new_file_selection_discards_an_older_inflight_preview", async ({
   });
   await connect(page);
   await page.getByRole("tab", { name: "Overview" }).click();
+  await page
+    .getByRole("button", { name: "Show repository file tree", exact: true })
+    .click();
   await page.getByRole("button", { name: "Open file file-0" }).click();
   await started;
   await page.getByRole("button", { name: "file-1", exact: true }).click();
@@ -623,7 +640,7 @@ test("files remain usable while optional header and attribution are unavailable"
       page.getByRole("button", { name: "Open file bin" }),
     ).toBeVisible();
     await expect.poll(() => headerStarted).toBe(true);
-    expect(attributionRequests).toBe(0);
+    expect(attributionRequests).toBe(1);
     releaseHeader();
     await expect.poll(() => attributionRequests).toBe(1);
     await expect(

@@ -1,7 +1,11 @@
-import {execFileSync} from "node:child_process";
-import {metadata,version} from "./release-metadata.mjs";
+import { execFileSync } from "node:child_process";
+import { metadata, version } from "./release-metadata.mjs";
 version();
-execFileSync("python3",["-c",`
+execFileSync(
+  "python3",
+  [
+    "-c",
+    `
 import tomllib,re,sys
 from pathlib import Path
 root=Path('.').resolve();w=tomllib.loads((root/'Cargo.toml').read_text())
@@ -21,5 +25,8 @@ for rel in w['workspace']['members']+['runtime/embedded-rustfs']:
    assert path.is_relative_to(base),str(source)+' has an external compilation input '+value
    assert path.is_file(),str(source)+' missing '+value
 print('All 20 Cargo packages have registry dependencies and contained compilation inputs.')
-`],{stdio:"inherit"});
+`,
+  ],
+  { stdio: "inherit" },
+);
 console.log(`Coordinated package metadata: ${metadata().version}`);

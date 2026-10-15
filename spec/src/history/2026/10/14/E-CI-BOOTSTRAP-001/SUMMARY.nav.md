@@ -1,0 +1,4 @@
+- [CI bootstrap evidence](details-02.md)
+- [CI bootstrap evidence](details-03.md)
+- [CI bootstrap evidence](details-04.md)
+- [CI bootstrap evidence](details-05.md)

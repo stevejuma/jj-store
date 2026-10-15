@@ -2,6 +2,7 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Desktop application](01-desktop-application.md)

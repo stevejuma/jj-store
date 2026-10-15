@@ -56,13 +56,7 @@ export default defineConfig({
               test: /node_modules\/@lucide\/svelte\//,
             },
             {
-              debugName: "design-core-layers",
-              name: (id) => {
-                const layer = id.match(
-                  /node_modules\/@lapismd\/design-core\/dist\/shared\/([^/]+)\//,
-                )?.[1];
-                return layer ? `design-${layer}` : null;
-              },
+              name: "design-shared",
               test: /node_modules\/@lapismd\/design-core\/dist\/shared\//,
             },
           ],

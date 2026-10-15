@@ -1,0 +1,432 @@
+name: Manual qualification
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        type: string
+        default: ""
+        description: Source ref or SHA (defaults to selected workflow revision)
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ""
+permissions:
+  contents: read
+  actions: read
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
+jobs:
+  resolve:
+    name: Resolve qualification source
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      source: ${{ steps.source.outputs.source }}
+      cache_write: ${{ steps.source.outputs.cache_write }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref || github.sha }}
+      - id: source
+        run: node scripts/ci-source.mjs
+  standard:
+    name: Standard checks
+    needs: resolve
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ needs.resolve.outputs.source }}
+      all_checks: true
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    env:
+      CARGO_TARGET_DIR: target
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: . -> target
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: heavy-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
+      - run: node scripts/ci-build.mjs heavy
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: tests-heavy
+          path: .release/tests-heavy.tar.zst*
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: linux-development-tools
+          path: |
+            target/debug/jj-store
+            target/debug/jj-store-jj
+            target/debug/examples/docs_reference
+            target/debug/examples/browser_preview
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: native-browser-fixtures
+          path: .scratch/web-responses.json
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+    name: Build server, CLI and capture tests
+    needs:
+      - resolve
+      - standard
+  tests:
+    needs:
+      - resolve
+      - build
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: true
+      max-parallel: 8
+      matrix:
+        shard:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+    env:
+      CARGO_TARGET_DIR: target
+      CI_SHARD: ${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: tests-heavy
+          path: .release
+      - run: node scripts/ci-tests.mjs run heavy
+    name: Server, CLI and capture tests (shard ${{ matrix.shard }}/8)
+  runtime:
+    needs:
+      - resolve
+      - build
+      - tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: runtime/embedded-rustfs -> target
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: embedded-runtime-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
+      - run: |
+          pnpm build:embedded-rustfs
+          pnpm check:embedded-rustfs
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: linux-storage-runtime
+          path: runtime/embedded-rustfs/target/debug/jj-store-rustfs
+          retention-days: 3
+          if-no-files-found: error
+    name: Embedded RustFS build and lint
+  storage:
+    needs:
+      - resolve
+      - tests
+      - runtime
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - lane: embedded
+            name: Embedded storage lifecycle
+          - lane: contracts
+            name: Generated API contracts
+          - lane: external
+            name: Real RustFS storage acceptance
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: ./.github/actions/setup
+      - if: matrix.lane == 'embedded'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-storage-runtime
+          path: runtime/embedded-rustfs/target/debug
+      - if: matrix.lane == 'embedded'
+        run: chmod +x runtime/embedded-rustfs/target/debug/jj-store-rustfs
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: . -> target
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: storage-${{ matrix.lane }}-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
+      - run: node scripts/ci-storage.mjs ${{ matrix.lane }}
+        env:
+          JJ_STORE_CI_PREBUILT: "1"
+          JJ_STORE_RUSTFS_RUNTIME:
+            ${{ github.workspace
+            }}/runtime/embedded-rustfs/target/debug/jj-store-rustfs
+    name: ${{ matrix.name }}
+  assets:
+    needs:
+      - resolve
+      - build
+      - tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    env:
+      JJ_STORE_DOC_REFERENCE:
+        ${{ github.workspace }}/.release/tools/examples/docs_reference
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-development-tools
+          path: .release/tools
+      - run: |
+          chmod +x .release/tools/jj-store .release/tools/jj-store-jj .release/tools/examples/docs_reference
+          pnpm exec playwright install --with-deps chromium
+          pnpm web:build
+          pnpm build-storybook
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: web-bundle
+          path: web/dist
+          retention-days: 3
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: storybook-bundle
+          path: storybook-static
+          retention-days: 3
+          if-no-files-found: error
+    name: Build web, Help and Storybook assets
+  browser:
+    needs:
+      - resolve
+      - tests
+      - assets
+      - runtime
+      - storage
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - lane: storybook
+            shard: 1/3
+            name: Storybook interactions (shard 1/3)
+          - lane: storybook
+            shard: 2/3
+            name: Storybook interactions (shard 2/3)
+          - lane: storybook
+            shard: 3/3
+            name: Storybook interactions (shard 3/3)
+          - lane: browser
+            shard: 1/2
+            name: Application browser (shard 1/2)
+          - lane: browser
+            shard: 2/2
+            name: Application browser (shard 2/2)
+          - lane: catalog
+            name: Static catalog browser
+          - lane: help
+            name: Help (Chromium and WebKit)
+          - lane: cold
+            shard: 1/4
+            name: Cold application browser (shard 1/4)
+          - lane: cold
+            shard: 2/4
+            name: Cold application browser (shard 2/4)
+          - lane: cold
+            shard: 3/4
+            name: Cold application browser (shard 3/4)
+          - lane: cold
+            shard: 4/4
+            name: Cold application browser (shard 4/4)
+          - lane: cold-profile
+            name: Profile restart acceptance
+          - lane: git-cycle
+            name: Real RustFS Git round-trip
+    env:
+      JJ_STORE_CI_PREBUILT: "1"
+      JJ_STORE_REAL_SHARD: ${{ matrix.shard }}
+      JJ_STORE_BROWSER_SHARD: ${{ matrix.shard }}
+      JJ_STORE_DEV_RUSTFS_RUNTIME:
+        ${{ github.workspace
+        }}/runtime/embedded-rustfs/target/debug/jj-store-rustfs
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: ./.github/actions/setup
+        with:
+          native-dependencies: "false"
+          build-tools: ${{ matrix.lane == 'git-cycle' && 'true' || 'false' }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-development-tools
+          path: target/debug
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-storage-runtime
+          path: runtime/embedded-rustfs/target/debug
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: web-bundle
+          path: web/dist
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: storybook-bundle
+          path: storybook-static
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: native-browser-fixtures
+          path: .scratch
+      - run:
+          chmod +x target/debug/jj-store target/debug/jj-store-jj
+          target/debug/examples/browser_preview
+          runtime/embedded-rustfs/target/debug/jj-store-rustfs
+      - if: matrix.lane == 'cold' || matrix.lane == 'cold-profile'
+        run: node scripts/ci-setup-acp.mjs
+      - if: matrix.lane == 'git-cycle'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: tests-heavy
+          path: .release
+      - run: pnpm exec playwright install --with-deps chromium
+      - if: matrix.lane == 'help'
+        run: pnpm exec playwright install --with-deps webkit
+      - run: node scripts/ci-browser.mjs ${{ matrix.lane }}
+      - if: failure() && !cancelled()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: browser-failure-${{ matrix.lane }}-${{ strategy.job-index }}
+          path: |
+            web/test-results*
+            test-results
+          retention-days: 3
+          if-no-files-found: ignore
+    name: ${{ matrix.name }}
+  native:
+    needs:
+      - resolve
+      - build
+      - tests
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - runner: ubuntu-22.04-arm
+            target: aarch64-unknown-linux-gnu
+          - runner: macos-15
+            target: aarch64-apple-darwin
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: native-${{ matrix.target }}-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
+      - name: Verify native compiler target
+        run: |
+          rustc -vV | grep -Fx 'host: ${{ matrix.target }}'
+      - run: pnpm dev:cargo -- build -p jj-store --bins --locked
+      - run:
+          pnpm dev:cargo -- test -p jj-store-read-index -p jj-collab -p
+          jj-store-capture --locked -- --test-threads=1
+    name: Native compatibility (${{ matrix.target }})
+  complete:
+    name: Complete qualification gate
+    needs:
+      - resolve
+      - build
+      - tests
+      - runtime
+      - storage
+      - assets
+      - browser
+      - native
+      - standard
+    if: always()
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - name: Report cache and execution timings
+        run: node scripts/ci-report.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: node scripts/ci-required.mjs
+        env:
+          CI_STAGE: heavy
+          CI_PLAN: "{}"
+          CI_JOBS: ${{ toJSON(needs) }}
+concurrency:
+  group: qualification-${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: false

@@ -3,6 +3,7 @@ import { test } from "vitest";
 import type { Model } from "../../src/lib/api/client.js";
 import { agentConversationProjection } from "../../src/lib/conversations/agent-adapter.js";
 import { recordedConversationProjection } from "../../src/lib/conversations/recorded-adapter.js";
+import { legacyRecordedItems } from "../../src/lib/conversations/legacy-recorded.js";
 import { capturedToolProjection } from "../../src/lib/conversations/tool-adapter.js";
 import {
   mergeReplies,
@@ -15,6 +16,20 @@ import {
 import type { ActivityRow } from "../../src/lib/ui/store-agent-execution/presentation.js";
 const hex = (c: string, n = 32) => c.repeat(n);
 const user = { id: hex("1"), name: "You", handle: "", initials: "YO" };
+test("legacy recorded context preserves raw bytes and stays non-commentable", () => {
+  const content =
+    'Before 🦀.\n<context source="recorded">\n## Notes\n```xml\n<literal />\n```\n</context>\nAfter.';
+  const items = legacyRecordedItems(
+    "session",
+    [{ sequence: 2, media_type: "text", content }],
+    user,
+  );
+  assert.equal(items[0].id, "session:legacy:2");
+  assert.equal(items[0].blocks.length, 1);
+  assert.equal(items[0].blocks[0].kind, "context");
+  assert.equal(items[0].blocks[0].text, content);
+  assert.equal(items[0].blocks[0].commentable, false);
+});
 const target = (
   c: string,
 ): Extract<Model<"ReactionTargetV1">, { type: "agent_message" }> => ({

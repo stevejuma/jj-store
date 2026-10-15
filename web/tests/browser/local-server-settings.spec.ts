@@ -1,3 +1,5 @@
+import { syncWorker } from "../../../catalog/fixtures/sync-settings.js";
+import { repositorySettings } from "./repository-settings-navigation.js";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample, repo } from "./native-browser-fixture.js";
@@ -11,6 +13,7 @@ async function setup(page: Page) {
     ...sample("capabilities"),
     local_settings_management: true,
     local_search_management: true,
+    local_sync_management: true,
   };
   await page.route("**/v1/bootstrap", (r) =>
     r.fulfill({
@@ -51,6 +54,9 @@ async function setup(page: Page) {
     }
     await r.fulfill({ contentType: "application/json", body: pretty(value) });
   });
+  await page.route("**/v1/repos/*/local/sync", (r) =>
+    r.fulfill({ json: { version: 1, configured: true, worker: syncWorker() } }),
+  );
   let search = searchSettingsValue();
   await page.route("**/v1/repos/*/local/search**", (r) => {
     if (r.request().method() === "POST") {
@@ -69,9 +75,47 @@ async function setup(page: Page) {
   return { saves };
 }
 async function section(page: Page, name: string, tab: string) {
-  await page.getByRole("button", { name, exact: true }).click();
-  await page.getByRole("tab", { name: tab, exact: true }).click();
+  const service =
+    name === "Local service" ||
+    (name === "Repository" && tab === "Protection") ||
+    name === "Storage";
+  if (service) {
+    const button = page.getByRole("button", {
+      name: "Local service",
+      exact: true,
+    });
+    await expect(async () => {
+      if (!(await button.isVisible())) {
+        const back = page.getByRole("button", {
+          name: "Back to repository",
+          exact: true,
+        });
+        if (await back.isVisible()) {
+          await back.click({ timeout: 1000 });
+          await page
+            .getByRole("button", {
+              name: "Open profile menu for Local",
+              exact: true,
+            })
+            .click({ timeout: 1000 });
+          await page
+            .getByRole("menuitem", { name: "Settings", exact: true })
+            .click({ timeout: 1000 });
+        }
+      }
+      await expect(button).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 10000 });
+    await button.click();
+  } else await repositorySettings(page, name);
+  await page
+    .getByRole("navigation", { name: "Settings page navigation", exact: true })
+    .getByRole("tab", {
+      name: name === "Storage" ? "Storage" : tab,
+      exact: true,
+    })
+    .click();
 }
+
 test("cold service protection and sync editors retain drafts and saved/running state", async ({
   page,
 }) => {
@@ -87,7 +131,7 @@ test("cold service protection and sync editors retain drafts and saved/running s
     .getByRole("button", { name: "Save settings", exact: true })
     .click();
   await expect(
-    page.getByText("Saved changes need a server restart."),
+    page.getByText("Saved changes need a configuration reload."),
   ).toBeVisible();
   expect(f.saves[0].update.section).toBe("service");
   await section(page, "Repository", "Protection");
@@ -120,11 +164,9 @@ test("cold Search advanced controls use explicit Apply and validate extraction l
 }) => {
   await setup(page);
   await section(page, "Search", "Advanced");
+  await page.getByRole("spinbutton", { name: "Polling interval" }).fill("2500");
   await page
-    .getByRole("spinbutton", { name: "Polling interval (ms)" })
-    .fill("2500");
-  await page
-    .getByRole("spinbutton", { name: "Maximum text file bytes" })
+    .getByRole("spinbutton", { name: "Maximum text file size" })
     .fill("500000");
   await page
     .getByRole("button", { name: "Save settings", exact: true })

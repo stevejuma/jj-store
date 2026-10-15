@@ -10,8 +10,8 @@ boundaries before journaling, events or capture publication. Possible privacy
 root prefixes remain bounded memory-only state until resolved; split workspace,
 home, temporary and exact credential replacements cannot bypass normalization.
 Message identity changes, tool boundaries and terminal frames flush the held
-text in order through the same scanner. Buffer failure is unavailable, never
-raw fallback. Restart never replays an inference to repair historical captures.
+text in order through the same scanner. Buffer failure is unavailable, never raw
+fallback. Restart never replays an inference to repair historical captures.
 
 Codex and Cursor are the initial qualification targets. Executable availability
 is distinct from installed-product acceptance. Ordinary reads, capture imports,

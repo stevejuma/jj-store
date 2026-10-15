@@ -19,6 +19,11 @@ rejection. Unsupported OpenCode/Cursor sources have no usable import action.
 Worker state and configuration setup use plain labels; receipt details remain
 available. Agents reuse main's automatic pinned snapshot updates.
 
+Each newly visible Capture owner recaptures current status and source coverage,
+including changes admitted while it was closed. Scoped interests from the prior
+subscription cannot suppress that initial read. A healthy unchanged open view
+still performs no periodic reads; drafts and exact commands remain retained.
+
 Runtime unavailable observations are a cumulative unsigned counter, not a count
 of tracked sources. Repeated discovery failures can exceed the 4096-source
 bound; valid counter values MUST NOT disable Capture status or controls. Queue
@@ -48,6 +53,14 @@ observations clear a condition and allow a new episode. Ordinary accepted
 outcomes use timed information notices. Disabled/unavailable capture content,
 request-ID validation, exact pending requests and receipt/publication recovery
 remain contextual without duplicate toasts.
+
+E-CI-BROWSER-001 restores the same context rendering in shared Document and
+Classic agent projections. A message with balanced tags outside code retains its
+whole original Markdown as one context block, including cross-section reference
+definitions and exact whole-section anchors. Code-only, escaped and malformed
+tags keep the ordinary selectable projection; no source bytes are rewritten.
+Recorded messages and legacy chunks expose their original exact Copy message
+menu in both shared layouts, including non-commentable legacy content.
 
 Agent message previews opt into a generic remark extension for XML-style prompt
 elements. Balanced arbitrary element names, nested sections and literal

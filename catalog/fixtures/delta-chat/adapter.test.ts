@@ -106,4 +106,31 @@ describe("immutable comment anchors", () => {
     ]);
     expect(blocks[1].text).toBe("fn main() {}");
   });
+  test("agent prompt context retains its whole immutable Markdown and exact anchor", () => {
+    const text =
+      'Before 🦀.\n<harness:context source="cli > desktop">\n## Notes\n```rust\nfn main() {}\n```\n</harness:context>\nAfter [link][target].\n\n[target]: https://example.test';
+    const blocks = markdownBlocks("m", "v1", "Your message", text, true);
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0]).toMatchObject({ kind: "context", text, sourceFrom: 0 });
+    expect(commentAnchor(blocks[0], { from: 8, to: 12 }).quote).toBe(text);
+    expect(
+      markdownBlocks("m", "v1", "Thread", text).some(
+        (b) => b.kind === "context",
+      ),
+    ).toBe(false);
+  });
+  test("code-only, escaped and mismatched prompt tags keep ordinary selectable blocks", () => {
+    for (const text of [
+      "```xml\n<tag>literal</tag>\n```",
+      "    <tag>literal</tag>",
+      "`<tag>literal</tag>`",
+      "\\<tag>literal\\</tag>",
+      "<tag>mismatch</other>",
+    ])
+      expect(
+        markdownBlocks("m", "v1", "Message", text, true).some(
+          (b) => b.kind === "context",
+        ),
+      ).toBe(false);
+  });
 });

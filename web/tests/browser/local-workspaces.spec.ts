@@ -1,3 +1,7 @@
+import {
+  repositorySettings,
+  repositorySettingsLayout,
+} from "./repository-settings-navigation.js";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample } from "./native-browser-fixture.js";
@@ -89,7 +93,7 @@ test("local folder settings preserve drafts and link without changing repository
       .getByRole("navigation", { name: "Settings navigation" })
       .getByRole("button", { name: "Back to jj-store" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await repositorySettings(page, "Repository");
   await expect(
     page.getByRole("button", { name: /^Copy full Repository ID:/ }),
   ).toBeVisible();
@@ -112,45 +116,15 @@ test("local folder settings preserve drafts and link without changing repository
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     fullId,
   );
-  const tabs = page.getByRole("tablist", {
-    name: "Repository settings sections",
-  });
-  const tabBounds = (await tabs.boundingBox())!;
-  const contentBounds = (await page
-    .getByRole("region", { name: "Settings content" })
-    .boundingBox())!;
+  await repositorySettingsLayout(page);
+  await repositorySettings(page, "Local folders");
   const navigation = page.getByRole("navigation", {
-    name: "Settings page navigation",
+    name: "Repository settings navigation",
   });
-  const headingBounds = (await navigation
-    .getByRole("heading", { name: "Repository", level: 1 })
-    .boundingBox())!;
-  expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
-  const navigationBounds = (await navigation.boundingBox())!;
-  expect(headingBounds.x - navigationBounds.x).toBeLessThan(24);
-  await expect(navigation.locator(":scope > :first-child")).toHaveRole(
-    "heading",
-  );
-  await expect(
-    navigation.getByRole("button", { name: "Back to app" }),
-  ).toHaveCount(0);
-  await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
-  await expect(page.locator(".store-settings h1")).toHaveCount(0);
-  expect(
-    (await page.locator(".store-settings").boundingBox())!.width,
-  ).toBeCloseTo(contentBounds.width, 0);
-  const settingsBounds = (await page.locator(".store-settings").boundingBox())!;
-  const firstSectionHeading = (await page
-    .getByRole("heading", { name: "Identity and snapshot", exact: true })
-    .boundingBox())!;
-  expect(firstSectionHeading.y - settingsBounds.y).toBeLessThan(24);
-  expect(firstSectionHeading.x - settingsBounds.x).toBeLessThan(24);
-  await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Folder path" });
   await expect(page.getByText("No local folders linked.")).toBeVisible();
   await expect(
-    navigation.getByRole("button", { name: "Refresh folders", exact: true }),
+    page.getByRole("button", { name: "Refresh settings", exact: true }),
   ).toHaveText("");
   await expect(
     input.locator('xpath=ancestor::*[contains(@class,"store-settings__rows")]'),
@@ -165,8 +139,8 @@ test("local folder settings preserve drafts and link without changing repository
   expect(requests).toHaveLength(0);
   await page.getByRole("button", { name: "Browse…" }).click();
   await expect(input).toHaveValue("/workspaces/example with spaces");
-  await page.getByRole("button", { name: "Search", exact: true }).click();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await repositorySettings(page, "Advanced");
+  await repositorySettings(page, "Repository");
   await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   await expect(input).toHaveValue("/workspaces/example with spaces");
   await page.getByRole("tab", { name: "General", exact: true }).click();
@@ -178,7 +152,7 @@ test("local folder settings preserve drafts and link without changing repository
   await expect(page.getByText(/workspace links changed/)).toBeVisible();
   await expect(input).toHaveValue("/workspaces/example with spaces");
   await page
-    .getByRole("button", { name: "Refresh folders", exact: true })
+    .getByRole("button", { name: "Refresh settings", exact: true })
     .click();
   await expect(page.getByText(/workspace links changed/)).toHaveCount(0);
   await page.getByRole("button", { name: "Link folder", exact: true }).click();
@@ -209,7 +183,7 @@ test("local folder settings preserve drafts and link without changing repository
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await page.getByRole("button", { name: "Back to repository" }).click();
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
@@ -223,7 +197,7 @@ test("local folder settings preserve drafts and link without changing repository
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await repositorySettings(page, "Repository");
   await page
     .getByRole("button", { name: "Open operation head 1", exact: true })
     .click();

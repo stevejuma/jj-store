@@ -1,9 +1,5 @@
 import { ProjectsDirtiness } from "./projects-dirtiness.js";
-import {
-  pendingProjectCommands,
-  projectProjectionAccepted,
-  invalidateProjectViews,
-} from "./projects-command-state.js";
+import * as commands from "./projects-command-state.js";
 import {
   refreshProjectSources,
   refreshDirtyLocalProjects,
@@ -129,6 +125,8 @@ export function createProjectsHub(
         return;
       }
       if (route.projectId) {
+        if (pending.work.has(route.repository))
+          work(route.repository).invalidateReactions?.();
         selections.set(route.repository, {
           projectId: route.projectId,
           taskId: route.taskId ?? null,
@@ -185,7 +183,7 @@ export function createProjectsHub(
         views.save(route, homes);
         if (!error)
           pending.accept((domain, id) =>
-            projectProjectionAccepted(domain, id, route, works, {
+            commands.projectProjectionAccepted(domain, id, route, works, {
               agents: agents.homes,
               reviews: reviews.homes,
               activity: activity.homes,
@@ -204,7 +202,7 @@ export function createProjectsHub(
     repositories: repositoryDirectory,
     scroll,
     get commands() {
-      return pendingProjectCommands(works);
+      return commands.pendingProjectCommands(works);
     },
     get homes() {
       return homes;
@@ -230,7 +228,7 @@ export function createProjectsHub(
         changes,
         context.repositories().map((repo) => repo.id),
       );
-      invalidateProjectViews(views, works, changes, navigation);
+      commands.invalidateProjectViews(views, works, changes, navigation);
     },
     async refresh(changes) {
       if (changes)

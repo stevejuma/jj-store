@@ -34,7 +34,7 @@ mod operation_descriptions;
 mod topology;
 
 fn stock(root: &Path, args: &[&str]) -> String {
-    let result = Process::new("/opt/homebrew/bin/jj")
+    let result = Process::new("jj")
         .current_dir(root)
         .args([
             "--no-pager",

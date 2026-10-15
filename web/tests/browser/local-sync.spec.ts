@@ -1,3 +1,7 @@
+import {
+  repositorySettings,
+  repositorySettingsLayout,
+} from "./repository-settings-navigation.js";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample, mutationSample } from "./native-browser-fixture.js";
@@ -46,22 +50,8 @@ test("local sync controls and grouped progress preserve repository context", asy
       .getByRole("navigation", { name: "Settings navigation" })
       .getByRole("button", { name: "Back to jj-store" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
-  const tabs = page.getByRole("tablist", { name: "Sync settings sections" });
-  const tabBounds = (await tabs.boundingBox())!;
-  const contentBounds = (await page
-    .getByRole("region", { name: "Settings content" })
-    .boundingBox())!;
-  const navigation = page.getByRole("navigation", {
-    name: "Settings page navigation",
-  });
-  const headingBounds = (await navigation
-    .getByRole("heading", { name: "Sync", level: 1 })
-    .boundingBox())!;
-  expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
-  await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
-  await expect(page.locator(".store-settings h1")).toHaveCount(0);
+  await repositorySettings(page, "Sync");
+  await repositorySettingsLayout(page, "Sync settings sections");
   await page.getByRole("button", { name: "Pause sync", exact: true }).click();
   await expect(page.getByRole("button", { name: "Retry sync" })).toBeDisabled();
   await page.getByRole("button", { name: "Resume sync" }).click();
@@ -85,7 +75,7 @@ test("local sync controls and grouped progress preserve repository context", asy
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await page.getByRole("button", { name: "Back to repository" }).click();
   expect(await page.evaluate(() => location.hash)).toBe(original);
 });
 
@@ -133,14 +123,14 @@ test("captured sync targets survive Settings navigation and timeout", async ({
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  await repositorySettings(page, "Sync");
   await page.getByRole("tab", { name: "Progress" }).click();
   await page.getByRole("button", { name: "Wait for current sync" }).click();
   await expect(
     page.getByText("Captured target is still pending"),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  await repositorySettings(page, "Repository");
+  await repositorySettings(page, "Sync");
   await page.getByRole("tab", { name: "Progress" }).click();
   await page.getByRole("button", { name: "Continue waiting" }).click();
   await expect(page.getByText("Captured target reached")).toBeVisible();
@@ -152,6 +142,17 @@ test("captured sync targets survive Settings navigation and timeout", async ({
     ),
   ).toBe(true);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  const back = page.getByRole("button", {
+    name: "Back to repository",
+    exact: true,
+  });
+  const recovery = page.getByRole("dialog", { name: "Reconcile operations" });
+  if (await recovery.isVisible())
+    await recovery
+      .getByRole("button", { name: "Close", exact: true })
+      .filter({ hasText: "Close" })
+      .click();
+  await back.click();
   expect(await page.evaluate(() => location.hash)).toBe(hash);
 });
 
@@ -208,7 +209,7 @@ test("Sync reconciliation uses fresh heads and keeps the historical route after 
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  await repositorySettings(page, "Sync");
   await page
     .getByRole("button", { name: "Reconcile operations", exact: true })
     .click();
@@ -217,11 +218,22 @@ test("Sync reconciliation uses fresh heads and keeps the historical route after 
   await dialog.getByRole("button", { name: "Apply command" }).click();
   await expect(dialog.getByText("Publication outcome unknown")).toBeVisible();
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  await repositorySettings(page, "Repository");
+  await repositorySettings(page, "Sync");
   await page.getByRole("button", { name: "Recover reconciliation" }).click();
   dialog = page.getByRole("dialog", { name: "Reconcile operations" });
   await dialog.getByRole("button", { name: "Check status" }).click();
   await expect(dialog.getByText("Repository updated")).toBeVisible();
+  const back = page.getByRole("button", {
+    name: "Back to repository",
+    exact: true,
+  });
+  const recovery = page.getByRole("dialog", { name: "Reconcile operations" });
+  if (await recovery.isVisible())
+    await recovery
+      .getByRole("button", { name: "Close", exact: true })
+      .filter({ hasText: "Close" })
+      .click();
+  await back.click();
   expect(await page.evaluate(() => location.hash)).toBe(hash);
 });

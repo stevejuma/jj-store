@@ -89,7 +89,8 @@ export function dependencyErrors(packages) {
       )
         errors.push(`${pkg.name}: excluded core dependency ${dep.name}`);
       if (
-        ((dep.name === "jj-store" || dep.name.startsWith("jj-store-")) ||
+        (dep.name === "jj-store" ||
+          dep.name.startsWith("jj-store-") ||
           [
             "jj-agent",
             "jj-review",

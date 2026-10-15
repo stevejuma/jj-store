@@ -5,11 +5,19 @@ if (!baseURL) throw new Error("JJ_STORE_REAL_BASE_URL is required");
 
 export default defineConfig({
   testDir: "./tests/real",
-  outputDir: "./test-results-real",
+  testIgnore:
+    process.env.JJ_STORE_REAL_SKIP_PROFILE === "1"
+      ? ["**/profiles-emoji.spec.ts"]
+      : [],
+  outputDir: process.env.JJ_STORE_REAL_SHARD
+    ? `./test-results-real-${process.env.JJ_STORE_REAL_SHARD.replace("/", "-")}`
+    : "./test-results-real",
   fullyParallel: false,
   workers: 1,
   timeout: 60000,
   retries: 0,
+  maxFailures: process.env.CI === "true" ? 1 : 0,
+  reporter: process.env.CI ? "line" : "list",
   use: {
     baseURL,
     browserName: "chromium",

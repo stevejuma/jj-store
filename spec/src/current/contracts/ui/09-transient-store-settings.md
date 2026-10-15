@@ -1,5 +1,11 @@
 # Settings navigation and lifecycle
 
+A rejected native browser Back or Forward returns to the guarded entry without
+rewriting the destination's stored history entry. Duplicate browser
+notifications do not repeat the reversal or clear its notice. After the draft or
+pending action is resolved, the original destination remains reachable through
+history.
+
 <span id="transient-store-settings"></span>
 
 JST-UI-016 installation capture management lives in dedicated Agents settings,

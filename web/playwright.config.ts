@@ -1,11 +1,16 @@
 import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/browser",
-  outputDir: "./test-results",
+  testIgnore: ["**/help*.spec.ts"],
+  outputDir: process.env.JJ_STORE_BROWSER_SHARD
+    ? `./test-results-browser-${process.env.JJ_STORE_BROWSER_SHARD.replace("/", "-")}`
+    : "./test-results",
   fullyParallel: false,
   workers: 1,
   timeout: 30000,
   retries: 0,
+  maxFailures: process.env.CI === "true" ? 1 : 0,
+  reporter: process.env.CI ? "line" : "list",
   use: {
     baseURL: "http://127.0.0.1:7458",
     browserName: "chromium",
@@ -15,7 +20,9 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "cargo run --quiet --locked -p jj-store-http --example browser_preview",
+      process.env.CI === "true" && process.env.JJ_STORE_CI_PREBUILT === "1"
+        ? "target/debug/examples/browser_preview"
+        : "node scripts/managed-cargo.mjs run --quiet --locked -p jj-store-http --example browser_preview",
     url: "http://127.0.0.1:7458",
     reuseExistingServer: false,
     timeout: 30000,

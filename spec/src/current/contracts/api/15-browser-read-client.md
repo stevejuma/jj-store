@@ -61,6 +61,11 @@ automatically; manual refresh remains available. Browser graph rendering admits
 at most 1000 nodes and 4096 edges; exceeding the display budget fails explicitly
 before layout.
 
+Preparation recovery carries the active graph's captured time and identity
+through view reconstruction. Ordinary navigation and explicit snapshot recapture
+retain their normal context reset; successful index preparation cannot silently
+turn an exact retry into a query evaluated at a later time.
+
 Collection controllers retain server cursors independently for every bounded
 resource. Directory navigation requests only the selected directory until a tree
 node is expanded; list/package modes use the recursive path route without

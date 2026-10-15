@@ -6,6 +6,7 @@ import { join, resolve } from "node:path";
 import { createServer } from "node:net";
 import { rewriteServerConfiguration } from "./dev-demo-state.mjs";
 import { cargoCommand } from "./managed-cargo.mjs";
+import { prebuiltBrowserResources } from "./ci-prebuilt.mjs";
 const root = resolve(import.meta.dirname, ".."),
   runtime = mkdtempSync(join(tmpdir(), "jj-store-profile-"));
 const binary = join(root, "target/debug/jj-store"),
@@ -25,8 +26,10 @@ const run = (cmd, args, env = {}) =>
   });
 let service;
 try {
-  run("cargo", ["build", "-p", "jj-store", "--bins", "--locked"]);
-  run("pnpm", ["web:build"]);
+  if (!(await prebuiltBrowserResources(root))) {
+    run("cargo", ["build", "-p", "jj-store", "--bins", "--locked"]);
+    run("pnpm", ["web:build"]);
+  }
   run(binary, [
     "init",
     "--local",

@@ -1,7 +1,9 @@
 # Previous chapter links
 
-These compatibility pages retain the former chapter paths and anchors. Start with the current specification for implementation.
+These compatibility pages retain the former chapter paths and anchors. Start
+with the current specification for implementation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Adapters and Tantivy (previous location)](adapters.md)

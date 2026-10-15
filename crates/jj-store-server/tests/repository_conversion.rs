@@ -173,7 +173,7 @@ impl Fixture {
     }
 }
 fn stock(path: &Path, args: &[&str]) -> String {
-    let output = std::process::Command::new("/opt/homebrew/bin/jj")
+    let output = std::process::Command::new("jj")
         .current_dir(path)
         .args(["--no-pager"])
         .args(args)

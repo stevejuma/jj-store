@@ -1,11 +1,19 @@
 import { expect, test } from "@playwright/test";
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 test("development work samples survive cold startup and additive reseeding", async ({
   page,
   request,
 }) => {
   const home = process.env.JJ_STORE_REAL_REPOSITORY!;
+  const runtime = JSON.parse(
+    readFileSync(
+      join(process.env.JJ_STORE_REAL_RUNTIME!, "runtime.json"),
+      "utf8",
+    ),
+  );
   const base = `/v1/repos/${home}/work`;
   const headers = {
     Origin: new URL(process.env.JJ_STORE_REAL_BASE_URL!).origin,
@@ -38,7 +46,9 @@ test("development work samples survive cold startup and additive reseeding", asy
     replies = 0;
   let browsingTaskId = "";
   for (const project of samples) {
-    expect(project.repositories[home]).toBe(true);
+    const linked =
+      runtime.repositoryProfiles.repositoryLinks[titles.indexOf(project.title)];
+    expect(project.repositories).toEqual({ [linked]: true });
     const tasks = await read(`&project=${project.id}`);
     expect(tasks.tasks).toHaveLength(3);
     for (const task of tasks.tasks) {
@@ -95,7 +105,9 @@ test("development work samples survive cold startup and additive reseeding", asy
   expect(
     new URLSearchParams(new URL(page.url()).hash.split("?")[1]).get("task"),
   ).toBe(browsingTaskId);
-  await view.getByRole("button", { name: "Activity", exact: true }).click();
+  await expect(
+    view.getByRole("button", { name: "Activity", exact: true }),
+  ).toHaveAttribute("aria-expanded", "true");
   await expect(
     view.getByText("The list and card layouts are ready for a visual pass.", {
       exact: false,

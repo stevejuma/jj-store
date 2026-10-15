@@ -1,5 +1,32 @@
 # Verification scope
 
+E-CI-BROWSER-001 runs the complete affected UI unit and cold-browser surfaces
+because fixture selection/sharding and shared freshness owners affect
+independent consumers. Every cold shard owns fresh storage/server state; profile
+restart acceptance cannot share it. The Git-cycle child requires its original
+real-RustFS Rust parent. Focused warm reruns establish diagnosis only. Other
+specialized fixtures retain their owning acceptance parents and qualification
+gaps. The working-copy action extraction preserves the exact capability and
+session-switch guard under JST-API-001/004; no transport or persisted format is
+changed. Browser template selectors follow current released primitives and
+maintained controls; numerical presentation retains the joined unit control,
+responsive width and accessibility bounds of JST-UI-016.
+
+Shared CI resource preparation runs its fail-closed fixture regressions,
+governance/release/spec tooling suites and workflow validation. Browser jobs
+reuse immutable artifacts produced for the same workflow/source selection;
+explicit CI prebuilt admission validates them before process replacement. Cold
+browser acceptance still starts fresh disposable storage and server processes
+and runs the complete real-browser suite. Published ACP is pinned,
+checksum/version checked and probed without opening an agent session. Local
+interactive fixtures, normal development builds and release qualification remain
+separate. Migration audits pin the public retained migration revision, whose
+tree and original evidence/task/requirement assertions are unchanged by signing.
+The prepared-context preflight keeps the control stream open until both bounded
+probe requests receive terminal responses; premature EOF must not cancel queued
+probes and masquerade as missing capability. It still admits only the expected
+session-not-open errors and opens no session or adapter.
+
 Help presentation bundling consumes the existing application palette sources and
 released local fonts. Changes to its asset generation and theme lifecycle run
 the documentation-tool regressions and complete cold Help browser lane,
@@ -53,6 +80,13 @@ is single-parent only. The installed 0.1.0 CLI uses Git for explicit revision
 arguments. JJ workspace stack qualification therefore enumerates the actual
 `jj diff` paths and passes all of them through the supported `--file` interface,
 alongside the default JJ gate for the integration change.
+
+Git-only CI and native JJ progress checks use the same selected revision and
+direct-parent baselines for both changed paths and evidence freshness. A CI
+pull-request base does not silently replace the progress comparison. Spec-first
+range confirmation explicitly selects its base for both paths and prior
+evidence, so a qualified tip cannot hide unqualified changes earlier in the PR.
+Every merge parent and committed evidence payload remains audited.
 
 Bounded-read integration rebases the completed slices onto committed main while
 preserving its repository conversion, terminal, capture settings and bundled

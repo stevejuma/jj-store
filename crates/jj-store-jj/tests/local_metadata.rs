@@ -425,7 +425,7 @@ fn stock_jj_import_gc_and_undo_preserve_companion_metadata() {
     let root = tempfile::tempdir().unwrap();
     let checkout = root.path().join("repo");
     let jj = |args: &[&str]| {
-        let output = Command::new("/opt/homebrew/bin/jj")
+        let output = Command::new("jj")
             .args([
                 "--no-pager",
                 "--config",

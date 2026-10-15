@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { api, sample } from "./native-browser-fixture.js";
 import {
   captureReceipt,
+  captureSettings,
   captureSources,
   captureStatus,
 } from "../../../catalog/fixtures/capture-management.js";
@@ -12,6 +13,26 @@ import type {
   CaptureImport,
 } from "../../src/lib/controller/capture-types.js";
 
+async function selectTab(page: Page, name: string) {
+  // Responsive fitting measures over animation frames after viewport changes.
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+  const tab = page.getByRole("tab", { name, exact: true });
+  if (await tab.isVisible()) await tab.click();
+  else {
+    await page
+      .getByRole("button", {
+        name: "More agents settings sections",
+        exact: true,
+      })
+      .click();
+    await page.getByRole("menuitem", { name, exact: true }).click();
+  }
+}
 async function openSettings(page: Page) {
   await page
     .getByRole("button", { name: "Open profile menu for Local" })
@@ -33,7 +54,7 @@ async function openSettings(page: Page) {
   await expect(
     page.getByRole("combobox", { name: "Settings repository" }),
   ).toHaveCount(0);
-  await page.getByRole("tab", { name: "Capture", exact: true }).click();
+  await selectTab(page, "Capture");
 }
 async function bootstrap(page: Page, supported = true) {
   await api(page, { access: "local_trusted" });
@@ -65,7 +86,8 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   value.runtime!.unavailable = 14000n;
   const controls: CaptureControl[] = [];
   let imported: CaptureImport | null = null,
-    inspections = 0;
+    inspections = 0,
+    receiptReady = false;
   const paths: string[] = [];
   await page.route("**/v1/local/capture**", async (r) => {
     const req = r.request(),
@@ -123,15 +145,14 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
       return respond({
         version: 1,
         request_id: imported!.request_id,
-        receipt: inspections === 1 ? null : outcome.receipt,
-        progress:
-          inspections === 1
-            ? {
-                ...outcome.progress,
-                phase: "pending",
-                boundary_available: false,
-              }
-            : outcome.progress,
+        receipt: !receiptReady ? null : outcome.receipt,
+        progress: !receiptReady
+          ? {
+              ...outcome.progress,
+              phase: "pending",
+              boundary_available: false,
+            }
+          : outcome.progress,
       });
     }
     return respond(value);
@@ -154,7 +175,8 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   await expect
     .poll(() => paths.includes("/v1/local/capture/sources"))
     .toBe(true);
-  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await selectTab(page, "Sources");
+  await page.clock.runFor(500);
   await expect(page.getByText("Codex CLI source 1")).toBeVisible();
   const sourceRow = page
     .getByRole("row")
@@ -165,7 +187,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
     return { labelRight: label.right, controlLeft: control.left };
   });
   expect(columns.controlLeft).toBeGreaterThan(columns.labelRight);
-  await page.getByRole("tab", { name: "Capture", exact: true }).click();
+  await selectTab(page, "Capture");
   await page.getByRole("button", { name: "Pause capture" }).click();
   await expect(page.getByText("Capture outcome unknown")).toBeVisible();
   await page
@@ -192,12 +214,19 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
     page.getByRole("button", { name: "Pause capture" }),
   ).toBeEnabled();
   expect(controls[3].request_id).not.toBe(controls[0].request_id);
+  const beforeRescanSources = paths.filter((p) =>
+    p.endsWith("/sources"),
+  ).length;
   await page.getByRole("button", { name: "Rescan capture" }).click();
   await expect(page.getByText(/Rescan requested/)).toBeVisible();
-  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await selectTab(page, "Sources");
+  // The acknowledged rescan refreshes coverage automatically before import.
+  await expect
+    .poll(() => paths.filter((p) => p.endsWith("/sources")).length)
+    .toBeGreaterThan(beforeRescanSources);
   await expect(
     page.getByRole("button", { name: /Import history for/ }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await page.getByRole("button", { name: "Refresh capture" }).click();
   await page.getByRole("button", { name: /Import history for/ }).click();
   await expect(page.getByText("Capture outcome unknown")).toBeVisible();
@@ -206,6 +235,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
     .click();
   await expect(page.getByText("No receipt available")).toBeVisible();
   await expect(page.getByText("Capture outcome unknown")).toBeVisible();
+  receiptReady = true;
   await page
     .getByRole("button", { name: "Check original import receipt" })
     .click();
@@ -228,7 +258,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   });
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await selectTab(page, "Sources");
   await expect(
     page.getByRole("table", { name: "Capture sources" }),
   ).toBeVisible();
@@ -276,7 +306,10 @@ test("capture notifications retain dismissal and drafts until observed recovery"
   await bootstrap(page);
   let unavailable = false;
   await page.route("**/v1/local/capture**", (route) => {
-    if (unavailable)
+    if (
+      unavailable &&
+      !new URL(route.request().url()).pathname.endsWith("/settings")
+    )
       return route.fulfill({
         status: 503,
         json: { version: 1, code: "capture_management_unavailable" },
@@ -284,9 +317,11 @@ test("capture notifications retain dismissal and drafts until observed recovery"
     return route.fulfill({
       contentType: "application/json",
       body: pretty(
-        new URL(route.request().url()).pathname.endsWith("/sources")
-          ? captureSources()
-          : captureStatus(),
+        new URL(route.request().url()).pathname.endsWith("/settings")
+          ? captureSettings()
+          : new URL(route.request().url()).pathname.endsWith("/sources")
+            ? captureSources()
+            : captureStatus(),
       ),
     });
   });
@@ -298,7 +333,7 @@ test("capture notifications retain dismissal and drafts until observed recovery"
   await expect(
     page.getByText("/Users/capture/.codex/sessions", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("tab", { name: "Imports", exact: true }).click();
+  await selectTab(page, "Imports");
   const draft = page.getByRole("textbox", {
     name: "Previous import request ID",
   });
@@ -322,12 +357,12 @@ test("capture notifications retain dismissal and drafts until observed recovery"
   await refresh.click();
   await expect(refresh).toBeEnabled();
   await expect(toast).toHaveCount(0);
-  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await selectTab(page, "Sources");
   await page.getByRole("button", { name: "Back to jj-store" }).click();
   await openSettings(page);
   await expect(refresh).toBeEnabled();
   await expect(toast).toHaveCount(0);
-  await page.getByRole("tab", { name: "Imports", exact: true }).click();
+  await selectTab(page, "Imports");
   await expect(draft).toHaveValue("ef".repeat(16));
   unavailable = false;
   await refresh.click();
@@ -353,10 +388,91 @@ test("visible capture follows observations and stops when settings closes", asyn
   page,
 }) => {
   await bootstrap(page);
-  await page.clock.install();
   let reads = 0;
   const value = captureStatus();
+  await page.route("**/v1/bootstrap", (r) =>
+    r.fulfill({
+      json: {
+        version: 1,
+        access_mode: "local_trusted",
+        capabilities: {
+          ...sample("capabilities"),
+          local_capture_management: true,
+          application_events: true,
+        },
+        storage: { ready: true },
+        repositories: [],
+        backups: [],
+      },
+    }),
+  );
+  // Keep a real streaming body open: a completed SSE response marks freshness offline.
+  await page.addInitScript(() => {
+    const original = window.fetch.bind(window);
+    window.fetch = async (input, init) => {
+      const url = new URL(
+        input instanceof Request ? input.url : String(input),
+        location.href,
+      );
+      if (url.pathname !== "/v1/events") return original(input, init);
+      let cleanup = () => {};
+      const stream = new ReadableStream({
+        start(controller) {
+          let sequence = 1;
+          const frame = (type: string, payload: Record<string, unknown>) =>
+            controller.enqueue(
+              new TextEncoder().encode(
+                `id: jse1:${"11".repeat(16)}:${"22".repeat(16)}:${sequence++}\nevent: ${type}\ndata: ${JSON.stringify({ version: 1, type, ...payload })}\n\n`,
+              ),
+            );
+          frame("ready", {
+            witnesses: [
+              {
+                repository: null,
+                domain: "capture",
+                identity: "status",
+                witness: "running",
+              },
+            ],
+          });
+          const changed = () =>
+            frame("changed", {
+              change: {
+                repository: null,
+                domain: "capture",
+                identity: "status",
+                witness: "paused",
+              },
+            });
+          window.addEventListener("capture-witness", changed);
+          cleanup = () =>
+            window.removeEventListener("capture-witness", changed);
+          const signal =
+            init?.signal ?? (input instanceof Request ? input.signal : null);
+          signal?.addEventListener(
+            "abort",
+            () => {
+              cleanup();
+              controller.error(new DOMException("Aborted", "AbortError"));
+            },
+            { once: true },
+          );
+        },
+        cancel() {
+          cleanup();
+        },
+      });
+      return new Response(stream, {
+        headers: { "content-type": "text/event-stream" },
+      });
+    };
+  });
   await page.route("**/v1/local/capture**", (r) => {
+    if (new URL(r.request().url()).pathname.endsWith("/settings"))
+      return r.fulfill({
+        contentType: "application/json",
+        body: pretty(captureSettings()),
+      });
     if (new URL(r.request().url()).pathname.endsWith("/sources"))
       return r.fulfill({
         contentType: "application/json",
@@ -370,16 +486,18 @@ test("visible capture follows observations and stops when settings closes", asyn
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
   await openSettings(page);
-  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await selectTab(page, "Sources");
   await expect(page.getByText("Codex CLI source 1")).toBeVisible();
-  await page.getByRole("tab", { name: "Imports", exact: true }).click();
+  await page.clock.install();
+  await selectTab(page, "Imports");
   await page
     .getByRole("textbox", { name: "Previous import request ID" })
     .fill("ef".repeat(16));
-  await page.getByRole("tab", { name: "Capture", exact: true }).click();
+  await selectTab(page, "Capture");
   value.policy!.paused = true;
   value.runtime!.phase = "paused";
-  await page.clock.fastForward(5151);
+  await page.evaluate(() => window.dispatchEvent(new Event("capture-witness")));
+  await page.clock.runFor(6000);
   await expect(
     page.getByRole("button", { name: "Resume capture" }),
   ).toBeEnabled();
@@ -391,7 +509,8 @@ test("visible capture follows observations and stops when settings closes", asyn
   await page.clock.fastForward(15000);
   expect(reads).toBe(serviceReads);
   await page.getByRole("button", { name: "Agents", exact: true }).click();
-  await page.getByRole("tab", { name: "Imports", exact: true }).click();
+  await selectTab(page, "Imports");
+  await page.clock.runFor(500);
   await expect(
     page.getByRole("textbox", { name: "Previous import request ID" }),
   ).toHaveValue("ef".repeat(16));
@@ -401,7 +520,8 @@ test("visible capture follows observations and stops when settings closes", asyn
   await page.clock.fastForward(15000);
   expect(reads).toBe(closedReads);
   await openSettings(page);
-  await page.getByRole("tab", { name: "Imports", exact: true }).click();
+  await selectTab(page, "Imports");
+  await page.clock.runFor(500);
   await expect(
     page.getByRole("textbox", { name: "Previous import request ID" }),
   ).toHaveValue("ef".repeat(16));
@@ -457,15 +577,21 @@ test("cold local configuration editing retains drafts and announces restart", as
   });
   await page.goto("/");
   await openSettings(page);
-  await page.getByRole("tab", { name: "Configuration", exact: true }).click();
+  await selectTab(page, "Configuration");
   await page.getByRole("switch", { name: "Enable automatic capture" }).click();
+  await page
+    .getByRole("button", { name: "Codex configuration", exact: true })
+    .click();
   await page
     .getByRole("textbox", { name: "Codex CLI folders" })
     .fill("/tmp/browser-capture/sessions");
   await page.getByRole("spinbutton", { name: "Concurrent readers" }).fill("2");
-  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await selectTab(page, "Sources");
   await page.getByRole("button", { name: "Refresh capture" }).click();
-  await page.getByRole("tab", { name: "Configuration", exact: true }).click();
+  await selectTab(page, "Configuration");
+  await page
+    .getByRole("button", { name: "Codex configuration", exact: true })
+    .click();
   await expect(
     page.getByRole("textbox", { name: "Codex CLI folders" }),
   ).toHaveValue("/tmp/browser-capture/sessions");
@@ -475,7 +601,9 @@ test("cold local configuration editing retains drafts and announces restart", as
   await page
     .getByRole("button", { name: "Save configuration", exact: true })
     .click();
-  await expect(page.getByText("Disabled · Restart required")).toBeVisible();
+  await expect(
+    page.getByText("Disabled · Configuration reload required"),
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Save configuration", exact: true }),
   ).toBeDisabled();
@@ -484,7 +612,7 @@ test("cold local configuration editing retains drafts and announces restart", as
     page.getByText("/Users/capture/.codex/sessions", { exact: true }),
   ).toBeVisible();
   const axe = await new AxeBuilder({ page })
-    .include('section[aria-labelledby="capture-configuration-title"]')
+    .include('[aria-labelledby="capture-config-options"]')
     .analyze();
   expect(axe.violations).toEqual([]);
   await page.setViewportSize({ width: 390, height: 844 });

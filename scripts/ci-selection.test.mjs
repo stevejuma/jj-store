@@ -1,0 +1,238 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  mkdtempSync,
+  mkdirSync,
+  writeFileSync,
+  rmSync,
+  renameSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { execFileSync } from "node:child_process";
+import {
+  packageGraph,
+  workspaceGraph,
+  sourceEdges,
+  reverseClosure,
+  selectedPackages,
+  cohortPackages,
+} from "./ci-packages.mjs";
+import { impact, changedFiles, cacheWritable } from "./ci-plan.mjs";
+const root = "/fixture";
+function metadata(names, edges = []) {
+  return {
+    workspace_members: names,
+    packages: names.map((name) => ({
+      id: name,
+      name,
+      manifest_path: `${root}/crates/${name}/Cargo.toml`,
+      dependencies: edges
+        .filter((e) => e.from === name)
+        .map((e) => ({ name: e.to, path: `${root}/crates/${e.to}`, ...e })),
+    })),
+  };
+}
+const graph = () =>
+  packageGraph(
+    metadata(
+      ["core", "leaf", "consumer", "jj-store"],
+      [
+        { from: "leaf", to: "core" },
+        { from: "consumer", to: "leaf" },
+        { from: "jj-store", to: "consumer" },
+      ],
+    ),
+    root,
+  );
+test("affected packages include reverse transitive normal build dev optional and target edges", () => {
+  const names = [
+    "core",
+    "normal",
+    "dev",
+    "build",
+    "optional",
+    "target",
+    "renamed",
+  ];
+  const edges = names.slice(1).map((from) => ({
+    from,
+    to: "core",
+    kind: from === "dev" || from === "build" ? from : null,
+    optional: from === "optional",
+    target: from === "target" ? "cfg(windows)" : null,
+    rename: from === "renamed" ? "alias" : null,
+  }));
+  const g = packageGraph(metadata(names, edges), root);
+  assert.deepEqual(reverseClosure(g, ["core"]), names.sort());
+  const selected = impact(["crates/leaf/src/lib.rs"], false, graph());
+  assert.deepEqual(selected.packages, ["consumer", "leaf"]);
+  assert.deepEqual(selected.excluded, ["jj-store"]);
+});
+test("shared inputs and unknown ownership conservatively select all standard consumers", () => {
+  for (const file of [
+    "Cargo.toml",
+    "Cargo.lock",
+    "crates/leaf/Cargo.toml",
+    "crates/leaf/build.rs",
+    ".github/workflows/ci.yml",
+    "rust-toolchain.toml",
+    "scripts/new.mjs",
+    "proto/api.proto",
+    "fixtures/input.json",
+    "unknown/data",
+  ]) {
+    const plan = impact([file], false, graph());
+    assert.deepEqual(plan.packages, ["consumer", "core", "leaf"], file);
+    assert.equal(plan.web, true, file);
+  }
+  for (const file of [
+    "crates/leaf/tests/fixtures/input.json",
+    "crates/core/proto/api.proto",
+  ])
+    assert.equal(impact([file], false, graph()).packages.length, 3);
+});
+test("empty and documentation selections stay light while force runs all standard checks", () => {
+  for (const files of [
+    [],
+    ["spec/src/current/index.md"],
+    ["README.md"],
+    [".changeset/note.md"],
+  ]) {
+    const plan = impact(files, false, graph());
+    assert.equal(plan.rust, false);
+    assert.equal(plan.web, false);
+    assert.deepEqual(plan.packages, []);
+    assert.equal(impact(files, true, graph()).packages.length, 3);
+    assert.equal(impact(files, true, graph()).web, true);
+  }
+  assert.equal(impact(["web/src/new.ts"], false, graph()).web, true);
+});
+test("real read-index and model impacts preserve the agreed standard cohort", () => {
+  const g = workspaceGraph();
+  const inputs = sourceEdges(g);
+  assert.deepEqual(inputs.uncertain, []);
+  assert.equal(cohortPackages(g, "ordinary").length, 16);
+  assert.deepEqual(
+    impact(["crates/jj-store-read-index/src/lib.rs"], false, g, inputs)
+      .packages,
+    [
+      "jj-store-http",
+      "jj-store-read-index",
+      "jj-store-rpc",
+      "jj-store-service",
+      "jj-store-tantivy",
+    ],
+  );
+  const core = impact(["crates/jj-store-model/src/lib.rs"], false, g, inputs);
+  assert.equal(core.packages.length, 15);
+  assert.equal(core.web, true);
+});
+test("invalid metadata and invalid or partial cohort requests fail closed", () => {
+  for (const data of [
+    {},
+    { workspace_members: [], packages: [] },
+    { workspace_members: ["missing"], packages: [] },
+    metadata(["same", "same"]),
+    metadata(["leaf"], [{ from: "leaf", to: "missing" }]),
+  ])
+    assert.throws(() => packageGraph(data, root));
+  for (const list of [[], ["leaf", "leaf"], ["missing"], ["jj-store"]])
+    assert.throws(() =>
+      selectedPackages("ordinary", JSON.stringify(list), graph()),
+    );
+  assert.deepEqual(selectedPackages("ordinary", '["leaf"]', graph()), ["leaf"]);
+  const g = packageGraph(
+    metadata(["leaf", "jj-store", "jj-store-server"]),
+    root,
+  );
+  assert.throws(() => selectedPackages("heavy", '["jj-store"]', g));
+});
+function fixture(t) {
+  const dir = mkdtempSync(join(tmpdir(), "ci-impact-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  return dir;
+}
+test("sibling source fixtures broaden reverse dependencies and dynamic includes select all", (t) => {
+  const dir = fixture(t);
+  const data = metadata(["core", "consumer"]);
+  for (const p of data.packages) {
+    p.manifest_path = p.manifest_path.replace(root, dir);
+    mkdirSync(join(dir, "crates", p.name, "tests"), { recursive: true });
+  }
+  writeFileSync(
+    join(dir, "crates/consumer/tests/test.rs"),
+    '#[path = "../../core/tests/shared.rs"] mod support;\n',
+  );
+  let g = packageGraph(data, dir),
+    inputs = sourceEdges(g, dir);
+  assert.deepEqual(
+    impact(["crates/core/tests/shared.rs"], false, g, inputs).packages,
+    ["consumer", "core"],
+  );
+  writeFileSync(
+    join(dir, "crates/consumer/tests/test.rs"),
+    'include!(concat!(env!("OUT_DIR"), "/generated.rs"));',
+  );
+  g = packageGraph(data, dir);
+  inputs = sourceEdges(g, dir);
+  assert.equal(inputs.uncertain.length, 1);
+  assert.equal(impact(["README.md"], false, g, inputs).packages.length, 2);
+});
+test("renames and deletions include both old and new owners", (t) => {
+  const dir = fixture(t);
+  const git = (...args) =>
+    execFileSync("git", ["-c", "commit.gpgsign=false", ...args], {
+      cwd: dir,
+      encoding: "utf8",
+    }).trim();
+  git("init", "-q");
+  git("config", "user.name", "Fixture");
+  git("config", "user.email", "fixture@example.invalid");
+  for (const name of ["core", "leaf"])
+    mkdirSync(join(dir, "crates", name, "src"), { recursive: true });
+  writeFileSync(join(dir, "crates/core/src/move.rs"), "original");
+  writeFileSync(join(dir, "crates/leaf/src/deleted.rs"), "deleted");
+  git("add", ".");
+  git("commit", "-qm", "before");
+  const base = git("rev-parse", "HEAD");
+  renameSync(
+    join(dir, "crates/core/src/move.rs"),
+    join(dir, "crates/leaf/src/move.rs"),
+  );
+  rmSync(join(dir, "crates/leaf/src/deleted.rs"));
+  git("add", ".");
+  git("commit", "-qm", "after");
+  const paths = changedFiles(base, git("rev-parse", "HEAD"), dir);
+  assert.deepEqual(paths.sort(), [
+    "crates/core/src/move.rs",
+    "crates/leaf/src/deleted.rs",
+    "crates/leaf/src/move.rs",
+  ]);
+  assert.equal(impact(paths, false, graph()).packages.length, 3);
+});
+test("cache writes stay PR scoped or require canonical main context and source", () => {
+  const base = {
+    repository: "stevejuma/jj-store",
+    event: "pull_request",
+    ref: "refs/pull/1/merge",
+    sourceOnMain: false,
+  };
+  assert.equal(cacheWritable(base), true);
+  for (const override of [
+    { repository: "fork/jj-store" },
+    { event: "pull_request_target" },
+    { ref: "refs/heads/main" },
+    { ref: "refs/pull/1/head" },
+  ])
+    assert.equal(cacheWritable({ ...base, ...override }), false);
+  for (const event of ["push", "workflow_dispatch"]) {
+    const main = { ...base, event, ref: "refs/heads/main", sourceOnMain: true };
+    assert.equal(cacheWritable(main), true);
+    assert.equal(cacheWritable({ ...main, sourceOnMain: false }), false);
+    assert.equal(
+      cacheWritable({ ...main, ref: "refs/heads/experiment" }),
+      false,
+    );
+  }
+});

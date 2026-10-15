@@ -73,10 +73,12 @@ test("cold device appearance restores under the production CSP and propagates ac
   await page.getByRole("button", { name: /Theme style,/ }).click();
   await page.getByRole("button", { name: "Use Nord theme" }).click();
   await page.getByRole("button", { name: "Use Lilac accent" }).click();
+  await page.getByRole("tab", { name: "Preferences", exact: true }).click();
   await page.getByRole("radio", { name: "Larger", exact: true }).click();
   await page.getByRole("radio", { name: "Spacious", exact: true }).click();
   await page.getByRole("radio", { name: "Rich", exact: true }).click();
   await page.getByRole("radio", { name: "Focus", exact: true }).click();
+  await page.getByRole("tab", { name: "Theme", exact: true }).click();
   await page.getByRole("switch", { name: "Glass background" }).click();
   const preference = await page.evaluate(() =>
     localStorage.getItem("jj-store.appearance.v1"),
@@ -143,13 +145,17 @@ test("cold device appearance restores under the production CSP and propagates ac
   await expect(
     page
       .getByRole("navigation", { name: "Settings page navigation" })
-      .getByRole("heading", { name: "Appearance", exact: true }),
+      .getByRole("tablist", {
+        name: "Appearance settings sections",
+        exact: true,
+      }),
   ).toBeVisible();
   expect(
     await page
       .locator(".store-appearance")
       .evaluate((el) => el.getBoundingClientRect().width),
   ).toBeLessThanOrEqual(390);
+  await page.getByRole("tab", { name: "Preferences", exact: true }).click();
   await page
     .getByRole("radio", { name: "Rich", exact: true })
     .scrollIntoViewIfNeeded();

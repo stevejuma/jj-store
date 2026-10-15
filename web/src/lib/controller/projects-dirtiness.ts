@@ -47,7 +47,9 @@ export class ProjectsDirtiness {
               ? (["agents", "activity", "directory"] as const)
               : change.domain === "reviews"
                 ? (["reviews", "directory"] as const)
-                : [];
+                : change.domain === "threads"
+                  ? (["work"] as const)
+                  : [];
       for (const id of ids)
         for (const domain of domains)
           this.pending.set(`${id}:${domain}`, {

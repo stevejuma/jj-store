@@ -6,14 +6,14 @@ updates:
       interval: weekly
     groups:
       actions:
-        patterns: ['*']
+        patterns: ["*"]
   - package-ecosystem: cargo
     directory: /
     schedule:
       interval: weekly
     groups:
       rust:
-        patterns: ['*']
+        patterns: ["*"]
   - package-ecosystem: cargo
     directory: /runtime/embedded-rustfs
     schedule:
@@ -24,4 +24,4 @@ updates:
       interval: weekly
     groups:
       npm:
-        patterns: ['*']
+        patterns: ["*"]

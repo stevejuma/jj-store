@@ -21,9 +21,19 @@
       name: "Repository workspace",
     });
     const returnToRoot = async () => {
+      const filename = canvas.queryByLabelText("File name");
       await userEvent.click(canvas.getByRole("link", { name: /^Files$/ }));
+      if (filename) {
+        await expect(filename).toBeInTheDocument();
+        await expect(filename).toHaveValue("README.md");
+        await userEvent.click(canvas.getByRole("button", { name: "Cancel" }));
+        await userEvent.click(canvas.getByRole("link", { name: /^Files$/ }));
+      }
       await waitFor(() =>
-        expect(canvas.queryByLabelText("File name")).not.toBeInTheDocument(),
+        expect(
+          canvas.queryByLabelText("File name"),
+          "root route clears editor",
+        ).not.toBeInTheDocument(),
       );
       await expect(workspace).toBeEnabled();
       await expect(
@@ -42,12 +52,22 @@
     await expect(workspace).toBeDisabled();
     await returnToRoot();
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
-    await expect(canvas.queryByLabelText("File name")).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        canvas.queryByLabelText("File name"),
+        "reopened file uses reading mode",
+      ).not.toBeInTheDocument(),
+    );
     await userEvent.click(canvas.getByRole("button", { name: /^Edit$/ }));
     await expect(canvas.getByLabelText("File name")).toHaveValue("README.md");
     await returnToRoot();
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
-    await expect(canvas.queryByLabelText("File name")).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        canvas.queryByLabelText("File name"),
+        "reopened file uses reading mode",
+      ).not.toBeInTheDocument(),
+    );
   }}
 />
 

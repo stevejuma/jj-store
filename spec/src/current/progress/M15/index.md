@@ -11,7 +11,9 @@
 | M15.6                                                                                                                                                                                                          | In progress | M15.3             | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                         | Qualify authorized joins                                   | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-READ-031                                                                                                                                                                          |
 | M15.7                                                                                                                                                                                                          | Planned     | M15.4,M15.5,M15.6 | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                               | Retain native/local/cold evidence                          | -                                                                                                                                                                                                                                     |
 | E-COMPUTE-004 aligns Projects/tab/task agent actions with the repository icon headers, preserving launch context. M15.5 remains In progress with its prior native, cold-production and visual gates unchanged. |
+
 <!-- generated-navigation -->
+
 ## Pages
 
 - [history](history/index.md)

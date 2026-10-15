@@ -1,3 +1,4 @@
+import { repositorySettings } from "./repository-settings-navigation.js";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample, repo, operation } from "./native-browser-fixture.js";
@@ -25,9 +26,12 @@ async function setup(page: Page) {
 async function open(page: Page) {
   await page.goto(`/#/repos/${repo}/files`);
   await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Open file bin", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: /Open profile menu/ }).click();
   await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await repositorySettings(page, "Repository");
   await page
     .getByRole("button", {
       name: /Use local Git-backed JJ|Continue conversion/,
@@ -41,6 +45,8 @@ test("cold export preflight, pending reload, exact retry and verified report", a
   await setup(page);
   const writes: any[] = [];
   let accepted: any;
+  let reportReady = false,
+    statusReads = 0;
   await page.route("**/v1/local/repositories/conversion/preview", (route) =>
     route.fulfill({
       json: {
@@ -59,31 +65,37 @@ test("cold export preflight, pending reload, exact retry and verified report", a
       json: { status: "outcome_unknown", request_id: accepted.request_id },
     });
   });
-  await page.route("**/v1/local/repositories/conversion/requests/*", (route) =>
-    route.fulfill({
-      json: {
-        status: "committed",
-        report: {
-          version: 1,
-          request_id: accepted.request_id,
-          source: repo,
-          destination: "33".repeat(16),
-          destination_profile: "local_jj_git",
-          name: accepted.intent.name,
-          operation: "44".repeat(64),
-          archive_digest: accepted.prepared_source,
-          code_mappings: {
-            operations: { [operation]: "44".repeat(64) },
-            commits: {},
-            views: {},
-            trees: {},
-            files: {},
-            symlinks: {},
-          },
-          collaboration: { selections: [], objects: {} },
-        },
-      },
-    }),
+  await page.route(
+    "**/v1/local/repositories/conversion/requests/*",
+    (route) => {
+      statusReads++;
+      return route.fulfill({
+        json: !reportReady
+          ? { status: "outcome_unknown", request_id: accepted.request_id }
+          : {
+              status: "committed",
+              report: {
+                version: 1,
+                request_id: accepted.request_id,
+                source: repo,
+                destination: "33".repeat(16),
+                destination_profile: "local_jj_git",
+                name: accepted.intent.name,
+                operation: "44".repeat(64),
+                archive_digest: accepted.prepared_source,
+                code_mappings: {
+                  operations: { [operation]: "44".repeat(64) },
+                  commits: {},
+                  views: {},
+                  trees: {},
+                  files: {},
+                  symlinks: {},
+                },
+                collaboration: { selections: [], objects: {} },
+              },
+            },
+      });
+    },
   );
   let dialog = await open(page);
   await dialog
@@ -100,10 +112,17 @@ test("cold export preflight, pending reload, exact retry and verified report", a
   await expect(
     dialog.getByRole("button", { name: "Retry conversion" }),
   ).toBeVisible();
+  const beforeReloadReads = statusReads;
   await page.reload();
+  await expect(
+    page.getByRole("tab", { name: "General", exact: true }),
+  ).toBeVisible();
+  await expect.poll(() => statusReads).toBeGreaterThan(beforeReloadReads);
+  await page.waitForTimeout(700);
+  expect(statusReads).toBe(beforeReloadReads + 1);
   await page.getByRole("button", { name: /Open profile menu/ }).click();
   await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await repositorySettings(page, "Repository");
   await page.getByRole("button", { name: "Continue conversion" }).click();
   dialog = page.getByRole("dialog", { name: "Convert repository" });
   await expect(dialog.getByRole("textbox", { name: "New folder" })).toHaveValue(
@@ -115,13 +134,17 @@ test("cold export preflight, pending reload, exact retry and verified report", a
   await dialog.getByRole("button", { name: "Retry conversion" }).click();
   await expect.poll(() => writes.length).toBe(2);
   expect(writes[0]).toEqual(writes[1]);
+  reportReady = true;
   await dialog.getByRole("button", { name: "Check status" }).click();
   await expect(dialog).not.toBeVisible();
   await page.goto(`/#/repos/${repo}/files`);
   await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Open file bin", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: /Open profile menu/ }).click();
   await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await repositorySettings(page, "Repository");
   await page.getByRole("button", { name: "Last conversion report" }).click();
   const report = page.getByRole("dialog", { name: "Conversion report" });
   await expect(

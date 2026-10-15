@@ -156,7 +156,7 @@
     const app = within(nav.getByRole("region", { name: "App" }));
     for (const name of ["Local service", "Agents", "Compute"])
       await expect(app.getByRole("button", { name })).toBeVisible();
-    const footer = nav.getByText(`v${version}`, { exact: true });
+    const footer = c.getByText(`v${version}`, { exact: true });
     await expect(footer).toBeVisible();
     await expect(footer.getBoundingClientRect().top).toBeGreaterThan(
       app.getByRole("button", { name: "Compute" }).getBoundingClientRect()

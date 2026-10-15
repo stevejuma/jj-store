@@ -42,9 +42,24 @@ for (const navigation of ["breadcrumb", "history"] as const) {
           page.getByRole("combobox", { name: "Repository workspace" }),
         ).toBeDisabled();
       } else await expect(page.getByLabel("File name")).toHaveCount(0);
-      if (navigation === "breadcrumb")
-        await page.getByRole("link", { name: "Files", exact: true }).click();
-      else await page.goBack();
+      const navigate = async () => {
+        if (navigation === "breadcrumb")
+          await page.getByRole("link", { name: "Files", exact: true }).click();
+        else await page.goBack();
+      };
+      await navigate();
+      if (edit) {
+        await expect(page.getByLabel("File name")).toHaveValue("bin");
+        await expect(page).toHaveURL(/file=bin/);
+        await expect(
+          page.getByText(
+            "Finish the current repository action before navigating.",
+            { exact: true },
+          ),
+        ).toBeVisible();
+        await page.getByRole("button", { name: "Cancel", exact: true }).click();
+        await navigate();
+      }
       await expect(
         page.getByRole("table", { name: "Repository files" }),
       ).toBeVisible();

@@ -6,5 +6,5 @@ manifest-selected objects and durable publication receipts.
 [Repository](https://github.com/stevejuma/jj-store) ·
 [Specification](https://stevejuma.github.io/jj-store/)
 
-Experimental 0.1 releases; consult the capability and milestone ledger.
-Licensed under Apache-2.0.
+Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
+under Apache-2.0.

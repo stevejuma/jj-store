@@ -1,5 +1,13 @@
 # Application documentation
 
+E-CI-BROWSER-001 reviews the current browser Settings/freshness sources under
+JST-DOC-001/002 and refreshes their explicit source fingerprint. The manual now
+states that opening Reload saved settings observes the latest revision without
+idle polling. CI documentation covers isolated cold shards, profile restart and
+the original real-RustFS Git parent. CLI references, Help manifests and browser
+admission retain their existing contracts; generated historical evidence is not
+rewritten for these workflow changes.
+
 Under JST-DOC-001, Guides use task-ordered sections with descriptive headings
 and short paragraphs. Separate setup, routine actions, inspection and recovery
 when they describe distinct workflows; keep technical limits beside the relevant
@@ -152,4 +160,7 @@ unchanged.
 
 ## Public release integration
 
-Published specification and manual use /jj-store/ and /jj-store/manual/. CI can render acknowledged checked-in references without invoking Rust; separate exact-source live reference comparison remains a required release lane. Package-owned CLI help is checked against maintained docs/cli inputs.
+Published specification and manual use /jj-store/ and /jj-store/manual/. CI can
+render acknowledged checked-in references without invoking Rust; separate
+exact-source live reference comparison remains a required release lane.
+Package-owned CLI help is checked against maintained docs/cli inputs.

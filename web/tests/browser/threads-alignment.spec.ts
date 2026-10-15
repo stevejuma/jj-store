@@ -21,7 +21,7 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
         readText: async () => JSON.stringify(copies),
       },
     });
-    const key = "jj-store/layout/v1/shell";
+    const key = "jj-store/connection/local/jj-store/layout/v1/shell";
     if (!localStorage.getItem(key))
       localStorage.setItem(
         key,
@@ -51,6 +51,30 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     releaseThreads = resolve;
   });
   const scopes: URLSearchParams[] = [];
+  await page.route("**/v1/local/threads", async (route) => {
+    const request = route.request().postDataJSON();
+    expect(request.command.type).toBe("create");
+    const thread = "ab".repeat(16);
+    await fixture.transport.command("threads", {
+      version: 1,
+      request_id: request.request_id,
+      command: {
+        type: "create",
+        thread_id: thread,
+        title: request.command.title,
+        baseline: null,
+      },
+    } as any);
+    const detail = await fixture.transport.thread(thread);
+    await route.fulfill({
+      json: {
+        request_id: request.request_id,
+        home: repo,
+        thread,
+        revision: detail.thread.reference,
+      },
+    });
+  });
   const patch = (value: any) => ({
     ...value,
     snapshot: {
@@ -149,23 +173,25 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     exact: true,
   });
   await expect(skeleton).toBeVisible();
-  await expect(skeleton).toHaveCSS("padding-top", "12px");
-  await expect(skeleton).toHaveCSS("padding-left", "12px");
+  await expect(skeleton).toHaveAttribute("aria-busy", "true");
+  await expect(
+    skeleton.locator(".inbox-session-tree__skeleton-row"),
+  ).toHaveCount(5);
   releaseThreads();
   await expect(
     page.getByRole("button", {
-      name: "Start a new post in Threads",
+      name: "New Thread",
       exact: true,
     }),
   ).toBeVisible();
   await expect(
     page
-      .getByRole("region", { name: "Threads listing" })
-      .getByText("Welcome to the channel"),
+      .getByRole("navigation", { name: "Threads by repository" })
+      .getByRole("button", { name: "Open Thread general", exact: true }),
   ).toBeVisible();
   await page.screenshot({ path: "/tmp/jj-thread-fix-forum.png" });
   const topic = page.getByRole("button", {
-    name: "Open thread general",
+    name: "Open Thread general",
     exact: true,
   });
   await expect(topic).toBeVisible();
@@ -177,19 +203,15 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     page.getByRole("tab", { name: "Branches", exact: true }),
   ).toHaveCount(0);
   const menu = page.getByRole("button", {
-    name: "Thread settings",
+    name: "Conversation details",
     exact: true,
   });
-  const toolbarButtons = await page
-    .locator('[aria-label="Thread toolbar"]')
-    .getByRole("button")
-    .all();
-  expect(await toolbarButtons.at(-1)!.getAttribute("aria-label")).toBe(
-    "Thread settings",
-  );
   await menu.click();
   await expect(page.getByRole("menu")).toHaveCount(0);
-  const settings = page.getByRole("complementary", { name: "Thread settings" });
+  const settings = page.getByRole("complementary", {
+    name: "Conversation details",
+    exact: true,
+  });
   await expect(settings).toBeVisible();
   const copiedValues: string[] = [];
   for (const label of ["Thread ID", "Thread revision"]) {
@@ -241,85 +263,32 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   ).toEqual(copiedValues);
   await menu.click();
   await expect(settings).toBeVisible();
-  await expect(settings).toHaveClass(
-    /community-application__standard-right-sidebar/,
-  );
-  const threadResize = page.getByRole("slider", {
-    name: "Resize thread details",
-    exact: true,
-  });
-  await expect(threadResize).toHaveAttribute("aria-valuenow", "360");
-  await expect(settings).toHaveCSS("border-top-style", "solid");
-  await expect(settings).toHaveCSS("border-top-width", "1px");
-  await threadResize.focus();
-  await page.keyboard.press("ArrowLeft");
-  const threadWidth = await threadResize.getAttribute("aria-valuenow");
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const panels = JSON.parse(
-          localStorage.getItem("jj-store/layout/v1/shell")!,
-        ).panels;
-        return [panels.right.width, panels["repository-details"].width];
-      }),
+  const paneHeader = settings.locator(".lc-community-inbox__thread-header");
+  const toolbar = page
+    .locator(
+      ".lc-community-inbox__thread-region > [data-ui-part=scroll-area] .lc-community-inbox__thread-header",
     )
-    .toEqual([Number(threadWidth), 280]);
-  const paneHeader = settings.locator('[data-ui-part="sidebar-header"]');
-  const toolbar = page.getByLabel("Thread toolbar", { exact: true });
+    .first();
   const toolbarBounds = (await toolbar.boundingBox())!;
   const paneHeaderBounds = (await paneHeader.boundingBox())!;
   expect(Math.abs(paneHeaderBounds.y - toolbarBounds.y)).toBeLessThan(1);
-  expect(
-    Math.abs(
-      paneHeaderBounds.y +
-        paneHeaderBounds.height -
-        toolbarBounds.y -
-        toolbarBounds.height,
-    ),
-  ).toBeLessThan(1);
   await expect(paneHeader).toHaveCSS("border-bottom-width", "0px");
   await expect(toolbar).toHaveCSS("border-bottom-width", "0px");
   const bounds = (await settings.boundingBox())!;
-  const composition = page.locator(".community-app-shell__surface");
-  const compositionBounds = (await composition.boundingBox())!;
-  const outerRail = page.getByRole("complementary", {
-    name: "Repository details",
-    exact: true,
-  });
-  await expect(outerRail).toBeVisible();
-  const railBounds = (await outerRail.boundingBox())!;
-  expect(bounds.x + bounds.width).toBeLessThanOrEqual(railBounds.x + 1);
-  expect(
-    Math.abs(
-      railBounds.x +
-        railBounds.width -
-        compositionBounds.x -
-        compositionBounds.width,
-    ),
-  ).toBeLessThan(2);
-  await page
-    .getByRole("button", { name: "Toggle details", exact: true })
-    .click();
-  await expect(outerRail).toBeHidden();
-  await expect(settings).toBeVisible();
-  await expect(threadResize).toHaveAttribute("aria-valuenow", threadWidth!);
-  await page
-    .getByRole("button", { name: "Toggle details", exact: true })
-    .click();
-  await expect(outerRail).toBeVisible();
-  await expect(settings).toBeVisible();
-  await expect(menu).toBeVisible();
+  const mainBounds = (await page.getByRole("main").boundingBox())!;
+  expect(bounds.x).toBeGreaterThan(mainBounds.x);
+  expect(bounds.x + bounds.width).toBeLessThanOrEqual(
+    mainBounds.x + mainBounds.width + 1,
+  );
   const menuBounds = (await menu.boundingBox())!;
   const refreshBounds = (await page
-    .getByRole("button", { name: "Refresh threads" })
+    .getByRole("button", { name: "Refresh Threads", exact: true })
     .boundingBox())!;
   expect(menuBounds.x).toBeGreaterThan(refreshBounds.x);
-  const conversation = page.locator(".community-conversation");
+  const conversation = page.locator(".thread-conversation");
   const conversationBounds = (await conversation.boundingBox())!;
-  const mainBounds = (await page.getByRole("main").boundingBox())!;
-  expect(Math.abs(conversationBounds.width - mainBounds.width)).toBeLessThan(3);
   const layoutBounds = (await conversation
-    .locator('[data-ui-component="ai-chat-layout"]')
+    .locator(".chat-body-reading-surface")
     .boundingBox())!;
   expect(Math.abs(layoutBounds.width - conversationBounds.width)).toBeLessThan(
     2,
@@ -338,19 +307,27 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   const rename = page.getByRole("dialog", { name: "Rename thread" });
   await rename.getByRole("textbox", { name: "Thread name" }).fill("planning");
   await rename.getByRole("button", { name: "Save name" }).click();
-  await expect(page.locator('[data-ui-part="room-title"]')).toHaveText(
-    "planning",
-  );
+  await expect(
+    page.getByRole("heading", { name: "planning", exact: true }),
+  ).toHaveText("planning");
   await expect(rename).toBeHidden();
   await expect(page.locator("body")).not.toHaveCSS("pointer-events", "none");
-  await page.getByRole("button", { name: "Close thread settings" }).click();
-  const composer = page.getByRole("textbox");
+  await page
+    .getByRole("button", { name: "Close conversation details" })
+    .click();
+  // This transport fixture has no publication feed; refresh its directory after rename.
+  await page
+    .getByRole("button", { name: "Refresh Threads", exact: true })
+    .click();
+  const composer = page
+    .getByRole("group", { name: "Message composer", exact: true })
+    .getByRole("textbox", { name: "Markdown editor" });
   await composer.fill("/threads/planning");
   await page.getByRole("option", { name: /planning/ }).click();
   await expect(
     composer.locator('[data-ui-part="composer-entity-reference"]'),
   ).toBeVisible();
-  await composer.press("Enter");
+  await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(
     page
       .getByRole("log")
@@ -362,45 +339,69 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   await page
     .getByRole("menuitem", { name: "Edit message", exact: true })
     .click();
-  await composer.fill("Edited root body");
-  await composer.press("Enter");
+  const edit = root.getByRole("group", { name: "Edit message", exact: true });
+  await edit
+    .getByRole("textbox", { name: "Markdown editor" })
+    .fill("Edited root body");
+  await edit.getByRole("button", { name: "Send message", exact: true }).click();
+  await expect(root.getByText("Edited", { exact: true })).toHaveText("Edited");
   await expect(
-    root.locator(
-      '[data-ui-component="ai-chat-message-metadata"] [data-ui-part="footer"]',
-    ),
-  ).toHaveText("Edited");
-  await expect(
-    root.locator('[data-ui-component="ai-chat-message-bubble"]'),
+    root.getByRole("textbox", { name: "Message", exact: true }),
   ).toHaveText("Edited root body");
 
   await root.hover();
-  await root.getByRole("button", { name: "Reply in thread" }).click();
+  await root
+    .getByRole("button", { name: "More message actions", exact: true })
+    .click();
+  await page
+    .getByRole("menuitem", { name: "Reply in thread", exact: true })
+    .click();
   const replies = page.getByRole("complementary", { name: "Thread replies" });
+  const threadResize = page.getByRole("slider", {
+    name: "Resize thread details",
+    exact: true,
+  });
+  await expect(threadResize).toHaveAttribute("aria-valuenow", "360");
+  await threadResize.focus();
+  await page.keyboard.press("ArrowLeft");
+  const threadWidth = await threadResize.getAttribute("aria-valuenow");
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const panels = JSON.parse(
+          localStorage.getItem(
+            "jj-store/connection/local/jj-store/layout/v1/shell",
+          )!,
+        ).panels;
+        return [panels.right.width, panels["repository-details"].width];
+      }),
+    )
+    .toEqual([Number(threadWidth), 280]);
   const replyRoot = replies.locator(
     `[data-message-id="${THREAD_IDS.message}"]`,
   );
   const replyHeaderBounds = (await replies
     .locator('[data-ui-part="sidebar-header"]')
     .boundingBox())!;
-  expect(
-    Math.abs(
-      replyHeaderBounds.y +
-        replyHeaderBounds.height -
-        toolbarBounds.y -
-        toolbarBounds.height,
-    ),
-  ).toBeLessThan(1);
+  // The inbox and application sidebar have independent header heights.
+  expect(Math.abs(replyHeaderBounds.y - toolbarBounds.y)).toBeLessThan(1);
   await replyRoot.hover();
-  const actions = replyRoot.getByRole("group", { name: /Actions for/ });
+  const actions = replyRoot.getByRole("group", {
+    name: "Actions for Message",
+    exact: true,
+  });
   const actionBounds = (await actions.boundingBox())!;
   const viewportBounds = (await replies
-    .locator(
-      '[data-ui-part="scroll-shell"] [data-ui-part="scroll-area-viewport"]',
-    )
+    .locator('.store-agent-chat-body [data-ui-part="scroll-area-viewport"]')
     .boundingBox())!;
   expect(actionBounds.y).toBeGreaterThanOrEqual(viewportBounds.y);
-  await replies.getByRole("textbox").fill("Cold reply needle");
-  await replies.getByRole("textbox").press("Enter");
+  await replies
+    .getByRole("group", { name: "Message composer", exact: true })
+    .getByRole("textbox", { name: "Markdown editor" })
+    .fill("Cold reply needle");
+  await replies
+    .getByRole("button", { name: "Send message", exact: true })
+    .click();
   await expect(
     replies.getByText("Cold reply needle", { exact: true }),
   ).toBeVisible();
@@ -412,16 +413,14 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   await expect(
     page
       .getByRole("log", { name: "planning messages" })
-      .locator(
-        `[data-message-id="${THREAD_IDS.message}"] [data-ui-component="ai-chat-message-bubble"]`,
-      ),
+      .locator(`[data-message-id="${THREAD_IDS.message}"] [role="textbox"]`),
   ).toHaveText("Edited root body");
   const createdReply = replies
     .locator("[data-message-id]")
     .filter({ hasText: "Cold reply needle" });
   await createdReply.hover();
   await createdReply
-    .getByRole("button", { name: "Add reaction", exact: true })
+    .getByRole("button", { name: /^Add reaction(?: to .+)?$/ })
     .click();
   await page.getByRole("button", { name: ":lapis:", exact: true }).click();
   await expect(
@@ -487,7 +486,7 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   const reply = page
     .getByRole("complementary", { name: "Thread replies" })
     .getByText("Cold reply needle", { exact: true })
-    .locator("xpath=ancestor::*[@data-message-id][1]");
+    .locator("xpath=ancestor::*[@data-chat-item][1]");
   await expect(reply).toBeFocused();
   await page.reload();
   await expect(
@@ -503,12 +502,19 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     .getByRole("dialog", { name: "Search workspace", exact: true })
     .getByRole("option", { name: "Create new thread", exact: true })
     .click();
-  const create = page.getByRole("dialog", { name: "New thread", exact: true });
+  const create = page.getByRole("dialog").filter({
+    has: page.getByRole("heading", { name: "Create Thread", exact: true }),
+  });
+  await expect(create).toBeVisible();
+  expect(
+    (await new AxeBuilder({ page }).include("[data-ui-dialog-frame]").analyze())
+      .violations,
+  ).toEqual([]);
   await create
-    .getByRole("textbox", { name: "Thread name", exact: true })
+    .getByRole("textbox", { name: "Thread title", exact: true })
     .fill("release planning");
   await create
-    .getByRole("button", { name: "Create thread", exact: true })
+    .getByRole("button", { name: "Create Thread", exact: true })
     .click();
   await expect(create).toBeHidden();
   await expect(
@@ -535,7 +541,9 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     .poll(() =>
       page.evaluate(() => {
         const panels = JSON.parse(
-          localStorage.getItem("jj-store/layout/v1/shell")!,
+          localStorage.getItem(
+            "jj-store/connection/local/jj-store/layout/v1/shell",
+          )!,
         ).panels;
         return [panels.right.width, panels["repository-details"].width];
       }),

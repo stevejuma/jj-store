@@ -93,3 +93,8 @@ registered for exact in-memory redaction before worker delivery, including
 rotated tokens and JSON object keys. Provider replay state is not part of
 canonical transcript serialization. This preserves the existing Kingfisher scan
 and publication boundary.
+
+Public builds use released Kingfisher scanner 1.4.0 with rules 1.2.1 and core
+1.0.3. The sanitization policy and compiled-cache namespace include the scanner
+version, so earlier caches cannot silently stand in for this rule set. A scan
+failure still withholds publication; distribution never bypasses sanitization.

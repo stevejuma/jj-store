@@ -410,7 +410,11 @@ impl Cache {
                 }
             }
         }
-        Err(Error::Limit)
+        if managed::evict(self, Some(repository))? {
+            Ok(())
+        } else {
+            Err(Error::Limit)
+        }
     }
     fn evict(&mut self) -> Result<()> {
         for index in 0..self.slots.len() {
@@ -419,7 +423,11 @@ impl Cache {
                 result => return result,
             }
         }
-        Err(Error::Limit)
+        if managed::evict(self, None)? {
+            Ok(())
+        } else {
+            Err(Error::Limit)
+        }
     }
     fn evict_at(&mut self, index: usize) -> Result<()> {
         remove(&self.path(self.slots[index].id))?;

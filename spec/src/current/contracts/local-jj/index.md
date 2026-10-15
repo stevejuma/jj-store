@@ -2,6 +2,7 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Local Git-backed JJ collaboration](01-local-git-backed-jj-collaboration.md)

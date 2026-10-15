@@ -5,7 +5,7 @@ use std::{fs::File, path::Path};
 fn identity(dir: &File) -> Result<m::RecordDigest> {
     let info = fs::fstat(dir).map_err(|_| Error::Unavailable)?;
     let mut hash = Sha256::new_with_prefix(b"jj-store/tree-checkout-directory/v1\0");
-    hash.update((info.st_dev as u64).to_be_bytes());
+    hash.update((i128::from(info.st_dev) as u64).to_be_bytes());
     hash.update(info.st_ino.to_be_bytes());
     Ok(m::RecordDigest::new(hash.finalize().into()))
 }

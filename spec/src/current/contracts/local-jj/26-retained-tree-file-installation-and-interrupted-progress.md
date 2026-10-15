@@ -31,3 +31,11 @@ result proves only physical files installed, preserving native checkout and
 tree-state bytes. It MUST NOT acknowledge a command, update a combination or
 enable writable transport. Native metadata completion and complete durable
 after-state remain separate required gates.
+
+Public CI portability retains the same nine physical metadata scalars and
+big-endian stamp bytes on GNU/Linux and macOS. Platform-specific device, link
+count and nanosecond typedefs widen through a lossless intermediate before the
+existing u64 representation. Working-copy lock identity, inode/race checks and
+retained installation fingerprints keep their interpretation. E-CI-BOOTSTRAP-001
+records strict native lint and current working-tree regression qualification; no
+checkout or publication format changes are implied.

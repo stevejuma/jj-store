@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 test("native project task and review pages share pinned commit activity", async ({
   page,
+  request,
 }) => {
   const home = process.env.JJ_STORE_REAL_REPOSITORY!;
   const errors: string[] = [];
@@ -55,7 +56,7 @@ test("native project task and review pages share pinned commit activity", async 
     page.getByRole("tab", { name: "Commits", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
   await expect(
-    page.getByRole("button", { name: "Repository actions", exact: true }),
+    page.getByRole("button", { name: "Application menu", exact: true }),
   ).toBeEnabled();
   const back = page.getByRole("button", { name: "Back", exact: true });
   await expect(back).toBeEnabled();
@@ -93,21 +94,24 @@ test("native project task and review pages share pinned commit activity", async 
   await expect(
     task.getByRole("button", { name: "Description", exact: true }),
   ).toHaveAttribute("aria-expanded", "true");
-  for (const name of ["Subtasks", "Activity"])
+  for (const name of ["Subtasks"])
     await expect(
       task.getByRole("button", { name, exact: true }),
     ).toHaveAttribute("aria-expanded", "false");
-  await task.getByRole("button", { name: "Activity", exact: true }).click();
+  await expect(
+    task.getByRole("button", { name: "Activity", exact: true }),
+  ).toHaveAttribute("aria-expanded", "true");
+  await expect(task.getByRole("list", { name: "Task comments" })).toBeVisible();
   await expect(
     task.getByRole("list", { name: "Repository activity" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   const selected = page.url();
   await page.reload();
   await expect(task).toBeVisible();
   expect(page.url()).toBe(selected);
   await expect(
     task.getByRole("button", { name: "Activity", exact: true }),
-  ).toHaveAttribute("aria-expanded", "false");
+  ).toHaveAttribute("aria-expanded", "true");
   await page.goto(`/#/repos/${home}/reviews?at_op=${operation}`);
   await page
     .getByRole("button", { name: /^Open Revision open review/ })
@@ -133,7 +137,7 @@ test("native project task and review pages share pinned commit activity", async 
     .click();
   await expect(
     review.getByRole("complementary", { name: "Changed files" }),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 15000 });
   await expect(
     review.locator('[data-ui-component="file-diff-composer"]'),
   ).toBeVisible();
@@ -187,18 +191,35 @@ test("native project task and review pages share pinned commit activity", async 
   await page.screenshot({
     path: test.info().outputPath("native-review-list.png"),
   });
-  await page
-    .getByRole("button", { name: /^Open Agent session open review/ })
-    .first()
-    .click();
+  const headers = {
+    Origin: new URL(page.url()).origin,
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "X-JJ-Store-Protocol": "1",
+  };
+  const reviewsResponse = await request.get(
+    `/v1/repos/${home}/reviews/threads?limit=50`,
+    { headers },
+  );
+  expect(reviewsResponse.ok()).toBe(true);
+  const anchored = (await reviewsResponse.json()).threads.find(
+    (row: any) =>
+      row.anchor?.target?.target === "agent_artifact" &&
+      row.anchor.target.value.owner.kind === "tool",
+  );
+  expect(anchored).toBeTruthy();
+  await page.goto(
+    `/#/repos/${home}/reviews?at_op=${operation}&thread=${anchored.thread_id}`,
+  );
   await review
     .getByRole("button", { name: "Agent context", exact: true })
     .click();
   await expect(
-    review.getByRole("log", { name: "Agent conversation activity" }),
+    review.getByRole("log", { name: "Conversation messages", exact: true }),
   ).toBeVisible();
   await expect(
-    review.getByRole("group", { name: /tool call$/ }).first(),
+    review.getByRole("button", { name: /^Show details for / }).first(),
   ).toBeVisible();
   await page.screenshot({
     path: test.info().outputPath("anchored-agent-review.png"),

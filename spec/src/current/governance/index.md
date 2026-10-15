@@ -2,6 +2,7 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Specification governance](01-specification-governance.md)

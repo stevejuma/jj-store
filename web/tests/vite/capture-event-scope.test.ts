@@ -73,6 +73,13 @@ test("healthy capture reads only changed status, sources and configuration inter
     await changed("configuration", null);
     expect(transport.settings).toHaveBeenCalledTimes(2);
     expect(transport.sources).toHaveBeenCalledTimes(3);
+    const beforeReopen = vi.mocked(transport.status).mock.calls.length;
+    management.setActive(false);
+    await changed("capture", "status");
+    expect(transport.status).toHaveBeenCalledTimes(beforeReopen);
+    management.setActive(true);
+    await vi.advanceTimersByTimeAsync(151);
+    expect(transport.status).toHaveBeenCalledTimes(beforeReopen + 1);
   } finally {
     management.destroy();
     freshness.destroy();

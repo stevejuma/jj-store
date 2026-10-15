@@ -80,26 +80,30 @@ test("merged_native_threads_create_send_and_reload_independent_of_local_browsing
   page,
 }) => {
   await page.goto(`/#/repos/${fixture.repositoryId}/threads`);
-  await page.getByRole("button", { name: "New thread", exact: true }).click();
+  await page.getByRole("button", { name: "New Thread", exact: true }).click();
   await page
-    .getByRole("textbox", { name: "Thread name" })
+    .getByRole("textbox", { name: "Thread title" })
     .fill("Merged native thread");
   await page
-    .getByRole("button", { name: "Create thread", exact: true })
+    .getByRole("dialog", { name: "Create Thread", exact: true })
+    .getByRole("button", { name: "Create Thread", exact: true })
     .click();
   await expect(
     page
       .getByRole("heading", { name: "Merged native thread", exact: true })
       .first(),
   ).toBeVisible();
-  const composer = page.locator(".store-threads").getByRole("textbox").first();
+  const composer = page.getByRole("textbox", {
+    name: "Markdown editor",
+    exact: true,
+  });
   await composer.fill("Native message after the local browser merge");
   const committed = page.waitForResponse(
     (response) =>
       response.url().endsWith("/threads/commands") &&
       response.request().method() === "POST",
   );
-  await composer.press("Enter");
+  await page.getByRole("button", { name: "Send message", exact: true }).click();
   const receipt = await committed;
   expect(receipt.ok()).toBe(true);
   expect((await receipt.json()).status).toBe("committed");

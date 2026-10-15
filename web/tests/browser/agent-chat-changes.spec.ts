@@ -63,6 +63,8 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
     pathReads = 0;
   await page.route("**/v1/local/agents**", async (r) => {
     const url = new URL(r.request().url());
+    if (/\/agents\/(?:settings|chatgpt)$/.test(url.pathname))
+      return r.fallback();
     if (url.pathname.endsWith("/targets")) return r.fulfill({ json: [] });
     if (url.pathname.endsWith("/feedback"))
       return r.fulfill({
@@ -114,6 +116,7 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
       session.title = setup.name;
       session.avatar = setup.avatar;
       session.conversation_id = body.conversation_id;
+      session.last_sequence = 4;
       session.repository_bindings = [
         {
           repository: repo,
@@ -151,6 +154,19 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
       events = [
         {
           sequence: 1,
+          observed_at_millis: 1791323999900,
+          committed: true,
+          payload: {
+            type: "repository_turn_start",
+            requestId: body.request_id,
+            repository: repo,
+            state: "completed",
+            operation,
+            commit: base,
+          },
+        },
+        {
+          sequence: 2,
           observed_at_millis: 1791324000000,
           committed: true,
           payload: {
@@ -160,7 +176,7 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
           },
         },
         {
-          sequence: 2,
+          sequence: 3,
           observed_at_millis: 1791324003000,
           committed: true,
           payload: {
@@ -170,7 +186,7 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
           },
         },
         {
-          sequence: 3,
+          sequence: 4,
           observed_at_millis: 1791324003100,
           committed: true,
           payload: {
@@ -273,8 +289,7 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
     header.getByRole("img", { name: "Fleet helper, Idle" }),
   ).toBeVisible();
   const panel = page.getByRole("region", {
-    name: "Changes in Local acceptance",
-    exact: true,
+    name: /^Changes in Local acceptance · turn [0-9a-f]{8}$/,
   });
   await expect(
     panel.getByText("Edited 20 files", { exact: true }),
@@ -282,13 +297,13 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
   await expect(panel.getByText("+40", { exact: true })).toBeVisible();
   await expect(panel.getByText("-20", { exact: true })).toBeVisible();
   await expect(
-    panel.getByRole("button", { name: /View changes to/ }),
+    panel.getByRole("button", { name: /^src\/example-\d+\.ts$/ }),
   ).toHaveCount(3);
   await panel
     .getByRole("button", { name: "Show 17 more files", exact: true })
     .click();
   await expect(
-    panel.getByRole("button", { name: /View changes to/ }),
+    panel.getByRole("button", { name: /^src\/example-\d+\.ts$/ }),
   ).toHaveCount(20);
   await panel
     .getByRole("button", { name: "Show fewer files", exact: true })
@@ -298,6 +313,24 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
   ).toBeDisabled();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   unavailable = true;
+  status.sessions[0]!.last_sequence = 5;
+  await page.getByRole("button", { name: "Agents", exact: true }).click();
+  const refreshed = page.waitForResponse(
+    (response) => response.url().endsWith("/v1/local/agents") && response.ok(),
+  );
+  await page
+    .getByRole("button", { name: "Refresh agents", exact: true })
+    .click();
+  await refreshed;
+  await page.goBack();
+  await page
+    .getByRole("complementary", { name: "Chat", exact: true })
+    .getByRole("button", { name: "Close", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Open chat", exact: true }).focus();
+  await page
+    .getByRole("button", { name: "Open chat", exact: true })
+    .press("Enter");
   const warning = page.getByText(
     "Chat updates are unavailable. Reconnecting…",
     { exact: true },
@@ -305,14 +338,19 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
   await expect(warning).toBeVisible({ timeout: 6000 });
   await expect(
     page
-      .locator('[data-ui-component="ai-chat-composer"]')
+      .getByRole("group", { name: "Message to agents", exact: true })
       .getByText("Chat updates are unavailable. Reconnecting…", {
         exact: true,
       }),
   ).toBeVisible();
   await editor.pressSequentially("Keep my draft");
+  events.push({
+    ...events[2]!,
+    sequence: 5,
+    observed_at_millis: 1791324003200,
+  });
   unavailable = false;
-  // This legacy-feed fixture uses bounded 5/10-second outage recovery.
+  // The failed history read retains dirtiness for bounded automatic recovery.
   await expect(warning).toHaveCount(0, { timeout: 12000 });
   await expect(editor).toContainText("Keep my draft");
   expect(pathReads).toBe(1);
@@ -321,29 +359,36 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
   });
   await panel
     .getByRole("button", {
-      name: "View changes to src/example-2.ts",
+      name: "src/example-2.ts",
       exact: true,
     })
     .click();
-  const dialog = page.getByRole("dialog");
+  const inspector = page.getByRole("complementary", {
+    name: "Workspace file",
+    exact: true,
+  });
   await expect(
-    dialog.getByRole("combobox", { name: "Changed file" }),
-  ).toHaveValue("src/example-2.ts");
-  await expect(dialog.getByText("more", { exact: true })).toBeVisible();
+    inspector.getByText("src/example-2.ts", { exact: true }),
+  ).toBeVisible();
+  await expect(inspector.getByText("more", { exact: true })).toBeVisible();
   expect(
-    (await new AxeBuilder({ page }).include('[role="dialog"]').analyze())
-      .violations,
+    (
+      await new AxeBuilder({ page })
+        .include('[aria-label="Workspace file"]')
+        .analyze()
+    ).violations,
   ).toEqual([]);
-  await page.keyboard.press("Escape");
-  await expect(dialog).toHaveCount(0);
+  await inspector
+    .getByRole("button", { name: "Close workspace file", exact: true })
+    .click();
+  await expect(inspector).toHaveCount(0);
   expect(sends).toBe(1);
   expect(controls).toBe(0);
   await page.goto(`/#/agents/sessions/${status.sessions[0]!.id}`);
   await expect(
     page
       .getByRole("region", {
-        name: `Changes in ${repo.slice(0, 8)}`,
-        exact: true,
+        name: /^Changes in Local acceptance · turn [0-9a-f]{8}$/,
       })
       .getByText("Edited 20 files", { exact: true }),
   ).toBeVisible();

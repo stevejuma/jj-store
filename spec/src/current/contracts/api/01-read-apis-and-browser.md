@@ -1,5 +1,19 @@
 # Read APIs and browser
 
+E-CI-BROWSER-001 confirms JST-API-001/004 read admission, operation pinning,
+mutation receipts and native formats remain unchanged. Browser qualification
+follows the advertised application feed, waits for the final CLI operation after
+snapshot-plus-describe publication, and exercises the current explicit menu and
+parent selection. Work comment reactions invalidate the affected home's visible
+task projection; hidden projections retain dirtiness until restored.
+
+Build-time browser manifest generation enforces the existing 256-entry and
+16,384-byte inventory bounds before artifacts are admitted. CI prebuilt reads
+retain complete same-source scripts, fonts, styles, icons and Help. Grouping
+shared helpers changes artifact layout only; public DTOs, operation-pinned
+queries, authorization, cursors and event framing are unchanged. Static server
+allowlists, byte/path/symlink rejection and CSP remain independently verified.
+
 The repository unavailable-content banner presentation does not alter API read
 contracts, unavailable/error responses, repository authorization or retry
 semantics. Its collection/surface inset is local UI state; clients do not send
@@ -318,4 +332,6 @@ not initiate additional reads or broaden repository access.
 
 ## Public release integration
 
-CLI version display and Cargo package naming do not change HTTP/RPC schemas. Generated contracts and actual fixture captures remain release gates; cached build artifacts never substitute another source revision.
+CLI version display and Cargo package naming do not change HTTP/RPC schemas.
+Generated contracts and actual fixture captures remain release gates; cached
+build artifacts never substitute another source revision.

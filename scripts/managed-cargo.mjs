@@ -99,18 +99,29 @@ export async function managedCargo(
     return;
   }
   const bundle = args[0] === "desktop-bundle";
-  if (!bundle && !["build", "check", "clippy", "test", "run", "nextest", "package"].includes(args[0]))
+  if (
+    !bundle &&
+    !["build", "check", "clippy", "test", "run", "nextest", "package"].includes(
+      args[0],
+    )
+  )
     throw Error("Unsupported managed Cargo command");
   const context = await storageContext(root);
   const selection = await cargoSelection(
     context,
     bundle ? ["build", "--manifest-path", "desktop/Cargo.toml"] : args,
   );
-  if (args[0] === "nextest" && args.includes("--archive-file") && args[1] === "run") {
+  if (
+    args[0] === "nextest" &&
+    args.includes("--archive-file") &&
+    args[1] === "run"
+  ) {
     const index = selection.args.indexOf("--target-dir");
     if (index >= 0) selection.args.splice(index, 2);
     if (selection.path !== join(context.root, "target"))
-      throw Error("Archived tests require an isolated standard target root to retain compiled executable paths");
+      throw Error(
+        "Archived tests require an isolated standard target root to retain compiled executable paths",
+      );
     selection.args.push("--extract-to", context.root, "--extract-overwrite");
   }
   const registryLock = join(context.store, "registry.lock");

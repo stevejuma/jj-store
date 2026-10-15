@@ -85,6 +85,13 @@ repository, epoch and operation. Cache construction stages a complete directory
 before rename, and a local lock rejects competing cache writers. Losing the
 cache causes reconstruction from committed native objects.
 
+Ordinary graph cache admission may reclaim idle managed code-index namespaces
+under the existing shared slot and byte caps. Repository byte pressure reclaims
+only the same repository; active managed writers and ordinary reader generation
+locks remain protected. The same bounded eviction path serves either profile and
+never replaces the selected operation or changes object authority (JST-JJ-005,
+JST-API-004).
+
 Operation graph metadata retains snapshot flags, logical workspace names and
 attributes alongside timestamps, user, host and description. A corrupt cache
 profile or backend type fails explicitly; removing the derived directory allows

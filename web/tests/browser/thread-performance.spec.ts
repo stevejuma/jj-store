@@ -10,6 +10,41 @@ test("cold Threads load conversation before directory and confirmed reaction ref
 }) => {
   await page.setViewportSize({ width: 1800, height: 1000 });
   await api(page, { access: "local_trusted" });
+  // This case measures a committed reaction while the repository feed is idle.
+  // A completed mocked SSE body reconnects and recaptures unrelated data.
+  await page.addInitScript(
+    ({ repo, ready }) => {
+      const fetch = window.fetch.bind(window);
+      window.fetch = async (input, init) => {
+        const url = new URL(
+          input instanceof Request ? input.url : String(input),
+          location.href,
+        );
+        if (url.pathname !== `/v1/repos/${repo}/events`)
+          return fetch(input, init);
+        const signal =
+          init?.signal ?? (input instanceof Request ? input.signal : null);
+        const stream = new ReadableStream({
+          start(controller) {
+            controller.enqueue(
+              new TextEncoder().encode(
+                `id: v1:${repo}:${ready.cursor.epoch}:${ready.cursor.position}\nevent: ready\ndata: ${JSON.stringify(ready)}\n\n`,
+              ),
+            );
+            signal?.addEventListener(
+              "abort",
+              () => controller.error(new DOMException("Aborted", "AbortError")),
+              { once: true },
+            );
+          },
+        });
+        return new Response(stream, {
+          headers: { "content-type": "text/event-stream" },
+        });
+      };
+    },
+    { repo, ready: sample("events") },
+  );
   const f = createThreadTransport();
   const library = await f.transport.emojis();
   if (library.items.type !== "emojis") throw Error("emoji library");
@@ -92,7 +127,7 @@ test("cold Threads load conversation before directory and confirmed reaction ref
   await expect(message.getByText("Retained reply")).toBeVisible();
   await message.hover();
   await message
-    .getByRole("button", { name: "Add reaction", exact: true })
+    .getByRole("button", { name: /^Add reaction(?: to .+)?$/ })
     .click();
   await page.getByRole("button", { name: ":lapis:", exact: true }).waitFor();
   const before = new Map(counts);
@@ -110,7 +145,7 @@ test("cold Threads load conversation before directory and confirmed reaction ref
     "reaction-emojis",
     `reaction-assets/${preview}`,
   ])
-    expect(counts.get(path)).toBe(before.get(path));
+    expect(counts.get(path), path).toBe(before.get(path));
   expect(counts.get("references")).toBeUndefined();
   expect(counts.get("log")).toBeUndefined();
   await expect(log.getByText("Welcome to the channel")).toBeVisible();

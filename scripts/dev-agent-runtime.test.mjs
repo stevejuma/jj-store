@@ -9,7 +9,7 @@ async function executable(path, versions = "1|2|3", context = true) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(
     path,
-    `#!/bin/sh\nif [ "$1" = "--help" ]; then\nprintf '%s\\n' '--control-version <${versions}>'\nelse\ncat >/dev/null\nprintf '%s\\n' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-text-context", code: context ? "session_not_open" : "invalid_request" })}' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-context-only", code: context ? "session_not_open" : "invalid_request" })}'\nfi\n`,
+    `#!/bin/sh\nif [ "$1" = "--help" ]; then\nprintf '%s\\n' '--control-version <${versions}>'\nelse\nread -r first\nread -r second\nprintf '%s\\n' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-text-context", code: context ? "session_not_open" : "invalid_request" })}' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-context-only", code: context ? "session_not_open" : "invalid_request" })}'\ncat >/dev/null\nfi\n`,
     { mode: 0o755 },
   );
 }

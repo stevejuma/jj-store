@@ -71,12 +71,7 @@ impl Namespace {
             _lock: lock,
             complete: existing.is_some(),
         };
-        while let Err(error) = cache.reserve(namespace.binding.repository(), policy.max_entry_bytes)
-        {
-            if !matches!(error, Error::Limit) || !evict(&mut cache)? {
-                return Err(error);
-            }
-        }
+        cache.reserve(namespace.binding.repository(), policy.max_entry_bytes)?;
         // Content-addressed JJ segments can be checked without a second
         // repository graph projection. Damage only clears the private copy.
         if existing.is_some() {
@@ -153,14 +148,16 @@ impl Drop for Namespace {
         let _ = self.finish();
     }
 }
-fn evict(cache: &mut Cache) -> Result<bool> {
+pub(super) fn evict(cache: &mut Cache, repository: Option<m::RepositoryId>) -> Result<bool> {
     // Only inactive managed namespaces are eligible. Existing standard slots
     // were already considered by Cache::reserve under the same namespace lock.
     let mut candidates: Vec<_> = cache
         .reservations
         .iter()
         .enumerate()
-        .filter(|(_, r)| r.managed.is_some())
+        .filter(|(_, r)| {
+            r.managed.is_some() && repository.is_none_or(|repository| r.repository == repository)
+        })
         .collect();
     candidates.sort_by_key(|(_, record)| {
         fs::metadata(record.path.join(RECORD))
@@ -186,6 +183,60 @@ fn evict(cache: &mut Cache) -> Result<bool> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn policy() -> Policy {
+        Policy {
+            max_entries: 2,
+            max_entry_bytes: 16 * 1024,
+            max_repository_bytes: 32 * 1024,
+            max_total_bytes: 32 * 1024,
+            ..Default::default()
+        }
+    }
+
+    fn local(repository: u8) -> Binding {
+        Binding::Local {
+            repository: m::RepositoryId::new([repository; 16]),
+            generation: 1,
+        }
+    }
+
+    #[test]
+    fn ordinary_reservations_evict_idle_code_namespaces_at_slot_limit() {
+        let root = tempfile::tempdir().unwrap();
+        let first = Namespace::acquire(root.path(), local(31), policy()).unwrap();
+        let first_path = first.path();
+        fs::write(first_path.join("kept"), b"index bytes").unwrap();
+        drop(first);
+        let active = Namespace::acquire(root.path(), local(32), policy()).unwrap();
+        let active_path = active.path();
+        let ordinary =
+            Reservation::acquire(root.path(), m::RepositoryId::new([33; 16]), policy()).unwrap();
+        assert!(!first_path.exists());
+        assert!(active_path.exists());
+        assert!(ordinary.path().exists());
+    }
+
+    #[test]
+    fn ordinary_reservations_evict_only_same_repository_at_repository_limit() {
+        let root = tempfile::tempdir().unwrap();
+        let policy = Policy {
+            max_entries: 4,
+            max_repository_bytes: 16 * 1024,
+            ..policy()
+        };
+        let other = Namespace::acquire(root.path(), local(34), policy).unwrap();
+        let other_path = other.path();
+        drop(other);
+        let same = Namespace::acquire(root.path(), local(35), policy).unwrap();
+        let same_path = same.path();
+        drop(same);
+        let ordinary =
+            Reservation::acquire(root.path(), m::RepositoryId::new([35; 16]), policy).unwrap();
+        assert!(!same_path.exists());
+        assert!(other_path.exists());
+        assert!(ordinary.path().exists());
+    }
+
     #[test]
     fn persistent_namespaces_share_quota_resume_and_reuse_one_repository_graph() {
         let root = tempfile::tempdir().unwrap();

@@ -7,7 +7,7 @@
 | spec-validator     | Released npm range ^0.1.0; exact resolution in pnpm lock                                                                                                                                    | Canonical specification tooling                     | Bootstrap checks                                                        |
 | RustFS             | `rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f`                                                                                                     | Initial single-node contract candidate              | Single-node probes passed; other topologies unqualified                 |
 | Embedded RustFS    | crate `rustfs = 1.0.0`, crates.io checksum `ecfecedc774cfa9f40fb0b475e2605cbff858282d18e52927a57ccb5105e5dd4`, source `d47f54bfb2f39f48bd1adda334bd27e151fe85b8`, default features disabled | Managed local authoritative storage runtime         | A0 macOS ARM64 compile and persistent restart qualification in progress |
-| MongoDB Kingfisher | registry core 1.0.3/rules 1.2.1/scanner 1.4.0, default scanner features disabled, published Vectorscan 0.1.1                                                            | In-process local agent capture sanitization         | Focused redaction, fail-closed and cached-startup regressions pass      |
+| MongoDB Kingfisher | registry core 1.0.3/rules 1.2.1/scanner 1.4.0, default scanner features disabled, published Vectorscan 0.1.1                                                                                | In-process local agent capture sanitization         | Focused redaction, fail-closed and cached-startup regressions pass      |
 | Generic S3 target  | `cgr.dev/chainguard/minio@sha256:6a1d0b45c8669726bba580ced0bfa4cb9fdeed1ed636dfabd81d1577beb6937b`                                                                                          | Backup interoperability target                      | Immutable multi-platform index pinned; A3 qualification pending         |
 | Commit Cloud POC   | `4b1c77b9db365e426e49846669a1626698fd5fa6`                                                                                                                                                  | Factory/RPC shape only                              | Audit in M0                                                             |
 | WalGit             | `80e9a20b29e29aefd16a4dae6f8e274cce85cca5`                                                                                                                                                  | Publication and durable consumer design             | Audit in M0                                                             |
@@ -56,6 +56,7 @@ initial local schema uses mmap and LZ4 without optional language stemmers. Index
 files are disposable; source/WAL format identity is unaffected by this
 dependency.
 
-MongoDB Kingfisher is consumed as unmodified released Rust library crates. Agent capture uses the built-in medium-confidence rules without
-validation, network calls or Base64 decoding. The compiled Vectorscan database
-is cached in user-restricted device state; untrusted hook input stays in memory.
+MongoDB Kingfisher is consumed as unmodified released Rust library crates. Agent
+capture uses the built-in medium-confidence rules without validation, network
+calls or Base64 decoding. The compiled Vectorscan database is cached in
+user-restricted device state; untrusted hook input stays in memory.

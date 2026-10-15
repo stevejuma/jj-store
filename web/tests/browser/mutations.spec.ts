@@ -11,7 +11,7 @@ import {
 test("repository action menu unlocks the page", async ({ page }) => {
   await api(page);
   await connect(page);
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("menu")).not.toBeVisible();
   await expect
@@ -27,7 +27,7 @@ test("repository action menu unlocks the page", async ({ page }) => {
 test("repository command dialog cancel unlocks the page", async ({ page }) => {
   await api(page);
   await connect(page);
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
   await dialog.getByRole("button", { name: "Cancel" }).click();
@@ -55,7 +55,7 @@ test("repository command preview and apply retain the captured head and request"
       bodies.push(request.postDataJSON());
   });
   await connect(page);
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
   await dialog
@@ -122,7 +122,7 @@ test("unknown mutation outcome is recovered through durable status", async ({
     await route.fulfill({ json: value });
   });
   await connect(page);
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
   await dialog.getByRole("button", { name: "Preview change" }).click();

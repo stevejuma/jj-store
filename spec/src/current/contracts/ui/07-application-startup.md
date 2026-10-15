@@ -1,5 +1,25 @@
 # Application startup
 
+Loading navigation retains an accessible name for every advertised section,
+including Local service Workflows, before its owning module arrives. Each
+asynchronous graph, evolution, inspection or collaboration continuation rechecks
+its route owner before starting dependent reads or replacing navigation status.
+Leaving code for Projects cannot validate an old commit against the new view's
+absent code-operation pin.
+
+JST-UI-005's initial placeholder distinction also applies to selected-project
+repository views. Once the owning project is captured, refreshing linked
+repository summaries MUST retain the mounted project and its pending link
+dialog. Secondary directory invalidation cannot replace that captured view with
+an initial skeleton, lose its submitted identity or reopen a completed dialog.
+
+Production bundle generation retains the server's 256-file and 16-KiB manifest
+limits and fails before publication when either bound is exceeded. Released
+Design Core shared helpers form one bundle group; application views retain their
+strict separate entries and on-demand loading. All reachable fonts, scripts,
+styles and icons remain in the complete allowlist. The server's byte, path,
+symlink and CSP guards remain unchanged.
+
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
 entries render an explicit chooser, and an empty catalog explains repository
@@ -43,3 +63,7 @@ E-UI-VIEW-READINESS-001 confirms the unchanged JST-UI-005/010 loading and
 accessibility contract. Interaction fixtures await the mounted view controls;
 they retain each owned loading phase, draft and layout assertion. Classic-only
 fixtures declare that view locally without changing the Document default.
+
+The shared inbox loading announcement names the selected domain: Threads and
+agent Sessions retain distinct accessible status labels while using the same
+repository-group skeleton.

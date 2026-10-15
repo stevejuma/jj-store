@@ -3,6 +3,7 @@
 Each area owns its requirements and related behavior. Topic indexes link to
 bounded pages.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Adapters and Tantivy](adapters/index.md)

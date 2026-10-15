@@ -1,4 +1,5 @@
 import { agentsRoute } from "./agents-route-codec.js";
+import { workingCopyActions } from "./working-copy-actions.js";
 import { repositorySettingsActions } from "./repository-settings-actions.js";
 import { isStacksRoute } from "./store-stacks-navigation.js";
 import { workspaceSelectedRoute } from "./store-workspaces.js";
@@ -41,24 +42,7 @@ export function createProductionStoreActions(options: {
   invalidate: () => void;
 }): StoreController["actions"] {
   return {
-    async openWorkingFile(path) {
-      const source = options.source();
-      if (!source.workingCopy)
-        throw new Error("Working copy editing is unavailable.");
-      const file = await source.workingCopy.read(path);
-      if (source !== options.source())
-        throw new DOMException("Session changed", "AbortError");
-      return file;
-    },
-    async saveWorkingFile(selection, contents) {
-      const source = options.source();
-      if (!source.workingCopy)
-        throw new Error("Working copy editing is unavailable.");
-      const file = await source.workingCopy.save(selection, contents);
-      if (source !== options.source())
-        throw new DOMException("Session changed", "AbortError");
-      return file;
-    },
+    ...workingCopyActions(options.source),
     connect: options.connect,
     disconnect: options.disconnect,
     destroy: options.destroy,
@@ -202,7 +186,14 @@ export function createProductionStoreActions(options: {
       await options.restoreRoute();
     },
     async selectPage(page) {
-      if (page === "workflows") { options.history.push({...agentsRoute(),page:"workflows",agentsHub:false});return; }
+      if (page === "workflows") {
+        options.history.push({
+          ...agentsRoute(),
+          page: "workflows",
+          agentsHub: false,
+        });
+        return;
+      }
       options.history.page(page);
       await options.restoreRoute();
     },

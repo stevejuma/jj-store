@@ -21,6 +21,7 @@ export function projectsInitialLoading(controller: StoreController): boolean {
   if (hub.route.taskId) return detail?.task?.id !== hub.route.taskId;
   if (hub.route.projectId && detail?.project?.id !== hub.route.projectId)
     return true;
+  if (hub.route.projectId && hub.route.workTab === "repositories") return false;
   switch (hub.route.workTab) {
     case "activity":
       return !hub.activity.homes.some((home) => home.page || home.error);

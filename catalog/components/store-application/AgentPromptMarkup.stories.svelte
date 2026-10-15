@@ -77,7 +77,7 @@
       name: "Message from Maya Chen",
     });
     await expect(
-      within(message).getByText("parser", { selector: "strong", exact: true }),
+      within(message).getByText("parser", { selector: "strong" }),
     ).toBeVisible();
     await expect(message).toHaveTextContent("Keep the review anchors exact.");
     await expect(message.querySelector("pre")).toBeNull();
@@ -119,20 +119,25 @@
       );
       // Also exercise a complete keyboard path without moving the pointer out
       // of a keyboard-opened submenu during its focus transition.
-      await userEvent.click(
-        within(message).getByRole("button", { name: "More message actions" }),
-      );
+      const trigger = within(message).getByRole("button", {
+        name: "More message actions",
+      });
+      trigger.focus();
+      await waitFor(() => expect(trigger).toHaveFocus());
+      await pointer.keyboard("{Enter}");
       const keyboardCopy = await page.findByRole("menuitem", {
         name: /^Copy$/,
       });
       keyboardCopy.focus();
-      await userEvent.keyboard("{ArrowRight}");
+      await waitFor(() => expect(keyboardCopy).toHaveFocus());
+      await pointer.keyboard("{ArrowRight}");
       const keyboardMessage = await page.findByRole("menuitem", {
         name: /^Copy message$/,
       });
       await waitFor(() => expect(keyboardMessage).toBeVisible());
       keyboardMessage.focus();
-      await userEvent.keyboard("{Enter}");
+      await waitFor(() => expect(keyboardMessage).toHaveFocus());
+      await pointer.keyboard("{Enter}");
       await waitFor(() => expect(write).toHaveBeenCalledTimes(2));
       await expect(write).toHaveBeenLastCalledWith(openCodeParts);
     } finally {

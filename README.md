@@ -20,10 +20,10 @@ and remaining platform, replication, provider and desktop gates.
 
 Download the GNU/Linux or macOS archive for ARM64 or x86-64, verify
 `SHA256SUMS`, and extract it outside a checkout. Retain the bundle layout:
-`bin/jj-store`, `bin/jj-store-jj`, `bin/jj-store-rustfs`, and `web/` with matching
-Help assets. Add its `bin` directory to PATH or use explicit executable paths.
-The existing upstream `jj` command stays available. macOS command-line bundles
-are unsigned; desktop/DMG distribution has separate qualification.
+`bin/jj-store`, `bin/jj-store-jj`, `bin/jj-store-rustfs`, and `web/` with
+matching Help assets. Add its `bin` directory to PATH or use explicit executable
+paths. The existing upstream `jj` command stays available. macOS command-line
+bundles are unsigned; desktop/DMG distribution has separate qualification.
 
 Rust **1.99** or newer supports Cargo installation:
 
@@ -53,8 +53,8 @@ Set `web_root` to the matching bundle's `web/` directory. LocalTrusted uses
 literal-loopback HTTP and an owner-only Unix socket. Follow the
 [native tutorial](docs/site/getting-started/native.md) and
 [project/task tutorial](docs/site/getting-started/work.md). Existing Git-backed
-JJ folders use the separately governed companion profile; conversion support
-has its own documented limits.
+JJ folders use the separately governed companion profile; conversion support has
+its own documented limits.
 
 ## Authenticated Docker server
 
@@ -87,11 +87,12 @@ source checkouts.
 
 ## Optional agent execution
 
-Install a matching [jj-acp release](https://github.com/stevejuma/jj-acp/releases)
-and explicitly configure paired executables and admitted agents. Provider tools
-and credentials belong to the execution host. The default image includes no
-agent runner or workflow executor. Live-provider acceptance remains distinct
-from deterministic fixtures.
+Install a matching
+[jj-acp release](https://github.com/stevejuma/jj-acp/releases) and explicitly
+configure paired executables and admitted agents. Provider tools and credentials
+belong to the execution host. The default image includes no agent runner or
+workflow executor. Live-provider acceptance remains distinct from deterministic
+fixtures.
 
 ## Develop and verify
 
@@ -107,16 +108,42 @@ pnpm build:embedded-rustfs
 pnpm web:build
 ```
 
-Follow [AGENTS.md](AGENTS.md) for focused verification. CI separates ordinary
-and eight independent heavy shards, real-storage, browser and native-platform
-lanes. Relevant PRs select affected heavy tests; nightly and release runs select
-all qualification lanes. Ignored subprocess helpers run through their acceptance
-parents.
+Follow [AGENTS.md](AGENTS.md) for focused verification. PR checks run
+formatting, tooling and governance before standard Rust tests and affected web
+checks. The standard Rust cohort has 16 packages; server, CLI and capture tests,
+including their unit tests, run only during qualification. The protected
+`required` check covers the standard workflow. Main pushes and the `all_checks`
+dispatch option run all standard checks.
+
+Cargo metadata selects changed standard crates and their transitive dependents.
+The same package list controls strict Clippy, doctests and Nextest compilation.
+Shared manifests, fixtures and uncertain inputs select the complete cohort. Each
+run summarizes its source, selection and reasons. Archived inventories verify
+source, packages and disjoint test shards, including legitimate empty shards.
+Ignored acceptance children remain owned by their manual parent tests.
+
+Rust dependency caches are saved after successful PR builds in GitHub's isolated
+PR scope. Trusted main runs can save shared caches; arbitrary manual source refs
+only restore them. Workspace artifacts and successful test results are not
+cached. Job summaries report exact cache hits, restore/save and transfer times,
+compilation and test durations.
+
+[Manual qualification](.github/workflows/ci-heavy.yml) first runs all standard
+checks, then all heavy tests, native platforms, real storage and browser suites
+at one immutable source SHA. Heavy Rust uses eight shards; cold browser uses
+four isolated shards, Storybook three and served-browser tests two. Profile
+restart, real RustFS Git-cycle, static catalog and dual-engine Help have
+separate lanes. Failures block later stages and cancel matrix siblings.
+Artifacts come from the same workflow run; ignored subprocess helpers run
+through their owning acceptance parents. There are no automatic or nightly heavy
+runs. Publication requires complete qualification. See
+[release instructions](docs/releases.md) for manual dispatch and remaining
+qualification gaps.
 
 Initialize the private development fixture once with `pnpm dev:restart`, then
 use `pnpm dev:ui` for Vite HMR at `http://127.0.0.1:7460/`. After Rust edits run
-`pnpm dev:backend:build` and `pnpm dev:backend:restart`. `pnpm dev:stop` preserves
-state; `pnpm dev:reset` explicitly replaces the fixture.
+`pnpm dev:backend:build` and `pnpm dev:backend:restart`. `pnpm dev:stop`
+preserves state; `pnpm dev:reset` explicitly replaces the fixture.
 
 Inspect build storage with `pnpm dev:disk` and `pnpm dev:clean -- --dry-run`.
 Use managed Cargo commands; live targets, fixtures and recovery archives are

@@ -90,10 +90,10 @@
     "test:build-storage": "node --test scripts/build-storage.test.mjs scripts/managed-cargo.test.mjs",
     "changeset": "changeset",
     "release:version": "changeset version && node scripts/release-version.mjs && pnpm install --lockfile-only --ignore-pnpmfile && prettier --write package.json CHANGELOG.md",
-    "release:check": "node --test scripts/release.test.mjs scripts/ci.test.mjs scripts/automation-governance.test.mjs && node scripts/package-check.mjs",
+    "release:check": "node --test scripts/release.test.mjs scripts/ci*.test.mjs scripts/automation-governance.test.mjs && node scripts/package-check.mjs",
     "release:orchestrate": "node scripts/release-orchestrate.mjs",
     "release:registry": "node scripts/release-registry.mjs",
-    "test:release": "node --test scripts/release.test.mjs scripts/ci.test.mjs scripts/automation-governance.test.mjs",
+    "test:release": "node --test scripts/release.test.mjs scripts/ci*.test.mjs scripts/automation-governance.test.mjs",
     "ci:plan": "node scripts/ci-plan.mjs"
   },
   "devDependencies": {
@@ -116,7 +116,7 @@
     "@codemirror/view": "^6.43.13",
     "@emoji-mart/data": "^1.2.1",
     "@fontsource-variable/inter": "5.2.8",
-    "@lapismd/design-core": "^0.3.1",
+    "@lapismd/design-core": "^0.3.2",
     "@lapismd/mira": "~0.0.3",
     "@lapismd/spec-validator": "^0.1.4",
     "@lezer/highlight": "^1.2.5",
