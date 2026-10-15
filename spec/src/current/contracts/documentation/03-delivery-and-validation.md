@@ -277,3 +277,8 @@ transport regression from live timings with older views still connected.
 E-UI-VIEW-READINESS-001 keeps JST-DOC-003 delivery and review gates unchanged.
 The browsing guide describes stable search-header geometry and shared file-tree
 presentation; fixture proof remains distinct from release qualification.
+
+E-UI-CI-003 documents Search save-error recovery under JST-DOC-002/003: status
+refresh retains the failed draft and notification, Cancel adopts the latest
+saved configuration, and retries require an explicit save. Neither refresh nor
+notification dismissal can replay a mutation.

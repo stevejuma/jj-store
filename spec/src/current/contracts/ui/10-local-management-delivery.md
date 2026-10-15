@@ -46,6 +46,13 @@ readers; repository access and RustFS remain available. Retry follows normal
 recovery, whereas Rebuild constructs a new text-search projection from selected
 committed data. Native graph preparation remains a separate action.
 
+A failed Search save retains its scoped failure notice alongside the original
+draft revision. Successful manual or automatic status reads do not establish
+save success and MUST NOT clear that notice. Explicit cancellation of the draft
+or a successful explicit save resolves the failure. Status observation never
+retries Save or Apply. E-UI-CI-003 records the notification/refresh race under
+JST-UI-016/019; storage and HTTP formats are unchanged.
+
 Storage offers current readiness, checkpoint coverage, bounded integrity checks
 and non-destructive checkpoint publication through the running owner. Reports
 identify the captured position and any incomplete check; uncertain publication

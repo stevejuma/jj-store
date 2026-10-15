@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "UI acceptance review: queued freshness now defers during explicit reference pagination; navigation away retains freshness. History completion and prompt interactions remain unchanged.",
-      "fingerprint": "7b1091ce837df022ae2113f97e0748ccaeed1fceb71eb92ad53f41aad1e4fe4b"
+      "reason": "Search save failures remain visible through status refresh until the draft is cancelled or an explicit save succeeds.",
+      "fingerprint": "137fc87a106bc9ac81ced8a59ebbe7ccc8786d55f6fad68fe684e50df259e0de"
     }
   },
   {

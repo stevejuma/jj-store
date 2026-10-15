@@ -21,9 +21,11 @@ export function createProductionSearchSettings(options: {
   const { data } = options;
   let generation = 0;
   let draftRevision: string | undefined;
+  let saveError = "";
   function clear() {
     generation++;
     draftRevision = undefined;
+    saveError = "";
     data.searchSettings = emptySearchSettings();
   }
   function setSearchDraft(patch: Partial<SearchDraft>) {
@@ -46,6 +48,8 @@ export function createProductionSearchSettings(options: {
       draftRevision = state.value.revision;
       state.dirty = false;
       state.validation = "";
+      if (state.error === saveError) state.error = "";
+      saveError = "";
     }
   }
   async function request(action?: SearchAction | "save") {
@@ -79,7 +83,7 @@ export function createProductionSearchSettings(options: {
     const current = () =>
       options.current(ticket, source) && token === generation;
     state.changing = true;
-    state.error = "";
+    state.error = saveError;
     state.state = state.value ? "refreshing" : "loading";
     try {
       if (!source.searchSettings)
@@ -125,11 +129,19 @@ export function createProductionSearchSettings(options: {
       }
       if (data.capabilities)
         data.capabilities.search = result.effective.enabled;
+      if (action === "save") saveError = "";
+      // Observing current settings does not resolve a rejected draft save.
+      state.error = saveError;
       state.state = "ready";
     } catch (cause) {
       if (!current()) return;
       state.state = "failed";
-      state.error = `${storeErrorMessage(cause)}. Settings will retry automatically.`;
+      if (action === "save") {
+        saveError = `${storeErrorMessage(cause)}. Your draft is retained. Refresh settings before retrying.`;
+        state.error = saveError;
+      } else {
+        state.error = `${storeErrorMessage(cause)}. Settings will retry automatically.`;
+      }
     } finally {
       if (current()) state.changing = false;
     }

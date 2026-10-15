@@ -120,6 +120,11 @@ the meaning of device folder registration or workspace links.
 
 ## Search and sync
 
+If Search settings cannot be saved, the error notification and draft remain
+after **Refresh settings**. Refresh does not retry the save. For a revision
+conflict, use **Cancel changes** to adopt the latest saved configuration before
+re-entering your edits.
+
 Search can be disabled independently of repository authority. Preparing an index
 is an explicit bounded action; inspect its result rather than assuming that a
 spinner disappearing means a complete index. Sync exposes configured worker
