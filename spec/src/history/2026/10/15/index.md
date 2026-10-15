@@ -2,3 +2,9 @@
 
 - [E-CI-ACTIONLINT-001](E-CI-ACTIONLINT-001/index.md)
 - [E-CI-GOVERNANCE-001](E-CI-GOVERNANCE-001/index.md)
+<!-- generated-navigation -->
+## Pages
+
+- [E-CI-ACTIONLINT-001](E-CI-ACTIONLINT-001/index.md)
+- [E-CI-GOVERNANCE-001](E-CI-GOVERNANCE-001/index.md)
+- [E-CI-STANDARD-001](E-CI-STANDARD-001/index.md)

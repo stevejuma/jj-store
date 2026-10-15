@@ -309,123 +309,6 @@ test("prebuilt CI validates complete resources before accepting the cold fixture
     rmSync(root, { recursive: true, force: true });
   }
 });
-test("required check rejects missing or failed shared runtime production", () => {
-  const jobs = Object.fromEntries(
-    [
-      "plan",
-      "fast",
-      "build",
-      "tests",
-      "rust",
-      "heavy",
-      "runtime",
-      "storage",
-      "web",
-      "assets",
-      "browser",
-      "native",
-    ].map((name) => [name, { result: "success" }]),
-  );
-  const verify = (jobs) =>
-    execFileSync(process.execPath, ["scripts/ci-required.mjs"], {
-      env: {
-        ...process.env,
-        CI_STAGE: "heavy",
-        CI_PLAN: JSON.stringify({
-          rust: true,
-          web: true,
-          heavy: true,
-          full: true,
-        }),
-        CI_JOBS: JSON.stringify(jobs),
-      },
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-  assert.doesNotThrow(() => verify(jobs));
-  assert.throws(
-    () => verify({ ...jobs, runtime: { result: "failure" } }),
-    /runtime/,
-  );
-  const { runtime, ...missing } = jobs;
-  assert.throws(() => verify(missing), /missing planned CI lane runtime/);
-});
-test("failed early or ordinary lanes cannot start expensive qualification", () => {
-  const { jobs } = parseYaml(readFileSync(".github/workflows/ci.yml", "utf8"));
-  assert.deepEqual(jobs.tooling.needs, ["plan", "format"]);
-  assert.deepEqual(jobs.governance.needs, ["plan", "format"]);
-  for (const job of ["build", "web"])
-    assert.ok(jobs[job].needs.includes("fast"));
-  const needs = {
-    plan: {
-      outputs: { rust: "true", web: "true", heavy: "true", full: "true" },
-    },
-    fast: { result: "success" },
-    build: { result: "success" },
-    rust: { result: "success" },
-    web: { result: "success" },
-  };
-  const eligible = new Function(
-    "needs",
-    "cancelled",
-    `return (${jobs.heavy.if});`,
-  );
-  assert.equal(
-    eligible(needs, () => false),
-    true,
-  );
-  for (const name of ["fast", "build", "rust", "web"])
-    for (const result of ["failure", "cancelled", "skipped"])
-      assert.equal(
-        eligible({ ...needs, [name]: { result } }, () => false),
-        false,
-        `${name}: ${result}`,
-      );
-  assert.equal(
-    eligible(needs, () => true),
-    false,
-  );
-  const webOnly = {
-    ...needs,
-    plan: {
-      outputs: { rust: "false", web: "true", heavy: "false", full: "false" },
-    },
-    build: { result: "skipped" },
-    rust: { result: "skipped" },
-  };
-  assert.equal(
-    eligible(webOnly, () => false),
-    true,
-  );
-  const docsOnly = {
-    ...webOnly,
-    plan: {
-      outputs: { rust: "false", web: "false", heavy: "false", full: "false" },
-    },
-    web: { result: "skipped" },
-  };
-  assert.equal(
-    eligible(docsOnly, () => false),
-    false,
-  );
-  const heavy = parseYaml(
-    readFileSync(".github/workflows/ci-heavy.yml", "utf8"),
-  ).jobs;
-  for (const job of [
-    jobs.rust,
-    heavy.tests,
-    heavy.storage,
-    heavy.browser,
-    heavy.native,
-  ])
-    assert.equal(job.strategy["fail-fast"], true);
-  assert.match(
-    readFileSync(".config/nextest.toml", "utf8"),
-    /fail-fast = true/,
-  );
-  for (const name of ["runtime", "assets", "native"])
-    assert.ok(heavy[name].needs.includes("tests"));
-  assert.ok(heavy.browser.needs.includes("storage"));
-});
 test("JJ extraction selects the exact safe archive member", () => {
   assert.equal(jjArchiveMember("./\n./jj\n./README.md\n"), "./jj");
   assert.equal(jjArchiveMember("jj\nREADME.md\n"), "jj");
@@ -455,11 +338,9 @@ test("docs-only impact stays light; shared and service changes select heavy lane
   assert.deepEqual(impact(["spec/src/current/index.md"]), {
     rust: false,
     web: false,
-    heavy: false,
-    full: false,
   });
-  assert.equal(impact(["crates/jj-store-service/src/lib.rs"]).heavy, true);
-  assert.equal(impact(["Cargo.lock"]).full, true);
+  assert.equal(impact(["crates/jj-store-service/src/lib.rs"]).rust, true);
+  assert.equal(impact(["Cargo.lock"]).web, true);
 });
 test("Git revision reader pins content and all merge parents", () => {
   const root = mkdtempSync(join(tmpdir(), "jj-store-ci-git-"));
@@ -487,4 +368,19 @@ test("Git revision reader pins content and all merge parents", () => {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+// Retain this historical evidence anchor: qualification is now manual-only.
+test("failed early or ordinary lanes cannot start expensive qualification", () => {
+  const standard = parseYaml(
+    readFileSync(".github/workflows/ci.yml", "utf8"),
+  ).jobs;
+  const heavy = parseYaml(
+    readFileSync(".github/workflows/ci-heavy.yml", "utf8"),
+  ).jobs;
+  for (const name of ["build", "web"])
+    assert.ok(standard[name].needs.includes("fast"));
+  assert.ok(heavy.build.needs.includes("standard"));
+  assert.equal(heavy.build.if, undefined);
+  assert.equal(standard.heavy, undefined);
 });

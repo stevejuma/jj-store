@@ -108,17 +108,24 @@ pnpm build:embedded-rustfs
 pnpm web:build
 ```
 
-Follow [AGENTS.md](AGENTS.md) for focused verification. CI runs formatting,
-tooling and governance gates before ordinary tests and affected web checks.
-Their success admits the separate
-[heavy workflow](.github/workflows/ci-heavy.yml) with eight parallel shards,
-then native, storage, assets and browser stages. Failures stop later stages and
-cancel matrix siblings; browser jobs reuse same-run tools and bundles. Cold
-browser checks use four isolated shards, with separate profile-restart and real
-RustFS Git-cycle jobs. Storybook runs in three shards, served-browser tests in
-two, and static catalog and Help acceptance have separate jobs. Relevant PRs
-select affected tests; nightly and release runs select all qualification lanes.
-Ignored subprocess helpers run through their acceptance parents.
+Follow [AGENTS.md](AGENTS.md) for focused verification. PR checks run
+formatting, tooling and governance before standard Rust tests and affected web
+checks. The standard Rust cohort has 16 packages; server, CLI and capture tests,
+including their unit tests, run only during qualification. The protected
+`required` check covers the standard workflow. Main pushes and the `all_checks`
+dispatch option run all standard checks.
+
+[Manual qualification](.github/workflows/ci-heavy.yml) first runs all standard
+checks, then all heavy tests, native platforms, real storage and browser suites
+at one immutable source SHA. Heavy Rust uses eight shards; cold browser uses
+four isolated shards, Storybook three and served-browser tests two. Profile
+restart, real RustFS Git-cycle, static catalog and dual-engine Help have
+separate lanes. Failures block later stages and cancel matrix siblings.
+Artifacts come from the same workflow run; ignored subprocess helpers run
+through their owning acceptance parents. There are no automatic or nightly heavy
+runs. Publication requires complete qualification. See
+[release instructions](docs/releases.md) for manual dispatch and remaining
+qualification gaps.
 
 Initialize the private development fixture once with `pnpm dev:restart`, then
 use `pnpm dev:ui` for Vite HMR at `http://127.0.0.1:7460/`. After Rust edits run

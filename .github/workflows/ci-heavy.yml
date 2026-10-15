@@ -1,20 +1,16 @@
-name: Heavy qualification
+name: Manual qualification
 on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        type: string
+        default: ""
+        description: Source ref or SHA (defaults to selected workflow revision)
   workflow_call:
     inputs:
       ref:
         type: string
-        required: false
         default: ""
-      heavy:
-        type: boolean
-        required: true
-      web:
-        type: boolean
-        required: true
-      full:
-        type: boolean
-        required: true
 permissions:
   contents: read
 env:
@@ -24,6 +20,26 @@ env:
   JJ_STORE_BUILD_TOTAL_GIB: "36"
   JJ_STORE_BUILD_FREE_GIB: "6"
 jobs:
+  resolve:
+    name: Resolve qualification source
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      source: ${{ steps.source.outputs.source }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref || github.sha }}
+      - id: source
+        run: echo "source=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  standard:
+    name: Standard checks
+    needs: resolve
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ needs.resolve.outputs.source }}
+      all_checks: true
   build:
     runs-on: ubuntu-22.04
     timeout-minutes: 90
@@ -32,9 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
@@ -69,9 +83,14 @@ jobs:
           include-hidden-files: true
           retention-days: 3
           if-no-files-found: error
+    name: Build server, CLI and capture tests
+    needs:
+      - resolve
+      - standard
   tests:
-    needs: build
-    if: inputs.heavy
+    needs:
+      - resolve
+      - build
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     strategy:
@@ -93,30 +112,25 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - uses: ./.github/actions/setup
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: tests-heavy
           path: .release
       - run: node scripts/ci-tests.mjs run heavy
+    name: Server, CLI and capture tests (shard ${{ matrix.shard }}/8)
   runtime:
     needs:
+      - resolve
       - build
       - tests
-    if:
-      "!cancelled() && needs.build.result == 'success' && (needs.tests.result ==
-      'success' || !inputs.heavy)"
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
@@ -134,26 +148,28 @@ jobs:
           path: runtime/embedded-rustfs/target/debug/jj-store-rustfs
           retention-days: 3
           if-no-files-found: error
+    name: Embedded RustFS build and lint
   storage:
     needs:
+      - resolve
       - tests
       - runtime
-    if: inputs.heavy
     runs-on: ubuntu-22.04
     timeout-minutes: 90
     strategy:
       fail-fast: true
       matrix:
-        lane:
-          - embedded
-          - contracts
-          - external
+        include:
+          - lane: embedded
+            name: Embedded storage lifecycle
+          - lane: contracts
+            name: Generated API contracts
+          - lane: external
+            name: Real RustFS storage acceptance
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - uses: ./.github/actions/setup
       - if: matrix.lane == 'embedded'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
@@ -175,13 +191,12 @@ jobs:
           JJ_STORE_RUSTFS_RUNTIME:
             ${{ github.workspace
             }}/runtime/embedded-rustfs/target/debug/jj-store-rustfs
+    name: ${{ matrix.name }}
   assets:
     needs:
+      - resolve
       - build
       - tests
-    if:
-      "!cancelled() && inputs.web && needs.build.result == 'success' &&
-      (needs.tests.result == 'success' || !inputs.heavy)"
     runs-on: ubuntu-22.04
     timeout-minutes: 25
     env:
@@ -190,22 +205,16 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - uses: ./.github/actions/setup
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: linux-development-tools
           path: .release/tools
-      - run: >
-          chmod +x .release/tools/jj-store .release/tools/jj-store-jj
-          .release/tools/examples/docs_reference
-
+      - run: |
+          chmod +x .release/tools/jj-store .release/tools/jj-store-jj .release/tools/examples/docs_reference
           pnpm exec playwright install --with-deps chromium
-
           pnpm web:build
-
           pnpm build-storybook
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
@@ -219,16 +228,14 @@ jobs:
           path: storybook-static
           retention-days: 3
           if-no-files-found: error
+    name: Build web, Help and Storybook assets
   browser:
     needs:
+      - resolve
       - tests
       - assets
       - runtime
       - storage
-    if:
-      "!cancelled() && inputs.web && needs.assets.result == 'success' &&
-      needs.runtime.result == 'success' && (needs.storage.result == 'success' ||
-      !inputs.heavy)"
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     strategy:
@@ -237,26 +244,39 @@ jobs:
         include:
           - lane: storybook
             shard: 1/3
+            name: Storybook interactions (shard 1/3)
           - lane: storybook
             shard: 2/3
+            name: Storybook interactions (shard 2/3)
           - lane: storybook
             shard: 3/3
+            name: Storybook interactions (shard 3/3)
           - lane: browser
             shard: 1/2
+            name: Application browser (shard 1/2)
           - lane: browser
             shard: 2/2
+            name: Application browser (shard 2/2)
           - lane: catalog
+            name: Static catalog browser
           - lane: help
+            name: Help (Chromium and WebKit)
           - lane: cold
             shard: 1/4
+            name: Cold application browser (shard 1/4)
           - lane: cold
             shard: 2/4
+            name: Cold application browser (shard 2/4)
           - lane: cold
             shard: 3/4
+            name: Cold application browser (shard 3/4)
           - lane: cold
             shard: 4/4
+            name: Cold application browser (shard 4/4)
           - lane: cold-profile
+            name: Profile restart acceptance
           - lane: git-cycle
+            name: Real RustFS Git round-trip
     env:
       JJ_STORE_CI_PREBUILT: "1"
       JJ_STORE_REAL_SHARD: ${{ matrix.shard }}
@@ -267,9 +287,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - uses: ./.github/actions/setup
         with:
           native-dependencies: "false"
@@ -318,13 +336,12 @@ jobs:
             test-results
           retention-days: 3
           if-no-files-found: ignore
+    name: ${{ matrix.name }}
   native:
     needs:
+      - resolve
       - build
       - tests
-    if:
-      "!cancelled() && inputs.full && needs.build.result == 'success' &&
-      (needs.tests.result == 'success' || !inputs.heavy)"
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
     strategy:
@@ -340,9 +357,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
@@ -357,9 +372,11 @@ jobs:
       - run:
           pnpm dev:cargo -- test -p jj-store-read-index -p jj-collab -p
           jj-store-capture --locked -- --test-threads=1
+    name: Native compatibility (${{ matrix.target }})
   complete:
-    name: Heavy pipeline gate
+    name: Complete qualification gate
     needs:
+      - resolve
       - build
       - tests
       - runtime
@@ -367,17 +384,19 @@ jobs:
       - assets
       - browser
       - native
+      - standard
     if: always()
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.resolve.outputs.source }}
       - run: node scripts/ci-required.mjs
         env:
           CI_STAGE: heavy
-          CI_PLAN: ${{ toJSON(inputs) }}
+          CI_PLAN: "{}"
           CI_JOBS: ${{ toJSON(needs) }}
+concurrency:
+  group: qualification-${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: false

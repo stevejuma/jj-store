@@ -14,10 +14,11 @@ They also need no additional authored Changesets note. Version automation
 updates only release metadata and notes; it MUST NOT generate specification or
 evidence edits. Ordinary PRs, other Changesets branches and other bots retain
 the change-specific gates. Like lapis-notes, those gates run on PR events;
-post-merge, scheduled and explicitly dispatched qualification still run static
+post-merge and explicitly dispatched qualification still run static
 specification validation and all impact-selected tests. Generated release PRs
-dispatched explicitly because of GitHub token event restrictions retain full
-release CI. Bot exemptions never waive package, security or publication gates.
+dispatched explicitly because of GitHub token event restrictions retain all
+standard checks. Complete qualification is required before publication. Bot
+exemptions never waive package, security or publication gates.
 
 Native bundles support GNU/Linux and macOS on ARM64 and x86-64, and contain the
 server, collision-safe custom client, embedded RustFS helper, browser and Help.
@@ -63,23 +64,34 @@ with control-version-3 prepared-context admission, and the collision-safe
 substituted. Missing resources fail; existing tests and acceptance assertions
 remain required. The aggregate required check includes the runtime producer.
 
-CI first plans impact and checks formatting. Independent tooling-test and static
-governance jobs then complete before ordinary Rust builds/tests and affected web
-checks may start. Their successful or explicitly unselected outcomes admit the
-separate reusable heavy workflow. Heavy test shards remain parallel and serial
-within each runner. Runtime/native qualification and asset production wait for
-heavy tests; storage waits for the verified runtime, and browser acceptance
-waits for both storage and assets. Early failures cannot launch the later
-stages. Each stage reports its own result, and the stable protected `required`
-check validates the complete planned graph, including rejected/skipped gates.
-Shared setup omits native headers and build-only tools for early checks. The
-Ubuntu amd64 governance runner installs actionlint from its pinned official
+Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
+calls. It first plans impact and checks formatting, then runs independent
+tooling and governance jobs before standard Rust and affected web checks. The
+standard cohort excludes server, CLI and capture packages, including their unit
+tests; embedded RustFS, native-platform and browser acceptance belong to
+qualification. The stable protected `required` check validates every planned
+standard lane and rejects missing, failed, canceled or unexpectedly skipped
+prerequisites. Main pushes and `all_checks` select the complete standard cohort.
+Superseded PR runs are canceled. No automatic or scheduled standard run starts
+heavy qualification.
+
+Manual qualification resolves its source once to an immutable commit, runs all
+standard checks, then runs every existing heavy lane. Publication calls this
+same complete workflow at the selected release SHA. Heavy archived shards remain
+parallel and serial within each runner. Runtime/native qualification and assets
+wait for heavy tests; storage waits for the verified runtime, and browser
+acceptance waits for storage and assets. All qualification lanes are mandatory.
+Failure or cancellation cannot satisfy the final qualification gate. Same-run
+artifacts always use the selected source. Automatic publication stays disabled.
+
+Shared setup omits native headers and build-only tools for early and web checks.
+The Ubuntu amd64 governance runner installs actionlint from its pinned official
 Linux release archive, verifies the tracked SHA-256 before extraction and
 exposes only the verified executable directory through the runner's PATH file.
-Fail-fast applies within archived shards and to each matrix: a failing shard
-cancels its siblings, and canceled work can never satisfy a qualification gate.
-CI Storybook and Playwright runners likewise stop on their first failure; unrun
-tests cannot establish acceptance and the containing gate fails.
+Fail-fast applies within archived shards and matrices. Storybook and Playwright
+likewise stop on their first failure; unrun tests never establish acceptance.
+Job names identify the tested cohort, browser suite or native platform and
+shard.
 
 Cold browser acceptance is partitioned into four complete Playwright shards,
 each with its own disposable server/storage fixture. Profile restart acceptance

@@ -109,7 +109,7 @@ test("bot PRs retain static spec and planned test lanes", () => {
       ),
       command,
     );
-  for (const name of ["build", "rust", "heavy", "web"]) {
+  for (const name of ["build", "rust", "web"]) {
     assert.ok(ci.jobs.required.needs.includes(name), name);
     assert.doesNotMatch(
       ci.jobs[name].if ?? "",
@@ -139,7 +139,7 @@ test("bot PRs retain static spec and planned test lanes", () => {
   );
   for (const test of [
     "scripts/release.test.mjs",
-    "scripts/ci.test.mjs",
+    "scripts/ci*.test.mjs",
     "scripts/automation-governance.test.mjs",
   ])
     assert.ok(packageJson.scripts["release:check"].includes(test), test);

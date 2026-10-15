@@ -375,3 +375,9 @@ generated `changeset-release/main` PR and Dependabot-authored `dependabot/`
 dependency PRs. Changeset notes and same-change spec/evidence gates are skipped;
 static validation, ordinary PR governance and publication qualification remain.
 Version automation no longer generates spec or evidence edits.
+
+E-CI-STANDARD-001 changes JST-ARCH-005 distribution qualification as explicitly
+requested: standard PR gates remain required, while the complete heavy workflow
+runs manually and before publication. JST-GOV-003/004/011 retain same-change
+canonical updates, evidence and milestone review. Generated automation skips
+only its existing bookkeeping gates; no failed or canceled test becomes a pass.

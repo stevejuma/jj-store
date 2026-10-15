@@ -10,16 +10,18 @@ if (!["root", "heavy", "early"].includes(stage))
   throw Error("Unknown CI stage");
 const conditional =
   stage === "early"
-    ? { format: true, tooling: true, governance: true }
+    ? { plan: true, format: true, tooling: true, governance: true }
     : stage === "heavy"
       ? {
+          resolve: true,
+          standard: true,
           build: true,
-          tests: plan.heavy,
+          tests: true,
           runtime: true,
-          storage: plan.heavy,
-          assets: plan.web,
-          browser: plan.web,
-          native: plan.full,
+          storage: true,
+          assets: true,
+          browser: true,
+          native: true,
         }
       : {
           plan: true,
@@ -30,7 +32,6 @@ const conditional =
           build: plan.rust,
           rust: plan.rust,
           web: plan.web,
-          heavy: plan.heavy || plan.web || plan.full,
         };
 for (const [name, job] of Object.entries(jobs)) {
   const required = conditional[name] ?? true;

@@ -22,12 +22,7 @@ export function impact(files, full = false) {
         f,
       ),
     );
-  const heavy =
-    rust ||
-    files.some((f) =>
-      /^scripts\/(?:.*acceptance|contracts|docs\/references|rustfs)/.test(f),
-    );
-  return { rust, web, heavy, full: shared };
+  return { rust, web };
 }
 if (process.argv[1]?.endsWith("ci-plan.mjs")) {
   const files = execFileSync(
@@ -45,9 +40,15 @@ if (process.argv[1]?.endsWith("ci-plan.mjs")) {
     .filter(Boolean);
   const result = impact(
     files,
-    process.env.CI_FULL === "true" || process.env.CI_EVENT === "schedule",
+    process.env.CI_ALL_CHECKS === "true" ||
+      (process.env.CI_EVENT === "push" &&
+        process.env.CI_REF === "refs/heads/main"),
   );
   for (const [key, value] of Object.entries(result))
     appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}\n`);
+  appendFileSync(
+    process.env.GITHUB_OUTPUT,
+    `source=${process.env.JJ_STORE_CHECK_REVISION}\n`,
+  );
   console.log(JSON.stringify({ files, ...result }));
 }

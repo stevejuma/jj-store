@@ -37,10 +37,9 @@ jobs:
           git merge-base --is-ancestor HEAD origin/main
   qualify:
     needs: identity
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/ci-heavy.yml
     with:
       ref: ${{ inputs.source }}
-      full: true
   archives:
     needs: qualify
     runs-on: ${{ matrix.runner }}

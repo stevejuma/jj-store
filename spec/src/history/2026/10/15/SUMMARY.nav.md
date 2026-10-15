@@ -2,3 +2,5 @@
   {{#include E-CI-ACTIONLINT-001/SUMMARY.nav.md}}
 - [E-CI-GOVERNANCE-001](E-CI-GOVERNANCE-001/index.md)
   {{#include E-CI-GOVERNANCE-001/SUMMARY.nav.md}}
+- [E-CI-STANDARD-001](E-CI-STANDARD-001/index.md)
+  {{#include E-CI-STANDARD-001/SUMMARY.nav.md}}

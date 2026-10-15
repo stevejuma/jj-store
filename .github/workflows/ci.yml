@@ -1,27 +1,27 @@
-name: CI
+name: PR checks
 on:
   push:
     branches:
       - main
   pull_request: null
-  schedule:
-    - cron: 21 2 * * *
   workflow_dispatch:
     inputs:
-      full:
-        type: boolean
-        default: false
       ref:
         type: string
         default: ""
+      all_checks:
+        type: boolean
+        default: false
+        description: Run all standard checks
   workflow_call:
     inputs:
-      full:
-        type: boolean
-        default: false
       ref:
         type: string
         default: ""
+      all_checks:
+        type: boolean
+        default: false
+        description: Run all standard checks
 permissions:
   contents: read
 concurrency:
@@ -38,10 +38,9 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     outputs:
+      source: ${{ steps.plan.outputs.source }}
       rust: ${{ steps.plan.outputs.rust }}
       web: ${{ steps.plan.outputs.web }}
-      heavy: ${{ steps.plan.outputs.heavy }}
-      full: ${{ steps.plan.outputs.full }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -60,8 +59,10 @@ jobs:
       - id: plan
         run: node scripts/ci-plan.mjs
         env:
-          CI_FULL: ${{ inputs.full }}
+          CI_ALL_CHECKS: ${{ inputs.all_checks }}
           CI_EVENT: ${{ github.event_name }}
+          CI_REF: ${{ github.ref }}
+    name: Change selection
   format:
     needs: plan
     runs-on: ubuntu-22.04
@@ -69,9 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
           native-dependencies: "false"
@@ -80,6 +79,7 @@ jobs:
         run: |
           pnpm format:rust:check
           pnpm exec prettier --check .
+    name: Formatting
   tooling:
     needs:
       - plan
@@ -90,9 +90,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
           native-dependencies: "false"
@@ -103,6 +101,7 @@ jobs:
         run: pnpm test:spec
       - name: Release and CI tooling
         run: pnpm release:check
+    name: Tooling regression tests
   governance:
     needs:
       - plan
@@ -113,9 +112,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
           native-dependencies: "false"
@@ -131,26 +128,20 @@ jobs:
           pnpm check:ui-ownership
           pnpm spec:validate --only governance,summary,fileLimits,verification
       - name: Progress evidence gate
-        if: >-
-          github.event_name == 'pull_request' && github.head_ref !=
-          'changeset-release/main' && !(github.event.pull_request.user.login ==
-          'dependabot[bot]' &&
+        if: |-
+          github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main' && !(github.event.pull_request.user.login == 'dependabot[bot]' &&
             startsWith(github.head_ref, 'dependabot/'))
         run: pnpm check:progress
       - name: Spec-first gate
-        if: >-
-          github.event_name == 'pull_request' && github.head_ref !=
-          'changeset-release/main' && !(github.event.pull_request.user.login ==
-          'dependabot[bot]' &&
+        if: |-
+          github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main' && !(github.event.pull_request.user.login == 'dependabot[bot]' &&
             startsWith(github.head_ref, 'dependabot/'))
         run:
           pnpm spec:first --base "$JJ_STORE_CHECK_BASE" --head
           "$JJ_STORE_CHECK_REVISION"
       - name: Release intent gate
-        if: >-
-          github.event_name == 'pull_request' && github.head_ref !=
-          'changeset-release/main' && !(github.event.pull_request.user.login ==
-          'dependabot[bot]' &&
+        if: |-
+          github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main' && !(github.event.pull_request.user.login == 'dependabot[bot]' &&
             startsWith(github.head_ref, 'dependabot/'))
         run: node scripts/changeset-check.mjs
         env:
@@ -170,8 +161,10 @@ jobs:
           "$tool_dir/actionlint" -version
           echo "$tool_dir" >> "$GITHUB_PATH"
       - run: actionlint
+    name: Specification and release policy
   fast:
     needs:
+      - plan
       - format
       - tooling
       - governance
@@ -181,14 +174,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - run: node scripts/ci-required.mjs
         env:
           CI_STAGE: early
           CI_PLAN: "{}"
           CI_JOBS: ${{ toJSON(needs) }}
+    name: Preflight gate
   build:
     needs:
       - plan
@@ -201,9 +193,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
@@ -220,6 +210,7 @@ jobs:
           include-hidden-files: true
           retention-days: 3
           if-no-files-found: error
+    name: Build standard Rust tests
   rust:
     needs:
       - plan
@@ -241,15 +232,14 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: tests-ordinary
           path: .release
       - run: node scripts/ci-tests.mjs run ordinary
+    name: Standard Rust tests (shard ${{ matrix.shard }}/4)
   web:
     needs:
       - plan
@@ -259,35 +249,18 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
+        with:
+          native-dependencies: "false"
+          build-tools: "false"
       - run: |
           pnpm web:check
           pnpm catalog:check
           pnpm web:test
           pnpm catalog:test
     if: needs.plan.outputs.web == 'true'
-  heavy:
-    needs:
-      - plan
-      - fast
-      - build
-      - rust
-      - web
-    if:
-      "!cancelled() && needs.fast.result == 'success' && (needs.plan.outputs.web
-      != 'true' || needs.web.result == 'success') && (needs.plan.outputs.rust !=
-      'true' || (needs.build.result == 'success' && needs.rust.result ==
-      'success')) && (needs.plan.outputs.heavy == 'true' ||
-      needs.plan.outputs.web == 'true' || needs.plan.outputs.full == 'true')"
-    uses: ./.github/workflows/ci-heavy.yml
-    with:
-      ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
-      heavy: ${{ needs.plan.outputs.heavy == 'true' }}
-      web: ${{ needs.plan.outputs.web == 'true' }}
-      full: ${{ needs.plan.outputs.full == 'true' }}
+    name: Web type checks and unit tests
   required:
     name: required
     needs:
@@ -299,16 +272,13 @@ jobs:
       - build
       - rust
       - web
-      - heavy
     if: always()
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
+          ref: ${{ needs.plan.outputs.source }}
       - run: node scripts/ci-required.mjs
         env:
           CI_PLAN: ${{ toJSON(needs.plan.outputs) }}

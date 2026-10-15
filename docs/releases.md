@@ -28,10 +28,35 @@ Generated `changeset-release/main` PRs and Dependabot-authored `dependabot/` PRs
 do not need spec, milestone, evidence or additional Changesets edits. The
 Changesets exemption follows lapis-notes; jj-store extends it to Dependabot.
 Static spec validation, formatting, package checks and all impact-selected test
-lanes still run. The release workflow explicitly dispatches full CI for Version
-Packages; version automation does not generate spec evidence. Ordinary PRs
-retain the spec and evidence requirements, and publication always requires
-qualification.
+lanes still run. The release workflow explicitly dispatches all standard checks
+for Version Packages; version automation does not generate spec evidence.
+Ordinary PRs retain the spec and evidence requirements, and publication always
+requires qualification.
+
+## CI and manual qualification
+
+PRs run the standard Rust cohort and affected web checks after formatting,
+governance and tooling succeed. Server, CLI and capture package tests (including
+unit tests), embedded RustFS, native platforms and browser acceptance run in the
+manual qualification workflow. Main pushes always run all standard checks.
+
+Once these workflows are available on the default branch, run:
+
+```sh
+gh workflow run ci.yml --ref main -f all_checks=true
+gh workflow run ci-heavy.yml --ref main -f ref=COMMIT_SHA
+```
+
+Omitting `ref` qualifies the workflow's selected revision. Qualification pins
+that revision once, runs all standard checks, then every heavy lane. No subset
+switches or scheduled heavy runs are enabled. The separate `publish-release.yml`
+workflow calls this complete qualification at its exact source SHA before any
+publication. Changesets release orchestration remains disabled until initial
+qualification is ready; running qualification alone does not publish anything.
+
+Run 38700726811 passed standard checks at `199969c8` but failed heavy shard 5;
+its siblings were canceled and later qualification lanes did not run. This
+workflow split does not qualify those gaps or promote M30 to Done.
 
 ## Initial Cargo bootstrap
 
