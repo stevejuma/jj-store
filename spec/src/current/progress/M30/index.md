@@ -1,8 +1,8 @@
 # M30 public release
 
-| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                                       | Evidence                                                                                                                                                                                                       |
-| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Complete release infrastructure qualification; bot governance exemptions verified | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001 |
+| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                                       | Evidence                                                                                                                                                                                                                           |
+| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Complete release infrastructure qualification; bot governance exemptions verified | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001 |
 
 E-AUTOMATION-GOVERNANCE-001 qualifies the generated release/dependency PR
 exception. Static spec checks, all planned tests and publication gates remain;
@@ -29,6 +29,11 @@ publication gate is promoted. E-CI-GOVERNANCE-001 qualifies the Git/JJ
 evidence-baseline repair with local CI-context checks and
 missing-evidence/merge-parent regressions. M30 remains In progress; hosted
 qualification and the remaining release gates are separate.
+
+E-CI-ACTIONLINT-001 qualifies the pinned Linux workflow-linter installation from
+its official release archive. The hosted progress and spec-first checks passed
+before exposing this independent installer failure. M30 remains In progress with
+the same release and merge gates.
 
 <!-- generated-navigation -->
 

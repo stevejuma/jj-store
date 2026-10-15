@@ -72,7 +72,10 @@ heavy tests; storage waits for the verified runtime, and browser acceptance
 waits for both storage and assets. Early failures cannot launch the later
 stages. Each stage reports its own result, and the stable protected `required`
 check validates the complete planned graph, including rejected/skipped gates.
-Shared setup omits native headers and build-only tools for early checks.
+Shared setup omits native headers and build-only tools for early checks. The
+Ubuntu amd64 governance runner installs actionlint from its pinned official
+Linux release archive, verifies the tracked SHA-256 before extraction and
+exposes only the verified executable directory through the runner's PATH file.
 Fail-fast applies within archived shards and to each matrix: a failing shard
 cancels its siblings, and canceled work can never satisfy a qualification gate.
 CI Storybook and Playwright runners likewise stop on their first failure; unrun
