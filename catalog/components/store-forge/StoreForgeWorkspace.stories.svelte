@@ -149,6 +149,17 @@
     await expect(getComputedStyle(panelHeader).backgroundColor).toBe(
       getComputedStyle(stackHeader).backgroundColor,
     );
+    const edit = within(panelHeader).getByRole("button", {
+      name: "Edit details",
+    });
+    await expect(edit.textContent?.trim()).toBe("");
+    await expect(edit.querySelector("svg")).toBeInTheDocument();
+    await expect(
+      within(panel).getAllByRole("button", { name: "Edit details" }),
+    ).toHaveLength(1);
+    await expect(
+      within(panel).queryByText("Description", { exact: true }),
+    ).not.toBeInTheDocument();
     const close = within(panelHeader).getByRole("button", {
       name: "Close pull requests",
     });
@@ -206,6 +217,14 @@
     const preview = within(panel).getByRole("region", {
       name: "Stack submission preview",
     });
+    await expect(
+      within(panel.querySelector("header")!).queryByRole("button", {
+        name: "Edit details",
+      }),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(preview).queryByText("Description", { exact: true }),
+    ).not.toBeInTheDocument();
     await expect(preview).toHaveTextContent("feature/model → main");
     await expect(preview).toHaveTextContent("feature/api → feature/model");
     const composer = within(preview).getByRole("group", {

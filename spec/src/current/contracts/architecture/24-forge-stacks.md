@@ -42,12 +42,15 @@ row of the topmost bookmark card and in the stack column kebab menu, with shared
 pending/conflict guards and the same preview flow; lower bookmark cards omit it.
 The column header has no separate submission button. Opening a PR shows its
 rendered title, branch relationship, state and Markdown description; edit fields
-appear only through an explicit action. Connection/session controls and
-inventory navigation stay in the column menu. Checks load automatically for the
-selected remote revision and appear immediately below the description, with an
-aggregate status and individually labelled runs. Late responses for earlier
-selections must not replace the current checks; missing, incomplete, unsupported
-or stale checks must never imply success. CI actions remain capability-gated and
+appear through an accessible icon-only pencil action in the PR column header,
+with a tooltip and pressed state. Editing remains capability/pending-gated. The
+body omits the Edit details button and redundant Description label; its composer
+retains the preview action and drafts. Connection/session controls and inventory
+navigation stay in the column menu. Checks load automatically for the selected
+remote revision and appear immediately below the description, with an aggregate
+status and individually labelled runs. Late responses for earlier selections
+must not replace the current checks; missing, incomplete, unsupported or stale
+checks must never imply success. CI actions remain capability-gated and
 secondary to the status rows, with merge controls after the checks. The PR panel
 uses the shared column header height, background and title primitives with an
 accessible icon-only close action. Descriptions render safe Markdown by default

@@ -20,6 +20,8 @@
   {{#include E-FORGE-BUTTONS-001/SUMMARY.nav.md}}
 - [E-FORGE-DETAILS-001](E-FORGE-DETAILS-001/index.md)
   {{#include E-FORGE-DETAILS-001/SUMMARY.nav.md}}
+- [E-FORGE-EDIT-001](E-FORGE-EDIT-001/index.md)
+  {{#include E-FORGE-EDIT-001/SUMMARY.nav.md}}
 - [E-FORGE-PANEL-001](E-FORGE-PANEL-001/index.md)
   {{#include E-FORGE-PANEL-001/SUMMARY.nav.md}}
 - [E-FORGE-STACKS-001](E-FORGE-STACKS-001/index.md)

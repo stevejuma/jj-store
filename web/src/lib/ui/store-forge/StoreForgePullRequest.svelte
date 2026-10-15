@@ -7,11 +7,16 @@
   import StoreForgeChecks from "./StoreForgeChecks.svelte";
   import StoreForgeDescription from "./StoreForgeDescription.svelte";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
-  let { controller }: { controller: ForgeController } = $props();
+  let {
+    controller,
+    editing = $bindable(false),
+  }: {
+    controller: ForgeController;
+    editing?: boolean;
+  } = $props();
   const blocked = $derived(controller.busy || Boolean(controller.pending));
   import { Input } from "@lapismd/design-core/shadcn/input";
   let method = $state("squash");
-  let editing = $state(false);
   const methods = $derived(controller.data?.capabilities.merge_methods ?? []);
   const methodLabel = (value: string) =>
     value === "merge" ? "Merge" : value === "squash" ? "Squash" : "Rebase";
@@ -64,7 +69,7 @@
         }
       }
       bind:editing
-      editLabel="Edit details"
+      showEditButton={false}
       disabled={blocked || !controller.data.capabilities.edit}
     />
     {#if controller.draftDirty || editing}

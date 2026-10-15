@@ -14,12 +14,14 @@
   import "../../web/src/lib/ui/store-application/store-application.css";
   let {
     failure = false,
+    canEdit = true,
     failureChecks = false,
     staleChecks = false,
     provider = "github",
     mergeMethods = ["merge", "squash", "rebase"],
   }: {
     failure?: boolean;
+    canEdit?: boolean;
     failureChecks?: boolean;
     staleChecks?: boolean;
     provider?: ForgeConnection["provider"];
@@ -69,7 +71,7 @@
     notice: null,
     connection,
     capabilities: {
-      edit: true,
+      edit: canEdit,
       draft: true,
       merge: true,
       auto_merge: false,

@@ -94,7 +94,21 @@
     await expect(
       canvas.getByRole("link", { name: "review guidance" }),
     ).toHaveAttribute("href", "https://example.com/review");
-    await userEvent.click(canvas.getByRole("button", { name: "Edit details" }));
+    const edit = canvas.getByRole("button", { name: "Edit details" });
+    await expect(edit.closest("header")).toHaveAttribute(
+      "data-ui-part",
+      "column-header",
+    );
+    await expect(edit.textContent?.trim()).toBe("");
+    await expect(edit.querySelector("svg")).toBeInTheDocument();
+    await expect(
+      canvas.queryByText("Description", { exact: true }),
+    ).not.toBeInTheDocument();
+    await expect(edit).toHaveAttribute("aria-pressed", "false");
+    edit.focus();
+    await userEvent.keyboard("{Enter}");
+    await expect(edit).toHaveAttribute("aria-pressed", "true");
+    await expect(canvas.getByRole("textbox", { name: "Title" })).toBeVisible();
     const composer = canvas.getByRole("group", { name: "PR description" });
     await expect(
       within(composer).getByRole("textbox", { name: "Markdown editor" }),
@@ -105,6 +119,7 @@
     await expect(
       canvas.getByRole("heading", { name: "Review summary" }),
     ).toBeVisible();
+    await expect(edit).toHaveAttribute("aria-pressed", "false");
     await userEvent.click(
       canvas.getByRole("button", { name: "Merge method: Squash" }),
     );
@@ -237,6 +252,30 @@
     await expect(checks).toHaveTextContent("Observed revision ffffffff");
     await expect(
       within(checks).queryByRole("heading", { name: "Checks passed" }),
+    ).not.toBeInTheDocument();
+  }}
+/>
+
+<Story
+  name="Editing unavailable keeps the header pencil disabled"
+  args={{ canEdit: false }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const edit = await canvas.findByRole("button", { name: "Edit details" });
+    await expect(edit.closest("header")).toHaveAttribute(
+      "data-ui-part",
+      "column-header",
+    );
+    await expect(edit).toBeDisabled();
+    await expect(edit.textContent?.trim()).toBe("");
+    await expect(
+      canvas.getAllByRole("button", { name: "Edit details" }),
+    ).toHaveLength(1);
+    await expect(
+      canvas.queryByRole("textbox", { name: "Title" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByText("Description", { exact: true }),
     ).not.toBeInTheDocument();
   }}
 />

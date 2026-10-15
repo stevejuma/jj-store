@@ -319,7 +319,10 @@ failures belong to application notifications; stale/unknown operation status may
 remain beside the controls. Native repository forge commands are unavailable.
 
 PR column headers match adjacent stack columns, including height and background,
-and use an icon-only close action with an accessible name and tooltip. PR
+and use an icon-only close action with an accessible name and tooltip. Editing
+uses an icon-only pencil action in the PR column header, with an Edit details
+accessible name/tooltip and pressed state, retaining capability and pending
+guards. The body omits Edit details and the redundant Description label. PR
 descriptions render Markdown with managed stack links; editing and submission
 use the shared chat composer with a retained preview toggle. Merge methods use
 the released shadcn dropdown rather than a native select.

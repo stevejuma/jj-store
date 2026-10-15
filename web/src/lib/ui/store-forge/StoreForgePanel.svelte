@@ -4,6 +4,7 @@
   import { Input } from "@lapismd/design-core/shadcn/input";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
+  import Pencil from "@lucide/svelte/icons/pencil";
   import X from "@lucide/svelte/icons/x";
   import StoreForgeIcon from "./StoreForgeIcon.svelte";
   import StoreForgePanelActions from "./StoreForgePanelActions.svelte";
@@ -19,6 +20,7 @@
   onMount(() => {
     controller.notifications = notifications.context;
   });
+  let editing = $state(false);
   const blocked = $derived(controller.busy || Boolean(controller.pending));
 </script>
 
@@ -31,8 +33,27 @@
     <StoreForgeIcon provider={controller.data?.connection?.provider} />
     <ColumnCanvas.Title>Pull requests</ColumnCanvas.Title>
     <ColumnCanvas.HeaderActions>
-      <StoreForgePanelActions {controller} />
       <Tooltip.Provider>
+        {#if controller.selected && controller.data}
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              {#snippet child({ props })}
+                <Button
+                  {...props}
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Edit details"
+                  aria-pressed={editing}
+                  disabled={blocked || !controller.data?.capabilities.edit}
+                  onclick={() => (editing = !editing)}
+                  ><Pencil aria-hidden="true" /></Button
+                >
+              {/snippet}
+            </Tooltip.Trigger>
+            <Tooltip.Content>Edit details</Tooltip.Content>
+          </Tooltip.Root>
+        {/if}
+        <StoreForgePanelActions {controller} />
         <Tooltip.Root>
           <Tooltip.Trigger>
             {#snippet child({ props })}
@@ -128,7 +149,7 @@
           >
         </section>
       {/if}
-      <StoreForgePullRequest {controller} />
+      <StoreForgePullRequest {controller} bind:editing />
       {#if !controller.selected && !controller.plan}<nav
           aria-label="Repository pull requests"
         >

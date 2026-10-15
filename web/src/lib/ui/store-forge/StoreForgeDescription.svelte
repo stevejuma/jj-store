@@ -10,26 +10,29 @@
     disabled = false,
     label = "PR description",
     editLabel = "Edit description",
+    showEditButton = true,
   }: {
     value?: string;
     editing?: boolean;
     disabled?: boolean;
     label?: string;
     editLabel?: string;
+    showEditButton?: boolean;
   } = $props();
 </script>
 
 <Field.Field>
-  <div class="forge-panel__toolbar">
-    <Field.Title>Description</Field.Title>
-    <Button
-      variant="ghost"
-      size="sm"
-      disabled={disabled && !editing}
-      onclick={() => (editing = !editing)}
-      >{editing ? "Preview description" : editLabel}</Button
-    >
-  </div>
+  {#if editing || showEditButton}
+    <div class="forge-panel__toolbar">
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled={disabled && !editing}
+        onclick={() => (editing = !editing)}
+        >{editing ? "Preview description" : editLabel}</Button
+      >
+    </div>
+  {/if}
   {#if editing}
     <CommunityChatComposer
       mode="form"

@@ -149,3 +149,8 @@ kebab-menu entry alter presentation only. Both submission entries use the same
 preview and exact pending/conflict guards. PR selection, submission preview, CI
 observation and exact pending actions are unchanged; clicking the control cannot
 also select the containing branch row.
+
+E-FORGE-EDIT-001 confirms JST-API-001 unchanged: the column header pencil and
+label-free description presentation share the existing title/composer editing
+state, authored drafts, capability gates and exact pending actions. Save,
+expected-body guards and transport formats are unchanged.
