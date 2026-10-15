@@ -4,7 +4,7 @@
   import * as Field from "@lapismd/design-core/shadcn/field";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
-  import PanelsTopLeft from "@lucide/svelte/icons/panels-top-left";
+  import PictureInPicture2 from "@lucide/svelte/icons/picture-in-picture-2";
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import StoreDetachablePanel from "../store-panels/StoreDetachablePanel.svelte";
   import StoreForgeDescription from "./StoreForgeDescription.svelte";
@@ -66,7 +66,7 @@
                   title={floating ? "Dock PR composer" : "Float PR composer"}
                   onclick={toggle}
                 >
-                  <PanelsTopLeft aria-hidden="true" />
+                  <PictureInPicture2 aria-hidden="true" />
                 </Button>
               {/snippet}
             </StoreForgeDescription>

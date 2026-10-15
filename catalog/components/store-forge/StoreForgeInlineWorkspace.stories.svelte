@@ -155,7 +155,7 @@
       name: "Collapse pull request #42",
     });
     const summary = toggle.closest<HTMLElement>("[data-forge-summary]")!;
-    await expect(summary.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+    await expect(summary.getBoundingClientRect().bottom).toBeLessThan(
       within(details)
         .getByRole("region", { name: "Selected file diff" })
         .getBoundingClientRect().top,
@@ -189,12 +189,27 @@
     await expect(
       within(floating).queryByRole("region", { name: "CI checks" }),
     ).not.toBeInTheDocument();
+    const fileDiff = within(details).getByRole("region", {
+      name: "Selected file diff",
+    });
+    const sections = details.querySelector<HTMLElement>(
+      ".stack-workspace-details__sections",
+    )!;
+    await expect(
+      Math.abs(
+        fileDiff.getBoundingClientRect().top -
+          sections.getBoundingClientRect().top,
+      ),
+    ).toBeLessThanOrEqual(1);
     await userEvent.click(
       within(floating).getByRole("button", { name: "Redock floating pane" }),
     );
     await expect(
       within(details).getByRole("heading", { name: "Expose repository API" }),
     ).toBeVisible();
+    await expect(fileDiff.getBoundingClientRect().top).toBeGreaterThan(
+      summary.getBoundingClientRect().bottom,
+    );
     await userEvent.click(
       within(details).getByRole("button", { name: "Close file diff" }),
     );

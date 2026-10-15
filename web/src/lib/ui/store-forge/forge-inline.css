@@ -1,8 +1,18 @@
 .forge-inline {
+  margin-block-end: 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--ui-column-canvas-radius, var(--radius));
   background: var(--background);
   overflow: hidden;
+}
+.forge-inline--floating {
+  margin-block-end: 0;
+  border: 0;
+  border-radius: 0;
+}
+.forge-inline--floating .forge-inline__summary {
+  background: var(--background);
+  border-block-end: 1px solid var(--border);
 }
 .forge-inline__summary {
   display: flex;

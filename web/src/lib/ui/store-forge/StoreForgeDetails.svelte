@@ -6,7 +6,7 @@
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import ChevronRight from "@lucide/svelte/icons/chevron-right";
   import Pencil from "@lucide/svelte/icons/pencil";
-  import PanelsTopLeft from "@lucide/svelte/icons/panels-top-left";
+  import PictureInPicture2 from "@lucide/svelte/icons/picture-in-picture-2";
   import ListChecks from "@lucide/svelte/icons/list-checks";
   import StoreForgeIcon from "./StoreForgeIcon.svelte";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
@@ -49,6 +49,7 @@
       {#snippet children({ floating, toggle })}
         <section
           class="forge-inline"
+          class:forge-inline--floating={floating}
           data-forge-summary
           aria-label={`Pull request for ${branch}`}
         >
@@ -129,7 +130,7 @@
                           onclick={() => {
                             if (!expanded) expand(true);
                             toggle();
-                          }}><PanelsTopLeft aria-hidden="true" /></Button
+                          }}><PictureInPicture2 aria-hidden="true" /></Button
                         >
                       {/snippet}</Tooltip.Trigger
                     ><Tooltip.Content
