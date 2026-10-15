@@ -335,10 +335,10 @@ test("CI pins JJ for each qualified platform and rejects corrupt bytes", () => {
   );
 });
 test("docs-only impact stays light; shared and service changes select heavy lanes", () => {
-  assert.deepEqual(impact(["spec/src/current/index.md"]), {
-    rust: false,
-    web: false,
-  });
+  const docs = impact(["spec/src/current/index.md"]);
+  assert.equal(docs.rust, false);
+  assert.equal(docs.web, false);
+  assert.deepEqual(docs.packages, []);
   assert.equal(impact(["crates/jj-store-service/src/lib.rs"]).rust, true);
   assert.equal(impact(["Cargo.lock"]).web, true);
 });

@@ -1,11 +1,17 @@
+const rawPlan = JSON.parse(process.env.CI_PLAN);
 const plan = Object.fromEntries(
-  Object.entries(JSON.parse(process.env.CI_PLAN)).map(([key, value]) => [
+  Object.entries(rawPlan).map(([key, value]) => [
     key,
     value === true || value === "true",
   ]),
 );
 const jobs = JSON.parse(process.env.CI_JOBS);
 const stage = process.env.CI_STAGE || "root";
+if (stage === "root")
+  for (const field of ["rust", "web"]) {
+    if (![true, false, "true", "false"].includes(rawPlan[field]))
+      throw Error(`Missing or invalid planned selection ${field}`);
+  }
 if (!["root", "heavy", "early"].includes(stage))
   throw Error("Unknown CI stage");
 const conditional =

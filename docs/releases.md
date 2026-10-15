@@ -38,7 +38,20 @@ requires qualification.
 PRs run the standard Rust cohort and affected web checks after formatting,
 governance and tooling succeed. Server, CLI and capture package tests (including
 unit tests), embedded RustFS, native platforms and browser acceptance run in the
-manual qualification workflow. Main pushes always run all standard checks.
+manual qualification workflow. Main pushes always run all standard checks. Cargo
+metadata selects changed standard packages plus reverse dependencies, including
+development, optional, target-specific and build edges. Manifests, lockfiles, CI
+configuration, fixtures and unknown inputs broaden selection. Clippy, doctests
+and archives use the same selected packages. The plan summary lists excluded
+manual packages and selection reasons.
+
+Archives carry source/package/test inventories and a digest. Partition coverage
+must be complete and disjoint; only verified empty partitions may run no tests.
+Dependency caches remain separate by platform, toolchain, profile and cohort.
+Successful PR builds populate their isolated PR cache; shared-main writes
+require both a main workflow context and source verified on canonical main.
+Arbitrary qualification refs restore only. Summaries record cache matches and
+job/step timings; a restored cache never substitutes for tests.
 
 Once these workflows are available on the default branch, run:
 

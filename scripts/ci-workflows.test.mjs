@@ -114,6 +114,10 @@ test("manual and release qualification pin one source and require every lane", (
     readFileSync(".github/workflows/publish-release.yml", "utf8"),
   );
   assert.equal(release.jobs.qualify.uses, "./.github/workflows/ci-heavy.yml");
+  assert.deepEqual(release.jobs.qualify.permissions, {
+    contents: "read",
+    actions: "read",
+  });
   assert.deepEqual(release.jobs.qualify.with, { ref: "${{ inputs.source }}" });
   assert.equal(release.jobs.archives.needs, "qualify");
   assert.match(
@@ -180,6 +184,7 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
       assert.throws(() => verify(stage, { rust: true, web: true }, missing));
     }
     if (stage === "root") {
+      assert.throws(() => verify(stage, {}, jobs), /planned selection/);
       const light = {
         ...jobs,
         build: { result: "skipped" },

@@ -13,6 +13,7 @@ on:
         default: ""
 permissions:
   contents: read
+  actions: read
 env:
   CARGO_BUILD_JOBS: "2"
   CARGO_INCREMENTAL: "0"
@@ -26,13 +27,14 @@ jobs:
     timeout-minutes: 5
     outputs:
       source: ${{ steps.source.outputs.source }}
+      cache_write: ${{ steps.source.outputs.cache_write }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
           ref: ${{ inputs.ref || github.sha }}
       - id: source
-        run: echo "source=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        run: node scripts/ci-source.mjs
   standard:
     name: Standard checks
     needs: resolve
@@ -53,15 +55,21 @@ jobs:
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
           workspaces: . -> target
-          save-if:
-            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
-            }}
-          key: heavy-1.99
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: heavy-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
       - run: node scripts/ci-build.mjs heavy
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: tests-heavy
-          path: .release/tests-heavy.tar.zst
+          path: .release/tests-heavy.tar.zst*
           include-hidden-files: true
           retention-days: 3
           if-no-files-found: error
@@ -135,10 +143,16 @@ jobs:
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
           workspaces: runtime/embedded-rustfs -> target
-          save-if:
-            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
-            }}
-          key: embedded-runtime-1.99
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: embedded-runtime-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
       - run: |
           pnpm build:embedded-rustfs
           pnpm check:embedded-rustfs
@@ -181,10 +195,16 @@ jobs:
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
           workspaces: . -> target
-          save-if:
-            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
-            }}
-          key: storage-${{ matrix.lane }}
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: storage-${{ matrix.lane }}-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
       - run: node scripts/ci-storage.mjs ${{ matrix.lane }}
         env:
           JJ_STORE_CI_PREBUILT: "1"
@@ -361,10 +381,16 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
-          save-if:
-            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
-            }}
-          key: native-${{ matrix.target }}
+          save-if: ${{ needs.resolve.outputs.cache_write == 'true' }}
+          key: native-${{ matrix.target }}-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        id: rust-cache
+        name: Restore Rust dependency cache
+      - name: Report Rust cache match
+        run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
+        env:
+          CACHE_HIT: ${{ steps.rust-cache.outputs.cache-hit }}
       - name: Verify native compiler target
         run: |
           rustc -vV | grep -Fx 'host: ${{ matrix.target }}'
@@ -392,6 +418,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ needs.resolve.outputs.source }}
+      - name: Report cache and execution timings
+        run: node scripts/ci-report.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
       - run: node scripts/ci-required.mjs
         env:
           CI_STAGE: heavy

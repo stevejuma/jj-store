@@ -1,3 +1,5 @@
+import { readInventory } from "./ci-inventory.mjs";
+import { selectedPackages } from "./ci-packages.mjs";
 import { execFileSync } from "node:child_process";
 import { cargoCommand } from "./managed-cargo.mjs";
 const pnpm = (...args) => execFileSync("pnpm", args, { stdio: "inherit" });
@@ -41,6 +43,11 @@ else if (lane === "browser" && prebuilt) {
   }
   pnpm("web:test:real");
 } else if (lane === "git-cycle") {
+  await readInventory(
+    ".release/tests-heavy.tar.zst",
+    "heavy",
+    selectedPackages("heavy"),
+  );
   process.env.JJ_STORE_RUSTFS_RUNTIME = process.env.JJ_STORE_DEV_RUSTFS_RUNTIME;
   execFileSync(
     ...cargoCommand([

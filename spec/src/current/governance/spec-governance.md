@@ -381,3 +381,10 @@ requested: standard PR gates remain required, while the complete heavy workflow
 runs manually and before publication. JST-GOV-003/004/011 retain same-change
 canonical updates, evidence and milestone review. Generated automation skips
 only its existing bookkeeping gates; no failed or canceled test becomes a pass.
+
+E-CI-AFFECTED-001 adds conservative Cargo-based standard selection and
+source/package/inventory validation to JST-ARCH-005. Invalid graphs, incomplete
+partitions and unexpected skips fail closed. PR caches stay in GitHub's isolated
+scope; arbitrary qualification sources cannot write shared-main caches.
+JST-GOV-003/004/011 retain same-change evidence and M30 review. No product API,
+publication authority, generated automation exception or heavy gate is changed.

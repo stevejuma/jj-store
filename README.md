@@ -115,6 +115,19 @@ including their unit tests, run only during qualification. The protected
 `required` check covers the standard workflow. Main pushes and the `all_checks`
 dispatch option run all standard checks.
 
+Cargo metadata selects changed standard crates and their transitive dependents.
+The same package list controls strict Clippy, doctests and Nextest compilation.
+Shared manifests, fixtures and uncertain inputs select the complete cohort. Each
+run summarizes its source, selection and reasons. Archived inventories verify
+source, packages and disjoint test shards, including legitimate empty shards.
+Ignored acceptance children remain owned by their manual parent tests.
+
+Rust dependency caches are saved after successful PR builds in GitHub's isolated
+PR scope. Trusted main runs can save shared caches; arbitrary manual source refs
+only restore them. Workspace artifacts and successful test results are not
+cached. Job summaries report exact cache hits, restore/save and transfer times,
+compilation and test durations.
+
 [Manual qualification](.github/workflows/ci-heavy.yml) first runs all standard
 checks, then all heavy tests, native platforms, real storage and browser suites
 at one immutable source SHA. Heavy Rust uses eight shards; cold browser uses

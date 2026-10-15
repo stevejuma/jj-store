@@ -112,3 +112,19 @@ Browser runners reuse prepared artifacts without native build headers or general
 build tools; only the archived Git parent installs the test-archive tooling.
 Every browser lane installs Chromium, while only dual-engine Help installs
 WebKit. Unused browser engines and build tools are not downloaded per shard.
+
+Standard Rust impact uses Cargo metadata and reverse workspace dependencies,
+including build/dev/optional/target-specific edges and shared source fixtures.
+One validated package list controls Clippy, doctests and archived tests. Shared
+manifests, build/configuration inputs and unknown ownership select the complete
+standard cohort; invalid metadata fails planning. Main always runs all standard
+checks. Plans disclose selected/excluded packages and reasons. Archive
+inventories pin source, packages and test identities; verified empty partitions
+are explicit.
+
+Dependency caches may be saved by successful PR jobs within GitHub's isolated PR
+scope. Shared-main cache writes require a main workflow context and a selected
+source verified on canonical main; arbitrary qualification refs are read-only.
+Cache identity includes platform, toolchain, profile and cohort. No cache hit
+proves a test pass. Summaries retain selection, cache and job/step timing
+evidence.

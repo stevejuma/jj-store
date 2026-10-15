@@ -36,6 +36,9 @@ jobs:
           node --input-type=module -e 'import {version,validateTag} from "./scripts/release-metadata.mjs"; if (!/^[a-f0-9]{40}$/.test(process.env.RELEASE_SOURCE)) throw Error("invalid source"); validateTag(process.env.RELEASE_TAG,version());'
           git merge-base --is-ancestor HEAD origin/main
   qualify:
+    permissions:
+      contents: read
+      actions: read
     needs: identity
     uses: ./.github/workflows/ci-heavy.yml
     with:
