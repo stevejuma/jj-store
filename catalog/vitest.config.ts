@@ -43,6 +43,14 @@ export default defineConfig({
             headless: true,
             fileParallelism: false,
             provider: playwright({
+              ...(process.env.PW_TEST_CONNECT_WS_ENDPOINT
+                ? {
+                    connectOptions: {
+                      wsEndpoint: process.env.PW_TEST_CONNECT_WS_ENDPOINT,
+                      exposeNetwork: "<loopback>",
+                    },
+                  }
+                : {}),
               contextOptions: { viewport: { width: 1440, height: 1200 } },
             }),
             instances: [

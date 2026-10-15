@@ -80,6 +80,10 @@
         "comment ID copied",
       );
       await userEvent.hover(message);
+      // Message actions intentionally appear after the shared hover delay.
+      await waitFor(() =>
+        expect(message).toHaveAttribute("data-actions-visible"),
+      );
       await userEvent.click(
         within(message).getByRole("button", { name: "Reply" }),
       );

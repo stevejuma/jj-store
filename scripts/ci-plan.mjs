@@ -53,7 +53,7 @@ export function impact(
       if (/^crates\/jj-store-(?:model|http|rpc)\//.test(file)) web = true;
       continue;
     }
-    if (/^(?:web\/|catalog\/|\.storybook\/|docs\/site\/assets\/)/.test(file)) {
+    if (/^(?:web\/|catalog\/|\.storybook\/|docs\/site\/)/.test(file)) {
       web = true;
       reasons.push(`${file}: web/catalog input`);
       continue;
@@ -76,7 +76,13 @@ export function impact(
   const closure = reverseClosure(graph, selected);
   if (
     closure.some((name) =>
-      ["jj-store-model", "jj-store-http", "jj-store-rpc"].includes(name),
+      [
+        "jj-store-model",
+        "jj-store-http",
+        "jj-store-rpc",
+        "jj-store-server",
+        "jj-store",
+      ].includes(name),
     )
   )
     web = true;

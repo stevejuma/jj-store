@@ -62,6 +62,16 @@ test("cold native history search highlights, completes and retains invalid draft
   await expect(
     page.getByRole("option", { name: "mutable() alias", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
+  // Completion must survive the debounced graph response, not just fast typing.
+  await expect
+    .poll(() =>
+      requests.some((url) => url.searchParams.get("revset") === "mut"),
+    )
+    .toBe(true);
+  await expect(page.locator(".store-history-query")).toHaveAttribute(
+    "aria-busy",
+    "false",
+  );
   await input.press("Enter");
   await expect(input).toHaveText("mutable()");
   await searchToggle.click();

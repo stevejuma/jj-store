@@ -61,24 +61,36 @@ export async function repositorySettingsLayout(
   await expect(
     page.getByRole("combobox", { name: "Settings repository" }),
   ).toHaveCount(0);
-  const bounds = (await active.boundingBox())!;
-  for (const card of await active
-    .locator(".store-settings-card:visible")
-    .all()) {
-    const cardBounds = (await card.boundingBox())!;
-    expect(cardBounds.x).toBeGreaterThanOrEqual(bounds.x - 1);
-    expect(cardBounds.x + cardBounds.width).toBeLessThanOrEqual(
-      bounds.x + bounds.width + 1,
-    );
-  }
   const navigation = active.getByRole("navigation", {
     name: "Settings page navigation",
   });
+  const tabs = tablistName
+    ? navigation.getByRole("tablist", { name: tablistName })
+    : null;
+  if (tabs) await expect(tabs).toBeVisible();
+  // Cards may be replaced as the selected category's initial read completes.
+  // Retry the complete measurement; never reuse a box from the previous page.
+  await expect(async () => {
+    const bounds = await active.boundingBox();
+    expect(bounds).not.toBeNull();
+    const cards = await active.locator(".store-settings-card:visible").all();
+    expect(cards.length).toBeGreaterThan(0);
+    for (const card of cards) {
+      const cardBounds = await card.boundingBox();
+      expect(cardBounds).not.toBeNull();
+      expect(cardBounds!.x).toBeGreaterThanOrEqual(bounds!.x - 1);
+      expect(cardBounds!.x + cardBounds!.width).toBeLessThanOrEqual(
+        bounds!.x + bounds!.width + 1,
+      );
+    }
+    if (tabs) {
+      const tabBounds = await tabs.boundingBox();
+      expect(tabBounds).not.toBeNull();
+      expect(tabBounds!.y - bounds!.y).toBeLessThan(16);
+    }
+  }).toPass({ timeout: 5000 });
   await expect(navigation.getByRole("heading")).toHaveCount(0);
-  if (tablistName) {
-    const tabs = navigation.getByRole("tablist", { name: tablistName });
-    const tabBounds = (await tabs.boundingBox())!;
-    expect(tabBounds.y - bounds.y).toBeLessThan(16);
+  if (tabs) {
     await expect(tabs.getByRole("tab", { selected: true })).toHaveCSS(
       "font-weight",
       "600",

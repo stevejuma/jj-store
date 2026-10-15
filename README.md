@@ -111,9 +111,12 @@ pnpm web:build
 Follow [AGENTS.md](AGENTS.md) for focused verification. PR checks run
 formatting, tooling and governance before standard Rust tests and affected web
 checks. The standard Rust cohort has 16 packages; server, CLI and capture tests,
-including their unit tests, run only during qualification. The protected
-`required` check covers the standard workflow. Main pushes and the `all_checks`
-dispatch option run all standard checks.
+including their unit tests, run only during qualification (apart from the two
+HTTP fixture captures needed by browser tests). Affected web checks also run
+Storybook interactions, served-browser tests, the static catalog and Help in
+Chromium and WebKit. The protected `required` check covers the standard
+workflow. Main pushes and the `all_checks` dispatch option run all standard
+checks.
 
 Cargo metadata selects changed standard crates and their transitive dependents.
 The same package list controls strict Clippy, doctests and Nextest compilation.
@@ -129,19 +132,22 @@ cached. Job summaries report exact cache hits, restore/save and transfer times,
 compilation and test durations.
 
 [Manual qualification](.github/workflows/ci-heavy.yml) first runs all standard
-checks, then all heavy tests, native platforms, real storage and browser suites
-at one immutable source SHA. Heavy Rust uses eight shards; cold browser uses
-four isolated shards, Storybook three and served-browser tests two. Profile
-restart, real RustFS Git-cycle, static catalog and dual-engine Help have
-separate lanes. Independent suites finish after failures; only failed build
-inputs block their consumers. Full qualification still requires every suite. Six
-named workflows support standalone dispatch with a source SHA, producer run and
-attempt. They verify successful producers and artifact checksums before reuse.
-Reports retain logs, test results, inventories and machine-readable timings.
-Ignored subprocess helpers run through their owning acceptance parents. There
-are no automatic or nightly heavy runs. Publication requires complete
-qualification. See [release instructions](docs/releases.md) for manual dispatch
-and remaining qualification gaps.
+checks (including core UI), then all heavy tests, native platforms, real storage
+and cold application suites at one immutable source SHA. Heavy Rust uses eight
+shards; cold browser uses four isolated shards, Storybook three and
+served-browser tests two. Profile restart, real RustFS Git-cycle, static catalog
+and dual-engine Help have separate lanes. Independent suites finish after
+failures; only failed build inputs block their consumers. Full qualification
+still requires every suite. Six named workflows support standalone dispatch with
+a source SHA, producer run and attempt. They verify successful producers and
+artifact checksums before reuse. For UI repairs,
+[UI acceptance](.github/workflows/ci-ui.yml) builds and tests a source SHA
+independently, without an earlier qualification run. Keep the full coordinator
+idle while fixing one suite. Reports retain logs, test results, inventories and
+machine-readable timings. Ignored subprocess helpers run through their owning
+acceptance parents. There are no automatic or nightly heavy runs. Publication
+requires complete qualification. See [release instructions](docs/releases.md)
+for manual dispatch and remaining qualification gaps.
 
 The
 [parallel-suite measurement record](spec/src/history/2026/10/15/E-CI-SUITES-MEASURE-001/index.md)

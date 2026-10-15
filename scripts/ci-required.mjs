@@ -28,7 +28,6 @@ const conditional =
           external: true,
           embedded: true,
           assets: true,
-          ui: true,
           cold: true,
           native: true,
         }
@@ -41,6 +40,7 @@ const conditional =
           build: plan.rust,
           rust: plan.rust,
           web: plan.web,
+          ui: plan.web,
         };
 for (const [name, job] of Object.entries(jobs)) {
   const required = conditional[name] ?? true;

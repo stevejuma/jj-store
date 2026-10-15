@@ -37,8 +37,11 @@ requires qualification.
 
 PRs run the standard Rust cohort and affected web checks after formatting,
 governance and tooling succeed. Server, CLI and capture package tests (including
-unit tests), embedded RustFS, native platforms and browser acceptance run in the
-manual qualification workflow. Main pushes always run all standard checks. Cargo
+unit tests, except two required HTTP fixture captures), embedded RustFS, native
+platforms and cold application acceptance run in manual qualification. Affected
+web checks include all three Storybook shards, both served-browser shards,
+static catalog and dual-engine Help; the protected `required` check rejects any
+failed or missing UI job. Main pushes always run all standard checks. Cargo
 metadata selects changed standard packages plus reverse dependencies, including
 development, optional, target-specific and build edges. Manifests, lockfiles, CI
 configuration, fixtures and unknown inputs broaden selection. Clippy, doctests
@@ -53,7 +56,21 @@ require both a main workflow context and source verified on canonical main.
 Arbitrary qualification refs restore only. Summaries record cache matches and
 job/step timings; a restored cache never substitutes for tests.
 
-Once these workflows are available on the default branch, run:
+To repair UI acceptance independently, build fresh inputs and run only the UI
+suite at an exact source SHA:
+
+```sh
+gh workflow run ci-ui.yml --ref main -f source=COMMIT_SHA
+```
+
+This shares the PR suite and reports each of its seven jobs independently. It
+does not require or trigger full qualification. Keep the coordinator idle while
+focusing on suite repairs. Its inputs are scoped to this run and attempt, with
+source/checksum verification; they cannot authorize release artifact reuse. The
+coordinator inherits core UI acceptance from its standard gate and does not
+repeat those tests. Full qualification remains required for publication.
+
+For standard checks or explicitly requested full qualification, run:
 
 ```sh
 gh workflow run ci.yml --ref main -f all_checks=true

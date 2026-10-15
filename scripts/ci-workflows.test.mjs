@@ -84,7 +84,7 @@ test("standard checks never schedule heavy qualification and preserve the protec
   }
   assert.deepEqual(jobs.tooling.needs, ["plan", "format"]);
   assert.deepEqual(jobs.governance.needs, ["plan", "format"]);
-  for (const job of ["build", "web"])
+  for (const job of ["build", "web", "ui"])
     assert.ok(jobs[job].needs.includes("fast"));
   for (const [id, job] of Object.entries(jobs)) {
     if (id !== "plan") {
@@ -120,7 +120,7 @@ test("manual and release qualification pin one source and require every lane", (
   for (const name of ["runtime", "contracts", "external", "native"])
     assert.ok(jobs[name].needs.includes("standard"));
   assert.deepEqual(jobs.assets.needs, ["resolve", "build"]);
-  assert.deepEqual(jobs.ui.needs, ["resolve", "assets"]);
+  assert.equal(jobs.ui, undefined); // Standard checks already require all UI shards.
   assert.deepEqual(jobs.cold.needs, ["resolve", "assets", "runtime"]);
   assert.deepEqual(jobs.embedded.needs, ["resolve", "runtime"]);
   for (const [name, job] of Object.entries(jobs)) {
@@ -149,8 +149,9 @@ test("manual and release qualification pin one source and require every lane", (
     for (const job of Object.values(workflow.jobs)) {
       if (job.strategy) assert.equal(job.strategy["fail-fast"], false);
       assert.ok(
-        job.steps.some((step) =>
-          step.run?.includes("ci-artifacts.mjs consume"),
+        job.steps.some(
+          (step) =>
+            step.run?.includes("ci-artifacts.mjs") && /consume/.test(step.run),
         ),
       );
       assert.equal(job.steps.at(-1).if, "always()");
@@ -205,6 +206,7 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
         "build",
         "rust",
         "web",
+        "ui",
       ],
     ],
     [
@@ -219,7 +221,6 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
         "external",
         "embedded",
         "assets",
-        "ui",
         "cold",
         "native",
       ],
@@ -249,6 +250,7 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
         build: { result: "skipped" },
         rust: { result: "skipped" },
         web: { result: "skipped" },
+        ui: { result: "skipped" },
       };
       assert.doesNotThrow(() =>
         verify(stage, { rust: false, web: false }, light),

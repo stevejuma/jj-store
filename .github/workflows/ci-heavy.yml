@@ -127,15 +127,6 @@ jobs:
     with:
       source: ${{ needs.resolve.outputs.source }}
       cache_write: ${{ needs.resolve.outputs.cache_write }}
-  ui:
-    name: UI acceptance
-    needs:
-      - resolve
-      - assets
-    uses: ./.github/workflows/ci-heavy-ui.yml
-    with:
-      source: ${{ needs.resolve.outputs.source }}
-      cache_write: ${{ needs.resolve.outputs.cache_write }}
   cold:
     name: Cold application
     needs:
@@ -159,7 +150,6 @@ jobs:
       - external
       - embedded
       - native
-      - ui
       - cold
     if: always()
     runs-on: ubuntu-22.04

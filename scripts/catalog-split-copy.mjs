@@ -29,6 +29,8 @@ export async function expectSplitCopy(browser, origin) {
       });
       await expect(commit.getByText("5656", { exact: true })).toBeVisible();
       await expect(change.getByText("utut", { exact: true })).toBeVisible();
+      // Measure the shipped font, rather than an OS-dependent fallback face.
+      await page.evaluate(() => document.fonts.ready);
       const width = (await group.boundingBox()).width;
       expect(width).toBeLessThanOrEqual(122);
       expect((await group.boundingBox()).height).toBeLessThanOrEqual(27);

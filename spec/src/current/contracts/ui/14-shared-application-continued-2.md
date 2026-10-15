@@ -181,16 +181,23 @@ continuation guides as Thread replies. The session or tool is the conversation
 root: its top comments occupy depth one, and replies to those comments occupy
 depth two with one visible indent. Tool and comment hover/focus boundaries are
 independent: hovering a tool comment reveals only its message toolbar, without
-the parent tool toolbar. Tool replies never open a second structural sheet. Both
-inline surfaces remain keyboard reachable and preserve the route-selected
-discussion column. The repository detail rail follows Community's section
-typography and spacing. Selecting a bookmark shows its name as a bold section
-heading, the target commit avatar, one-line message, author and relative update
-time, then one-row status and target-count chips with every exact target Git SHA
-below; selecting a revision replaces that selection detail with change metadata.
-JJ Log and Op Log selection follows the same replacement rule and exposes the
-enabled mutation actions from the header menu, including bookmark creation and
-conflict resolution when native capabilities and an exact selection permit them.
+the parent tool toolbar. Invisible prompt-context controls MUST NOT intercept
+pointer input intended for the underlying disclosure. Visible and
+keyboard-focused controls retain their actions. Prompt-context actions sit above
+the first disclosure so becoming visible cannot cover its click target. Tool
+replies never open a second structural sheet. Both inline surfaces remain
+keyboard reachable and preserve the route-selected discussion column.
+E-UI-CI-001 confirms JST-UI-005 is unchanged by awaiting the existing delayed
+message-action visibility before activating Reply in interaction coverage; copy,
+reply, own-author editing and native identity assertions remain intact. The
+repository detail rail follows Community's section typography and spacing.
+Selecting a bookmark shows its name as a bold section heading, the target commit
+avatar, one-line message, author and relative update time, then one-row status
+and target-count chips with every exact target Git SHA below; selecting a
+revision replaces that selection detail with change metadata. JJ Log and Op Log
+selection follows the same replacement rule and exposes the enabled mutation
+actions from the header menu, including bookmark creation and conflict
+resolution when native capabilities and an exact selection permit them.
 Multiline mutation input always uses Community's form composer. Fixed Edit
 description and Abandon targets use the shared commit row with author avatar,
 current message, copyable Git/JJ identifiers, relative commit time and

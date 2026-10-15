@@ -96,6 +96,18 @@
   background: var(--background);
   box-shadow: inset 0 0 0 1px var(--border);
 }
+.chat-custom[data-kind="context"] > .chat-text-actions {
+  /* Prompt disclosures start on the first line; keep actions above that hit area. */
+  top: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+.chat-custom[data-kind="context"]:hover > .chat-text-actions,
+.chat-custom[data-kind="context"]:focus-within > .chat-text-actions,
+.chat-custom[data-kind="context"]
+  > .chat-text-actions:has([aria-expanded="true"]) {
+  pointer-events: auto;
+}
 .chat-text-reader .cm-editor:not([data-comment-editor] *) {
   background: transparent;
   color: var(--foreground);
@@ -267,6 +279,9 @@
 @media (hover: none) {
   .chat-text-actions {
     opacity: 1;
+  }
+  .chat-custom[data-kind="context"] > .chat-text-actions {
+    pointer-events: auto;
   }
 }
 

@@ -37,6 +37,9 @@ on:
       cache_write:
         type: string
         default: "false"
+      input_profile:
+        type: string
+        default: qualification
 permissions:
   contents: read
   actions: read
@@ -94,7 +97,8 @@ jobs:
       - name: Verify source, successful producers and artifact checksums
         run:
           node scripts/ci-exec.mjs artifact-download -- node
-          scripts/ci-artifacts.mjs consume ${{ matrix.lane }}
+          scripts/ci-artifacts.mjs ${{ inputs.input_profile == 'ui' &&
+          'consume-ui' || 'consume' }} ${{ matrix.lane }}
         env:
           GH_TOKEN: ${{ github.token }}
       - uses: ./.github/actions/setup

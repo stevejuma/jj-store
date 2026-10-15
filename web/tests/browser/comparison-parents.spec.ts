@@ -127,6 +127,8 @@ test("comparison parent dropdown searches descriptions and sends the full record
   await search.press("Enter");
   await expect(picker).toHaveCount(0);
   expect(selections).toEqual([second]);
+  // The picker closes when selection starts; the route commits after its read.
+  await expect(page).toHaveURL((url) => url.hash.includes(`parent=${second}`));
   const hash = new URL(page.url()).hash;
   expect(hash).toContain(`parent=${second}`);
   expect(hash).toContain(`at_op=${operation}`);

@@ -52,7 +52,10 @@ export function createProductionAutomaticRefresh(options: {
         ["previewing", "prepared", "applying", "unknown"].includes(
           data.mutation.status,
         ) ||
-        data.status.navigation === "loading"
+        data.status.navigation === "loading" ||
+        (!["projects", "threads"].includes(options.route().page) &&
+          (data.workingCopiesStatus === "refreshing" ||
+            data.status.bookmarks === "refreshing"))
       )
         return false;
       const batch = queued.length ? [...queued] : undefined;

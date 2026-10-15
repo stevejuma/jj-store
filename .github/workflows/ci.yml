@@ -280,6 +280,14 @@ jobs:
           pnpm catalog:test
     if: needs.plan.outputs.web == 'true'
     name: Web type checks and unit tests
+  ui:
+    name: UI acceptance
+    needs: [plan, fast]
+    if: needs.plan.outputs.web == 'true'
+    uses: ./.github/workflows/ci-ui.yml
+    with:
+      source: ${{ needs.plan.outputs.source }}
+      cache_write: ${{ needs.plan.outputs.cache_write }}
   required:
     name: required
     needs:
@@ -291,6 +299,7 @@ jobs:
       - build
       - rust
       - web
+      - ui
     if: always()
     runs-on: ubuntu-22.04
     timeout-minutes: 5
