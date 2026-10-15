@@ -171,3 +171,9 @@ E-FORGE-FLOAT-DISCLOSURE-001 confirms JST-API-001 unchanged: disabling the
 floating title disclosure and its pointer/hover styling changes presentation
 only. Forge actions, retained editor/drafts and exact pending intents are
 unchanged; redocking re-enables the existing inline disclosure.
+
+E-FORGE-BRANCH-STATUS-001 confirms JST-API-001 unchanged: the compact top-change
+status row uses existing local bookmark heads, observed PR heads and revision-
+bound check snapshots. It adds no reads, mutation eligibility or schema, and
+unknown/incomparable data remains explicit. Forge actions and pending guards are
+unchanged.

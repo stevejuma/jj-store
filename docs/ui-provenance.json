@@ -3974,6 +3974,8 @@
       "web/src/lib/ui/store-forge/StoreForgeSetup.svelte",
       "web/src/lib/ui/store-forge/StoreForgePanel.svelte",
       "web/src/lib/ui/store-forge/StoreForgeButton.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeBranchStatus.svelte",
+      "web/src/lib/controller/forge/branch-status.ts",
       "web/src/lib/controller/forge/effects.svelte.ts",
       "web/src/lib/controller/forge/view-lifecycle.ts",
       "web/src/lib/controller/forge/polling.svelte.ts",

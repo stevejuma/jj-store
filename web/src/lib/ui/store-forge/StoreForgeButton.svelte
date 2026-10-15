@@ -9,11 +9,13 @@
     bookmark,
     stack,
     menuItem = false,
+    compact = false,
   }: {
     controller: StackWorkspaceController;
     bookmark?: string;
     stack?: WorkspaceStack;
     menuItem?: boolean;
+    compact?: boolean;
   } = $props();
   const name = $derived(bookmark ?? stack?.name ?? "");
   const mode = $derived(stack ? "stack" : "bookmark");
@@ -39,7 +41,7 @@
   {:else}
     <Button
       variant="outline"
-      size="sm"
+      size={compact ? "xs" : "sm"}
       class="store-forge-button"
       {disabled}
       aria-label={mode === "stack"
@@ -51,9 +53,11 @@
       }}
     >
       <StoreForgeIcon provider={forge.data?.connection?.provider} />
-      {#if mode === "stack"}Submit stack{:else if forge.pr(name)}#{forge.pr(
+      {#if mode === "stack"}Submit stack{:else if compact && forge.pr(name)}PR #{forge.pr(
           name,
-        )!.number} · {forge.pr(name)!.draft && forge.pr(name)!.state === "open"
+        )!.number}{:else if forge.pr(name)}#{forge.pr(name)!.number} · {forge.pr(
+          name,
+        )!.draft && forge.pr(name)!.state === "open"
           ? "Draft"
           : forge.pr(name)!.state}{:else}Create PR{/if}
     </Button>

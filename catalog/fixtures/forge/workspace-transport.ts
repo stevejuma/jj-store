@@ -4,6 +4,7 @@ import type {
   ForgePlan,
   ForgeResponse,
   ForgeTransport,
+  ForgeCheck,
 } from "../../../web/src/lib/controller/forge/types.js";
 
 type ForgeChecks = NonNullable<ForgeResponse["checks"]>;
@@ -25,6 +26,11 @@ export function workspaceForgeTransport(
   apiPullRequests = true,
   failPreview = false,
   unknownSubmit = false,
+  options: {
+    apiCheckState?: ForgeCheck["state"];
+    apiChecksComplete?: boolean;
+    apiLocalHead?: string;
+  } = {},
 ) {
   const examples: ForgePr[] = [
     {
@@ -67,18 +73,17 @@ export function workspaceForgeTransport(
   const prs = examples.filter((pr) =>
     pr.head === "feature/workspace" ? workspacePullRequest : apiPullRequests,
   );
-  const states = new Map<string, "running" | "passed" | "failed" | "cancelled">(
-    [
-      ["feature/model", "passed"],
-      ["feature/api", "running"],
-      ["feature/workspace", "failed"],
-    ],
-  );
+  const states = new Map<string, ForgeCheck["state"]>([
+    ["feature/model", "passed"],
+    ["feature/api", options.apiCheckState ?? "running"],
+    ["feature/workspace", "failed"],
+  ]);
   function checks(pr: ForgePr, jobs = false): ForgeChecks {
     const run = String(pr.number);
     return {
       sha: pr.sha,
-      complete: true,
+      complete:
+        pr.head === "feature/api" ? (options.apiChecksComplete ?? true) : true,
       checks: [
         ...(!jobs
           ? ["Typecheck", "Unit tests"].map((name, index) => ({
@@ -154,7 +159,10 @@ export function workspaceForgeTransport(
             return {
               segment: {
                 branch: p.head,
-                head: p.sha,
+                head:
+                  p.head === "feature/api"
+                    ? (options.apiLocalHead ?? p.sha)
+                    : p.sha,
                 base: p.base,
                 title: p.title,
                 body: pr
@@ -174,11 +182,16 @@ export function workspaceForgeTransport(
     }
     if (action.kind === "submit") {
       for (const item of action.plan.items) {
-        if (prs.some((pr) => pr.head === item.segment.branch)) continue;
+        const existing = prs.find((pr) => pr.head === item.segment.branch);
+        if (existing) {
+          existing.sha = item.segment.head;
+          continue;
+        }
         const example = examples.find((pr) => pr.head === item.segment.branch);
         if (example)
           prs.push({
             ...example,
+            sha: item.segment.head,
             title: item.segment.title,
             body: item.segment.body,
             draft: action.plan.draft,

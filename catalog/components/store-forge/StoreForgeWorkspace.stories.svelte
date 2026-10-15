@@ -27,23 +27,20 @@
     const title = within(stack).getByRole("button", {
       name: "Show all changes in feature/api",
     });
-    const row = title.closest<HTMLElement>(
-      '[data-slot="card-title"]',
-    )!.parentElement!;
-    const centre = (element: HTMLElement) => {
-      const r = element.getBoundingClientRect();
-      return r.top + r.height / 2;
-    };
-    await expect(Math.abs(centre(button) - centre(title))).toBeLessThanOrEqual(
-      1,
+    const row = within(stack).getByRole("group", {
+      name: "Branch status for feature/api",
+    });
+    await expect(button.parentElement).toBe(row);
+    await expect(row.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      title.getBoundingClientRect().bottom,
     );
-    await expect(
-      Math.abs(
-        button.getBoundingClientRect().right -
-          row.getBoundingClientRect().right,
-      ),
-    ).toBeLessThanOrEqual(1);
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+    const lower = within(stack).getByRole("button", {
+      name: "Pull request for feature/model",
+    });
+    await expect(
+      lower.closest(".stack-workspace__branch-title-row"),
+    ).toBeInTheDocument();
     if (import.meta.env.MODE !== "test") return;
     const { userEvent: pointer } = await import("vitest/browser");
     const sample = document.createElement("canvas");
@@ -130,7 +127,9 @@
     await expect(
       within(badge).getByRole("img", { name: "GitHub" }),
     ).toBeInTheDocument();
-    await expect(within(stack).getByText("Checks running")).toBeInTheDocument();
+    await expect(
+      within(stack).getByRole("status", { name: "Checks running" }),
+    ).toHaveTextContent("Running");
     const details = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
     });

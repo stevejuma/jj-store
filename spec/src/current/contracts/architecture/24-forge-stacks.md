@@ -47,8 +47,13 @@ retain session-only authored drafts and pending identities; closing an unknown
 action never replaces or replays it. Cached plans retain their original guards
 and may be rejected as stale; explicit reopening never weakens server admission.
 
-Submitted bookmark title rows pair the configured forge icon with PR number and
-state at the trailing edge; CI status remains in metadata. PR/create/submit
+Topmost submitted bookmarks place a compact neutral forge/PR button below the
+title, beside observed push status and a Passed/Failed/Running checks badge.
+Running/queued checks use a spinner. Lower bookmarks retain trailing title-row
+PR controls. Missing, stale or incomparable heads/checks remain explicitly
+unknown or unavailable; skipped checks do not imply success. Local versus
+observed open-PR head comparison supplies display-only push status, with no
+ancestor/ahead-count claim or additional mutation authority. PR/create/submit
 controls retain opaque bordered surfaces and distinct light/dark hover/focus.
 Submit stack remains in the column menu and beside Push for an already submitted
 top bookmark. PR details and file diffs share one adjacent details column per

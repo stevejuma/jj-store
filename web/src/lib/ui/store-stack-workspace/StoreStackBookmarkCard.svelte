@@ -102,6 +102,7 @@
     {tip}
     {card}
     {onCommand}
+    top={submitStack}
   />
   {#if creating && controller.forge}<StoreForgeCreate
       controller={controller.forge}
