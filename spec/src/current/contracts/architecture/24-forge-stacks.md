@@ -33,7 +33,12 @@ Existing local Stacks undo/redo cannot undo external forge effects.
 
 ## UI and maintenance
 
-Branch and Workspace columns share PR presentation and submission. The app
+Branch and Workspace columns share PR presentation and submission. The PR panel
+uses the shared column header height, background and title primitives with an
+accessible icon-only close action. Descriptions render safe Markdown by default
+and use the maintained chat composer when editing, including submission drafts;
+previewing or closing retains authored edits. Merge methods use the released
+shadcn radio dropdown and expose only provider-supported options. The app
 retains description drafts and exact pending operations during refresh and
 navigation. Operational failures use the shared notification service. Logs are
 bounded untrusted text and remain separate from native WorkflowStore evidence.

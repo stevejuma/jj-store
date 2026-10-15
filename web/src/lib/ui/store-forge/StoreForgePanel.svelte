@@ -2,12 +2,16 @@
   import { onMount } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { Textarea } from "@lapismd/design-core/shadcn/textarea";
+  import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
+  import X from "@lucide/svelte/icons/x";
+  import GitPullRequest from "@lucide/svelte/icons/git-pull-request";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   import StoreForgeSetup from "./StoreForgeSetup.svelte";
   import StoreForgePullRequest from "./StoreForgePullRequest.svelte";
+  import StoreForgeDescription from "./StoreForgeDescription.svelte";
   import StoreForgeChecks from "./StoreForgeChecks.svelte";
   import "./store-forge.css";
   let { controller }: { controller: ForgeController } = $props();
@@ -23,12 +27,30 @@
   aria-label="Pull requests"
   aria-busy={controller.busy}
 >
-  <header>
-    <h2>Pull requests</h2>
-    <Button variant="ghost" size="sm" onclick={() => controller.closePanel()}
-      >Close</Button
-    >
-  </header>
+  <ColumnCanvas.Header>
+    <GitPullRequest size={16} aria-hidden="true" />
+    <ColumnCanvas.Title>Pull requests</ColumnCanvas.Title>
+    <ColumnCanvas.HeaderActions>
+      <Tooltip.Provider>
+        <Tooltip.Root>
+          <Tooltip.Trigger>
+            {#snippet child({ props })}
+              <Button
+                {...props}
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Close pull requests"
+                onclick={() => controller.closePanel()}
+              >
+                <X aria-hidden="true" />
+              </Button>
+            {/snippet}
+          </Tooltip.Trigger>
+          <Tooltip.Content>Close pull requests</Tooltip.Content>
+        </Tooltip.Root>
+      </Tooltip.Provider>
+    </ColumnCanvas.HeaderActions>
+  </ColumnCanvas.Header>
   <ScrollArea scrollStrategy="styled" class="forge-panel__body">
     {#if !controller.data?.connection}
       <StoreForgeSetup {controller} />
@@ -107,13 +129,13 @@
           {#each controller.plan.items as item}<fieldset>
               <legend>{item.segment.branch} → {item.segment.base}</legend>
               <p>{item.steps.join(", ")}</p>
-              <label>PR title<Input bind:value={item.segment.title} /></label
-              ><label
-                >PR description<Textarea
-                  bind:value={item.segment.body}
-                  rows={5}
-                /></label
-              >
+              <label>PR title<Input bind:value={item.segment.title} /></label>
+              <StoreForgeDescription
+                bind:value={item.segment.body}
+                editing
+                label={`PR description for ${item.segment.branch}`}
+                disabled={blocked}
+              />
             </fieldset>{/each}
           <Button disabled={blocked} onclick={() => controller.submit()}
             >Push branches and submit</Button

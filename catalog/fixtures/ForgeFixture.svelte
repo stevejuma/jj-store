@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, untrack } from "svelte";
+  import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import StoreForgePanel from "../../web/src/lib/ui/store-forge/StoreForgePanel.svelte";
   import StoreNotificationHost from "../../web/src/lib/ui/store-notifications/StoreNotificationHost.svelte";
   import { ownNotifications } from "../../web/src/lib/notifications/notification-context.svelte.js";
@@ -11,8 +12,19 @@
     ForgeTransport,
   } from "../../web/src/lib/controller/forge/types.js";
   import "../../web/src/lib/ui/store-application/store-application.css";
-  let { failure = false }: { failure?: boolean } = $props();
+  let {
+    failure = false,
+    mergeMethods = ["merge", "squash", "rebase"],
+  }: {
+    failure?: boolean;
+    mergeMethods?: string[];
+  } = $props();
   const notifications = ownNotifications();
+  const canvas = ColumnCanvas.createColumnCanvasController({
+    columns: {
+      "forge-pr": { defaultWidth: 500, minWidth: 360, maxWidth: 800 },
+    },
+  });
   const connection: ForgeConnection = {
     provider: "github",
     api_url: "https://api.github.com",
@@ -27,7 +39,7 @@
     number: 7,
     url: "https://github.com/team/repo/pull/7",
     title: "Add API",
-    body: "Authored description",
+    body: "## Review summary\n\nAuthored **description** with [review guidance](https://example.com/review).",
     head: "feature",
     sha: "a".repeat(40),
     base: "main",
@@ -49,7 +61,7 @@
       logs: true,
       rerun: true,
       rerun_all: true,
-      merge_methods: ["merge", "squash", "rebase"],
+      merge_methods: mergeMethods,
       cancel: true,
       native_stacks: false,
     },
@@ -120,6 +132,10 @@
 <div
   style="height: 780px; width: 500px; background: var(--background); color: var(--foreground)"
 >
-  <StoreForgePanel {controller} />
+  <ColumnCanvas.Root controller={canvas} displayMode="fixed">
+    <ColumnCanvas.Column id="forge-pr" aria-label="Pull request details">
+      <StoreForgePanel {controller} />
+    </ColumnCanvas.Column>
+  </ColumnCanvas.Root>
 </div>
 <StoreNotificationHost owner={notifications} />

@@ -34,6 +34,26 @@
       name: "Pull request details",
     });
     panel.scrollIntoView({ block: "nearest", inline: "end" });
+    const stackHeader = stack.querySelector("header")!;
+    const panelHeader = panel.querySelector("header")!;
+    await expect(panelHeader).toHaveAttribute("data-ui-part", "column-header");
+    await expect(panelHeader.getBoundingClientRect().height).toBe(
+      stackHeader.getBoundingClientRect().height,
+    );
+    await expect(getComputedStyle(panelHeader).backgroundColor).toBe(
+      getComputedStyle(stackHeader).backgroundColor,
+    );
+    const close = within(panelHeader).getByRole("button", {
+      name: "Close pull requests",
+    });
+    await expect(close.textContent?.trim()).toBe("");
+    await expect(close.querySelector("svg")).toBeInTheDocument();
+    await expect(
+      within(panel).getByRole("heading", { name: "Stack" }),
+    ).toBeInTheDocument();
+    await expect(
+      within(panel).getByRole("link", { name: "#41" }),
+    ).toHaveAttribute("href", "https://github.com/team/repo/pull/41");
     await expect(
       within(panel).getByRole("textbox", { name: "Title" }),
     ).toHaveValue("Expose repository API");
@@ -65,7 +85,9 @@
     await expect(
       within(panel).getByRole("textbox", { name: "Title" }),
     ).toHaveValue("Add workspace toolbar");
-    await userEvent.click(within(panel).getByRole("button", { name: "Close" }));
+    await userEvent.click(
+      within(panel).getByRole("button", { name: "Close pull requests" }),
+    );
     const api = canvas.getByRole("region", { name: "Stack feature/api" });
     await userEvent.click(
       within(api).getByRole("button", { name: "Submit stack feature/api" }),
@@ -77,6 +99,23 @@
     });
     await expect(preview).toHaveTextContent("feature/model → main");
     await expect(preview).toHaveTextContent("feature/api → feature/model");
+    const composer = within(preview).getByRole("group", {
+      name: "PR description for feature/api",
+    });
+    const description = within(composer).getByRole("textbox", {
+      name: "Markdown editor",
+    });
+    await userEvent.click(description);
+    await userEvent.keyboard("{Control>}a{/Control}{Backspace}");
+    await userEvent.type(description, "## API review");
+    await userEvent.click(
+      within(composer.closest("fieldset")!).getByRole("button", {
+        name: "Preview description",
+      }),
+    );
+    await expect(
+      within(preview).getByRole("heading", { name: "API review" }),
+    ).toBeVisible();
     await expect(
       within(preview).getByRole("button", { name: "Push branches and submit" }),
     ).toBeEnabled();

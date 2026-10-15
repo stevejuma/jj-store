@@ -130,3 +130,9 @@ upstream JJ. Tokens are request/session input, never retained in the binding or
 response. Status may maintain owned remote navigation; it never mutates local
 code. PR details, plans, CI, merge queue receipts and original-effect recovery
 remain separate typed actions. Operational failures use application toasts.
+
+E-FORGE-PANEL-001 confirms JST-API-001 unchanged: shared column headers,
+Markdown description rendering/composition and the shadcn merge-method picker
+alter presentation only. Forge action shapes, expected-body/head guards,
+capabilities, session credentials and exact pending request identities remain
+unchanged.

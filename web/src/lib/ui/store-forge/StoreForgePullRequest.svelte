@@ -1,15 +1,26 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
+  import ChevronDown from "@lucide/svelte/icons/chevron-down";
+  import StoreForgeDescription from "./StoreForgeDescription.svelte";
   import type { ForgeController } from "../../controller/forge/controller.svelte.js";
   let { controller }: { controller: ForgeController } = $props();
   const blocked = $derived(controller.busy || Boolean(controller.pending));
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   let method = $state("squash");
+  let editing = $state(false);
+  const methods = $derived(controller.data?.capabilities.merge_methods ?? []);
+  const methodLabel = (value: string) =>
+    value === "merge" ? "Merge" : value === "squash" ? "Squash" : "Rebase";
   let mergeConfirm = $state(false);
   $effect(() => {
     controller.selected?.number;
     mergeConfirm = false;
+    editing = untrack(() => controller.draftDirty);
+  });
+  $effect(() => {
+    if (!methods.includes(method)) method = methods[0] ?? "";
   });
 </script>
 
@@ -28,18 +39,25 @@
         oninput={() => (controller.draftDirty = true)}
       /></label
     >
-    <label
-      >Description<Textarea
-        rows={12}
-        bind:value={controller.body}
-        oninput={() => (controller.draftDirty = true)}
-      /></label
-    >
+    <StoreForgeDescription
+      bind:value={
+        () => controller.body,
+        (value) => {
+          controller.body = value;
+          controller.draftDirty = true;
+        }
+      }
+      bind:editing
+      disabled={blocked || !controller.data.capabilities.edit}
+    />
     <Button
       disabled={blocked ||
         !controller.draftDirty ||
         !controller.data.capabilities.edit}
-      onclick={() => controller.edit()}>Save PR description</Button
+      onclick={async () => {
+        await controller.edit();
+        if (!controller.draftDirty) editing = false;
+      }}>Save PR description</Button
     >
     <div class="forge-panel__toolbar">
       <Button
@@ -62,21 +80,39 @@
       onclick={() => controller.previewRestack(pr.head)}>Restack…</Button
     >
     {#if pr.state === "open"}
-      <label
-        >Merge method<select bind:value={method}>
-          {#each controller.data.capabilities.merge_methods as option}<option
-              value={option}
-              >{option === "merge"
-                ? "Merge"
-                : option === "squash"
-                  ? "Squash"
-                  : "Rebase"}</option
-            >{/each}
-        </select></label
-      >
+      <Menu.Root>
+        <Menu.Trigger>
+          {#snippet child({ props })}
+            <Button
+              {...props}
+              variant="outline"
+              disabled={blocked ||
+                !controller.data?.capabilities.merge ||
+                !methods.length}
+              aria-label={`Merge method: ${method ? methodLabel(method) : "Unavailable"}`}
+            >
+              {method ? methodLabel(method) : "Merge unavailable"}
+              <ChevronDown data-icon="inline-end" aria-hidden="true" />
+            </Button>
+          {/snippet}
+        </Menu.Trigger>
+        <Menu.Content align="start" preventScroll={false}>
+          <Menu.Group>
+            <Menu.Label>Merge method</Menu.Label>
+            <Menu.RadioGroup bind:value={method}>
+              {#each methods as option}
+                <Menu.RadioItem value={option}
+                  >{methodLabel(option)}</Menu.RadioItem
+                >
+              {/each}
+            </Menu.RadioGroup>
+          </Menu.Group>
+        </Menu.Content>
+      </Menu.Root>
       <Button
         disabled={blocked ||
           !controller.data.capabilities.merge ||
+          !methods.includes(method) ||
           pr.draft ||
           pr.mergeable !== true}
         onclick={() => (mergeConfirm = true)}

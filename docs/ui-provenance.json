@@ -3366,6 +3366,10 @@
       "reason": "Owned workflow summary, stacked icon and description presentation with released Design Core; Buzz desktop references and Apache-2.0 attribution are recorded in desktopWorkflows. No external source imports."
     },
     {
+      "local": "web/src/lib/ui/store-forge/StoreForgeDescription.svelte",
+      "reason": "Application-owned composition of the maintained local chat composer and Markdown renderer for PR descriptions; no new Community source copied or external checkout imports."
+    },
+    {
       "local": "web/src/lib/ui/store-forge/StoreForgePanel.svelte",
       "reason": "Independently implemented forge controls using released Design Core; jjbutler and Changeyard are design references only. No source copied from their checkouts."
     },
