@@ -1,0 +1,2 @@
+- [E-STACKS-DETAILS-VISIBILITY-001 details 2](details-02.md)
+- [E-STACKS-DETAILS-VISIBILITY-001 details 3](details-03.md)

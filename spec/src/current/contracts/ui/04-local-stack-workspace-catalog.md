@@ -25,10 +25,12 @@ Stacks actions remain available across all four views. Commits and Op Log reuse
 repository-wide history and its exact operation/selection reads. The existing
 repository Branches page stays separate. The body header retains the separate
 trailing Repository settings gear across all four views. It opens the scoped
-Settings route and returns to the exact Stacks context. The right sidebar
-retains the separately labelled Workspace settings action but suppresses
-ordinary repository navigation and actions. Its far-right rail uses the
-repository page-heading and compact Details navigation composition with
+Settings route and returns to the exact Stacks context. A closed Details rail
+remains absent with zero layout width after returning; only an explicit open
+action restores the rail and its content. An open rail retains its prior state.
+The right sidebar retains the separately labelled Workspace settings action but
+suppresses ordinary repository navigation and actions. Its far-right rail uses
+the repository page-heading and compact Details navigation composition with
 Branches, Workspace, Commits and Op Log links, retaining focused Stacks routes
 and marking the current view. It omits the introductory workspace, target,
 count, folder and selected-item metadata list; selections remain in the body and
