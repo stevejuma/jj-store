@@ -120,6 +120,12 @@ YAML geometry coverage remeasures the existing one-pixel bounds after dialog
 layout changes. Local qualification retains live runner, remote Forgejo
 protocol, provider, platform and visual-baseline gates.
 
+E-PR10-AUTOCOMPLETE-001 explicitly reviews M28 with status unchanged. The shared
+autocomplete opening-selection regression belongs to Design Core; consumer
+qualification retains the original workflow draft, runner-label and Form/YAML
+assertions. Source, packed-consumer and released-package results do not close
+live runner, remote protocol, provider, platform or visual gates.
+
 <!-- generated-navigation -->
 
 ## Pages

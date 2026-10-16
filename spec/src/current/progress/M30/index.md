@@ -136,6 +136,13 @@ full-draft visibility contract. Qualification gates remain unchanged. M30 stays
 In progress. Fresh standard required checks must pass on the repair head; prior
 local or hosted passes do not substitute for that result.
 
+E-PR10-AUTOCOMPLETE-001 explicitly reviews M30 with status unchanged. The
+remaining hosted workflow failure is traced to Design Core's deferred input
+selection. Its source repair and authorized package release retain protected
+source/version checks and provenance verification. Fresh required CI on the
+updated jj-store head remains mandatory; this dependency repair does not qualify
+heavy hosted release, other platforms or jj-store publication.
+
 <!-- generated-navigation -->
 
 ## Pages
