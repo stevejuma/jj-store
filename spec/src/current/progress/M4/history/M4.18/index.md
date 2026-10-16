@@ -17,6 +17,7 @@ not a completion gate selection.
 | [E-SETTINGS-SKELETON-001](../../../../../history/2026/10/11/E-SETTINGS-SKELETON-001/index.md)               | 2026-10-11 | pending         | Original outcome |
 | [E-SETTINGS-SPLIT-001](../../../../../history/2026/10/11/E-SETTINGS-SPLIT-001/index.md)                     | 2026-10-11 | pending         | Original outcome |
 | [E-GLOBAL-SETTINGS-NAV-001](../../../../../history/2026/10/12/E-GLOBAL-SETTINGS-NAV-001/index.md)           | 2026-10-12 | pending         | Original outcome |
+| [E-REPOSITORY-DELETION-001](../../../../../history/2026/10/16/E-REPOSITORY-DELETION-001/index.md)           | 2026-10-16 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 

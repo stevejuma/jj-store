@@ -305,3 +305,9 @@ selects their roots; stale observed Thread/assignment preconditions select
 neither. Matching receipt replay retains the original result before entity
 preconditions. Empty bindings preserve unlinked capture behavior and do not
 launch a runner.
+
+Explicit LocalTrusted Admin repository deletion is installation lifecycle
+administration under the API/security/object-storage contracts. It adds no typed
+native mutation, head transition, object-store deletion port or manifest
+publication bypass. The installation durably fences and erases one complete
+namespace, including its manifest, rather than publishing replacement history.

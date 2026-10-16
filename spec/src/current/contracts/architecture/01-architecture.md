@@ -307,3 +307,10 @@ leases coordinate disposable outputs across JJ workspaces. Managed Cargo pins
 each independent workspace target; application state and staged resources stay
 outside cleanup. E-BUILD-STORAGE-001 retains the architecture and installed-tool
 boundaries while adding bounded development-cache maintenance under JST-CLI-004.
+
+Explicit repository lifecycle administration keeps the ordinary ObjectStore port
+unchanged. Only the separate S3 administrator path performs bounded namespace
+erasure; `quick-xml` parses bounded storage maintenance responses.
+Installation-owned journals, fences and discovery guards remain server-owned. UI
+and transport consume owned deletion DTOs, without upstream JJ or storage client
+imports. JST-ARCH-001 layer independence remains unchanged.

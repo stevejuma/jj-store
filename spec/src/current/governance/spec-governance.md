@@ -41,11 +41,11 @@ directory; it adds no Community, catalog or source dependency, repository
 registry or server executor. Version-2 managed configuration and legacy recovery
 compatibility are governed by the owning workflow chapters.
 
-E-CREATE-FORMS-001 adopts the existing JST-UI-016 Settings presentation in
-server-repository and project creation/editing. Icon rows and creation-specific
-layout remain application-owned under JST-GOV-002/008, using maintained local
-compositions and released Design Core primitives. Creation requests, authority,
-draft owners and persistence formats are unchanged.
+E-CREATE-FORMS-001/E-REPOSITORY-DELETION-001 retain JST-GOV-002/008. Creation,
+removal and exact-intent deletion recovery compose owned Settings forms, icon
+rows and released Design Core confirmation/toasts. No Community source or
+catalog runtime dependency is added. Native creation, authority and draft
+contracts remain unchanged; deletion uses its separate installation API.
 
 E-REMOTE-ADMIN-001 adds independent operator agent administration and explicit
 identity/repository access onboarding. Agent management uses freshly loaded

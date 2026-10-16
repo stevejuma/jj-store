@@ -27,9 +27,30 @@ pub struct Catalog {
     pub repositories: Vec<RepositoryEntry>,
     pending_repositories: Vec<RepositoryEntry>,
     pub(crate) tokens: Vec<TokenEntry>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    deleted_repositories: Vec<RepositoryId>,
 }
 
 impl Catalog {
+    pub(crate) fn remove_entry(&mut self, repository: RepositoryId) -> Result<()> {
+        if self.deleted_repositories.binary_search(&repository).is_ok() {
+            return Ok(());
+        }
+        if let Err(index) = self.deleted_repositories.binary_search(&repository) {
+            self.deleted_repositories.insert(index, repository);
+        }
+        self.repositories.retain(|e| e.id != repository);
+        self.pending_repositories.retain(|e| e.id != repository);
+        for token in &mut self.tokens {
+            token.repositories.retain(|r| *r != repository);
+        }
+        self.tokens.retain(|t| !t.repositories.is_empty());
+        self.generation = self
+            .generation
+            .checked_add(1)
+            .ok_or(Error::Config("registry generation"))?;
+        Ok(())
+    }
     pub fn empty(identity: &Identity) -> Self {
         Self {
             version: 2,
@@ -38,6 +59,7 @@ impl Catalog {
             repositories: Vec::new(),
             pending_repositories: Vec::new(),
             tokens: Vec::new(),
+            deleted_repositories: Vec::new(),
         }
     }
 
@@ -62,6 +84,9 @@ impl Catalog {
     }
 
     pub(crate) fn reserve_entry(&mut self, repository: RepositoryId, name: String) -> Result<bool> {
+        if self.deleted_repositories.binary_search(&repository).is_ok() {
+            return Err(Error::Config("deleted repository identity"));
+        }
         if !valid_name(&name)
             || self
                 .repositories
@@ -116,6 +141,9 @@ impl Catalog {
     }
 
     fn register_entry(&mut self, repository: RepositoryId, name: String) -> Result<bool> {
+        if self.deleted_repositories.binary_search(&repository).is_ok() {
+            return Err(Error::Config("deleted repository identity"));
+        }
         if !valid_name(&name)
             || self
                 .repositories
@@ -237,6 +265,11 @@ impl Catalog {
         if self.version != 2
             || self.installation != identity.installation
             || self.generation == 0
+            || self.deleted_repositories.len() > MAX_REPOSITORIES
+            || self.deleted_repositories.windows(2).any(|w| w[0] >= w[1])
+            || all_repositories
+                .iter()
+                .any(|e| self.deleted_repositories.binary_search(&e.id).is_ok())
             || !repositories_valid
             || !tokens_valid
         {

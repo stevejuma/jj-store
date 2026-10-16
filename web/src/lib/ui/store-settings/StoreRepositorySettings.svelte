@@ -4,6 +4,7 @@
   import StoreRepositoryIdentity from "./StoreRepositoryIdentity.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreRepositoryConversion from "./StoreRepositoryConversion.svelte";
+  import StoreRepositoryRemoval from "./StoreRepositoryRemoval.svelte";
   import StoreLocalFolders from "./StoreLocalFolders.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
@@ -92,6 +93,7 @@
       navigationBlocked={!!navigationBlocked}
     />
     <StoreRepositoryConversion {controller} {onClose} />
+    <StoreRepositoryRemoval {controller} />
   {:else if section === "folders"}
     {#if view.repository.profile === "git_sha1_jj045"}<StoreLocalFolders
         {controller}

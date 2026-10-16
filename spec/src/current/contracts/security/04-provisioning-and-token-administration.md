@@ -180,3 +180,21 @@ values; missing/invalid secrets produce fixed errors. Index files inherit
 private state directory access. A revoked runner credential degrades indexing
 without changing repository serving permission or bypassing fresh authorization
 for search users.
+
+## Confirmed server repository deletion
+
+Only an admitted LocalTrusted installation administrator on managed embedded
+storage may start or recover server deletion. POST
+`/v1/local/repositories/{repo}/delete` binds a nonzero stable request ID and
+exact expected epoch. The fresh native snapshot proves existence before durable
+admission; later retries match the installation journal and do not require
+access to the now-fenced repository. GET deletion status is read-only. The
+original intent survives acknowledgement loss, navigation and restart.
+Conflicting identities or epochs cannot change the admitted deletion. Discovery
+is removed and its catalog retains a content-free deleted-ID guard against
+creation-journal replay. Native HTTP, RPC, search, replication and prior
+sessions all encounter the same underlying storage fence. Stored objects are
+permanently erased only within that repository namespace. Local working folders
+and independent backups are preserved. This is explicit lifecycle
+administration; operator privileges, automatic GC and ordinary repository token
+APIs gain no new authority.

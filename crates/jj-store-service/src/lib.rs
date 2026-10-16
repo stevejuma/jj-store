@@ -14,6 +14,7 @@ mod native_agent;
 pub mod native_inventory;
 pub mod registry;
 pub mod replication_control;
+pub mod repository_deletion;
 
 pub mod transport;
 

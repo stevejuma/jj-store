@@ -4,6 +4,7 @@
   import StoreApplicationAgents from "./StoreApplicationAgents.svelte";
   import StoreApplicationOverlays from "./StoreApplicationOverlays.svelte";
   import { provideConversationInspection } from "../../conversations/inspection.svelte.js";
+  import StoreRepositoryDeletionRecovery from "../store-settings/StoreRepositoryDeletionRecovery.svelte";
   import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
   import StoreConnectionFooter from "../store-connections/StoreConnectionFooter.svelte";
@@ -288,6 +289,7 @@
   />
 </CommunityAppShell>
 
+<StoreRepositoryDeletionRecovery {controller} />
 <StoreIndexPreparationNotice {controller} />
 <StoreNotificationHost owner={notifications} />
 {#if controller.execution}<StoreAgentExecutionNotice

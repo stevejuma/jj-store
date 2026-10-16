@@ -90,6 +90,7 @@ export interface StoreRepositorySummary {
 export interface StoreControllerState {
   readonly installationReady?: boolean;
   readonly nativeRepositoryCreation?: boolean;
+  readonly nativeRepositoryDeletion?: boolean;
   readonly repositoryConversion?: boolean;
   readonly accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   readonly storageReady: boolean;

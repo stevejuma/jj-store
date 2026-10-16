@@ -69,6 +69,25 @@ Add folder is installation-wide. Search, Storage and Sync retain supported
 subtabs. Advanced contains capability/limit facts and eligible graph
 preparation. Workspace settings remains a separately labelled Stacks action.
 
+General offers a red **Remove repository** footer for LocalTrusted Admin
+Git-backed repositories. Its confirmation identifies the selected repository and
+explains that the folder, files and history remain on disk. Cancel performs no
+request. Removal uses the existing device registration API and its exact
+registry revision. An unknown acknowledgement retains that revision for status
+inspection/retry; a new registration cannot be removed by silently rebasing the
+original intent. Pending removal blocks leaving its Settings owner, while
+category changes retain it. Successful removal releases the active repository,
+refreshes discovery and opens Projects / Repositories. Failures use JST-UI-019
+toasts and keep confirmation available. Existing Settings drafts and actions
+must be resolved before removal. General offers **Delete repository** for
+supported LocalTrusted Admin native repositories on managed embedded storage.
+Its confirmation names the repository and states that code, history and
+collaboration objects will be permanently deleted from server storage. Local
+folders remain untouched. A stable request/epoch is retained before dispatch;
+partial/unknown deletion keeps the exact intent for status and retry, including
+an installation-owned continuation after reload. Success returns to Projects /
+Repositories. Unsupported profiles expose no destructive command.
+
 Repository settings routes use `#/repos/{id}/settings?section=search&tab=scopes`
 with an optional retained `at_op`. Missing section defaults to General; missing
 subtab defaults to the supported first tab. Category/subtab navigation pushes

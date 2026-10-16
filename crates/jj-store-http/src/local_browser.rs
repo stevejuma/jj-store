@@ -22,6 +22,7 @@ use axum::{
 };
 use hmac::{Hmac, Mac as _};
 use jj_store_service::local_browser as management;
+use jj_store_service::repository_deletion as deletion;
 use management::code as local;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -94,6 +95,8 @@ macro_rules! endpoints {
         (get, "/local/repositories/requests/{request_id}", status, "local_repository_status", routes::Empty, management::RegistrationOutcome),
         (post, "/local/repositories/{repo}/reconnect", reconnect, "local_repository_reconnect", management::ReconnectFolder, management::LocalBindings),
         (post, "/local/repositories/{repo}/remove", remove, "local_repository_remove", management::RemoveBinding, management::LocalBindings),
+        (post, "/local/repositories/{repo}/delete", delete_native, "local_native_repository_delete", deletion::DeleteRepository, deletion::DeletionOutcome),
+        (get, "/local/repositories/{repo}/deletions/{request_id}", deletion_status, "local_native_repository_deletion_status", routes::Empty, deletion::DeletionOutcome),
         (get, "/local/repos/{repo}/snapshot", snapshot, "local_code_snapshot", routes::Empty, Snapshot),
         (get, "/local/repos/{repo}/capabilities", capabilities, "local_code_capabilities", routes::Empty, Capabilities),
         (post, "/local/repos/{repo}/query", query, "local_code_query", Query, QueryResponse)
@@ -130,6 +133,63 @@ fn admit(state: &State) -> Result<()> {
         return Err(Error::denied());
     }
     Ok(())
+}
+fn deletion_error(error: deletion::Error) -> Error {
+    match error {
+        deletion::Error::Uncertain => Error::new(
+            StatusCode::SERVICE_UNAVAILABLE,
+            "repository_deletion_restart_required",
+        ),
+        deletion::Error::Stale => {
+            Error::new(StatusCode::CONFLICT, "repository_deletion_snapshot_changed")
+        }
+        deletion::Error::Unsupported => {
+            Error::new(StatusCode::BAD_REQUEST, "repository_deletion_unsupported")
+        }
+        deletion::Error::Unavailable => Error::new(
+            StatusCode::SERVICE_UNAVAILABLE,
+            "repository_deletion_unavailable",
+        ),
+        deletion::Error::Conflict => {
+            Error::new(StatusCode::CONFLICT, "repository_deletion_conflict")
+        }
+        deletion::Error::Invalid => Error::invalid(),
+    }
+}
+async fn delete_native(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(repo): Path<m::RepositoryId>,
+    body: Body<deletion::DeleteRepository>,
+) -> Result<Response> {
+    admit(&state)?;
+    let manager = state
+        .config
+        .repository_deletion
+        .as_ref()
+        .ok_or_else(Error::unavailable)?;
+    state.json(
+        &manager
+            .delete(repo, decode_body(body)?)
+            .await
+            .map_err(deletion_error)?,
+    )
+}
+async fn deletion_status(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path((repo, request)): Path<(m::RepositoryId, m::RequestId)>,
+) -> Result<Response> {
+    admit(&state)?;
+    let manager = state
+        .config
+        .repository_deletion
+        .as_ref()
+        .ok_or_else(Error::unavailable)?;
+    state.json(
+        &manager
+            .status(repo, request)
+            .await
+            .map_err(deletion_error)?,
+    )
 }
 async fn create_native(
     ExtractState(state): ExtractState<Arc<State>>,

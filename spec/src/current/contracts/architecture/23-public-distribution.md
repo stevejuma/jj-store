@@ -216,3 +216,9 @@ repaired and qualified in their source repository, then consumed through a
 released registry version. Packed-consumer evidence, released-package acceptance
 and hosted required checks remain distinct. Authorization to publish Design Core
 does not authorize jj-store publication or waive its qualification gates.
+
+E-REPOSITORY-DELETION-001 records a minor Changeset for confirmed local removal
+and managed native object erasure. The note does not publish a release, modify
+installed tools or qualify external S3/shared/platform deployment. Existing
+source ownership, portable dependency metadata and coordinated release authority
+under JST-ARCH-005 remain unchanged.

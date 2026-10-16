@@ -3428,6 +3428,14 @@
     {
       "local": "web/src/lib/ui/store-mutations/commit-tags.ts",
       "reason": "Application-owned mapping of current native bookmark and workspace labels into released TagList data; no shared domain policy."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreRepositoryRemoval.svelte",
+      "reason": "Independently authored repository removal, permanent server deletion and exact-intent recovery using maintained Settings compositions and public Design Core confirmation/toast primitives; Community confirmation inspected as reference only."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreRepositoryDeletionRecovery.svelte",
+      "reason": "Independently authored repository removal, permanent server deletion and exact-intent recovery using maintained Settings compositions and public Design Core confirmation/toast primitives; Community confirmation inspected as reference only."
     }
   ],
   "desktopAppearance": {

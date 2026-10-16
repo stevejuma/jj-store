@@ -373,10 +373,33 @@ pub(super) async fn prepare(
         local_capture
             .map(|m| Arc::new(m) as Arc<dyn jj_store_service::capture_management::CaptureManager>)
     };
+    let repository_deletion = if matches!(
+        http_access,
+        HttpAccess::LocalTrusted {
+            permission: jj_store_service::auth::Permission::Admin,
+            ..
+        }
+    ) && matches!(
+        config.storage,
+        crate::config::Storage::EmbeddedRustfs { .. }
+    ) {
+        host.clone().zip(storage.as_ref()).map(|(host, storage)| {
+            Arc::new(crate::repository_deletion::Manager::new(
+                &state,
+                identity.clone(),
+                storage.store(),
+                host,
+                registry.clone(),
+            )) as Arc<dyn jj_store_service::repository_deletion::RepositoryDeletion>
+        })
+    } else {
+        None
+    };
     let http = HttpApi::with_search(
         host,
         state.join("native-reads"),
         HttpConfig {
+            repository_deletion,
             workflow_hosts: config.workflow_hosts.clone(),
             workflow_admission: Some(workflow_admission.clone()),
             runtime_reload,
