@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed accepted code-selection ownership and independent revision detail/context reads. Browser proxy-wrapped routes preserve rejected/no-op selections; valid selections retire superseded navigation while graph/detail retain busy phases. Review/agent associations no longer wait for file inspection; pinned operations, request ownership, guards, existing user flows and documentation remain unchanged.",
-      "fingerprint": "a1c958b934a181a5d26869118d867b9a717f2a317829ff8f771f1d64ca941456"
+      "reason": "Reviewed branch selection recovery of interrupted operation-pinned reference reads. Current complete windows remain cached, obsolete results remain ignored, workspace loading recovers after accepted selections, and native command preview receipt readiness retains original identities and existing UI assertions.",
+      "fingerprint": "bfc998ac9439567bb60e02acfe64cd8709cd527155fa8139458758cdf85d1a80"
     }
   },
   {

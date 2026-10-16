@@ -42,7 +42,11 @@ test.each(["bookmark", "working copy"])(
       data,
       history,
       invalidate() {},
-      reader: { loadGraph, loadCommit: vi.fn() } as never,
+      reader: {
+        loadGraph,
+        loadCommit: vi.fn(),
+        loadReferencePickers: vi.fn(),
+      } as never,
     });
     const pending =
       kind === "bookmark"
@@ -96,11 +100,13 @@ test("guarded selections retain the current loading owner and do not start reads
   ] as typeof data.workingCopies;
   const loadGraph = vi.fn(),
     loadCommit = vi.fn(),
-    invalidate = vi.fn();
+    invalidate = vi.fn(),
+    loadReferencePickers = vi.fn();
   const reader = {
     loadGraph,
     loadCommit,
     loadRevisionContext: vi.fn(),
+    loadReferencePickers,
   } as never;
   const actions = createProductionBranchActions({
     data,
@@ -117,5 +123,6 @@ test("guarded selections retain the current loading owner and do not start reads
   expect(loadGraph).not.toHaveBeenCalled();
   expect(loadCommit).not.toHaveBeenCalled();
   expect(invalidate).not.toHaveBeenCalled();
+  expect(loadReferencePickers).not.toHaveBeenCalled();
   history.destroy();
 });

@@ -44,6 +44,7 @@ export function createProductionBranchActions(context: {
       context.invalidate();
       data.targets = [...bookmark.targets];
       resetBranchGraph(data);
+      void reader.loadReferencePickers();
       await reader.loadGraph();
     },
     async selectWorkingCopy(commit: string, workspace?: string) {
@@ -68,6 +69,7 @@ export function createProductionBranchActions(context: {
       context.invalidate();
       data.targets = [workingCopy.commitId];
       resetBranchGraph(data);
+      void reader.loadReferencePickers();
       await Promise.all([
         reader.loadGraph(),
         reader.loadCommit(workingCopy.commitId),

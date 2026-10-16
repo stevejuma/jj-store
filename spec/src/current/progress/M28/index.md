@@ -115,9 +115,9 @@ file-editor navigation/save regressions reproduce on the parent revision and
 remain outside this presentation slice. Wider qualification and separate visual
 approval remain explicit.
 
-E-MAIN-LOCAL-REPAIRS-001 reviews M28 with status unchanged. Private
-workflow YAML geometry coverage remeasures the existing one-pixel bounds after
-dialog layout changes. Local qualification retains live runner, remote Forgejo
+E-MAIN-LOCAL-REPAIRS-001 reviews M28 with status unchanged. Private workflow
+YAML geometry coverage remeasures the existing one-pixel bounds after dialog
+layout changes. Local qualification retains live runner, remote Forgejo
 protocol, provider, platform and visual-baseline gates.
 
 <!-- generated-navigation -->

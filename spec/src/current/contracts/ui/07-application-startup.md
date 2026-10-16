@@ -11,10 +11,13 @@ An accepted bookmark, working-copy or revision selection retires the navigation
 loading state of superseded route restoration. Its graph and detail reads retain
 their own busy states. Rejected selections preserve the original owner and start
 no reads; completion of an earlier selection cannot clear a later navigation.
-Selecting a revision within an existing graph keeps that graph's valid read
-completion rather than cancelling it. Independent revision-detail and
-collaboration-context reads start together, so loading file inspection cannot
-delay discovery of existing review and agent associations.
+Bookmark and working-copy selections restart any interrupted operation-pinned
+reference picker reads, so cancellation cannot strand their loading state. Late
+superseded responses cannot replace the selected workspace inventory. Selecting
+a revision within an existing graph keeps that graph's valid read completion
+rather than cancelling it. Independent revision-detail and collaboration-context
+reads start together, so loading file inspection cannot delay discovery of
+existing review and agent associations.
 
 JST-UI-005's initial placeholder distinction also applies to selected-project
 repository views. Once the owning project is captured, refreshing linked

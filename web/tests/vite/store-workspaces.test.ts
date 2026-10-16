@@ -70,6 +70,7 @@ function harness(workspace: string | null) {
   history.connect(repository, operation);
   history.replace({ ...history.route, page: "files", workspace });
   const reads = {
+    loadReferencePickers: vi.fn(),
     loadReferences: vi.fn(async () => {
       data.workingCopies = copies;
       data.status.bookmarks = "ready";

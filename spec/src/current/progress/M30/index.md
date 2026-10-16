@@ -108,6 +108,12 @@ E-MAIN-LOCAL-REPAIRS-001 records the user-authorized 2026-10-16 completed
 main-workspace repair validation and wider failure repairs. M30 retains its
 existing status and completion gates; local passes do not establish hosted,
 additional-platform, live-provider or visual-baseline qualification.
+E-MAIN-PICKER-REPAIRS-001 reviews the reference-read cancellation repair with
+status unchanged. Exact unit, direct-consumer and fresh native browser
+acceptance retain pinned reads and stale-response rejection. Complete local
+qualification, hosted checks and the existing release/platform/visual gates
+remain separate.
+
 <!-- generated-navigation -->
 
 ## Pages
