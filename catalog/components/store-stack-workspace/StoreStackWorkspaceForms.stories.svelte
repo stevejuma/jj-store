@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
   import {
     applyPreview,
@@ -14,29 +14,31 @@
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen" },
   });
-  function settingsRows(dialog: HTMLElement, count: number) {
-    const group = dialog.querySelector<HTMLElement>(
-      '.community-settings__option-group[data-ui-part="field-group"]',
-    )!;
-    const rows = group.querySelectorAll<HTMLElement>(
-      ':scope > [data-ui-part="field"]',
-    );
-    expect(rows).toHaveLength(count);
-    expect(getComputedStyle(group).borderTopWidth).toBe("1px");
-    let previous: DOMRect | undefined;
-    for (const row of rows) {
-      expect(row).toHaveClass("community-settings__option-row");
-      const style = getComputedStyle(row);
-      expect(parseFloat(style.paddingLeft)).toBeGreaterThanOrEqual(16);
-      expect(parseFloat(style.paddingTop)).toBeGreaterThanOrEqual(12);
-      const rect = row.getBoundingClientRect();
-      expect(rect.height).toBeGreaterThanOrEqual(68);
-      if (previous) {
-        expect(Math.abs(rect.top - previous.bottom)).toBeLessThan(1);
-        expect(style.borderTopWidth).toBe("1px");
+  async function settingsRows(dialog: HTMLElement, count: number) {
+    await waitFor(() => {
+      const group = dialog.querySelector<HTMLElement>(
+        '.community-settings__option-group[data-ui-part="field-group"]',
+      )!;
+      const rows = group.querySelectorAll<HTMLElement>(
+        ':scope > [data-ui-part="field"]',
+      );
+      expect(rows).toHaveLength(count);
+      expect(getComputedStyle(group).borderTopWidth).toBe("1px");
+      let previous: DOMRect | undefined;
+      for (const row of rows) {
+        expect(row).toHaveClass("community-settings__option-row");
+        const style = getComputedStyle(row);
+        expect(parseFloat(style.paddingLeft)).toBeGreaterThanOrEqual(16);
+        expect(parseFloat(style.paddingTop)).toBeGreaterThanOrEqual(12);
+        const rect = row.getBoundingClientRect();
+        expect(rect.height).toBeGreaterThanOrEqual(68);
+        if (previous) {
+          expect(Math.abs(rect.top - previous.bottom)).toBeLessThan(1);
+          expect(style.borderTopWidth).toBe("1px");
+        }
+        previous = rect;
       }
-      previous = rect;
-    }
+    });
   }
 </script>
 
@@ -55,7 +57,7 @@
     await userEvent.click(
       within(dialog).getByRole("combobox", { name: "Destination" }),
     );
-    settingsRows(dialog, 2);
+    await settingsRows(dialog, 2);
     expect(
       within(dialog).getByRole("list", { name: "Selected changes" }),
     ).toHaveTextContent("README.md · 1 hunk(s)");
@@ -74,9 +76,11 @@
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Preview command" }),
     );
-    expect(
-      await portal.findByText(/move to commit “Add repository model”/),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await portal.findByText(/move to commit “Add repository model”/),
+      ).toBeVisible();
+    });
     await applyPreview(canvasElement);
     await userEvent.click(
       canvas.getByRole("button", { name: "Add repository model" }),
@@ -103,13 +107,15 @@
       await canvas.findByRole("button", { name: "Create stack" }),
     );
     expect(portal.getByRole("radio", { name: "Independent" })).toBeChecked();
-    settingsRows(portal.getByRole("dialog", { name: "Create stack" }), 2);
+    await settingsRows(portal.getByRole("dialog", { name: "Create stack" }), 2);
     expect(portal.queryByRole("combobox", { name: "Add to stack" })).toBeNull();
     await userEvent.type(portal.getByLabelText("Name"), "feature/independent");
     await userEvent.click(
       portal.getByRole("button", { name: "Preview command" }),
     );
-    expect(await portal.findByText(/at “main” and apply/)).toBeVisible();
+    await waitFor(async () => {
+      expect(await portal.findByText(/at “main” and apply/)).toBeVisible();
+    });
     await applyPreview(canvasElement);
     expect(
       canvas.getByRole("region", { name: "Stack feature/independent" }),
@@ -127,7 +133,7 @@
     );
     await userEvent.type(portal.getByLabelText("Name"), "feature/dependent");
     await userEvent.click(portal.getByRole("radio", { name: "Dependent" }));
-    settingsRows(portal.getByRole("dialog", { name: "Create stack" }), 3);
+    await settingsRows(portal.getByRole("dialog", { name: "Create stack" }), 3);
     await userEvent.click(
       portal.getByRole("button", { name: "Preview command" }),
     );
@@ -143,9 +149,11 @@
     await userEvent.click(
       portal.getByRole("button", { name: "Preview command" }),
     );
-    expect(
-      await portal.findByText(/as a dependent branch above “feature\/api”/),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        await portal.findByText(/as a dependent branch above “feature\/api”/),
+      ).toBeVisible();
+    });
     await applyPreview(canvasElement);
     const stack = within(
       canvas.getByRole("region", { name: "Stack feature/dependent" }),

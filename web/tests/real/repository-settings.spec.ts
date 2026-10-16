@@ -161,6 +161,9 @@ test("native folder drafts survive category changes and Back with accessible mob
   await expect(input).toHaveValue("/retained/settings-navigation-draft");
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
   await expect(input).toHaveValue("");
+  await expect(
+    page.locator('[data-ui-component="tooltip"][data-state="closed"]'),
+  ).toHaveCount(0);
   expect(
     (
       await new AxeBuilder({ page })

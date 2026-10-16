@@ -65,7 +65,9 @@
       "Ignore whitespace",
       "Ignore case",
     ]) {
-      expect(page.getByRole("menuitemcheckbox", { name })).toBeVisible();
+      await waitFor(async () => {
+        expect(page.getByRole("menuitemcheckbox", { name })).toBeVisible();
+      });
     }
     expect(
       page.getByRole("menuitemcheckbox", { name: "Sync horizontal scroll" }),
@@ -77,7 +79,9 @@
       page.getByRole("menuitemcheckbox", { name: "Ignore case" }),
     );
     await userEvent.keyboard("{Escape}");
-    expect(dialog).toBeVisible();
+    await waitFor(async () => {
+      expect(dialog).toBeVisible();
+    });
     expect(trigger).toHaveFocus();
     expect(editor).toHaveValue("// Op Log retained draft\n");
     await userEvent.click(

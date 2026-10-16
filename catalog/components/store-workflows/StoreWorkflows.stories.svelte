@@ -25,9 +25,11 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(document.body);
-    await expect(
-      await canvas.findByText("Build parser", { exact: true }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByText("Build parser", { exact: true }),
+      ).toBeVisible();
+    });
     await userEvent.click(
       canvas.getByRole("button", { name: "View Build parser" }),
     );
@@ -38,9 +40,11 @@
       await userEvent.click(
         dialog.getByRole("button", { name: "Edit workflow name" }),
       );
-    await expect(
-      dialog.getByRole("button", { name: /Trigger Bookmark main/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByRole("button", { name: /Trigger Bookmark main/ }),
+      ).toBeVisible();
+    });
     await userEvent.click(dialog.getByRole("button", { name: "build build" }));
     await expect(dialog.getByLabelText("Command name")).toHaveValue("build");
     await userEvent.click(dialog.getByRole("tab", { name: "YAML" }));
@@ -154,11 +158,13 @@
     await userEvent.click(
       history.getByRole("button", { name: "Log settings" }),
     );
-    await expect(
-      await within(document.body).findByRole("menuitem", {
-        name: "Download result.txt",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(document.body).findByRole("menuitem", {
+          name: "Download result.txt",
+        }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await expect(
       history.getByRole("button", { name: "Follow latest" }),
@@ -219,16 +225,20 @@
       );
     await userEvent.click(dialog.getByRole("tab", { name: "YAML" }));
     await userEvent.click(dialog.getByRole("tab", { name: "Form" }));
-    await expect(
-      dialog.getByRole("button", { name: "Trigger Run manually" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByRole("button", { name: "Trigger Run manually" }),
+      ).toBeVisible();
+    });
     const labels = dialog.getByRole("combobox", { name: "Runner labels" });
     await userEvent.type(labels, "linux", { delay: 30 });
     await expect(labels).toHaveValue("linux");
     await userEvent.keyboard("{Enter}");
-    await expect(
-      await dialog.findByRole("button", { name: "Remove linux" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await dialog.findByRole("button", { name: "Remove linux" }),
+      ).toBeVisible();
+    });
     await userEvent.click(dialog.getByRole("tab", { name: "YAML" }));
     const yaml = dialog.getByRole("textbox", { name: "Workflow YAML" });
     await expect(yaml).toHaveTextContent("linux");
@@ -237,9 +247,11 @@
     await userEvent.type(yaml, "name: [[", { delay: 30, skipClick: true });
     const retainedYaml = yaml.textContent!;
     await userEvent.click(dialog.getByRole("tab", { name: "Form" }));
-    await expect(
-      dialog.getByRole("button", { name: "Trigger Run manually" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByRole("button", { name: "Trigger Run manually" }),
+      ).toBeVisible();
+    });
     const notice = await body.findByText(/your YAML text is retained/);
     await expect(notice).toBeVisible();
     await expect(notice.closest('[data-ui-part="toast"]')).not.toBeNull();

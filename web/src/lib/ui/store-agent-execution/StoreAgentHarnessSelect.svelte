@@ -32,7 +32,7 @@
       >
     </span>
   </Select.Trigger>
-  <Select.Content>
+  <Select.Content aria-labelledby={`${id}-label`}>
     <Select.Group>
       {#each options as option (option.id)}
         <Select.Item value={option.id} label={option.label}>

@@ -34,6 +34,7 @@
     await expect(
       layout.querySelector('[data-ui-component="ai-chat-composer"]'),
     ).toBeNull();
+    let phase = "initial-jump";
     const assertUncovered = () => {
       expect(viewport.getBoundingClientRect().bottom).toBeLessThanOrEqual(
         dock.getBoundingClientRect().top + 1,
@@ -42,14 +43,23 @@
         c
           .getByRole("textbox", { name: "Markdown editor" })
           .getBoundingClientRect().bottom,
+        JSON.stringify({
+          phase,
+          top: viewport.scrollTop,
+          height: viewport.scrollHeight,
+          client: viewport.clientHeight,
+        }),
       ).toBeLessThanOrEqual(viewport.getBoundingClientRect().bottom + 1);
     };
     await userEvent.click(c.getByRole("button", { name: "Jump to end" }));
     await waitFor(assertUncovered);
     const draft = c.getByRole("textbox", { name: "Markdown editor" });
+    await expect(draft).toHaveFocus();
+    phase = "typing";
     await userEvent.type(
       draft,
       "A growing draft\nwith multiple lines\nthat stays below the chat",
+      { skipClick: true },
     );
     await waitFor(assertUncovered);
     expect(viewport.scrollHeight).toBeGreaterThan(viewport.clientHeight + 100);
@@ -58,6 +68,7 @@
     viewport.dispatchEvent(new Event("scroll"));
     const latest = await c.findByRole("button", { name: "Jump to end" });
     await waitFor(() => expect(latest).toBeVisible());
+    phase = "keyboard-jump";
     latest.focus();
     await userEvent.keyboard("{Enter}");
     await waitFor(() =>
@@ -70,6 +81,43 @@
     await expect(
       c.queryByLabelText("Session commands"),
     ).not.toBeInTheDocument();
+  }}
+/>
+
+<Story
+  name="Jump to end completes after the editor reveals its caret"
+  args={{ longHistory: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      c.getByRole("button", { name: "Open fixture conversation" }),
+    );
+    await c.findByText("Ready to help.");
+    const viewport = canvasElement.querySelector<HTMLElement>(
+      '.chat-body-reading-surface [data-ui-part="scroll-area-viewport"]',
+    )!;
+    const draft = c.getByRole("textbox", { name: "Markdown editor" });
+    let revealedCaret = false;
+    // Focusing an editor may reveal only its caret; the explicit jump must win.
+    draft.addEventListener(
+      "focus",
+      () => {
+        viewport.scrollTo({
+          top: viewport.scrollHeight - viewport.clientHeight - 80,
+          behavior: "instant",
+        });
+        revealedCaret = true;
+      },
+      { once: true },
+    );
+    await userEvent.click(c.getByRole("button", { name: "Jump to end" }));
+    await expect(revealedCaret).toBe(true);
+    await expect(draft).toHaveFocus();
+    await waitFor(() =>
+      expect(draft.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+        viewport.getBoundingClientRect().bottom + 1,
+      ),
+    );
   }}
 />
 

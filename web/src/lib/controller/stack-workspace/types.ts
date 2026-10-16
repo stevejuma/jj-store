@@ -260,6 +260,7 @@ export type WorkspaceSourceRequest = {
 };
 export type WorkspaceFilePage = { files: WorkspaceFile[]; nextCursor?: string };
 export interface StackWorkspaceAdapter {
+  readonly forge?: import("../forge/controller.svelte.js").ForgeController;
   /** Ordinary JJ commands must not be retried after an unknown response. */
   readonly retryPending?: boolean;
   /** Current checkout evidence; never the historical read pin or complete Unstaged. */

@@ -1,4 +1,5 @@
 import { localLink } from "../../appearance/local-link.js";
+import { linkContent } from "../../links/site-links.js";
 import type { CommunityCustomEmoji } from "../../community/contracts.js";
 
 import type {
@@ -19,6 +20,7 @@ export type CommunityMarkdownHastNode = {
   tagName?: string;
   properties?: Record<string, unknown>;
   children?: CommunityMarkdownHastNode[];
+  position?: { start: { offset?: number } };
 };
 
 export type CommunityMarkdownTokenizer = (
@@ -33,8 +35,30 @@ export function applyCommunityMarkdownSyntax(
   tree: CommunityMarkdownHastNode,
   options: CommunityMarkdownSyntaxOptions,
   tokenize: CommunityMarkdownTokenizer,
+  standaloneLinks: ReadonlyMap<number, string> = new Map(),
 ): void {
   transformChildren(tree, options, tokenize, []);
+  // Replace the paragraph as a block, never insert a card into prose.
+  if (tree.type === "root")
+    tree.children = tree.children?.map((paragraph) => {
+      const offset = paragraph.position?.start.offset;
+      const href =
+        offset === undefined ? undefined : standaloneLinks.get(offset);
+      const link = paragraph.children?.[0];
+      if (
+        !href ||
+        paragraph.tagName !== "p" ||
+        paragraph.children?.length !== 1 ||
+        link?.tagName !== "communityexternallink" ||
+        href !== link.properties?.href
+      )
+        return paragraph;
+      return {
+        ...paragraph,
+        tagName: "communitylinkpreview",
+        properties: { href, label: linkContent(href) },
+      };
+    });
 }
 
 function transformChildren(
@@ -57,16 +81,20 @@ function transformChildren(
       nextChildren.push(segmentToHast(mentionLink));
       continue;
     }
-    if (!skipText && child.tagName === "a") {
+    if (!skipText && child.tagName === "a" && !containsMedia(child)) {
       const text = (node: CommunityMarkdownHastNode): string =>
         node.value ?? (node.children ?? []).map(text).join("");
       const link = localLink(child.properties?.href, text(child));
       if (link) {
         nextChildren.push({
           type: "element",
-          tagName: "communitylinkcard",
-          properties: { href: link.href, label: link.label },
-          children: [],
+          tagName: "communityexternallink",
+          properties: {
+            href: link.href,
+            label: link.label,
+            title: child.properties?.title,
+          },
+          children: child.children,
         });
         continue;
       }
@@ -87,4 +115,11 @@ function transformChildren(
     nextChildren.push(child);
   }
   node.children = nextChildren;
+}
+
+function containsMedia(node: CommunityMarkdownHastNode): boolean {
+  return (
+    ["img", "audio", "video"].includes(node.tagName ?? "") ||
+    (node.children ?? []).some(containsMedia)
+  );
 }

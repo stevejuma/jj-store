@@ -55,35 +55,39 @@
       const layout = element.querySelector<HTMLElement>(
         ".workflow-editor--yaml",
       )!;
-      const style = getComputedStyle(layout);
-      const canvasWidth = layout
-        .querySelector<HTMLElement>(".workflow-canvas")!
-        .getBoundingClientRect().width;
-      await expect(
-        Math.abs(
-          canvasWidth -
-            (layout.clientWidth -
-              parseFloat(style.paddingLeft) -
-              parseFloat(style.paddingRight)),
-        ),
-      ).toBeLessThanOrEqual(1);
+      await waitFor(() => {
+        const style = getComputedStyle(layout);
+        const canvasWidth = layout
+          .querySelector<HTMLElement>(".workflow-canvas")!
+          .getBoundingClientRect().width;
+        expect(
+          Math.abs(
+            canvasWidth -
+              (layout.clientWidth -
+                parseFloat(style.paddingLeft) -
+                parseFloat(style.paddingRight)),
+          ),
+        ).toBeLessThanOrEqual(1);
+      });
       await expect(layout.querySelector(".workflow-inspector")).toBeNull();
       const yamlArea = layout.querySelector<HTMLElement>(".workflow-yaml")!;
       const editor = yamlArea.querySelector<HTMLElement>(
         '[data-ui-component="code-editor"]',
       )!;
-      const yamlStyle = getComputedStyle(yamlArea),
-        editorStyle = getComputedStyle(editor);
-      await expect(
-        Math.abs(
-          editor.getBoundingClientRect().width -
-            (yamlArea.clientWidth -
-              parseFloat(yamlStyle.paddingLeft) -
-              parseFloat(yamlStyle.paddingRight) -
-              parseFloat(editorStyle.marginLeft) -
-              parseFloat(editorStyle.marginRight)),
-        ),
-      ).toBeLessThanOrEqual(1);
+      await waitFor(() => {
+        const yamlStyle = getComputedStyle(yamlArea),
+          editorStyle = getComputedStyle(editor);
+        expect(
+          Math.abs(
+            editor.getBoundingClientRect().width -
+              (yamlArea.clientWidth -
+                parseFloat(yamlStyle.paddingLeft) -
+                parseFloat(yamlStyle.paddingRight) -
+                parseFloat(editorStyle.marginLeft) -
+                parseFloat(editorStyle.marginRight)),
+          ),
+        ).toBeLessThanOrEqual(1);
+      });
       await userEvent.click(dialog.getByRole("tab", { name: "Form" }));
       const inspector = element.querySelector<HTMLElement>(
         ".workflow-inspector",

@@ -26,6 +26,20 @@
   --store-paragraph-spacing: 0.45rem;
 }
 html[data-store-theme] {
+  /* Syntax palettes may use a pale destructive colour for button labels.
+     Diff washes instead use the palette's dedicated deleted-content hue. */
+  --ui-diff-removed-background: color-mix(
+    in srgb,
+    var(--status-deleted, var(--destructive)) 14%,
+    transparent
+  );
+  --ui-diff-segment-removed: color-mix(
+    in srgb,
+    var(--status-deleted, var(--destructive)) 32%,
+    transparent
+  );
+}
+html[data-store-theme] {
   --ui-dialog-background: var(--background);
   --ui-dialog-foreground: var(--foreground);
   --ui-alert-dialog-background: var(--background);

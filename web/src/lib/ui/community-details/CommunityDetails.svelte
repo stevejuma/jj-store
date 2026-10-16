@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import { TagList } from "@lapismd/design-core/shadcn/tag-list";
   import { communityMemberHandleLabel } from "../community-member-avatar/handle.js";
   import CommunityMemberHoverCard from "../community-member-hover-card/CommunityMemberHoverCard.svelte";
 
@@ -37,9 +37,21 @@
     <p>{details.description}</p>
     <div class="community-details__facts">
       <span>{room.memberCount ?? visibleMembers.length} members</span>
-      <CommunityChip>{room.kind}</CommunityChip>
-      {#if room.private}<CommunityChip variant="muted">Private</CommunityChip
-        >{/if}
+      <TagList
+        label="Room tags"
+        tags={[
+          { id: "kind", label: room.kind },
+          ...(room.private
+            ? [
+                {
+                  id: "private",
+                  label: "Private",
+                  variant: "secondary" as const,
+                },
+              ]
+            : []),
+        ]}
+      />
     </div>
   </section>
 

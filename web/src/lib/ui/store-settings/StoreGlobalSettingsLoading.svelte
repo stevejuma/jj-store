@@ -42,10 +42,12 @@
   <div class="global-settings-loading">
     <StoreSettingsPage
       {section}
-      tabs={globalSettingsTabs[section].map((value) => ({
-        value,
-        label: labels[value],
-      }))}
+      tabs={section === "integrations"
+        ? []
+        : globalSettingsTabs[section].map((value) => ({
+            value,
+            label: labels[value],
+          }))}
       value={selected}
       {onSelect}
     >

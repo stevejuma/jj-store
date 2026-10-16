@@ -27,24 +27,24 @@ fn run_with_transcript(answer: &str, transcript: &str) -> (std::process::Output,
             let n = socket.read(&mut part).unwrap();
             assert!(n > 0);
             bytes.extend_from_slice(&part[..n]);
-            if end.is_none() {
-                if let Some(at) = bytes.windows(4).position(|v| v == b"\r\n\r\n") {
-                    let header = String::from_utf8_lossy(&bytes[..at]);
-                    let size = header
-                        .lines()
-                        .find_map(|l| {
-                            l.to_ascii_lowercase()
-                                .strip_prefix("content-length: ")
-                                .and_then(|v| v.parse::<usize>().ok())
-                        })
-                        .unwrap();
-                    end = Some((at + 4, size));
-                }
+            if end.is_none()
+                && let Some(at) = bytes.windows(4).position(|v| v == b"\r\n\r\n")
+            {
+                let header = String::from_utf8_lossy(&bytes[..at]);
+                let size = header
+                    .lines()
+                    .find_map(|l| {
+                        l.to_ascii_lowercase()
+                            .strip_prefix("content-length: ")
+                            .and_then(|v| v.parse::<usize>().ok())
+                    })
+                    .unwrap();
+                end = Some((at + 4, size));
             }
-            if let Some((at, size)) = end {
-                if bytes.len() >= at + size {
-                    break;
-                }
+            if let Some((at, size)) = end
+                && bytes.len() >= at + size
+            {
+                break;
             }
             assert!(bytes.len() < 1024 * 1024);
         }

@@ -46,6 +46,7 @@
     const dialog = await body.findByRole("dialog", {
       name: "Create server repository",
     });
+    await waitFor(() => expect(dialog).toBeVisible());
     await waitFor(() =>
       expect(dialog.contains(document.activeElement)).toBe(true),
     );
@@ -84,6 +85,7 @@
     const folder = await body.findByRole("dialog", {
       name: "Add local JJ folder",
     });
+    await waitFor(() => expect(folder).toBeVisible());
     await expect(
       within(folder).getByRole("textbox", { name: "Folder" }),
     ).toBeVisible();

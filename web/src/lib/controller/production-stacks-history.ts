@@ -48,6 +48,7 @@ export function createProductionStacksReaders(
     source: options.localSource,
     route: () => options.history.route,
     fetcher: options.fetcher,
+    configureForge: () => options.history.globalSettings.open("integrations"),
     released: (repository) => options.history.stacks.clear(repository),
     acceptedOperation: stacksHistory(
       options.data,

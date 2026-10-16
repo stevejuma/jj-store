@@ -31,9 +31,8 @@
 {#snippet labelContent()}<Field.Content
     class={hideLabel ? "sr-only" : undefined}
   >
-    {#if id}<Field.Label for={id}>{label}</Field.Label>{:else}<Field.Title
-        >{label}</Field.Title
-      >{/if}
+    {#if id}<Field.Label id={`${id}-label`} for={id}>{label}</Field.Label
+      >{:else}<Field.Title>{label}</Field.Title>{/if}
     {#if description}<Field.Description>{description}</Field.Description>{/if}
   </Field.Content>{/snippet}
 

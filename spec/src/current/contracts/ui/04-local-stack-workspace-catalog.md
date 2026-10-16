@@ -309,3 +309,88 @@ insertion/squash; unsupported hunk transfers remain explicitly disabled until
 qualified. Loaded Unstaged summaries are retained in the draft selection model
 without eagerly reading patches. Remote tracking and PR actions remain outside
 the local UI scope.
+
+JST-FORGE-001/007 add forge-owned PR controls to Branches and Workspace.
+Configured forges offer Create PR only on the topmost unsubmitted bookmark,
+immediately before Push. It opens an inline title and Markdown chat composer
+above commits; new PR titles default to branch names. Dependency plans and
+Draft/Ready selection retain the existing guarded, explicit push/submit action.
+Cancel/reopen and refresh retain authored drafts and exact pending operations.
+Every submitted change, including lower dependent changes, places a compact,
+neutral bordered PR button in a wrapping status row immediately below its title,
+alongside push status and a CI badge. The checks badge matches the compact PR
+button height and corner radius; Running uses the same neutral background and
+border, retaining its spinner. Passed/Failed retain their distinct status tones.
+PR controls retain opaque surfaces and distinct light/dark hover/focus. Push
+status compares exact local and last-observed open-PR SHA-1 heads: matching
+heads show Nothing to push and different heads show Changes to push. Missing,
+incomparable or stale observations show Push status unknown; these labels never
+grant publication authority or claim an ahead count. CI badges show Passed,
+Failed or Running with an animated spinner for running/queued checks.
+Capability, revision and completeness checks preserve explicit unavailable,
+unknown, stale, attention, no-checks and skipped states; absent or skipped
+checks never imply a pass. Text and icons distinguish status independently of
+colour. Submit stack stays in the column menu and beside Push on submitted top
+cards. Submit stack, Create PR, Push and the branch action-bar icon buttons use
+the same compact height as the PR number control, preserving their capability,
+pending and command guards.
+
+A branch's PR appears as an expandable section above its selected file diff in
+the same adjacent details column, following the Op Log's separate-card layout.
+Badge activation opens PR details before any file is selected. Choosing a file
+uses that same column; the relevant PR summary remains above it. Collapsing the
+PR leaves the diff intact, and closing only the file leaves the PR available. No
+PR details section is inserted into the stack lane. The header owns the title,
+linked PR number, draft/state chip and action icons. Merge method, guarded
+merge, draft and Restack controls share its compact actions menu. A bottom split
+merge bar shares method selection and retains confirmation, head and receipt
+guards. The body omits repeated identity and repository-name metadata, renders
+Markdown and uses an icon-only header pencil for editing; no body Edit details
+button or Description label. Available checks form a flush, expandable footer
+below the description, including while floating. The footer starts collapsed
+whenever a PR opens, uses a themed hover/focus surface and places its chevron
+after Refresh and display options at the far right. There is no header checks
+toggle; PR actions use an icon-only kebab immediately before Close. All action
+menus have icons and sufficient width for unwrapped labels. Header actions have
+visible themed hover, open-menu and keyboard-focus surfaces in both themes. The
+collapsible title trigger stays transparent in docked and floating views; only
+its docked form is interactive. Disabled actions stay inert. Merge/draft/Restack
+actions preserve provider capability and pending guards. Checks offer a
+segmented summary ring, counts, refresh, and expandable nonempty status groups
+ordered failing, in progress, attention, successful and skipped/cancelled, with
+an explicit flat-list option. Results use the released Scroll Area, bounded to
+min(20rem, 45dvh), with corners no larger than 6px; the summary stays outside
+the scroll region. Loading, stale, incomplete and unavailable outcomes stay
+explicit. Group/disclosure choices, selected jobs/logs and list scroll survive
+refresh and float/redock. Successful checks alone grant no merge authority. The
+repository owner serializes forge transport calls, including discovery and
+selected-PR reads, retaining journal admission and exact pending effects.
+Session-only bounded account/repository/host caches reuse PR/check/job/log reads
+until manual refresh, mutation or identity change. No forge or inventory timer
+refreshes them; device sign-in keeps its polling. Previews and recovery proofs
+are never cached. Single-line check rows keep only a kebab; timing requires
+valid provider start/completion facts. Failed observations release the queue;
+closed views do not dispatch queued requests. Creation and details share the
+forge-independent detachable-panel adapter: released floating window controls
+own moving, resizing, minimizing, maximizing and docking. The same
+content/editor instance and draft remain mounted during float/redock, with
+focused Escape and return focus. Floating layout is session-only,
+viewport-bounded and cleaned up with the owning view. Float/dock preserves
+nested scrolling after the content node moves between hosts; temporary host
+hiding must not discard its scroll offsets. Float/dock controls use the
+picture-in-picture-2 icon. Floating PR content has no outer component border or
+corner radius; its header matches the body background and uses a bottom divider.
+Its title disclosure hides the collapse chevron, uses a transparent background,
+ignores pointer input through CSS and disables keyboard activation while
+floating; redocking restores normal disclosure. The inline PR component owns its
+bottom spacing, so floating it leaves the file diff aligned to the top of the
+shared column; redocking restores the separation between cards.
+
+The adjacent PR inspection/submission column retains matching shared headers,
+icon-only pencil/close controls and its connection/inventory menu. Descriptions
+use the owned composer and safe Markdown, including preview; merge methods use
+the released shadcn dropdown. Operational failures belong to notifications.
+Unknown commands retain their exact intent; native forge commands stay
+unavailable. Catalog evidence includes unsubmitted creation beside a submitted
+stack, rendered details, checks inspection, keyboard/float/redock/draft
+behavior, scoped failure toasts and both themes. Stories remain visual-pending.

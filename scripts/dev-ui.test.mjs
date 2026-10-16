@@ -18,7 +18,7 @@ async function documentation(root) {
   await mkdir(resources, { recursive: true });
   await writeFile(
     join(resources, "jj-acp"),
-    `#!/bin/sh\nif [ "$1" = "--help" ]; then\nprintf '%s\\n' '--control-version <1|2|3>'\nelse\ncat >/dev/null\nprintf '%s\\n' '{"version":3,"type":"error","requestId":"preflight-text-context","code":"session_not_open"}' '{"version":3,"type":"error","requestId":"preflight-context-only","code":"session_not_open"}'\nfi\n`,
+    `#!/bin/sh\nif [ "$1" = "--help" ]; then\nprintf '%s\\n' '--control-version <1|2|3>'\nelse\nread -r first\nread -r second\nprintf '%s\\n' '{"version":3,"type":"error","requestId":"preflight-text-context","code":"session_not_open"}' '{"version":3,"type":"error","requestId":"preflight-context-only","code":"session_not_open"}'\ncat >/dev/null\nfi\n`,
     { mode: 0o755 },
   );
   const docs = join(root, "docs/build");

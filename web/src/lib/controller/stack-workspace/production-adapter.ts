@@ -1,3 +1,4 @@
+import type { ForgeController } from "../forge/controller.svelte.js";
 import { retainStackContents } from "./retained-diffs.js";
 import { findWorkspaceTarget } from "./local-state.js";
 import { LocalStacksSession } from "./local-session.js";
@@ -33,6 +34,7 @@ import {
 
 /** Read projection for one verified device binding and an explicitly selected JJ operation. */
 export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
+  forge?: ForgeController;
   readonly #closed = new AbortController();
   #epoch = 0;
   readonly #local: LocalStacksSession;
@@ -285,16 +287,13 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     this.#context(request);
     return conflict;
   }
-  preview(request: WorkspaceRequest) {
-    return this.#local.preview(request);
-  }
-  apply(request: WorkspaceRequest) {
-    return this.#local.apply(request);
-  }
+  preview = (request: WorkspaceRequest) => this.#local.preview(request);
+  apply = (request: WorkspaceRequest) => this.#local.apply(request);
   status(_requestId: string) {
     return this.#local.status();
   }
   close() {
+    this.forge?.close();
     this.#closed.abort();
     this.#physical.close();
     this.#reads?.close();

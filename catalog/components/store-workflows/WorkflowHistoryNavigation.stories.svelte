@@ -60,9 +60,11 @@
       nav.getByRole("button", { name: "Build parser" }),
     ).toHaveAttribute("aria-current", "page");
     await userEvent.click(nav.getByRole("button", { name: "All workflows" }));
-    await expect(
-      await canvas.findByRole("button", { name: /Open run Publish preview/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("button", { name: /Open run Publish preview/ }),
+      ).toBeVisible();
+    });
     await userEvent.click(
       canvas.getByRole("combobox", { name: "Run author filter" }),
     );
@@ -83,9 +85,11 @@
     await userEvent.click(
       canvas.getByRole("button", { name: /Open run Build parser 51515151/ }),
     );
-    await expect(
-      await canvas.findByRole("article", { name: "Run details" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("article", { name: "Run details" }),
+      ).toBeVisible();
+    });
     await expect(
       canvas.queryByRole("navigation", { name: "Workflows by repository" }),
     ).toBeNull();
@@ -170,7 +174,9 @@
         .getByRole("navigation", { name: "Workflows by repository" })
         .querySelector('button[title^="Agent review"]')!,
     );
-    await expect(await canvas.findByText("No matching runs")).toBeVisible();
+    await waitFor(async () => {
+      await expect(await canvas.findByText("No matching runs")).toBeVisible();
+    });
   }}
 />
 
@@ -227,9 +233,11 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(document.body);
-    await expect(
-      await canvas.findByRole("button", { name: /Open run Publish preview/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("button", { name: /Open run Publish preview/ }),
+      ).toBeVisible();
+    });
     await waitFor(() =>
       expect(
         canvas
@@ -243,19 +251,23 @@
     await userEvent.click(
       await body.findByRole("button", { name: "Build parser" }),
     );
-    await expect(
-      await canvas.findByRole("button", {
-        name: /Open run Build parser 51515151/,
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("button", {
+          name: /Open run Build parser 51515151/,
+        }),
+      ).toBeVisible();
+    });
     const frame = canvas.getByTestId("workflow-frame");
     await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth);
     await userEvent.click(
       canvas.getByRole("combobox", { name: "Run status filter" }),
     );
-    await expect(
-      await body.findByRole("option", { name: /^skipped/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("option", { name: /^skipped/ }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
   }}
 />

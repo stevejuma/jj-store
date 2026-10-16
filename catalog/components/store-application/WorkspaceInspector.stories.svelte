@@ -44,9 +44,11 @@
       return element!;
     });
     const header = within(headerElement);
-    await expect(
-      await header.findByRole("tab", { name: "Diff" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await header.findByRole("tab", { name: "Diff" }),
+      ).toBeVisible();
+    });
     await expect(header.getByRole("tab", { name: "Before" })).toBeVisible();
     const split = header.getByRole("radio", { name: "Show split diff" });
     await expect(split).toBeVisible();
@@ -74,7 +76,11 @@
       await userEvent.click(more);
       const menu = within(document.body);
       for (const name of ["Diff", "Before", "After"])
-        await expect(await menu.findByRole("menuitem", { name })).toBeVisible();
+        await waitFor(async () => {
+          await expect(
+            await menu.findByRole("menuitem", { name }),
+          ).toBeVisible();
+        });
       await userEvent.click(menu.getByRole("menuitem", { name: "Before" }));
       await expect(
         await within(inspector).findByRole("textbox", {
@@ -90,9 +96,11 @@
         await header.findByRole("tab", { name: "Before" }),
       ).toHaveAttribute("aria-selected", "true");
       await userEvent.click(header.getByRole("tab", { name: "Diff" }));
-      await expect(
-        await header.findByRole("radio", { name: "Show split diff" }),
-      ).toBeVisible();
+      await waitFor(async () => {
+        await expect(
+          await header.findByRole("radio", { name: "Show split diff" }),
+        ).toBeVisible();
+      });
       await expect(headerElement.scrollWidth).toBeLessThanOrEqual(
         headerElement.clientWidth + 1,
       );

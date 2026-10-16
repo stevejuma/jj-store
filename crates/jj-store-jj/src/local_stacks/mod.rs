@@ -5,6 +5,7 @@ mod config;
 mod conflicts;
 mod content;
 mod destructive;
+pub mod forge;
 mod graph;
 mod history;
 pub use conflicts::{Conflict, conflict};
@@ -103,6 +104,16 @@ pub enum Command {
     },
     Rebase {
         branch: String,
+    },
+    #[serde(skip)]
+    #[schemars(skip)]
+    ForgeRestack {
+        branch: String,
+        target: String,
+        target_remote: String,
+        target_sha: String,
+        expected_base: String,
+        merged: Vec<String>,
     },
     SquashBranch {
         branch: String,
@@ -503,6 +514,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             | Command::Squash { .. }
             | Command::Uncommit { .. }
             | Command::Rebase { .. }
+            | Command::ForgeRestack { .. }
             | Command::SquashBranch { .. } => {
                 graph::execute(
                     tx.repo_mut(),
@@ -563,6 +575,30 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                 .await?;
             }
             Command::Refresh => unreachable!(),
+        }
+        if let Command::ForgeRestack {
+            target,
+            target_remote,
+            target_sha,
+            merged,
+            ..
+        } = &request.command
+        {
+            use jj_lib::op_store::{RemoteRef, RemoteRefState};
+            let id = jj_lib::backend::CommitId::try_from_hex(target_sha).ok_or(Error::Invalid)?;
+            tx.repo_mut().set_remote_bookmark(
+                jj_lib::ref_name::RemoteRefSymbol {
+                    name: target.as_ref(),
+                    remote: target_remote.as_ref(),
+                },
+                RemoteRef {
+                    target: RefTarget::normal(id),
+                    state: RemoteRefState::Tracked,
+                },
+            );
+            let saved = config.active_mut().ok_or(Error::Invalid)?;
+            saved.target = format!("{target}@{target_remote}");
+            saved.applied.retain(|name| !merged.contains(name));
         }
         // Setup and Create select their freshly retained WIP.
         if matches!(

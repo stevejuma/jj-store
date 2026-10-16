@@ -103,6 +103,46 @@ controller now retains that failure until Cancel or a successful explicit Save;
 neither observation nor dismissal replays a command. M30 remains In progress:
 the failed standard gate prevented heavy suites from starting, and prior
 backend/cold failures remain unresolved.
+
+E-MAIN-LOCAL-REPAIRS-001 records the user-authorized 2026-10-16 completed
+main-workspace repair validation and wider failure repairs. M30 retains its
+existing status and completion gates; local passes do not establish hosted,
+additional-platform, live-provider or visual-baseline qualification.
+E-MAIN-PICKER-REPAIRS-001 reviews the reference-read cancellation repair with
+status unchanged. Exact unit, direct-consumer and fresh native browser
+acceptance retain pinned reads and stale-response rejection. Complete local
+qualification, hosted checks and the existing release/platform/visual gates
+remain separate.
+
+E-MAIN-SYNC-STORIES-001 supplies fresh combined-parent integration evidence for
+the unchanged product tree synchronized with remote main. The complete
+1,021-case Storybook inventory passes; failed attempts remain recorded. M30
+stays In progress. Complete cold application/profile, final governance and
+hosted qualification remain pending; no merge or publication is authorized.
+
+E-MAIN-LOCAL-QUALIFICATION-001 records the complete local qualification
+inventory, including source-bound repaired-target Rust proof, exact UI
+inventories, real storage, cold renewal and isolated profile restart. Earlier
+failures and environment prerequisite repairs remain explicit. Final consuming
+documentation and stable-tree tooling results accompany the same evidence. M30
+stays In progress: this local proof and the separately identified standard CI
+head do not qualify heavy hosted release, other platforms or publication.
+
+E-PR10-UI-READINESS-001 records PR #10's single hosted Storybook failure at the
+otherwise locally qualified head. The private story waits for dismissed selects
+to finish closing. Broader acceptance also exposed editor focus interrupting
+chat navigation; focusing before the explicit jump retains the existing
+full-draft visibility contract. Qualification gates remain unchanged. M30 stays
+In progress. Fresh standard required checks must pass on the repair head; prior
+local or hosted passes do not substitute for that result.
+
+E-PR10-AUTOCOMPLETE-001 explicitly reviews M30 with status unchanged. The
+remaining hosted workflow failure is traced to Design Core's deferred input
+selection. Its source repair and authorized package release retain protected
+source/version checks and provenance verification. Fresh required CI on the
+updated jj-store head remains mandatory; this dependency repair does not qualify
+heavy hosted release, other platforms or jj-store publication.
+
 <!-- generated-navigation -->
 
 ## Pages

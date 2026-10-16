@@ -30,6 +30,14 @@ Git-backed JJ workspace, then use `stack apply`, `unapply`, `status`, `list` and
 UI engine and `.jj/jj-store/stacks.toml`. No server or registration is required.
 Use `jj-store help stack` for the complete guide.
 
+The `stack pr` family configures ordinary-local forge connections, inspects PRs
+and checks, merges with expected-head protection, and recovers exact uncertain
+requests. `stack submit` previews and publishes the required bookmark chain;
+`stack restack` explicitly rebases and republishes after landing. Saved GitHub
+accounts are resolved by the shared backend; explicit automation credentials
+remain supported. See
+[forge submission](../guides/git.md#submit-an-ordinary-local-stack-for-review).
+
 ## Command conventions
 
 Use `--help` on the exact command for long help and `-h` for short help.

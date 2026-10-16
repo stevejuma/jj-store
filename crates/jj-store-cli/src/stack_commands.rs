@@ -1,6 +1,7 @@
 //! Server-free CLI integration for the existing ordinary local Stacks engine.
 mod args;
 mod context;
+mod forge;
 mod mutations;
 mod queries;
 mod selection;
@@ -107,6 +108,12 @@ pub(crate) async fn run(
     let Some(command) = &args.command else {
         return crate::server_commands::help(ui, no_pager, &["stack".into()]);
     };
+    if matches!(
+        command,
+        StackCommand::Submit { .. } | StackCommand::Restack { .. } | StackCommand::Pr { .. }
+    ) {
+        return forge::run(ui, format, no_pager, &args, command).await;
+    }
     validate(&args, command)?;
     let initial = Context::open(&args.directory).await?;
     initial.check_pin(args.expect_operation, args.expect_revision)?;

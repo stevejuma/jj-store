@@ -27,23 +27,29 @@
     );
     await userEvent.click(add);
     await userEvent.unhover(message);
-    await expect(
-      await body.findByRole("button", { name: ":lapis:" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("button", { name: ":lapis:" }),
+      ).toBeVisible();
+    });
     await userEvent.click(await body.findByRole("button", { name: ":lapis:" }));
-    await expect(
-      await within(message).findByRole("button", {
-        name: /1 reaction with Lapis/,
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(message).findByRole("button", {
+          name: /1 reaction with Lapis/,
+        }),
+      ).toBeVisible();
+    });
     within(message)
       .getByRole("button", { name: /1 reaction with Lapis/ })
       .focus();
-    await expect(
-      await body.findByText(/1 reaction with Lapis/, {
-        selector: '[data-ui-part="tooltip-content"]',
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByText(/1 reaction with Lapis/, {
+          selector: '[data-ui-part="tooltip-content"]',
+        }),
+      ).toBeVisible();
+    });
     await userEvent.click(
       within(message).getByRole("button", { name: /1 reaction with Lapis/ }),
     );

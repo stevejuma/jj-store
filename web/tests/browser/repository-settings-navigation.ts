@@ -2,25 +2,36 @@ import { expect, type Page } from "@playwright/test";
 
 /** Use the repository-owned primary tabs, retaining same-owner commands. */
 export async function repositorySettings(page: Page, section: string) {
+  await expect(
+    page.locator('[data-ui-component="dropdown-menu"][data-state="closed"]'),
+  ).toHaveCount(0);
   const navigation = page.getByRole("navigation", {
     name: "Repository settings navigation",
     exact: true,
   });
-  await expect(async () => {
+  const enterRepositorySettings = async () => {
+    const globalBack = page.getByRole("button", {
+      name: "Back to jj-store",
+      exact: true,
+    });
+    if (new URL(page.url()).hash.startsWith("#/settings?"))
+      await expect(globalBack).toBeVisible({ timeout: 1000 });
     if (!(await navigation.isVisible())) {
-      const globalBack = page.getByRole("button", {
-        name: "Back to jj-store",
-        exact: true,
-      });
-      if (await globalBack.isVisible())
+      if (await globalBack.isVisible()) {
         await globalBack.click({ timeout: 1000 });
+        await expect(globalBack).not.toBeVisible({ timeout: 1000 });
+      }
       if (!(await navigation.isVisible()))
         await page
           .getByRole("button", { name: "Repository settings", exact: true })
           .click({ timeout: 1000 });
     }
     await expect(navigation).toBeVisible({ timeout: 1000 });
-  }).toPass({ timeout: 10000 });
+    await expect(page).toHaveURL(/\/repos\/[^/]+\/settings\?/, {
+      timeout: 1000,
+    });
+  };
+  await expect(enterRepositorySettings).toPass({ timeout: 10000 });
   await page.evaluate(
     () =>
       new Promise<void>((resolve) =>
@@ -28,7 +39,14 @@ export async function repositorySettings(page: Page, section: string) {
       ),
   );
   const name = section === "Repository" ? "General" : section;
+  const sectionValue =
+    section === "Repository"
+      ? "general"
+      : section === "Local folders"
+        ? "folders"
+        : section.toLowerCase();
   await expect(async () => {
+    await enterRepositorySettings();
     const tab = navigation.getByRole("tab", { name, exact: true });
     if (await tab.isVisible()) {
       if ((await tab.getAttribute("aria-selected")) !== "true") {
@@ -46,8 +64,20 @@ export async function repositorySettings(page: Page, section: string) {
         .getByRole("menuitem", { name, exact: true })
         .click({ timeout: 1000 });
     }
+    await expect(page).toHaveURL(/\/repos\/[^/]+\/settings\?/, {
+      timeout: 1000,
+    });
+    await expect
+      .poll(
+        () =>
+          new URLSearchParams(new URL(page.url()).hash.split("?")[1]).get(
+            "section",
+          ) ?? "general",
+        { timeout: 1000 },
+      )
+      .toBe(sectionValue);
   }).toPass({ timeout: 10000 });
-  await expect(page).toHaveURL(/\/settings\?/);
+  await expect(page).toHaveURL(/\/repos\/[^/]+\/settings\?/);
 }
 
 export async function repositorySettingsLayout(

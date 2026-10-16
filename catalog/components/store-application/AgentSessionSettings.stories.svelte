@@ -62,8 +62,8 @@
       await expect(
         page.getByRole("menuitem", { name }).querySelector("svg"),
       ).not.toBeNull();
-    await expect(page.getByRole("menu").getBoundingClientRect().width).toBe(
-      288,
+    await waitFor(() =>
+      expect(page.getByRole("menu").getBoundingClientRect().width).toBe(288),
     );
     await userEvent.click(
       page.getByRole("menuitem", { name: "Conversation details" }),
@@ -139,12 +139,16 @@
     await expect(
       editor.getByRole("textbox", { name: "Agent name" }),
     ).toHaveValue("Repository helper");
-    await expect(
-      editor.getByRole("button", { name: "Choose agent image" }),
-    ).toBeVisible();
-    await expect(
-      editor.getByRole("form", { name: "Agent configuration" }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        editor.getByRole("button", { name: "Choose agent image" }),
+      ).toBeVisible(),
+    );
+    await waitFor(async () => {
+      await expect(
+        editor.getByRole("form", { name: "Agent configuration" }),
+      ).toBeVisible();
+    });
     const mode = editor.getByLabelText("Execution mode");
     await userEvent.click(mode);
     await userEvent.click(page.getByRole("option", { name: "Read only" }));
@@ -286,9 +290,11 @@
     await expect(
       editor.getByRole("button", { name: "Save agent" }),
     ).toBeEnabled();
-    await expect(
-      editor.getByText(/Save changes the agent defaults for future chats/),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        editor.getByText(/Save changes the agent defaults for future chats/),
+      ).toBeVisible(),
+    );
     await userEvent.click(editor.getByRole("button", { name: "Cancel" }));
     await waitFor(() =>
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),

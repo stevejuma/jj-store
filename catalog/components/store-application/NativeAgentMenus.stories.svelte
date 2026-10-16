@@ -12,7 +12,10 @@
   });
   async function openCopy() {
     const menu = within(document.body);
-    await pointer.click(menu.getByRole("menuitem", { name: /^Copy$/ }));
+    const trigger = await waitFor(() =>
+      menu.getByRole("menuitem", { name: /^Copy$/ }),
+    );
+    await pointer.click(trigger);
     await menu.findByRole("menu", { name: /^Copy$/ });
   }
 </script>

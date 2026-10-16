@@ -8,6 +8,7 @@ use binding::bound_folder;
 mod collaboration;
 mod conversion;
 mod events;
+mod forge;
 mod index_tasks;
 mod reviews;
 mod stacks;
@@ -111,6 +112,7 @@ pub(super) fn router() -> Router<Arc<State>> {
         .merge(working_copy::router())
         .merge(working_tree::router())
         .merge(stacks::router())
+        .merge(forge::router())
         .merge(conversion::router())
         .merge(agents::router())
         .merge(reviews::router())
@@ -688,6 +690,7 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     working_copy::document(document);
     working_tree::document(document);
     stacks::document(document);
+    forge::document(document);
     conversion::document(document);
     events::document(document);
 }

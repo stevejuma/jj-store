@@ -37,7 +37,10 @@
       >{options[selected]?.label ?? value ?? "Choose an option"}</span
     >
   </Select.Trigger>
-  <Select.Content>
+  <Select.Content
+    aria-label={ariaLabel}
+    aria-labelledby={ariaLabel ? undefined : id ? `${id}-label` : undefined}
+  >
     <Select.Group>
       {#each options as option, index (option.value)}
         <Select.Item

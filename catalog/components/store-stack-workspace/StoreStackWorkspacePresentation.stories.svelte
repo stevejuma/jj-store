@@ -173,9 +173,11 @@
     const action = toolbar.getByRole("button", { name: "Create stack" });
     await userEvent.hover(action);
     await expect(action).toHaveAttribute("aria-describedby");
-    await expect(
-      await portal.findByText("Create stack", { exact: true }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await portal.findByText("Create stack", { exact: true }),
+      ).toBeVisible();
+    });
     await userEvent.unhover(action);
     const picker = canvas.getByRole("combobox", {
       name: "Active stack workspace",
@@ -183,12 +185,16 @@
     await userEvent.click(picker);
     const search = await portal.findByLabelText("Search workspaces");
     await userEvent.type(search, "unmatched");
-    await expect(portal.getByText("No matching workspaces.")).toBeVisible();
+    await waitFor(async () => {
+      await expect(portal.getByText("No matching workspaces.")).toBeVisible();
+    });
     await userEvent.clear(search);
     await userEvent.type(search, "Exper");
-    await expect(
-      portal.getByRole("option", { name: /Experiment/ }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        portal.getByRole("option", { name: /Experiment/ }),
+      ).toBeVisible();
+    });
     expect(portal.queryByRole("option", { name: /Daily work/ })).toBeNull();
     await userEvent.keyboard("{ArrowDown}{Enter}");
     await portal.findByRole("button", { name: "Apply command" });
@@ -275,7 +281,9 @@
       }),
     );
     await messagePreview(canvasElement, "Empty WIP commit");
-    await expect(portal.getByText(/Create an empty commit/)).toBeVisible();
+    await waitFor(async () => {
+      await expect(portal.getByText(/Create an empty commit/)).toBeVisible();
+    });
     await applyPreview(canvasElement);
     await expect(
       within(stack).getByRole("button", { name: "Empty WIP commit" }),

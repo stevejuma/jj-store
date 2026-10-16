@@ -184,17 +184,17 @@
   }
   function jumpToEnd() {
     if (!root) return;
+    const draft = root.querySelector<HTMLElement>(
+      "[data-chat-next-message] [role='textbox']",
+    );
+    (draft ?? target(items.at(-1)?.id ?? ""))?.focus({ preventScroll: true });
+    close();
     root.scrollTo({
       top: root.scrollHeight,
       behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "instant"
         : "smooth",
     });
-    const draft = root.querySelector<HTMLElement>(
-      "[data-chat-next-message] [role='textbox']",
-    );
-    (draft ?? target(items.at(-1)?.id ?? ""))?.focus({ preventScroll: true });
-    close();
   }
 </script>
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { connectForgeView } from "../../controller/forge/view-lifecycle.js";
+  import { untrack } from "svelte";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import type { Snippet } from "svelte";
   import type { StoreStacksView } from "../../controller/store-stacks-navigation.js";
@@ -63,6 +65,7 @@
   let formOpen = $state(false),
     formCommand = $state<WorkspaceCommand | null>(null);
   const notifications = ownNotifications();
+  $effect(() => connectForgeView(controller.forge, notifications.context));
   const showCanvas = $derived(
     !focusedView || focusedView === "branches" || focusedView === "workspace",
   );

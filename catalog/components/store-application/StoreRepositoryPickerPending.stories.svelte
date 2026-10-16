@@ -23,6 +23,9 @@
       for (const item of body.getAllByRole("option"))
         expect(item).toHaveAttribute("aria-disabled", "true");
     });
+    await waitFor(() =>
+      expect(body.getByRole("option", { name: /Parser/ })).toBeVisible(),
+    );
     await userEvent.click(body.getByRole("option", { name: /Parser/ }));
     expect(args.onChange).not.toHaveBeenCalled();
     expect(body.getByRole("option", { name: /Parser/ })).toBeVisible();

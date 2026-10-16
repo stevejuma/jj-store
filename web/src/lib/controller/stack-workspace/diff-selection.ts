@@ -1,4 +1,5 @@
 import { workspaceAggregateSource, workspaceSourceStack } from "./files.js";
+import { workspaceSourceBranch } from "./details-columns.js";
 import type { StackWorkspaceController } from "./controller.svelte.js";
 import type { WorkspaceOpenDiff, WorkspaceCommand } from "./types.js";
 /** Adjacent file views retain independent read cancellation and selection. */
@@ -37,6 +38,17 @@ export function selectWorkspaceFile(
     );
   }
   activateWorkspaceDiff(controller, diff);
+  const forge = controller.forge;
+  const branch = workspaceSourceBranch(snapshot, source, origin.slice(6));
+  if (
+    forge &&
+    branch &&
+    !forge.busy &&
+    !forge.pending &&
+    (forge.pr(branch) || forge.surface === "inline") &&
+    (forge.selected?.head !== branch || forge.surface !== "inline")
+  )
+    forge.select(branch, "inline");
   void controller.details.loadDiff(source, path);
 }
 export function closeWorkspaceDiff(

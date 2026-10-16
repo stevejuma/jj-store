@@ -1,4 +1,5 @@
 import { RuntimeReload } from "./runtime-reload.svelte.js";
+import { Integrations } from "./integrations.svelte.js";
 import { authenticatedAgentFetch } from "../connections/agent-transport.js";
 import { createDirectory } from "./directory.svelte.js";
 import { ServerAgentAdministration } from "./server-agent-administration.svelte.js";
@@ -15,6 +16,10 @@ export function createLocalConfiguration(
   denied?: () => void,
   active: () => boolean = () => true,
 ) {
+  const integrations = new Integrations(
+    () => active() && data.accessMode === "local_trusted",
+    new LocalClient("", fetcher),
+  );
   const directory = createDirectory({
     available: () =>
       active() &&
@@ -66,6 +71,7 @@ export function createLocalConfiguration(
     },
   );
   return {
+    integrations,
     reload,
     capture,
     execution,
@@ -73,6 +79,7 @@ export function createLocalConfiguration(
     directory,
     agentAdministration,
     destroy() {
+      integrations.destroy();
       reload.destroy();
       freshness?.destroy();
       capture.destroy();

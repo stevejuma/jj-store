@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceLoadingApplicationFixture from "../../fixtures/StackWorkspaceLoadingApplicationFixture.svelte";
@@ -7,6 +8,9 @@
     component: StackWorkspaceLoadingApplicationFixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
+    beforeEach: async () => {
+      await Promise.all([views.stacks(), views.log()]);
+    },
   });
   async function assertPending(element: HTMLElement) {
     const canvas = within(element);

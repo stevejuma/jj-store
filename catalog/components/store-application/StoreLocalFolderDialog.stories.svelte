@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import StoreLocalFolderDialog from "../../../web/src/lib/ui/store-settings/StoreLocalFolderDialog.svelte";
   import "../../../web/src/lib/ui/store-work/store-work.css";
   const { Story } = defineMeta({
@@ -42,10 +42,12 @@
     );
     const fields = input.closest(".community-settings__option-group")!;
     const notice = within(dialog).getByRole("status");
-    await expect(
-      notice.getBoundingClientRect().top -
-        fields.getBoundingClientRect().bottom,
-    ).toBeGreaterThanOrEqual(12);
+    await waitFor(() =>
+      expect(
+        notice.getBoundingClientRect().top -
+          fields.getBoundingClientRect().bottom,
+      ).toBeGreaterThanOrEqual(12),
+    );
     await userEvent.type(input, "/workspaces/example");
     await expect(input).toHaveValue("/workspaces/example");
     await expect(

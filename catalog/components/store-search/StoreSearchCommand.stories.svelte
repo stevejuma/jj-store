@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, fn, userEvent, within } from "storybook/test";
+  import { expect, fn, userEvent, within, waitFor } from "storybook/test";
   import StoreSearchCommand from "../../../web/src/lib/ui/store-search/StoreSearchCommand.svelte";
   import StoreSearchCommandFixture from "../../fixtures/StoreSearchCommandFixture.svelte";
   import { searchResults } from "../../fixtures/search.js";
@@ -41,24 +41,32 @@
     await expect(
       dialog.querySelector('[data-ui-component="command-view"]'),
     ).not.toBeNull();
-    await expect(
-      within(dialog).getByText("Operations", {
-        selector: "[data-command-group-heading]",
-      }),
-    ).toBeVisible();
-    await expect(
-      within(dialog).getByText("Commits", {
-        selector: "[data-command-group-heading]",
-      }),
-    ).toBeVisible();
-    await expect(
-      within(dialog).getByText("Files", {
-        selector: "[data-command-group-heading]",
-      }),
-    ).toBeVisible();
-    await expect(
-      within(dialog).getByText("Indexing newer history"),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByText("Operations", {
+          selector: "[data-command-group-heading]",
+        }),
+      ).toBeVisible();
+    });
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByText("Commits", {
+          selector: "[data-command-group-heading]",
+        }),
+      ).toBeVisible();
+    });
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByText("Files", {
+          selector: "[data-command-group-heading]",
+        }),
+      ).toBeVisible();
+    });
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByText("Indexing newer history"),
+      ).toBeVisible();
+    });
     const commit = within(dialog).getByRole("option", {
       name: /Stream immutable native objects/u,
     });

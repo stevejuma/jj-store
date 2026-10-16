@@ -1,12 +1,17 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, within } from "storybook/test";
+  import { IDS } from "../../fixtures/repository.js";
   import Fixture from "../../fixtures/StoreEvolutionStatesFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Evolution column",
     component: Fixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
+    beforeEach: async () => {
+      await Promise.all([views.log()]);
+    },
   });
 </script>
 
@@ -58,9 +63,11 @@
       await page.findByText("Incomplete predecessor history"),
     ).toBeVisible();
     await expect(
-      within(canvas.getByRole("list", { name: "Evolution log" })).getAllByRole(
-        "listitem",
-      ),
-    ).toHaveLength(3);
+      [
+        ...canvas
+          .getByRole("list", { name: "Evolution log" })
+          .querySelectorAll("[data-revision-id]"),
+      ].map((row) => row.getAttribute("data-revision-id")),
+    ).toEqual([IDS.merge, "ec".repeat(64), "ed".repeat(64)]);
   }}
 />

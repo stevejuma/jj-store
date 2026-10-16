@@ -5942,7 +5942,7 @@ mod tests {
                 let (mut socket, _) = listener.accept().await.unwrap();
                 counted.fetch_add(1, Ordering::SeqCst);
                 let mut bytes = [0; 4096];
-                socket.read(&mut bytes).await.unwrap();
+                assert!(socket.read(&mut bytes).await.unwrap() > 0);
                 socket.write_all(b"HTTP/1.1 503 Unavailable\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}").await.unwrap();
             }
         });

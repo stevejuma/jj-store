@@ -45,6 +45,21 @@ const initialIdentity = await identity();
 let runtime;
 let phase = "startup";
 try {
+  // Prepare watched files before the development server establishes subscriptions.
+  await mkdir(probe);
+  await writeFile(
+    join(probe, "index.html"),
+    '<!doctype html><html><body><div id="probe"></div><script type="module" src="./main.ts"></script></body></html>',
+  );
+  await writeFile(
+    join(probe, "main.ts"),
+    'import { mount } from "svelte"; import Probe from "./Probe.svelte"; import "./probe.css"; mount(Probe, { target: document.getElementById("probe")! });',
+  );
+  await writeFile(join(probe, "label.ts"), 'export const label = "First";');
+  const component =
+    '<script lang="ts">import {label} from "./label.ts";</script><p>{label} component-before</p>';
+  await writeFile(join(probe, "Probe.svelte"), component);
+  await writeFile(join(probe, "probe.css"), ":root { --hmr-probe: before; }");
   runtime = await runUiDevelopment(root, environment);
   const { api, agentsAvailable, headers } = developmentApi(runtime.origin);
   await agentsAvailable();
@@ -142,21 +157,14 @@ try {
   await reader.cancel().catch(() => {});
   const snapshot = await api(`repos/${repositoryId}/snapshot`);
   phase = "HMR";
-  await mkdir(probe);
-  await writeFile(
-    join(probe, "index.html"),
-    '<!doctype html><html><body><div id="probe"></div><script type="module" src="./main.ts"></script></body></html>',
-  );
-  await writeFile(
-    join(probe, "main.ts"),
-    'import { mount } from "svelte"; import Probe from "./Probe.svelte"; import "./probe.css"; mount(Probe, { target: document.getElementById("probe")! });',
-  );
-  await writeFile(join(probe, "label.ts"), 'export const label = "First";');
-  const component =
-    '<script lang="ts">import {label} from "./label.ts";</script><p>{label} component-before</p>';
-  await writeFile(join(probe, "Probe.svelte"), component);
-  await writeFile(join(probe, "probe.css"), ":root { --hmr-probe: before; }");
+  // Isolate the probe document and observe its connected HMR client before edits.
+  await page.goto("about:blank");
+  const connected = page.waitForEvent("console", {
+    predicate: (message) => message.text() === "[vite] connected.",
+    timeout: 10000,
+  });
   await page.goto(`${runtime.origin}.dev-ui-acceptance/index.html`);
+  await connected;
   await page.getByText("First component-before", { exact: true }).waitFor();
   await page.evaluate(() => {
     window.__hmrProbe = "same-document";

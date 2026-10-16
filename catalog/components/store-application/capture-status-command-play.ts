@@ -20,7 +20,15 @@ export async function sourceStatusCommand({
   await expect(degraded).toHaveAttribute("data-checked", "true");
   await expect(degraded).toHaveAccessibleDescription("Selected");
   await expect(search).toBeVisible();
-  await expect(c.getByText("1 shown")).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("1 shown"),
+    ).toBeVisible(),
+  );
   await userEvent.clear(search);
   await userEvent.click(
     page.getByRole("option", { name: "Awaiting activity" }),
@@ -30,16 +38,48 @@ export async function sourceStatusCommand({
   await expect(c.getByText("Codex CLI source 1")).toBeVisible();
   await expect(c.getByText("Codex Desktop source 3")).toBeVisible();
   await expect(c.queryByText("Cursor Desktop source 2")).toBeNull();
-  await expect(c.getByText("3 loaded")).toBeVisible();
-  await expect(c.getByText("5 observed")).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("3 loaded"),
+    ).toBeVisible(),
+  );
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("5 observed"),
+    ).toBeVisible(),
+  );
   const awaiting = page.getByRole("option", {
     name: "Awaiting activity",
   });
   await userEvent.click(awaiting);
   await expect(awaiting).toHaveAttribute("data-checked", "false");
-  await expect(c.getByText("1 shown")).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("1 shown"),
+    ).toBeVisible(),
+  );
   await userEvent.click(awaiting);
-  await expect(c.getByText("2 shown")).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("2 shown"),
+    ).toBeVisible(),
+  );
   await userEvent.type(search, "no-matching-status");
   await expect(page.getByText("No matching statuses")).toBeVisible();
   await userEvent.keyboard("{Escape}");
@@ -62,6 +102,14 @@ export async function sourceStatusCommand({
   await userEvent.click(page.getByRole("option", { name: "All statuses" }));
   await expect(status).toHaveTextContent("All statuses");
   await expect(c.getByText("Cursor Desktop source 2")).toBeVisible();
-  await expect(c.getByText("1 shown")).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("1 shown"),
+    ).toBeVisible(),
+  );
   await userEvent.keyboard("{Escape}");
 }

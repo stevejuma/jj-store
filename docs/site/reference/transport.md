@@ -346,3 +346,21 @@ Managed local runners derive their native identity and source attachments from
 the selected service and its verified workspace directory. Job context carries
 repository and revision IDs; it cannot choose arbitrary local paths. Native
 workflow RPC/CLI command and receipt formats remain unchanged.
+
+## Local forge actions
+
+`POST /v1/local/repos/{repo}/forge` uses the existing LocalTrusted bound-folder,
+same-origin and protocol-header admission. It exposes versioned configuration,
+preview/submit, PR editing, CI, guarded merge and original-request recovery.
+`GET`/`POST /v1/local/integrations` inventories verified GitHub accounts and
+handles token registration, device authorization and forgetting. Native
+credential storage resolves saved secrets in the backend; API responses expose
+metadata and opaque account/session references, never saved tokens or device
+secrets. Explicit CLI automation credentials remain supported. Repository
+detection and account binding retain endpoint identities and exact pending
+intents.
+
+Private device receipts describe external effects and never become native
+repository authority. Status can maintain an owned remote description block;
+local rebases and publication require explicit Restack. See
+[ordinary-local review submission](../guides/git.md).

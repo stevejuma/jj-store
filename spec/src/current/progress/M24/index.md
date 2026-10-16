@@ -395,3 +395,4 @@ presentation and related review links.
 - [View loading review](view-loading-review.md)
 - [Workspace inspector and historical turn review](workspace-inspector-review.md)
 - [history](history/index.md)
+- [Main local qualification review](main-local-qualification.md)

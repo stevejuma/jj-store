@@ -68,9 +68,13 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Manage selected server" }),
     );
-    await expect(
-      within(document.body).getByRole("dialog", { name: "Server connection" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(document.body).getByRole("dialog", {
+          name: "Server connection",
+        }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
   }}>{#snippet children()}<Fixture compact />{/snippet}</Story
 >
@@ -93,13 +97,17 @@
         .querySelector('[data-slot="dialog-description"]'),
     ).toBeNull();
     const dialog = page.getByRole("dialog", { name: "Add server" });
+    await waitFor(() => expect(dialog).toBeVisible());
     const header = dialog.querySelector(
       '[data-ui-part="dialog-frame-header"]',
     )!;
     const card = page.getByRole("region", { name: "Connection details" });
-    await expect(
-      card.getBoundingClientRect().top - header.getBoundingClientRect().bottom,
-    ).toBe(4);
+    await waitFor(() =>
+      expect(
+        card.getBoundingClientRect().top -
+          header.getBoundingClientRect().bottom,
+      ).toBe(4),
+    );
     await expect(getComputedStyle(header).paddingBottom).toBe("4px");
     const viewport = dialog.querySelector(
       '[data-ui-part="scroll-area-viewport"]',
@@ -136,7 +144,7 @@
         name: "Add server",
       });
       const input = within(dialog).getByRole("textbox", { name: "Name" });
-      await expect(input).toBeVisible();
+      await waitFor(() => expect(input).toBeVisible());
       const label = within(dialog).getByText(
         "A display name for this sidebar.",
       );

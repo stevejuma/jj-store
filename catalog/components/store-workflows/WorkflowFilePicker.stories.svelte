@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, within, userEvent } from "storybook/test";
+  import { expect, within, userEvent, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/WorkflowFilePickerFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Workflow YAML files",
@@ -30,11 +30,13 @@
     });
     await expect(picker).toBeEnabled();
     await userEvent.click(canvas.getByRole("button", { name: "Browse…" }));
-    await expect(
-      await body.findByText(
-        "Workflow source read failed. Your selection is retained.",
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByText(
+          "Workflow source read failed. Your selection is retained.",
+        ),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await expect(picker).toHaveValue(".github/workflows/ci.yml");
     await expect(canvas.queryByRole("alert")).toBeNull();

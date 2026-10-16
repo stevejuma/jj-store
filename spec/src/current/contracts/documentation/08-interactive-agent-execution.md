@@ -16,6 +16,12 @@ guide; bundled harness availability alone does not qualify a live adapter or a
 signed desktop release. Fixture permission proof stays distinct from installed
 adapter turns that raised no permission request.
 
+E-PR10-UI-READINESS-001 retains JST-DOC-001/002/003. The Browsing guide
+describes Document-view Jump to end, draft focus before scrolling, full-draft
+visibility and immediate reduced-motion navigation. Application review covers
+its mapped browsing, editing, settings and conversion pages without expanding
+execution or publication authority.
+
 The guide documents Settings → Agents → Runtimes, explicit private Codex
 installation/update, pinned versions, Node/npm prerequisites, vendor Cursor
 setup, exact installation receipts and restart/failure retention. Readiness,

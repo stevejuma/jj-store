@@ -120,7 +120,7 @@
       body.querySelector('[data-ui-component="file-listing-view-mode-toggle"]'),
     ).toBeNull();
     expect(
-      within(body).getByRole("button", { name: "README.md" }),
+      await within(body).findByRole("button", { name: "README.md" }),
     ).toBeVisible();
     expect(body.querySelector("p")).toBeNull();
     expect(
@@ -190,7 +190,9 @@
     expect(
       canvasElement.querySelector('[data-sticky-for="working"]'),
     ).toBeNull();
-    const source = within(column).getByRole("button", { name: "README.md" });
+    const source = await within(column).findByRole("button", {
+      name: "README.md",
+    });
     expect(source).toBeVisible();
     // Files stay clickable while the later stacks are in view and their diff
     // remains immediately after Unstaged in the original canvas sequence.
@@ -212,7 +214,7 @@
       name: "Create commit in feature/workspace",
     });
     expect(
-      within(form).getByRole("button", { name: "README.md" }),
+      await within(form).findByRole("button", { name: "README.md" }),
     ).toBeVisible();
     await userEvent.click(within(form).getByRole("button", { name: "Cancel" }));
     await userEvent.click(
@@ -236,7 +238,7 @@
     await assertPinned(expanded);
     expect(expanded.getBoundingClientRect().width).toBe(width);
     expect(
-      within(expanded).getByRole("button", { name: "README.md" }),
+      await within(expanded).findByRole("button", { name: "README.md" }),
     ).toBeVisible();
     for (const area of canvasElement.querySelectorAll<HTMLElement>(
       ".stack-workspace__canvas-scroll [data-scroll-strategy]",

@@ -13,7 +13,7 @@ pub struct StackArgs {
     /// Validate and describe a mutation against the last snapshot without writing
     #[arg(long, global = true)]
     pub dry_run: bool,
-    /// Confirm deletion, abandonment, discard or reconciliation
+    /// Confirm destructive local actions, forge merge or Restack
     #[arg(long, global = true)]
     pub yes: bool,
     /// Reject a changed operation (also returned by status/hunks JSON)
@@ -29,6 +29,20 @@ pub struct StackArgs {
 pub enum StackCommand {
     /// Show workspace, applied stacks, unfinished paths and conflicts
     Status,
+    /// Push the exact dependency chain and create/update its forge PRs
+    Submit {
+        bookmark: String,
+        /// Create ready-for-review PRs; drafts are the default
+        #[arg(long)]
+        ready: bool,
+    },
+    /// Preview or explicitly rebase and publish the remaining stack
+    Restack { bookmark: String },
+    /// Inspect and manage forge pull/merge requests
+    Pr {
+        #[command(subcommand)]
+        command: PrCommand,
+    },
     /// Discover top-level stacks relative to the active or explicitly selected target
     List {
         #[arg(long)]
@@ -324,4 +338,114 @@ pub struct SelectionArgs {
     /// Exact file paths relative to -C; directories expand only through --all
     #[arg(last = true)]
     pub paths: Vec<String>,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum PrCommand {
+    /// Show the configured forge, PRs and current capabilities
+    List,
+    /// Approve this device-local forge connection (token comes from JJ_STORE_FORGE_TOKEN)
+    Configure {
+        #[arg(long, value_parser=["github","gitlab","forgejo"])]
+        /// Forge provider for this connection
+        provider: String,
+        #[arg(long)]
+        /// Explicit approved HTTPS API root
+        api_url: String,
+        #[arg(long)]
+        /// Target repository path, including GitLab subgroups
+        repository: String,
+        #[arg(long)]
+        /// Source repository path when submitting from a fork
+        source_repository: Option<String>,
+        #[arg(long, default_value = "origin")]
+        /// Approved remote for publishing branch heads
+        remote: String,
+        #[arg(long, default_value = "origin")]
+        /// Approved remote containing the upstream target branch
+        target_remote: String,
+        #[arg(long, default_value = "main")]
+        /// Upstream target branch name
+        target: String,
+        #[arg(long)]
+        /// Use native GitHub membership for eligible same-repository chains
+        native_stacks: bool,
+    },
+    Show {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+    },
+    /// Update authored title/body against an exact current body
+    Edit {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        #[arg(long)]
+        /// Complete new authored PR title
+        title: String,
+        #[arg(long)]
+        /// File containing the complete intended PR description
+        body_file: PathBuf,
+    },
+    Draft {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        #[arg(long)]
+        /// Mark ready for review instead of draft
+        ready: bool,
+    },
+    Checks {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+    },
+    Jobs {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        /// Exact run or pipeline ID belonging to the PR revision
+        run: String,
+    },
+    Logs {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        /// Exact run or pipeline ID belonging to the PR revision
+        run: String,
+        /// Exact job ID belonging to the selected run
+        job: String,
+    },
+    Rerun {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        /// Exact run or pipeline ID belonging to the PR revision
+        run: String,
+        #[arg(long)]
+        /// Retry failed jobs using the supported provider operation
+        failed_only: bool,
+    },
+    Cancel {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        /// Exact run or pipeline ID belonging to the PR revision
+        run: String,
+    },
+    Merge {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        #[arg(long, default_value="squash", value_parser=["merge","squash","rebase"])]
+        /// Merge method supported by the configured forge
+        method: String,
+    },
+    MergeStatus {
+        /// Pull request or merge request number in the target repository
+        number: u64,
+        /// Original asynchronous merge receipt identifier
+        receipt: String,
+    },
+    /// Observe and resume known-unexecuted steps; never replay an unknown effect
+    Recover {
+        /// Original retained request identity for observation and recovery
+        request_id: String,
+    },
+    OperationStatus {
+        /// Original retained request identity for observation and recovery
+        request_id: String,
+    },
 }

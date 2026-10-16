@@ -44,9 +44,11 @@
     await userEvent.click(
       await canvas.findByRole("button", { name: "Application menu" }),
     );
-    await expect(
-      await body.findByRole("menuitem", { name: "Create change" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("menuitem", { name: "Create change" }),
+      ).toBeVisible();
+    });
     await expect(
       body.queryByRole("menuitem", { name: "Reload saved settings" }),
     ).toBeNull();
@@ -75,9 +77,11 @@
     const check = await within(dialog).findByRole("button", {
       name: "Check original outcome",
     });
-    await expect(
-      await body.findByText("Configuration reload", { selector: "strong" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByText("Configuration reload", { selector: "strong" }),
+      ).toBeVisible();
+    });
     try {
       await page.viewport(390, 844);
       await waitFor(() =>
@@ -117,9 +121,11 @@
       menu.closest('[aria-label="Application navigation"]'),
     ).not.toBeNull();
     await userEvent.click(menu);
-    await expect(
-      within(document.body).getByRole("menuitem", { name: "Create change" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(document.body).getByRole("menuitem", { name: "Create change" }),
+      ).toBeVisible();
+    });
     await userEvent.click(
       await within(document.body).findByRole("menuitem", {
         name: "Reload saved settings",
@@ -128,9 +134,11 @@
     const dialog = await within(document.body).findByRole("dialog", {
       name: "Reload saved settings",
     });
-    await expect(
-      within(dialog).getByRole("button", { name: "Reload saved settings" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByRole("button", { name: "Reload saved settings" }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await waitFor(() => expect(menu).toHaveFocus());
   }}
@@ -160,11 +168,13 @@
         name: "Reload saved settings",
       }),
     );
-    await expect(
-      await within(document.body).findByRole("dialog", {
-        name: "Reload saved settings",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(document.body).findByRole("dialog", {
+          name: "Reload saved settings",
+        }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await waitFor(() => expect(menu).toHaveFocus());
   }}
@@ -193,7 +203,9 @@
         ).toBeNull(),
       );
       await expect(body.getAllByRole("dialog")).toHaveLength(1);
-      await expect(dialog).toBeVisible();
+      await waitFor(async () => {
+        await expect(dialog).toBeVisible();
+      });
       await userEvent.keyboard("{Escape}");
       await waitFor(() =>
         expect(

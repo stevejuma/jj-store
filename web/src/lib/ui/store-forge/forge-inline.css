@@ -1,0 +1,91 @@
+.forge-inline {
+  margin-block-end: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--ui-column-canvas-radius, var(--radius));
+  background: var(--background);
+  overflow: hidden;
+}
+.forge-inline--floating {
+  margin-block-end: 0;
+  border: 0;
+  border-radius: 0;
+}
+.forge-inline--floating .forge-inline__summary {
+  background: var(--background);
+  border-block-end: 1px solid var(--border);
+}
+.forge-inline--floating .forge-inline__title button {
+  pointer-events: none;
+  opacity: 1;
+}
+.forge-inline--floating .forge-inline__title button svg {
+  display: none;
+}
+.forge-inline__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: var(--ui-column-canvas-header-height, 2.5rem);
+  padding: 0 0.5rem;
+  background: var(--jj-store-row-background);
+}
+.forge-inline__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-sm, 0.875rem);
+}
+.forge-inline__title button {
+  background: transparent;
+  width: 100%;
+  min-width: 0;
+  justify-content: flex-start;
+  padding-inline: 0.25rem;
+}
+.forge-inline__title button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.forge-inline__actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.125rem;
+}
+.forge-create {
+  padding: 0.75rem;
+}
+.forge-inline__details .forge-panel__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.forge-inline__details > section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+.forge-create {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.forge-create__target {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+.forge-create__footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.forge-create__footer > button:first-child {
+  margin-inline-end: auto;
+}
+.forge-create__skeleton {
+  min-height: 12rem;
+}

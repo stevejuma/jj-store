@@ -227,6 +227,7 @@ export function productionControllerSurface(
     agentAdministration?: StoreController["agentAdministration"];
     configuration?: StoreController["configuration"];
     directory?: StoreController["directory"];
+    integrations?: StoreController["integrations"];
     freshness?: StoreController["freshness"];
   },
   pause?: StoreController["actions"]["setRefreshPaused"],
@@ -247,6 +248,7 @@ export function productionControllerSurface(
     agentAdministration: options.agentAdministration,
     configuration: options.configuration,
     directory: options.directory,
+    integrations: options.integrations,
     freshness: options.freshness,
     get threads() {
       return options.threads.available() ? options.threads.threads : undefined;

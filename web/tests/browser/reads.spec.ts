@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Locator } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import {
   api,
@@ -14,6 +14,14 @@ import {
   samples,
   token,
 } from "./native-browser-fixture.js";
+
+function graphTag(graph: Locator, label: string) {
+  return graph
+    .getByRole("list", { name: "Revision tags", exact: true })
+    .getByRole("listitem")
+    .filter({ has: graph.page().getByText(label, { exact: true }) })
+    .locator('[data-ui-part="tag"]');
+}
 
 test("changed-file collections consume commit, group and path cursors", async ({
   page,
@@ -214,16 +222,13 @@ test("branch targets scope native history and expose repository decorations", as
   revsets.length = 0;
   await page.getByRole("option", { name: "main", exact: true }).click();
   await expect.poll(() => revsets.at(-1)).toBe(`::${commit}`);
-  await expect(
-    page
-      .locator('[data-chip-tone="danger"]', { hasText: "conflicted" })
-      .first(),
-  ).toBeVisible();
-  await expect(
-    page.locator('[data-chip-tone="success"]', {
-      hasText: "Working copy · laptop",
-    }),
-  ).toBeVisible();
+  const revisionGraph = page.getByRole("list", { name: "Revision graph" });
+  const conflicted = graphTag(revisionGraph, "conflicted").first();
+  await expect(conflicted).toBeVisible();
+  await expect(conflicted).toHaveAttribute("data-tone", "danger");
+  const workingCopyTag = graphTag(revisionGraph, "Working copy · laptop");
+  await expect(workingCopyTag).toBeVisible();
+  await expect(workingCopyTag).toHaveAttribute("data-tone", "success");
 
   revsets.length = 0;
   await workingCopy.click();
@@ -232,19 +237,17 @@ test("branch targets scope native history and expose repository decorations", as
 
   await page.getByRole("tab", { name: "Op Log", exact: true }).click();
   const operationGraph = page.getByRole("list", { name: "Operation graph" });
-  await expect(
-    operationGraph.locator('[data-chip-tone="success"]', {
-      hasText: "Working copy · laptop",
-    }),
-  ).toBeVisible();
-  await expect(
-    operationGraph.getByText("Snapshot", { exact: true }),
-  ).toBeVisible();
-  await expect(
-    operationGraph.locator('[data-ui-part="community-chip"]', {
-      hasText: "head 1",
-    }),
-  ).toHaveAttribute("data-chip-tone", "accent");
+  const operationWorkingCopy = graphTag(
+    operationGraph,
+    "Working copy · laptop",
+  );
+  await expect(operationWorkingCopy).toBeVisible();
+  await expect(operationWorkingCopy).toHaveAttribute("data-tone", "success");
+  await expect(graphTag(operationGraph, "Snapshot")).toBeVisible();
+  await expect(graphTag(operationGraph, "head 1")).toHaveAttribute(
+    "data-tone",
+    "accent",
+  );
 });
 test("multiple_heads_require_choice_and_events_preserve_the_selected_view", async ({
   page,
@@ -356,7 +359,7 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
         queries.filter((query) => query.get("revset") === `::${commit}`).length,
     )
     .toBe(2);
-  await expect(revisionGraph.getByRole("listitem")).toHaveCount(1);
+  await expect(revisionGraph.locator("[data-revision-id]")).toHaveCount(1);
   await page.getByRole("button", { name: "Toggle details" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "pagination snapshot mismatch",
@@ -368,7 +371,7 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
     scopedQueries[0]!.get("at_time_millis"),
   );
   expect(scopedQueries[1]!.get("cursor")).toBe("graph-page-2");
-  await expect(revisionGraph.getByRole("listitem")).toHaveCount(1);
+  await expect(revisionGraph.locator("[data-revision-id]")).toHaveCount(1);
   let pages = 0;
   await page.route("**/commits/*/paths?**", async (route) => {
     const result = pathsPage("paths-page-2");

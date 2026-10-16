@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import StoreRepositoryConversionDialog from "../../../web/src/lib/ui/store-settings/StoreRepositoryConversionDialog.svelte";
   import "../../../web/src/lib/ui/store-work/store-work.css";
   const op = "22".repeat(64);
@@ -80,9 +80,11 @@
   }}
   play={async ({ canvasElement }) => {
     const c = within(await dialog(canvasElement));
-    await expect(
-      c.getByText("Conversion is unavailable: Unsupported signed commit"),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        c.getByText("Conversion is unavailable: Unsupported signed commit"),
+      ).toBeVisible(),
+    );
     await expect(
       c.queryByRole("button", { name: "Convert and open destination" }),
     ).toBeNull();

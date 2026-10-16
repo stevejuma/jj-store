@@ -194,8 +194,10 @@
     await expect(getComputedStyle(copyButton).backgroundColor).not.toBe(
       "rgba(0, 0, 0, 0)",
     );
-    await expect(getComputedStyle(parentButton).backgroundColor).toBe(
-      getComputedStyle(copyButton).backgroundColor,
+    await waitFor(() =>
+      expect(getComputedStyle(parentButton).backgroundColor).toBe(
+        getComputedStyle(copyButton).backgroundColor,
+      ),
     );
     await expect(
       within(diffColumn).getByText("No file selected"),

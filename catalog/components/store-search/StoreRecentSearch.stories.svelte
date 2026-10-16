@@ -96,6 +96,7 @@
   play={async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
     const dialog = body.getByRole("dialog", { name: "Search workspace" });
+    await waitFor(() => expect(dialog).toBeVisible());
     const c = within(dialog);
     await expect(
       c.getByText("Recent activity", {
@@ -143,6 +144,7 @@
   play={async ({ canvasElement, args }) => {
     const page = within(canvasElement.ownerDocument.body);
     const dialog = page.getByRole("dialog", { name: "Search workspace" });
+    await waitFor(() => expect(dialog).toBeVisible());
     const c = within(dialog);
     const glyphs = {
       thread: "hash",

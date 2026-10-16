@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
@@ -7,6 +8,9 @@
     component: StoreRepositoryApplication,
     tags: ["visual-pending"],
     args: { initialPage: "reviews", initiallyCollapsed: true },
+    beforeEach: async () => {
+      await Promise.all([views.settings(), views.reviews()]);
+    },
     parameters: { layout: "fullscreen" },
   });
 </script>

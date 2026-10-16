@@ -1,5 +1,15 @@
 # Device workspace management
 
+Forge account management is installation-owned LocalTrusted Admin capability.
+Account descriptors and opaque handles may be stored in private device files;
+tokens and OAuth refresh tokens use the OS credential facility, with no file
+fallback. PAT inputs remain transient browser drafts until submitted, and saved
+secrets never return to UI responses. Explicit Enterprise endpoints are approved
+by account setup; remote discovery alone cannot authorize credential disclosure.
+Device OAuth uses backend-owned bounded sessions, redacted errors and the
+operator's public client ID. Cancellation prevents late authorization from
+saving an account. Forgetting credentials preserves external-effect receipts.
+
 Local workspace links require LocalTrusted administration of the selected
 repository and the existing browser admission checks. Bearer sessions cannot
 obtain this capability, even when they have repository admin permission. The

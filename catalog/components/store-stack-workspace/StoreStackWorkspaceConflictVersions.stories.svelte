@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceConflictApplicationFixture from "../../fixtures/StackWorkspaceConflictApplicationFixture.svelte";
@@ -8,7 +9,14 @@
     component: StackWorkspaceConflictApplicationFixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
-    beforeEach: () => {
+    beforeEach: async () => {
+      await Promise.all([
+        views.stacks(),
+        views.files(),
+        views.log(),
+        views.stackDetails(),
+        views.stackConflicts(),
+      ]);
       const prior = localStorage.getItem(mergeEditorSettingsKey);
       localStorage.removeItem(mergeEditorSettingsKey);
       return () => {
@@ -53,7 +61,9 @@
       "Ignore whitespace",
       "Ignore case",
     ])
-      expect(page.getByRole("menuitemcheckbox", { name })).toBeVisible();
+      await waitFor(async () => {
+        expect(page.getByRole("menuitemcheckbox", { name })).toBeVisible();
+      });
     await userEvent.keyboard("{Escape}");
     expect(view.getByRole("textbox", { name: "Edit Resolved" })).toBeVisible();
   }}
@@ -234,7 +244,11 @@
     const picker = await page.findByRole("dialog", {
       name: "Choose conflict version",
     });
-    expect(within(picker).getByText("1 line · 6 bytes · third")).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        within(picker).getByText("1 line · 6 bytes · third"),
+      ).toBeVisible();
+    });
     await userEvent.type(
       within(picker).getByRole("combobox", {
         name: "Search conflict versions",
@@ -294,11 +308,13 @@
     expect(
       within(picker).getByRole("option", { name: /Version 3/ }),
     ).toHaveAttribute("aria-disabled", "true");
-    expect(
-      within(picker).getByText(
-        "Deleted version · unavailable for text comparison",
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      expect(
+        within(picker).getByText(
+          "Deleted version · unavailable for text comparison",
+        ),
+      ).toBeVisible();
+    });
     expect(
       view.getByRole("button", { name: "Preview resolution" }),
     ).toBeDisabled();

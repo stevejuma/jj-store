@@ -57,27 +57,33 @@
     await userEvent.click(
       body.getByRole("menuitem", { name: "Edit workflow" }),
     );
-    await expect(
-      await body.findByRole("dialog", { name: "Edit workflow" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("dialog", { name: "Edit workflow" }),
+      ).toBeVisible();
+    });
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
       initialHash,
     );
     await closeDialog();
     body = await openMenu(canvasElement);
     await userEvent.click(body.getByRole("menuitem", { name: "Run workflow" }));
-    await expect(
-      await body.findByRole("dialog", { name: "Run Build parser" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await body.findByRole("dialog", { name: "Run Build parser" }),
+      ).toBeVisible();
+    });
     await closeDialog();
     body = await openMenu(canvasElement);
     await userEvent.click(body.getByRole("menuitem", { name: "Duplicate" }));
     const dialog = within(
       await body.findByRole("dialog", { name: "Create workflow" }),
     );
-    await expect(
-      dialog.getByText("Build parser copy", { exact: true }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        dialog.getByText("Build parser copy", { exact: true }),
+      ).toBeVisible();
+    });
     await userEvent.click(dialog.getByRole("tab", { name: "YAML" }));
     await expect(
       dialog.getByRole("textbox", { name: "Workflow YAML" }),

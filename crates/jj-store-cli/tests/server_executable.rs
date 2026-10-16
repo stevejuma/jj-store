@@ -1188,11 +1188,16 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         ca_certificate_pem: Some(pem.clone()),
         ..Options::default()
     };
+    assert_eq!(journal["created"], true);
+    let initialized = NativeClient::connect(&endpoint, repository, admin.clone(), options.clone())
+        .await
+        .unwrap();
+    assert_eq!(initialized.tokens().await.unwrap().snapshot.epoch, epoch);
+    drop(initialized);
     let operator =
         NativeClient::connect(&endpoint, repository, f.operator.clone(), options.clone())
             .await
             .unwrap();
-    operator.create_repository(epoch, &admin).await.unwrap();
     fs::write(
         f.root.path().join("work/readme.txt"),
         "durable native publication\n",
@@ -1592,6 +1597,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
             &[
                 "store",
                 "token",
+                "grant",
                 "--endpoint",
                 &endpoint,
                 "--repo-id",
@@ -1599,7 +1605,6 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
                 "--ca-certificate",
                 "server.crt",
                 "--format=json",
-                "grant",
                 "--principal",
                 &PrincipalId::new([72; 16]).to_string(),
                 "--permission",
@@ -1638,6 +1643,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
             .env("JJ_STORE_TOKEN", admin.expose().as_str())
             .args([
                 "token",
+                "revoke",
                 "--endpoint",
                 &endpoint,
                 "--repo-id",
@@ -1645,7 +1651,6 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
                 "--ca-certificate",
                 "server.crt",
                 "--format=json",
-                "revoke",
                 "--token-id",
                 &reader.id().to_string(),
                 "--request",
@@ -1680,6 +1685,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
             &[
                 "store",
                 "token",
+                "retry",
                 "--endpoint",
                 &endpoint,
                 "--repo-id",
@@ -1687,7 +1693,6 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
                 "--ca-certificate",
                 "server.crt",
                 "--format=json",
-                "retry",
                 "--request",
                 "reader-grant.json",
             ],
@@ -1721,7 +1726,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
     );
     assert_eq!(
         operator
-            .create_repository(epoch, &admin)
+            .create_repository_named(epoch, &admin, journal["name"].as_str().unwrap())
             .await
             .unwrap_err()
             .code(),

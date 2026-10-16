@@ -101,3 +101,43 @@ applied but checkout/settings need attention. For exit 3 inspect the reported
 operation and do not repeat the command. No command automatically retries a
 failed mutation. Remote/PR commands and terminal pickers are outside this local
 command family.
+
+## Submit and manage pull requests
+
+Configure an approved device-local API connection. Set `JJ_STORE_FORGE_TOKEN`
+through your automation environment; tokens are never written to a checkout. Use
+the API root for GitHub (`https://api.github.com`), GitLab
+(`https://gitlab.com/api/v4`) or Forgejo (`https://forge.example/api/v1`).
+
+```text
+jj-store stack pr configure --provider github --api-url https://api.github.com --repository team/project
+jj-store stack submit feature/api --dry-run --format json
+jj-store stack submit feature/api
+jj-store stack pr list
+jj-store stack pr edit 42 --title "Add API" --body-file description.md
+jj-store stack pr checks 42
+jj-store stack pr jobs 42 1234
+jj-store stack pr logs 42 1234 5678
+jj-store stack pr rerun 42 1234 --failed-only
+jj-store stack pr merge 42 --method squash --yes
+jj-store stack restack feature/api --dry-run
+jj-store stack restack feature/api --yes
+```
+
+Submission pushes only the selected bookmark and its required dependency chain,
+then creates or updates PRs and their owned navigation sections. New PRs default
+to Draft; `--ready` selects ready-for-review. Fork workflows configure a
+separate `--source-repository` and `--target-remote`; when upstream lacks
+intermediate branches, PRs explicitly use cumulative diffs against upstream
+trunk.
+
+Native GitHub stacks are opt-in with `--native-stacks`. Other forges use
+portable branch chains. Checks, logs, rerun/cancel and merge methods depend on
+the instance and permissions. Forgejo job logs/cancellation require version 16
+or newer; rerun is unavailable in the supported Forgejo API. GitLab rebase is
+not offered as a merge method by this profile.
+
+An interrupted submit prints its exact request identity. Use
+`stack pr recover REQUEST` to observe it and resume only known-unexecuted work;
+unknown effects are never blindly replayed. Queued merges remain distinct from
+merged PRs. Ordinary local undo/redo cannot undo a push or forge mutation.

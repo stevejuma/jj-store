@@ -121,7 +121,9 @@
       await expect(
         c.queryByRole("group", { name: "Editing message" }),
       ).toBeNull();
-      await expect(editor.querySelector(".cm-placeholder")).toBeVisible();
+      await waitFor(async () => {
+        await expect(editor.querySelector(".cm-placeholder")).toBeVisible();
+      });
       await expect(editor).not.toHaveTextContent("Edited native comment");
     } finally {
       if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
@@ -142,9 +144,11 @@
     await expect(
       within(message).queryByRole("button", { name: "Reply" }),
     ).toBeNull();
-    await expect(
-      menu.getByRole("menuitem", { name: "Copy revision ID" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        menu.getByRole("menuitem", { name: "Copy revision ID" }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await expect(c.queryByRole("textbox")).toBeNull();
   }}
