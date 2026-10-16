@@ -3,15 +3,16 @@
 Responsive repository and Stacks tabs skip duplicate width/section measurements
 so a visible overflow trigger remains mounted and usable during initial layout.
 
-Stacks tracks binding discovery independently after repository connection is
-ready. Initial connection, binding discovery and the first workspace read show a
-labelled busy skeleton across Branches, Workspace, Commits and Op Log. A
-verified binding seed enables navigation but is not loaded workspace content; it
-cannot briefly render unavailable or empty workspace banners. Successful
-workspace reads release the skeleton; later refreshes retain loaded content,
-drafts and selections. Failed reads use scoped condition notifications and an
-Empty recovery state with Retry; confirmed missing bindings use contextual Empty
-presentation, without duplicate inline error banners.
+Stacks tracks binding discovery separately from connection; a binding seed is
+not loaded content. Connection, discovery, module and first-read skeletons match
+the selected view: Workspace's 330px Unstaged column, anonymous stack/composer
+and footer; Branches' 320px target/filter/bookmark column and footer; Commits/Op
+Log's shared history canvas with saved widths and selected details, without a
+footer. Each region has one named busy status, inert hidden decorations and
+reduced motion support. Pending reads cannot show empty/unavailable states.
+Refreshes retain loaded content, drafts and selections. Failed reads use scoped
+condition toasts and Empty with Retry; confirmed missing bindings use contextual
+Empty, without duplicate inline errors.
 
 JST-UI-020 requires an interactive local stack workspace catalog with a
 transport-independent production controller and an injected stateful fixture

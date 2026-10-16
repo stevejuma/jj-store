@@ -3436,6 +3436,18 @@
     {
       "local": "web/src/lib/ui/store-settings/StoreRepositoryDeletionRecovery.svelte",
       "reason": "Independently authored repository removal, permanent server deletion and exact-intent recovery using maintained Settings compositions and public Design Core confirmation/toast primitives; Community confirmation inspected as reference only."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreRepositoryHistorySkeleton.svelte",
+      "reason": "Owned extraction of repository history loading geometry, sharing maintained local placeholders and released Design Core canvas primitives; no new Community source copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSkeleton.svelte",
+      "reason": "Independently authored route-specific stack loading composition matching the owned workspace canvas, branch picker, composer and footer with released Design Core primitives."
+    },
+    {
+      "local": "web/src/lib/ui/store-stack-workspace/StoreStackHistorySkeleton.svelte",
+      "reason": "Owned bookmark-card placeholder shared by initial workspace and bounded per-stack history reads; locally authored from the maintained application layout with public Design Core primitives."
     }
   ],
   "desktopAppearance": {

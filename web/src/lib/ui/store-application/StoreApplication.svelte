@@ -245,6 +245,7 @@
       </StoreApplicationNavigation>{/if}
   </AppShell.Sidebar>
   <StoreApplicationMain
+    layoutStorage={storage}
     {controller}
     {stackWorkspace}
     {shell}

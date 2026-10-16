@@ -2,6 +2,7 @@
   import { connectForgeView } from "../../controller/forge/view-lifecycle.js";
   import { untrack } from "svelte";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
+  import type { StoreRoute } from "../../controller/contracts.js";
   import type { Snippet } from "svelte";
   import type { StoreStacksView } from "../../controller/store-stacks-navigation.js";
   import StoreRepositorySettingsButton from "../store-settings/StoreRepositorySettingsButton.svelte";
@@ -44,6 +45,8 @@
     onSettings,
     onRepositorySettings,
     focusedView,
+    route,
+    layoutStorage,
     onSelectView,
     historyMode,
     onHistoryMode,
@@ -56,6 +59,8 @@
     onSettings?: () => void;
     onRepositorySettings?: () => void;
     focusedView?: StoreStacksView;
+    route?: StoreRoute;
+    layoutStorage?: Storage;
     onSelectView?: (view: StoreStacksView) => void;
     historyMode?: "live" | "pinned";
     onHistoryMode?: (mode: "live" | "pinned") => void;
@@ -176,7 +181,12 @@
         />{/if}{/snippet}
   </StoreStacksNavigation>
   {#if !snapshot || !controller.snapshotLoaded || !eligible}
-    <StoreStackWorkspaceState {controller} />
+    <StoreStackWorkspaceState
+      {controller}
+      view={focusedView ?? controller.page}
+      {route}
+      {layoutStorage}
+    />
   {:else}
     {#if (focusedView ?? controller.page) === "workspace" && snapshot.conflicts.length}<CommunityProjectsColumnAlert
         inline

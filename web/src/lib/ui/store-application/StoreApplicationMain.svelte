@@ -10,7 +10,10 @@
     type AppShellController,
   } from "@lapismd/design-core/shell";
   import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
-  import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
+  import {
+    isStacksRoute,
+    stacksRouteView,
+  } from "../../controller/store-stacks-navigation.js";
   import StoreStackWorkspaceState from "../store-stack-workspace/StoreStackWorkspaceState.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { Snippet } from "svelte";
@@ -33,6 +36,7 @@
     stackWorkspace,
     shell,
     current,
+    layoutStorage,
     settingsOpen,
     settingsSection,
     openRepositorySettings,
@@ -53,6 +57,7 @@
     stackWorkspace?: StackWorkspaceController;
     shell: AppShellController;
     current: StoreRoute;
+    layoutStorage?: Storage;
     settingsOpen: boolean;
     settingsSection: StoreSettingsSection;
     openRepositorySettings(): void;
@@ -246,10 +251,15 @@
                 {#if stackWorkspace && (!stackWorkspace.snapshot || stackWorkspace.snapshot.repository === current.repository) && !initialStackFailure}
                   <StoreLazyView load={views.stacks} label="Workspace"
                     >{#snippet loading()}<StoreStackWorkspaceState
+                        navigation
+                        view={stacksRouteView(current)}
+                        route={current}
+                        {layoutStorage}
                         loading
                       />{/snippet}{#snippet content(View)}<View
                         {controller}
                         workspace={stackWorkspace}
+                        {layoutStorage}
                         onRepositorySettings={openRepositorySettings}
                       >
                         {#snippet history()}
@@ -265,6 +275,10 @@
                   >
                 {:else}
                   <StoreStackWorkspaceState
+                    navigation
+                    view={stacksRouteView(current)}
+                    route={current}
+                    {layoutStorage}
                     loading={Boolean(stacksPreparing)}
                     onRetry={() => controller.actions.refresh()}
                   />

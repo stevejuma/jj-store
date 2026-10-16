@@ -55,9 +55,13 @@ primary navigation, real-subtab strip and selected category’s single-column
 cards, divided rows and action footers. Its module and discovery fallbacks use
 the same shared presentation as initial section reads, including Local JJ
 profile differences. A generic details skeleton never precedes these page
-skeletons. Known selection-empty states remain visible while their list loads.
-Failed imports use application notifications with Retry; the retry entry URL
-comes from the application compiler, including hashed production entries and
+skeletons. Focused repository Branches, Workspace, Commits and Op Log preserve
+their selected canvas from connection and discovery through module and first
+read loading. Workspace and Branches include their navigation space and footer;
+history uses the same saved-width/selected-detail placeholder as ordinary
+repository history. Known selection-empty states remain visible while their list
+loads. Failed imports use application notifications with Retry; the retry entry
+URL comes from the application compiler, including hashed production entries and
 development HMR transformations. It is never inferred from an output filename.
 Retries never clear drafts, replay mutations or reload the application.
 Navigation prevents obsolete pending views from rendering. Loaded optional

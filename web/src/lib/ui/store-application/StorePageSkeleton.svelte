@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { untrack, onDestroy } from "svelte";
+  import { untrack } from "svelte";
   import { AppShell } from "@lapismd/design-core/shell";
-  import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
+  import StoreRepositoryHistorySkeleton from "./StoreRepositoryHistorySkeleton.svelte";
+  import StoreStackWorkspaceSkeleton from "../store-stack-workspace/StoreStackWorkspaceSkeleton.svelte";
   import WorkflowPageSkeleton from "../store-workflows/WorkflowPageSkeleton.svelte";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import type { StoreRoute } from "../../controller/contracts.js";
-  import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
   import {
     loadRepositoryFileTreeLayout,
     resolveLayoutStorage,
@@ -40,33 +40,13 @@
     surface === "repository" &&
       ["branches", "log", "oplog"].includes(route.page),
   );
-  const canvas = untrack(() =>
-    history ? createRepositoryLogCanvas(route.page, storage) : undefined,
-  );
-  onDestroy(() => void canvas?.dispose());
-  $effect(() => {
-    if (!canvas) return;
-    canvas.layoutReady;
-    const current = route;
-    untrack(() => {
-      canvas.clear();
-      const depth = current.page === "branches" ? 1 : 0;
-      if (depth && current.bookmark) canvas.select(0, current.bookmark);
-      const revision =
-        current.page === "oplog"
-          ? current.inspectedOperationId
-          : current.commitId;
-      if (revision) canvas.select(depth, revision);
-      if (current.path) canvas.select(depth + 1, current.path);
-      if (current.path || (current.page === "oplog" && revision))
-        canvas.open("diff");
-    });
-  });
 </script>
 
 <div
   class="store-page-skeleton"
-  role={route.page === "files" ? undefined : "status"}
+  role={route.page === "files" || route.page === "stacks" || history
+    ? undefined
+    : "status"}
   aria-label={`Loading ${label}`}
   aria-busy="true"
   data-surface={surface}
@@ -146,46 +126,18 @@
         />
       </div>
     </AppShell.Body.Content>
-  {:else if canvas}
-    <section class="community-projects-repository-log">
-      <ColumnCanvas.Root controller={canvas}>
-        {#if route.page === "branches"}<ColumnCanvas.Column
-            id="branches"
-            title="Branches"
-            ><ColumnCanvas.Body
-              ><RepositorySkeleton
-                layout="bookmarks"
-                label="Loading branches"
-              /></ColumnCanvas.Body
-            ></ColumnCanvas.Column
-          >{/if}
-        <ColumnCanvas.Column
-          id="revisions"
-          title={route.page === "oplog" ? "Op Log" : "JJ Log"}
-          ><ColumnCanvas.Body
-            ><RepositorySkeleton
-              layout="graph"
-              label={route.page === "oplog"
-                ? "Loading operation log"
-                : "Loading JJ log"}
-              showStatus={route.page === "oplog"}
-            /></ColumnCanvas.Body
-          ></ColumnCanvas.Column
-        >
-        {#if route.path || (route.page === "oplog" && route.inspectedOperationId)}<ColumnCanvas.Column
-            id="diff"
-            title={route.path ?? "Operation details"}
-            ><ColumnCanvas.Body
-              ><RepositorySkeleton
-                layout="diff"
-                label={route.page === "oplog"
-                  ? "Loading selected operation comparison"
-                  : "Loading selected file diff"}
-              /></ColumnCanvas.Body
-            ></ColumnCanvas.Column
-          >{/if}
-      </ColumnCanvas.Root>
-    </section>
+  {:else if route.page === "stacks"}
+    <StoreStackWorkspaceSkeleton
+      view={route.stackTab ?? "workspace"}
+      {route}
+      {layoutStorage}
+    />
+  {:else if history}
+    <StoreRepositoryHistorySkeleton
+      {route}
+      {layoutStorage}
+      label={`Loading ${label}`}
+    />
   {:else if route.page === "reviews" && route.reviewThreadId}
     <StoreReviewDetailSkeleton {writable} />
   {:else}

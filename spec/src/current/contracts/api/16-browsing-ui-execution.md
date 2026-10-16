@@ -39,6 +39,13 @@ requests or read authority. Previously displayed snapshots remain visible during
 background refresh, with empty/error/unsupported states shown after reads
 settle.
 
+E-REPOSITORY-TABS-SKELETON-001 confirms unchanged JST-API-001/005 browser
+contracts. Selected Stacks startup, history-column and per-stack bookmark-card
+placeholders share the existing read lifecycle and public saved layout state.
+They add no requests, authorization, route fields, persistence formats or
+command replay; bounded history, exact read pins and retained refresh content
+are unchanged.
+
 Repository sidebar Threads use the existing authorized, bounded Threads list
 endpoint independently from the selected code source. Each entry retains its own
 native repository and stable thread ID; selecting it connects that owner before
