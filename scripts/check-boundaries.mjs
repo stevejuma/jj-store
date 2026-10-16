@@ -7,6 +7,7 @@ export function dependencyErrors(packages) {
   const errors = [];
   const native = new Set(["jj-store-jj", "jj-store"]);
   const layers = {
+    "jj-forge": [],
     "jj-store-read-index": [],
     "jj-store-model": [],
     "jj-work": ["jj-store-model"],
@@ -31,8 +32,14 @@ export function dependencyErrors(packages) {
       "jj-store-object",
       "jj-store-wal",
     ],
-    "jj-store-jj": ["jj-store-model", "jj-store-object", "jj-store-wal"],
+    "jj-store-jj": [
+      "jj-forge",
+      "jj-store-model",
+      "jj-store-object",
+      "jj-store-wal",
+    ],
     "jj-store-service": [
+      "jj-forge",
       "jj-store-read-index",
       "jj-workflow",
       "jj-collab",
@@ -92,6 +99,7 @@ export function dependencyErrors(packages) {
         (dep.name === "jj-store" ||
           dep.name.startsWith("jj-store-") ||
           [
+            "jj-forge",
             "jj-agent",
             "jj-review",
             "jj-work",

@@ -13,6 +13,7 @@
   import StoreCustomEmojiSettings from "./StoreCustomEmojiSettings.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
+  import StoreIntegrations from "./StoreIntegrations.svelte";
   import type { StoreSettingsSection } from "./model.js";
 
   let {
@@ -51,9 +52,14 @@
     const selected = section;
     repository;
     if (
-      ["appearance", "agents", "compute", "profile", "custom-emoji"].includes(
-        selected,
-      )
+      [
+        "appearance",
+        "agents",
+        "compute",
+        "profile",
+        "custom-emoji",
+        "integrations",
+      ].includes(selected)
     )
       return;
     return untrack(() => observeStoreSettings(controller, selected));
@@ -95,6 +101,8 @@
         {controller}
         bind:active={() => selectedTab ?? "overview", selectTab}
       />
+    {:else if section === "integrations"}
+      <StoreIntegrations {controller} />
     {:else if section === "agents"}
       <StoreNotice
         noticeKey="capture-repository"

@@ -1,5 +1,19 @@
 # Complete supported configuration settings
 
+Global Integrations / Accounts owns GitHub device sign-in, personal tokens and
+explicit Enterprise API endpoints. Shared cards show non-secret account
+identity, method and availability with Forget and Add account footers. Token
+forms use masked bordered fields with an explicit visibility toggle. Device
+sign-in presents a two-step dotted guide, joined code/Copy controls, a primary
+activation-page button with icon and an icon-only Cancel in its header. Theme
+tokens supply colours. Account options use icons and nonwrapping menus. Neutral
+waiting/expiry state remains explicit; inventory refresh is manual, while device
+authorization retains required polling. Operational failures use the shared
+toast service. Repository access retains account, source/push remote, target
+repository/remote and default-or-explicit branch drafts through
+refresh/navigation. Tokens are backend-owned OS credentials; browser token
+drafts are session-only and successful save/cancel clears them.
+
 JST-UI-016 includes typed editors in Local service (resource limits), Local
 service / Protection (installation-wide protected bookmarks/commits), Sync
 (repository upstream, credential environment reference, CA path and every
@@ -140,7 +154,10 @@ Initial loading placeholders follow the selected settings page's card, row,
 control and footer geometry, with a single named busy status and decorative
 placeholders hidden from assistive technology. Respect reduced motion and mobile
 stacking. Background reads retain loaded content, empty results, drafts and
-pending identities instead of replacing them with skeletons.
+pending identities instead of replacing them with skeletons. Card content adds
+no horizontal inset around the already padded application rows, so dividers and
+skeletons span the card. Portalled Settings listboxes use their field label (or
+explicit accessible label), including while closing.
 
 Global Appearance uses the shared Theme and Preferences cards while keeping
 previews and device-local immediate saves. Local service separates status,

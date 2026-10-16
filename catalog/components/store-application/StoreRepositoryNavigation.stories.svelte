@@ -217,7 +217,9 @@
     const dialog = await page.findByRole("dialog", {
       name: "Reconcile operations",
     });
-    await expect(dialog).toBeVisible();
+    await waitFor(async () => {
+      await expect(dialog).toBeVisible();
+    });
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Cancel" }),
     );

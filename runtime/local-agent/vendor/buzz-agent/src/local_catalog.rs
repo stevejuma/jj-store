@@ -25,14 +25,14 @@ pub async fn discover(
     let value: Value = serde_json::from_slice(&bytes)?;
     let rows = value["data"]
         .as_array()
-        .ok_or_else(|| "invalid model catalog")?;
+        .ok_or("invalid model catalog")?;
     if rows.len() > 64 {
         return Err("model catalog limit".into());
     }
     let mut ids = BTreeSet::new();
     let mut models = Vec::new();
     for row in rows {
-        let id = row["id"].as_str().ok_or_else(|| "invalid model identity")?;
+        let id = row["id"].as_str().ok_or("invalid model identity")?;
         if id.is_empty() || id.len() > 512 || id.chars().any(char::is_control) {
             return Err("invalid model identity".into());
         }

@@ -44,7 +44,7 @@
     const panel = panels[1]!;
     const p = within(panel);
     await expect(p.getByText("Edited 20 files")).toBeVisible();
-    await expect(p.getByText("+40")).toBeVisible();
+    await waitFor(() => expect(p.getByText("+40")).toBeVisible());
     await expect(p.getByText("-20")).toBeVisible();
     await expect(
       panel.querySelectorAll('[data-ui-part="file-row"]'),

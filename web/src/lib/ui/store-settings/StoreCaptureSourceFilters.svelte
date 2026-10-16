@@ -25,7 +25,7 @@
       >{captureSourceHarnesses.find((h) => h.value === harness)
         ?.label}</Select.Trigger
     >
-    <Select.Content
+    <Select.Content aria-label="Capture source harnesses"
       ><Select.Group
         ><Select.Label>Harness</Select.Label>
         {#each captureSourceHarnesses as h (h.value)}<Select.Item

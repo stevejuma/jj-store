@@ -63,8 +63,24 @@ export async function sourceTableIdentification({
   await expect(table.querySelectorAll("tbody > tr")).toHaveLength(1);
   await expect(c.getByText("Codex Desktop source 3")).toBeVisible();
   await expect(c.queryByText("Codex CLI source 1")).toBeNull();
-  await expect(c.getByText("1 shown")).toBeVisible();
-  await expect(c.getByText("5 observed")).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("1 shown"),
+    ).toBeVisible(),
+  );
+  await waitFor(() =>
+    expect(
+      within(
+        c
+          .getByRole("list", { name: "Capture source counts" })
+          .querySelector<HTMLElement>('[data-ui-part="row"]')!,
+      ).getByText("5 observed"),
+    ).toBeVisible(),
+  );
   await userEvent.keyboard("{Escape}");
 }
 

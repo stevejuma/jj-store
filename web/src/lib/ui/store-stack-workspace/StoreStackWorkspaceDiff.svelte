@@ -14,6 +14,7 @@
   } from "../../controller/stack-workspace/files.js";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import Trash from "@lucide/svelte/icons/trash-2";
+  import X from "@lucide/svelte/icons/x";
   import Columns from "@lucide/svelte/icons/columns-2";
   import { TARGET_HISTORY_ORIGIN } from "../../controller/stack-workspace/target-history.svelte.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
@@ -25,9 +26,11 @@
     controller,
     diff,
     onCommand,
+    embedded = false,
   }: {
     controller: StackWorkspaceController;
     diff: WorkspaceOpenDiff;
+    embedded?: boolean;
     onCommand: (command: WorkspaceCommand) => void;
   } = $props();
   let viewMode = $state<"unified" | "split">("unified"),
@@ -105,11 +108,7 @@
   );
 </script>
 
-<ColumnCanvas.Column
-  resizable
-  id={`diff-${diff.origin}`}
-  aria-label={`Selected changes from ${diff.origin}`}
->
+{#snippet header()}
   <ColumnCanvas.Header
     ><ColumnCanvas.Title>{file?.path ?? "Diff"}</ColumnCanvas.Title
     ><ColumnCanvas.HeaderActions>
@@ -163,96 +162,128 @@
           >
         {/if}
       {/if}
-      <ColumnCanvas.Close
-        aria-label="Close Diff column"
-        onclick={() => controller.closeDiff(diff.origin)}
-      /></ColumnCanvas.HeaderActions
+      {#if embedded}<Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Close file diff"
+          onclick={() => controller.closeDiff(diff.origin)}
+          ><X aria-hidden="true" /></Button
+        >
+      {:else}<ColumnCanvas.Close
+          aria-label="Close Diff column"
+          onclick={() => controller.closeDiff(diff.origin)}
+        />{/if}</ColumnCanvas.HeaderActions
     ></ColumnCanvas.Header
   >
+{/snippet}
+{#snippet unavailable()}
   {#if file?.content?.status === "unavailable"}
     <CommunityProjectsColumnAlert
       description={`This file cannot be displayed as a text diff (${file.content.reason.replaceAll("_", " ")}).`}
     />
   {/if}
-  <ColumnCanvas.Body scrollStrategy="styled">
-    <StoreNotice
-      noticeKey={`stack-files:${diff.source}`}
-      title="Changed files unavailable"
-      message={filesState.error}
-      lifetime="condition"
-    />
-    <StoreNotice
-      noticeKey={`stack-patch:${diff.source}:${diff.path}`}
-      title="Diff unavailable"
-      message={patchRead.error}
-      lifetime="condition"
-    />
-    {#if patchRead.error}<Button
+{/snippet}
+{#snippet content()}
+  <StoreNotice
+    noticeKey={`stack-files:${diff.source}`}
+    title="Changed files unavailable"
+    message={filesState.error}
+    lifetime="condition"
+  />
+  <StoreNotice
+    noticeKey={`stack-patch:${diff.source}:${diff.path}`}
+    title="Diff unavailable"
+    message={patchRead.error}
+    lifetime="condition"
+  />
+  {#if patchRead.error}<Button
+      size="sm"
+      variant="outline"
+      onclick={() => void controller.details.loadDiff(diff.source, diff.path)}
+      >Retry diff</Button
+    >{/if}
+  {#if controller.details.lazy && !file}
+    {#if filesState.error}<Button
         size="sm"
         variant="outline"
-        onclick={() => void controller.details.loadDiff(diff.source, diff.path)}
-        >Retry diff</Button
-      >{/if}
-    {#if controller.details.lazy && !file}
-      {#if filesState.error}<Button
-          size="sm"
-          variant="outline"
-          onclick={() => void controller.details.loadFiles(diff.source)}
-          >Retry changed files</Button
-        >
-      {:else}<CommunityProjectsRepositorySkeleton
-          layout="diff"
-          label={`Loading diff for ${diff.path}`}
-          count={3}
-        />{/if}
-    {:else if file?.content?.status === "unloaded" && !patchRead.error}
-      <CommunityProjectsRepositorySkeleton
+        onclick={() => void controller.details.loadFiles(diff.source)}
+        >Retry changed files</Button
+      >
+    {:else}<CommunityProjectsRepositorySkeleton
         layout="diff"
         label={`Loading diff for ${diff.path}`}
         count={3}
-      />
-    {:else if file && file.content?.status !== "unavailable" && !file.hunks.length && !patchRead.error}
-      <CommunityProjectsColumnAlert
-        title="No text changes"
-        description="There are no changed text hunks for this file."
-      />
-    {:else if file && file.content?.status !== "unavailable"}
-      <section
-        class="stack-workspace__hunks"
-        aria-label={`Diff hunks from ${diff.origin} · ${file.path}`}
-      >
-        {#each file.hunks as hunk (hunk.id)}
-          <StoreStackDiffHunk
-            {hunk}
-            displayPatch={context.get(hunk.id)}
-            drag={controller.drag}
-            origin={diff.origin}
-            path={file.path}
-            selection={diff.origin === TARGET_HISTORY_ORIGIN ||
-            !executable ||
-            (controller.details.lazy &&
-              !/^native:[0-9a-f]{64}$/u.test(hunk.id)) ||
-            !controller.can("transfer")
-              ? null
-              : workspaceHunkSelection(
-                  controller.snapshot!,
-                  diff.source,
-                  file.path,
-                  hunk.id,
-                )}
-            checked={!selection?.hunks || selection.hunks.includes(hunk.id)}
-            selectable={Boolean(selection) &&
-              (!controller.details.lazy ||
-                /^native:[0-9a-f]{64}$/u.test(hunk.id))}
-            disabled={controller.locked}
-            {viewMode}
-            {wrap}
-            onChecked={(checked) => choose(hunk.id, checked)}
-            onAssign={(selection) =>
-              onCommand({ kind: "transfer", selection, target: "" })}
-          />
-        {/each}
-      </section>
-    {/if}
-  </ColumnCanvas.Body>
-</ColumnCanvas.Column>
+      />{/if}
+  {:else if file?.content?.status === "unloaded" && !patchRead.error}
+    <CommunityProjectsRepositorySkeleton
+      layout="diff"
+      label={`Loading diff for ${diff.path}`}
+      count={3}
+    />
+  {:else if file && file.content?.status !== "unavailable" && !file.hunks.length && !patchRead.error}
+    <CommunityProjectsColumnAlert
+      title="No text changes"
+      description="There are no changed text hunks for this file."
+    />
+  {:else if file && file.content?.status !== "unavailable"}
+    <section
+      class="stack-workspace__hunks"
+      aria-label={`Diff hunks from ${diff.origin} · ${file.path}`}
+    >
+      {#each file.hunks as hunk (hunk.id)}
+        <StoreStackDiffHunk
+          {hunk}
+          displayPatch={context.get(hunk.id)}
+          drag={controller.drag}
+          origin={diff.origin}
+          path={file.path}
+          selection={diff.origin === TARGET_HISTORY_ORIGIN ||
+          !executable ||
+          (controller.details.lazy &&
+            !/^native:[0-9a-f]{64}$/u.test(hunk.id)) ||
+          !controller.can("transfer")
+            ? null
+            : workspaceHunkSelection(
+                controller.snapshot!,
+                diff.source,
+                file.path,
+                hunk.id,
+              )}
+          checked={!selection?.hunks || selection.hunks.includes(hunk.id)}
+          selectable={Boolean(selection) &&
+            (!controller.details.lazy ||
+              /^native:[0-9a-f]{64}$/u.test(hunk.id))}
+          disabled={controller.locked}
+          {viewMode}
+          {wrap}
+          onChecked={(checked) => choose(hunk.id, checked)}
+          onAssign={(selection) =>
+            onCommand({ kind: "transfer", selection, target: "" })}
+        />
+      {/each}
+    </section>
+  {/if}
+{/snippet}
+
+{#if embedded}
+  <section
+    class="stack-workspace-details__file"
+    aria-label="Selected file diff"
+  >
+    {@render header()}
+    {@render unavailable()}
+    <div class="stack-workspace-details__patch">{@render content()}</div>
+  </section>
+{:else}
+  <ColumnCanvas.Column
+    resizable
+    id={`diff-${diff.origin}`}
+    aria-label={`Selected changes from ${diff.origin}`}
+  >
+    {@render header()}
+    {@render unavailable()}
+    <ColumnCanvas.Body scrollStrategy="styled"
+      >{@render content()}</ColumnCanvas.Body
+    >
+  </ColumnCanvas.Column>
+{/if}

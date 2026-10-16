@@ -74,6 +74,9 @@ pub(super) fn describe(command: &Command, config: &Config) -> String {
             format!("Rename branch {} to {}", label(branch), label(name))
         }
         Command::DeleteBranch { branch } => format!("Delete branch {}", label(branch)),
+        Command::ForgeRestack { branch, target, .. } => {
+            format!("Restack branch {} onto {}", label(branch), label(target))
+        }
         Command::Rebase { branch } => {
             format!("Rebase branch {} onto workspace target", label(branch))
         }

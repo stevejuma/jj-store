@@ -1,0 +1,16 @@
+.store-detachable-panel,
+.store-detachable-panel__content {
+  min-width: 0;
+}
+.store-detachable-panel__content {
+  max-height: 100%;
+  overflow: auto;
+}
+.store-detachable-panel[data-detached] {
+  min-height: 0;
+}
+
+.store-detachable-panel[data-detached] > .store-detachable-panel__content {
+  /* Keep scroll offsets while the same node moves between its two hosts. */
+  visibility: hidden;
+}

@@ -8,7 +8,7 @@
   import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityMemberHoverCard from "../community-member-hover-card/CommunityMemberHoverCard.svelte";
-  import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import { TagList } from "@lapismd/design-core/shadcn/tag-list";
   import VirtualForumTopicRows from "./VirtualForumTopicRows.svelte";
   import {
     memberById,
@@ -88,15 +88,19 @@
               avatarSize="medium"
             /></span
           >
-          <span class="forum-topic-list__topic-main"
-            ><span class="forum-topic-list__title-row"
+          <div class="forum-topic-list__topic-main">
+            <span class="forum-topic-list__title-row"
               ><strong>{topic.title}</strong></span
             ><span class="forum-topic-list__excerpt">{topic.excerpt}</span>
-            {#if topic.tags?.length}<span class="forum-topic-list__meta"
-                >{#each topic.tags as tag}<CommunityChip>{tag}</CommunityChip
-                  >{/each}</span
-              >{/if}
-          </span>
+            <TagList
+              tags={(topic.tags ?? []).map((tag, index) => ({
+                id: `${index}:${tag}`,
+                label: tag,
+              }))}
+              label={`Tags for ${topic.title}`}
+              class="forum-topic-list__tags"
+            />
+          </div>
           <span
             class="forum-topic-list__participants"
             data-ui-part="forum-topic-participants"

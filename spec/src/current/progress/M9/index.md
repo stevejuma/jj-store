@@ -22,3 +22,9 @@ detail placement. Visual baseline approval remains independent.
 ## Pages
 
 - [history](history/index.md)
+
+E-MAIN-LOCAL-REPAIRS-001 records the user-authorized completed repair-slice
+validation and retains failed/interrupted attempts until fresh completion. M9.2
+remains Done; the scanner identity assertion now names the already-released
+1.4.0 policy, while exact secret redaction, workspace normalization, cache
+timing and retained historical identities remain required.

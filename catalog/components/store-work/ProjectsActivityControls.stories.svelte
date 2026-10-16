@@ -29,6 +29,7 @@
     await expect(filter.closest(".community-projects__tabs")).not.toBeNull();
     await userEvent.click(filter);
     const panel = body.getByRole("dialog", { name: "Activity filters" });
+    await waitFor(() => expect(panel).toBeVisible());
     await expect(
       within(panel).getByRole("combobox", { name: "Repository filter" }),
     ).toBeVisible();

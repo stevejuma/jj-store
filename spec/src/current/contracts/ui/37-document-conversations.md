@@ -61,6 +61,10 @@ response panels bound the shared conversation to the available panel height and
 place session reviews inside its scroll area, keeping its own Send footer
 visible. Classic retains its existing host review footer.
 
+Native record copy menus and their submenus retain a keyboard-focusable scroll
+surface, including copy-only menus whose items are all in another submenu. Arrow
+navigation and exact record identities remain available while open.
+
 A shared controller owns drafts, audience, exact pending submissions and source
 mappings across view switches, navigation, sidebar changes and remounts. Drafts
 remain session-only; no draft text is stored in browser persistence. Typing
@@ -250,8 +254,10 @@ menu aligns with its leading edge and its rows align left. It shows known branch
 facts and View files, with a Copy submenu for Project path (the inspected
 directory verified by the server) and the exact Workspace name. The filesystem
 path is not displayed in the menu. An inspection selector changes only the
-viewed binding; it never rebinds an agent or changes a checkout. Footer controls
-wrap at constrained widths while keeping Send accessible and the full truncated
+viewed binding; it never rebinds an agent or changes a checkout. Comparison
+range and base listboxes retain accessible names matching their triggers,
+including while their closing content remains mounted. Footer controls wrap at
+constrained widths while keeping Send accessible and the full truncated
 repository label available.
 
 The collapsed formatting toolbar keeps its intrinsic width; repository and

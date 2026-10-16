@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent harness models",
@@ -25,23 +25,27 @@
     const editor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),
     );
-    await expect(
-      await editor.findByText(
-        /Showing choices from this harness's last session/,
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await editor.findByText(
+          /Showing choices from this harness's last session/,
+        ),
+      ).toBeVisible();
+    });
     await userEvent.click(editor.getByRole("combobox", { name: "Model" }));
     await userEvent.click(page.getByRole("option", { name: /Codex Fast/ }));
     await expect(
       editor.getByRole("combobox", { name: "Model" }),
     ).toHaveTextContent("Codex Fast");
     await userEvent.click(editor.getByRole("button", { name: "Save agent" }));
-    await expect(
-      await within(c.getByRole("region", { name: "Your agents" })).findByText(
-        "codex-fast",
-        { exact: true },
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(c.getByRole("region", { name: "Your agents" })).findByText(
+          "codex-fast",
+          { exact: true },
+        ),
+      ).toBeVisible();
+    });
     await expect(
       c.queryByLabelText("Last session command"),
     ).not.toBeInTheDocument();
@@ -63,11 +67,13 @@
     const editor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),
     );
-    await expect(
-      await editor.findByText(
-        /No model or thinking choices have been advertised/,
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await editor.findByText(
+          /No model or thinking choices have been advertised/,
+        ),
+      ).toBeVisible();
+    });
     await userEvent.click(editor.getByRole("combobox", { name: "Model" }));
     await expect(
       page.getByRole("option", {
@@ -76,11 +82,13 @@
     ).toHaveAttribute("aria-disabled", "true");
     await userEvent.keyboard("{Escape}");
     await userEvent.click(editor.getByRole("button", { name: "Save agent" }));
-    await expect(
-      await within(c.getByRole("region", { name: "Your agents" })).findByText(
-        "remembered-model",
-        { exact: true },
-      ),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(c.getByRole("region", { name: "Your agents" })).findByText(
+          "remembered-model",
+          { exact: true },
+        ),
+      ).toBeVisible();
+    });
   }}
 />

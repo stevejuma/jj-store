@@ -13,10 +13,18 @@ The file preview presents the selected path in its labelled content header and
 keeps the source Code Block scoped to file bytes and language highlighting;
 catalog interactions verify those surfaces separately.
 
-Community's Tailwind Vite plugin compiles the public Design Core stylesheet. The
-catalog uses its bundled DM Sans and Source Code Pro fonts, shared icon sizing
-and Community typography scale. No substitute font or icon override is
-introduced.
+The application and catalog load application-owned utility rules before the
+released Design Core prepared stylesheet. Its bundled DM Sans and Source Code
+Pro fonts, shared icon sizing and Community typography scale remain the runtime
+defaults, including a cold static catalog. Utility theme defaults cannot replace
+those public tokens; no substitute font or icon override is introduced.
+
+Catalog acceptance awaits the relevant lazy view modules before exercising a
+fully loaded fixture, and waits for overlay visibility and final geometry. After
+the previous portable canvas is disposed, the next story's setup waits for
+overlay modal leases to release before mounting. Original accessibility rules,
+layout thresholds and interaction outcomes remain required; these waits do not
+qualify production cold-start behavior.
 
 Branches use the requested card layout within the existing Command View:
 bookmark name, latest description, workspace/conflict chips, author avatar and

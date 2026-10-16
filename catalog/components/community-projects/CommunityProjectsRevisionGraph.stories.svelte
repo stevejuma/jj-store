@@ -42,30 +42,57 @@
       : {}),
   });
   async function boundedChips(element: HTMLElement) {
+    const list = within(element).getByRole("list", { name: "Revision tags" });
     await waitFor(() =>
-      expect(
-        element.querySelector(".community-revision-graph-copy__chips"),
-      ).not.toBeNull(),
+      expect(list.querySelector('[data-ui-part="overflow"]')).not.toBeNull(),
     );
-    const chips = element.querySelector<HTMLElement>(
-      ".community-revision-graph-copy__chips",
-    )!;
-    const bounds = chips.getBoundingClientRect();
-    for (const chip of chips.querySelectorAll<HTMLElement>(
-      '[data-ui-part="community-chip"]',
+    const bounds = list.getBoundingClientRect();
+    for (const chip of list.querySelectorAll<HTMLElement>(
+      '[data-presentation="inline"] [data-ui-part="tag"]',
     )) {
       const rect = chip.getBoundingClientRect();
-      expect(rect.width).toBeLessThanOrEqual(256);
       expect(rect.right).toBeLessThanOrEqual(bounds.right + 1);
+      expect(rect.height).toBeLessThanOrEqual(20);
     }
-    const bookmark = within(chips).getByText(longBookmark);
-    expect(bookmark.scrollWidth).toBeGreaterThan(bookmark.clientWidth);
-    expect(getComputedStyle(bookmark).textOverflow).toBe("ellipsis");
+    const overflow = list.querySelector<HTMLButtonElement>(
+      '[data-ui-part="overflow"]',
+    )!;
+    overflow.focus();
+    await userEvent.keyboard("{Enter}");
+    const popup = await within(element.ownerDocument.body).findByRole(
+      "dialog",
+      { name: /Revision tags/ },
+    );
+    await waitFor(() =>
+      expect(within(popup).getByText(longBookmark)).toBeVisible(),
+    );
+    await waitFor(() =>
+      expect(
+        within(popup).getByText(`Working copy · ${"workspace-".repeat(30)}`),
+      ).toBeVisible(),
+    );
     expect(
-      bookmark
-        .closest('[data-ui-part="community-chip"]')
-        ?.getAttribute("title"),
-    ).toContain(longBookmark);
+      within(popup).queryByText(`Local bookmark · ${longBookmark}`),
+    ).toBeNull();
+    expect(
+      within(popup).queryByText(`Workspace ${"workspace-".repeat(30)}`),
+    ).toBeNull();
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(overflow).toHaveFocus());
+  }
+  async function allTags(row: HTMLElement) {
+    const list = within(row).getByRole("list", { name: "Revision tags" });
+    await waitFor(() =>
+      expect(list.querySelector('[data-presentation="inline"]')).not.toBeNull(),
+    );
+    const more = list.querySelector<HTMLButtonElement>(
+      '[data-ui-part="overflow"]',
+    );
+    if (!more) return list.querySelector<HTMLElement>('[data-ui-part="row"]')!;
+    await userEvent.click(more);
+    return within(row.ownerDocument.body).findByRole("list", {
+      name: "All revision tags",
+    });
   }
   const linear = Array.from({ length: 160 }, (_, index) => ({
     ...fixtureGraph().revisions[0]!,
@@ -103,8 +130,11 @@
 
 <Story
   name="JJ Log long chips stay within the row"
-  args={longLabels(false)}
-  play={async ({ canvasElement }) => boundedChips(canvasElement)}
+  args={{ ...longLabels(false), onSelect: fn() }}
+  play={async ({ canvasElement, args }) => {
+    await boundedChips(canvasElement);
+    await expect(args.onSelect).not.toHaveBeenCalled();
+  }}
 >
   {#snippet template(args)}<div class="wide-graph-scroll">
       <CommunityProjectsRevisionGraph {...args} />
@@ -112,8 +142,11 @@
 </Story>
 <Story
   name="Op Log long chips stay within the row"
-  args={longLabels(true)}
-  play={async ({ canvasElement }) => boundedChips(canvasElement)}
+  args={{ ...longLabels(true), onSelect: fn() }}
+  play={async ({ canvasElement, args }) => {
+    await boundedChips(canvasElement);
+    await expect(args.onSelect).not.toHaveBeenCalled();
+  }}
 >
   {#snippet template(args)}<div class="wide-graph-scroll">
       <CommunityProjectsRevisionGraph {...args} />
@@ -142,6 +175,7 @@
     const nativeRow = canvas
       .getByText("Stream immutable native objects")
       .closest<HTMLElement>(".community-revision-graph__row")!;
+    const tags = await allTags(nativeRow);
     for (const [label, tone] of [
       ["Divergent", "warning"],
       ["Conflicted", "danger"],
@@ -149,23 +183,23 @@
       ["feature/native-objects@origin", "neutral"],
     ] as const) {
       await expect(
-        within(nativeRow)
-          .getByText(label)
-          .closest('[data-ui-part="community-chip"]'),
-      ).toHaveAttribute("data-chip-tone", tone);
+        within(tags).getByText(label).closest('[data-ui-part="tag"]'),
+      ).toHaveAttribute("data-tone", tone);
     }
+    await userEvent.keyboard("{Escape}");
     const workingCopyRow = canvas
       .getAllByText("Working copy")
       .find((element) =>
         element.classList.contains("community-revision-graph-message__text"),
       )!
       .closest<HTMLElement>(".community-revision-graph__row")!;
+    const workingTags = await allTags(workingCopyRow);
     await expect(
-      within(workingCopyRow)
+      within(workingTags)
         .getAllByText("Working copy")
-        .find((element) => element.closest('[data-ui-part="community-chip"]'))
-        ?.closest('[data-ui-part="community-chip"]'),
-    ).toHaveAttribute("data-chip-tone", "success");
+        .find((element) => element.closest('[data-ui-part="tag"]'))
+        ?.closest('[data-ui-part="tag"]'),
+    ).toHaveAttribute("data-tone", "success");
   }}
 />
 <Story
@@ -177,14 +211,17 @@
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const row = canvas
+      .getByText(operations.revisions[0]!.message)
+      .closest<HTMLElement>(".community-revision-graph__row")!;
+    const tags = await allTags(row);
     await expect(
-      canvas.getByText("head 1").closest('[data-ui-part="community-chip"]'),
-    ).toHaveAttribute("data-chip-tone", "accent");
+      within(tags).getByText("head 1").closest('[data-ui-part="tag"]'),
+    ).toHaveAttribute("data-tone", "accent");
     await expect(
-      canvas
-        .getByText("Working copy")
-        .closest('[data-ui-part="community-chip"]'),
-    ).toHaveAttribute("data-chip-tone", "success");
+      within(tags).getByText("Working copy").closest('[data-ui-part="tag"]'),
+    ).toHaveAttribute("data-tone", "success");
+    await userEvent.keyboard("{Escape}");
   }}
 />
 <Story

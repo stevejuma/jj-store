@@ -81,7 +81,9 @@
     await waitFor(() => expect(c.queryByRole("tab")).toBeNull());
     await waitFor(() => expect(more).toBeEnabled());
     await userEvent.click(more);
-    await expect(body.getByRole("menuitem", { name: "All" })).toBeVisible();
+    await waitFor(async () => {
+      await expect(body.getByRole("menuitem", { name: "All" })).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     for (const header of canvasElement.querySelectorAll(
       ".lc-community-inbox__list-header, .lc-community-inbox__thread-header",

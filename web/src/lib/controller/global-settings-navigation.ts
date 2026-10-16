@@ -4,6 +4,7 @@ export const globalSettingsTabs = {
   profile: ["details"],
   "custom-emoji": ["library"],
   appearance: ["theme", "preferences"],
+  integrations: ["accounts"],
   service: [
     "overview",
     "limits",

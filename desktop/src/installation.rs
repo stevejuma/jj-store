@@ -51,15 +51,14 @@ impl Resources {
                 ));
             }
         }
-        if let Some(acp) = &value.acp {
-            if !acp.is_file()
+        if let Some(acp) = &value.acp
+            && (!acp.is_file()
                 || fs::symlink_metadata(acp)
                     .map_err(|e| e.to_string())?
                     .file_type()
-                    .is_symlink()
-            {
-                return Err("Invalid bundled ACP executable".into());
-            }
+                    .is_symlink())
+        {
+            return Err("Invalid bundled ACP executable".into());
         }
         if root.join("agent-resources.json").exists() {
             crate::agent_resources::verify(root)?;

@@ -8,16 +8,15 @@ beforeAll(() => {
   restoreSvelteRuntimeDiagnosticGuard = installSvelteRuntimeDiagnosticGuard();
 });
 
-afterEach(
-  () =>
-    new Promise<void>((resolve) => {
+afterEach(async () => {
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setTimeout(resolve, 20);
-        });
+        setTimeout(resolve, 20);
       });
-    }),
-);
+    });
+  });
+});
 
 afterAll(() => {
   restoreSvelteRuntimeDiagnosticGuard?.();

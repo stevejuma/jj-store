@@ -81,3 +81,6 @@ pub mod workflow;
 pub mod workflow_host;
 
 pub mod read_indexes;
+
+/// Forge contracts and provider-independent external effects.
+pub use jj_forge as forge;

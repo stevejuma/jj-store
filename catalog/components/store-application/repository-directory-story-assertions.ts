@@ -171,9 +171,11 @@ export async function expectRepositoryDirectoryLayout(
     canvas.queryByRole("region", { name: "Repository document preview" }),
   ).toBeNull();
   await userEvent.click(branchSelector);
-  await expect(
-    await body.findByRole("option", { name: "feature/native-objects" }),
-  ).toBeVisible();
+  await waitFor(async () => {
+    await expect(
+      await body.findByRole("option", { name: "feature/native-objects" }),
+    ).toBeVisible();
+  });
   await userEvent.keyboard("{Escape}");
   await expect(
     canvas.getByRole("table", { name: "Files in src" }),

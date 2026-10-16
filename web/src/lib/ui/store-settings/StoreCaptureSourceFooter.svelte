@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Spinner } from "@lapismd/design-core/shadcn/spinner";
-  import { Badge } from "@lapismd/design-core/shadcn/badge";
+  import { TagList } from "@lapismd/design-core/shadcn/tag-list";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { CaptureManagement } from "../../controller/capture-types.js";
   let { management, shown }: { management: CaptureManagement; shown: number } =
@@ -30,13 +30,24 @@
       />{/if}
     <span>{status}</span>
     <div class="store-capture-sources__counts">
-      <Badge variant="secondary">{shown.toLocaleString("en-GB")} shown</Badge>
-      <Badge variant="outline"
-        >{sources?.sources.length.toLocaleString("en-GB")} loaded</Badge
-      >
-      <Badge variant="outline"
-        >{sources?.total.toLocaleString("en-GB")} observed</Badge
-      >
+      <TagList
+        label="Capture source counts"
+        tags={[
+          {
+            id: "shown",
+            label: `${shown.toLocaleString("en-GB")} shown`,
+            variant: "secondary",
+          },
+          {
+            id: "loaded",
+            label: `${sources?.sources.length.toLocaleString("en-GB")} loaded`,
+          },
+          {
+            id: "observed",
+            label: `${sources?.total.toLocaleString("en-GB")} observed`,
+          },
+        ]}
+      />
     </div>
     {#if state.sourcesObservedAt !== null}<span
         class="store-settings__row-description"
@@ -60,8 +71,7 @@
 
 <style>
   .store-capture-sources__footer,
-  .store-capture-sources__summary,
-  .store-capture-sources__counts {
+  .store-capture-sources__summary {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -74,6 +84,8 @@
     gap: 0.75rem;
   }
   .store-capture-sources__counts {
-    gap: 0.35rem;
+    width: 18rem;
+    max-width: 100%;
+    min-width: 0;
   }
 </style>

@@ -10,6 +10,7 @@ homepage.workspace = true
 readme = "README.md"
 
 [dependencies]
+jj-forge.workspace = true
 jj-store-read-index.workspace = true
 url = "2"
 jj-workflow.workspace = true

@@ -4,10 +4,34 @@ JST-UI-018 owns the Buzz Appearance adaptation. The page exposes all 62 theme
 styles plus the previous app's Original light/dark pair, System/Light/Dark mode,
 paired transitions, ten accent choices, browser glass with 30-90 percent
 opacity/reset, prominent navigation, 13/14/15 pixel body typography,
-Compact/Comfy/Spacious conversations, local Compact/Rich link cards and
+Compact/Comfy/Spacious conversations, local Inline/Compact/Rich links and
 Focus/Split discussions. Preferences are device-local and app-wide; Settings
 location remains transient. Defaults are System/Buzz, default font, Comfy
-density, Compact links, Split replies, glass off and subtle active tabs.
+density, Inline links, Split replies, glass off and subtle active tabs.
+
+External prose and explicitly labelled Markdown links render inline with a small
+decorative site icon and the original formatted, underlined label. Lists,
+headings, tables and quotes remain inline in all styles. Only bare/autolink URLs
+occupying an entire top-level paragraph and matching supported GitHub
+repository/issue/PR, Linear issue or Google Drive/Docs/Sheets/Slides content
+addresses qualify for local Compact/Rich cards. Inline disables those cards.
+Missing/invalid preferences select Inline; valid saved Compact/Rich choices keep
+the v1 storage identity. Settings previews use the actual shared renderer and
+never persist temporary choices. Native entity chips, media, file links, code
+and spoilers retain their established behavior. Labelled links reveal their full
+destination on hover and keyboard focus. Site matching uses explicit
+hosts/aliases and Slack workspace subdomains, with a generic icon for unknown
+hosts. The shared renderer bridges Mira’s public link-colour token to the app
+foreground colour, retaining contrast on tinted message surfaces and palettes
+whose selected accent lacks text contrast. Underlines and site icons retain the
+link distinction. Brand paths are bundled locally, monochrome and theme-aware;
+no metadata, favicons or external images are fetched. Inline labels wrap
+naturally and retain visible hover/focus states. Icon support does not imply
+card eligibility.
+
+Removed-line and intraline diff washes bind the public foundation diff tokens to
+each palette's deleted-content hue. Pale destructive button foregrounds do not
+supply those layered washes; changed text retains readable contrast.
 
 Appearance uses the shared full-width Theme and Preferences cards with tinted
 headers, relevant icons and edge-to-edge dividers, under Theme and Preferences

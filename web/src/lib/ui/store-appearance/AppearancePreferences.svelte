@@ -16,7 +16,6 @@
   import AppearanceChoice from "./AppearanceChoice.svelte";
   import AppearanceRow from "./AppearanceRow.svelte";
   const store = useAppearance()!;
-  let links = $state<LinkStyle | null>(null);
   let threads = $state<ThreadLayout | null>(null);
 </script>
 
@@ -101,61 +100,36 @@
   <div class="appearance-card appearance-card--settings">
     <AppearanceRow
       title="Display style"
-      description={(links ?? store.saved.links) === "rich"
-        ? "Larger cards using the link text and address already in the message"
-        : "Compact cards that keep conversations easy to scan"}
+      description={store.live.links === "inline"
+        ? "Small site icons beside links; no preview cards"
+        : `${store.live.links === "rich" ? "Larger" : "Compact"} cards for recognised standalone links; prose links stay inline`}
     >
       <AppearanceChoice
         label="Link previews"
         value={store.saved.links}
         options={[
+          { value: "inline", label: "Inline" },
           { value: "compact", label: "Compact" },
           { value: "rich", label: "Rich" },
         ]}
         onChange={(v) => store.update({ links: v as LinkStyle })}
-        onPreview={(v) => (links = v as LinkStyle | null)}
+        onPreview={(v) =>
+          v ? store.preview({ links: v as LinkStyle }) : store.resetPreview()}
       />
     </AppearanceRow>
-    <div class="appearance-preview" aria-hidden="true">
+    <div
+      class="appearance-preview"
+      role="group"
+      aria-label="Link preview examples"
+    >
       <div class="appearance-preview__surface">
-        <span class="appearance-preview__label"><Eye />Preview</span>
-        <div
-          class="appearance-link-sample"
-          data-layout={links ?? store.saved.links}
+        <span class="appearance-preview__label" aria-hidden="true"
+          ><Eye />Preview</span
         >
-          <svg viewBox="0 0 382 200"
-            ><rect width="382" height="200" fill="var(--sidebar)" /><rect
-              x="76"
-              y="64"
-              width="72"
-              height="72"
-              rx="22"
-              fill="var(--foreground)"
-              opacity="0.24"
-            /><rect
-              x="168"
-              y="76"
-              width="96"
-              height="18"
-              rx="9"
-              fill="var(--foreground)"
-              opacity="0.18"
-            /><rect
-              x="168"
-              y="106"
-              width="138"
-              height="18"
-              rx="9"
-              fill="var(--foreground)"
-              opacity="0.12"
-            /></svg
-          >
-          <div>
-            <small>example.com</small><strong
-              >Product updates — a fresh look at conversations</strong
-            >
-            <p>https://example.com/product-updates</p>
-          </div>
+        <div class="appearance-link-examples">
+          <CommunityMarkdownContent
+            content={"Review [#42](https://github.com/team/repo/pull/42), [GitLab](https://gitlab.com/team/repo) and [Forgejo](https://code.forgejo.org/team/repo) before merging.\n\nhttps://github.com/team/repo/pull/42"}
+          />
         </div>
       </div>
     </div>

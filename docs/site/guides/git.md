@@ -48,3 +48,56 @@ Qualification covers macOS ARM64, JJ 0.45.1 and Git 2.55.0 with the SHA-1
 bookmark profile. Push options, native import/export, signing/conflict-export
 profiles, other platforms and arbitrary forge deployments are not implied by
 this gate.
+
+## Submit an ordinary-local stack for review
+
+Git-backed JJ repositories can use **Submit stack** in the Stack or Workspace
+view, or the `jj-store stack` CLI. For GitHub, first add an account in
+**Settings → Integrations**. Verified credentials stay in the OS credential
+store; the browser receives account metadata only. A single verified account and
+unambiguous remote can connect automatically, using the observed default branch.
+Otherwise select the account, source/push remote, target repository and target
+branch in Repository access. GitHub PR controls appear after connection.
+
+GitLab and Forgejo retain explicit repository connection settings: API URL,
+upstream project, source project/fork and push/target remotes. Their global
+account screens are not yet available. CLI automation can supply
+`JJ_STORE_FORGE_TOKEN` explicitly. Tokens never belong in the checkout or device
+receipt. See [Integrations](settings.md#integrations) for saved accounts.
+
+```text
+jj-store stack pr configure --provider github --api-url https://api.github.com --repository owner/project
+jj-store stack submit feature/api --dry-run
+jj-store stack submit feature/api
+jj-store stack pr checks 123
+jj-store stack pr merge 123 --dry-run
+jj-store stack pr merge 123 --yes
+jj-store stack restack feature/api --dry-run
+jj-store stack restack feature/api --yes
+```
+
+Preview shows each required ancestor bookmark, exact head and publication step.
+Submission pushes those branches, creates missing draft PRs and maintains links
+to the related PRs. Edit titles and descriptions before submission or in the PR
+section beside its file diffs afterward; the PR section can also float. Checks
+form a collapsed expandable footer beneath the description, with status groups,
+bounded scrolling and reported durations where available. Row menus provide
+check details, jobs, bounded logs and supported rerun/cancel actions. The bottom
+action bar offers provider-supported merge methods. A queued merge stays
+distinct from a completed merge.
+
+Explicit status refresh updates managed links after landing. **Restack**
+explicitly rebases and publishes remaining branches; polling never rewrites
+local commits. Fork-only parent branches use labelled cumulative upstream PRs
+and bottom-first merging. GitHub native stack membership is optional for
+eligible same-repository chains. Shared-root/cross-combination Restack is
+unavailable in this profile.
+
+If an effect's outcome is unknown, inspect the retained original request with
+`stack pr recover` or `stack pr operation-status`; do not create a replacement
+submission. Forge reads load on first use and explicit Refresh. Session caches
+reuse PR, checks, jobs and logs through navigation and reopening; Refresh,
+connection/account changes and mutations invalidate them. There is no periodic
+forge polling or always-on backend maintenance service. These controls are
+implemented for the ordinary-local profile. Live forge/platform and packaged
+end-to-end qualification remain open; native-storage submission is separate.

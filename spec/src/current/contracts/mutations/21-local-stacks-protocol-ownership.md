@@ -85,3 +85,13 @@ target plus distinct applied tips, preserving WIP delta and change identities.
 Reconciliation previews list conservatively proven obsolete merge heads before
 retirement; ordinary reads and refresh never repair repository graphs. Native
 operation history remains the recovery path.
+
+## External forge effects
+
+JST-FORGE-001/007 owns ordinary-local stack publication through the shared
+jj-store-jj orchestration. Device-local forge receipts record external effects;
+they do not use or replace native command WAL, manifest CAS, WorkStore or
+repository Undo/Redo. Restack reuses the native local transaction and physical
+workspace guard. Its internal command is excluded from the public local-command
+Serde/schema union; only the forge planner can admit it. An unknown local
+rewrite is retained for inspection and never automatically repeated.

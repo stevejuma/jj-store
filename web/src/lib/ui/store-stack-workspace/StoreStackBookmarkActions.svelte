@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -28,7 +29,11 @@
     enabled = () => true,
     reason = () => "",
     onCommand,
+    afterPush,
+    beforePush,
   }: {
+    afterPush?: Snippet;
+    beforePush?: Snippet;
     stack: string;
     commitStack?: string;
     name: string;
@@ -58,7 +63,7 @@
             <Button
               {...props}
               variant="outline"
-              size="icon-sm"
+              size="icon-xs"
               aria-label={`Add empty commit to ${name}`}
               disabled={disabled || !enabled("create_commit")}
               onclick={() =>
@@ -72,13 +77,14 @@
         </Tooltip.Trigger><Tooltip.Content>Add empty commit</Tooltip.Content
         ></Tooltip.Root
       >{/if}
+    {@render beforePush?.()}
     <Tooltip.Root
       ><Tooltip.Trigger>
         {#snippet child({ props })}
           <Button
             {...props}
             variant="outline"
-            size="sm"
+            size="xs"
             aria-disabled="true"
             aria-label={`Push ${name}`}
           >
@@ -90,12 +96,13 @@
       ></Tooltip.Root
     >
   </Tooltip.Provider>
+  {@render afterPush?.()}
   <Menu.Root
     ><Menu.Trigger>
       {#snippet child({ props })}<Button
           {...props}
           variant="ghost"
-          size="icon-sm"
+          size="icon-xs"
           class="stack-workspace__bookmark-menu stack-workspace__menu-trigger"
           aria-label={`Branch actions for ${name}`}
           {disabled}><Ellipsis aria-hidden="true" /></Button

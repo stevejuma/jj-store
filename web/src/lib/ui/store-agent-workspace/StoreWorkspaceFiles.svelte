@@ -156,7 +156,7 @@
                         ?.label}</span
                     ></Select.Trigger
                   >
-                  <Select.Content
+                  <Select.Content aria-label="Comparison range"
                     ><Select.Group
                       >{#each ranges as range}<Select.Item value={range.value}
                           >{range.label}</Select.Item
@@ -183,7 +183,7 @@
                         class="truncate">{baseLabel}</span
                       ></Select.Trigger
                     >
-                    <Select.Content
+                    <Select.Content aria-label="Comparison base"
                       ><Select.Group
                         ><Select.Item value="default"
                           >Configured branch</Select.Item

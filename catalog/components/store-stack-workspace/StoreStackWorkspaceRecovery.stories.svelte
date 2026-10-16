@@ -39,13 +39,15 @@
       await canvas.findByRole("button", { name: "Unapply feature/api" }),
     );
     await portal.findByRole("dialog", { name: "Workspace outcome unknown" });
-    expect(portal.getByText("Outcome awaiting confirmation")).toBeVisible();
+    await waitFor(async () => {
+      expect(portal.getByText("Outcome awaiting confirmation")).toBeVisible();
+    });
     expect(portal.queryByRole("button", { name: "Apply command" })).toBeNull();
     expect(portal.queryByRole("button", { name: "Cancel preview" })).toBeNull();
     expect(canvas.getByRole("button", { name: "Create stack" })).toBeDisabled();
     await userEvent.click(portal.getByRole("button", { name: "Check status" }));
     await canvas.findByRole("button", { name: "Apply feature/api" });
-    expect(portal.queryByRole("dialog")).toBeNull();
+    await waitFor(() => expect(portal.queryByRole("dialog")).toBeNull());
   }}
 />
 
@@ -59,9 +61,11 @@
     await userEvent.click(
       portal.getByRole("button", { name: "Apply command" }),
     );
-    await expect(
-      await portal.findByText("Outcome awaiting confirmation"),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await portal.findByText("Outcome awaiting confirmation"),
+      ).toBeVisible();
+    });
     await expect(
       canvas.getByRole("button", { name: "Create stack" }),
     ).toBeDisabled();
@@ -69,11 +73,13 @@
       portal.getByRole("button", { name: "Cancel preview" }),
     ).toBeDisabled();
     await userEvent.click(portal.getByRole("button", { name: "Check status" }));
-    await expect(
-      await canvas.findByRole("button", {
-        name: "Retained commit draft",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("button", {
+          name: "Retained commit draft",
+        }),
+      ).toBeVisible();
+    });
   }}
 />
 
@@ -91,11 +97,13 @@
     await userEvent.click(
       portal.getByRole("button", { name: "Retry original command" }),
     );
-    await expect(
-      await canvas.findByRole("button", {
-        name: "Retained commit draft",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("button", {
+          name: "Retained commit draft",
+        }),
+      ).toBeVisible();
+    });
     await expect(
       canvas.getAllByRole("button", {
         name: "Retained commit draft",
@@ -115,9 +123,11 @@
     await userEvent.click(
       portal.getByRole("button", { name: "Apply command" }),
     );
-    await expect(
-      await portal.findByText(/The workspace changed/),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await portal.findByText(/The workspace changed/),
+      ).toBeVisible();
+    });
     await userEvent.click(
       portal.getByRole("button", { name: "Cancel preview" }),
     );
@@ -144,17 +154,21 @@
     await userEvent.click(
       portal.getByRole("button", { name: "Apply command" }),
     );
-    await expect(
-      await portal.findByText("Workspace command failed"),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await portal.findByText("Workspace command failed"),
+      ).toBeVisible();
+    });
     await userEvent.click(
       portal.getByRole("button", { name: "Apply command" }),
     );
-    await expect(
-      await workspaceCanvas(canvasElement).findByRole("button", {
-        name: "Retained commit draft",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await workspaceCanvas(canvasElement).findByRole("button", {
+          name: "Retained commit draft",
+        }),
+      ).toBeVisible();
+    });
   }}
 />
 
@@ -167,9 +181,11 @@
     await userEvent.click(
       portal.getByRole("button", { name: "Preview command" }),
     );
-    await expect(
-      await portal.findByText("This workspace name is already in use."),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await portal.findByText("This workspace name is already in use."),
+      ).toBeVisible();
+    });
     await expect(portal.getByLabelText("Name")).toHaveValue("Daily work");
   }}
 />

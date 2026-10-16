@@ -54,9 +54,11 @@
     ).toBeVisible();
 
     await userEvent.keyboard("{Meta>}k{/Meta}");
-    await expect(
-      await page.findByRole("dialog", { name: "Search workspace" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await page.findByRole("dialog", { name: "Search workspace" }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
   }}
 />

@@ -174,11 +174,13 @@ test("local folder settings preserve drafts and link without changing repository
   ]);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(input).toBeVisible();
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    )
+    .toBe(true);
   expect(await new AxeBuilder({ page }).analyze()).toMatchObject({
     violations: [],
   });

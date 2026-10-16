@@ -68,9 +68,13 @@
       canvas.getByRole("button", { name: "Assign to feature/workspace" }),
     );
     await messagePreview(canvasElement, "Add keyboard shortcut");
-    await expect(
-      workspacePortal(canvasElement).getByText(/using only the staged changes/),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        workspacePortal(canvasElement).getByText(
+          /using only the staged changes/,
+        ),
+      ).toBeVisible(),
+    );
     await applyPreview(canvasElement);
     await expect(
       canvas.getByRole("button", {

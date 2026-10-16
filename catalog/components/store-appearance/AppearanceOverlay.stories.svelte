@@ -81,9 +81,11 @@
         );
       });
       await expect(input).toHaveValue("native");
-      await expect(
-        within(dialog).getByText("Retained search result"),
-      ).toBeVisible();
+      await waitFor(() =>
+        expect(
+          within(dialog).getByText("Retained search result"),
+        ).toBeVisible(),
+      );
       await userEvent.click(
         within(dialog).getByRole("button", { name: "Menu surface" }),
       );

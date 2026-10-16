@@ -1,10 +1,14 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/RepositoryDirectoryNavigationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Directory navigation",
     component: Fixture,
+    beforeEach: async () => {
+      await views.files();
+    },
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });

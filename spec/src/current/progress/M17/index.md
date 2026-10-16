@@ -9,6 +9,11 @@
 | M17.4 | Planned     | M17.3   | JST-DESK-005                                                                  | Cold ARM64 app and DMG persistence and relocation                               | Package and qualify local distribution                                      | E-DESK-010                                                                                         |
 | M17.5 | Partial     | M17.2   | JST-DESK-006,JST-UI-002,JST-UI-006,JST-SEC-005                                | Desktop repository terminal and retained shell sessions                         | Native terminal qualified; retain M16 registry and M17.2 host prerequisites | E-DESK-007,E-DESK-008,E-DESK-009                                                                   |
 
+E-MAIN-LOCAL-REPAIRS-001 retains M17.2 In progress. Equivalent optional ACP file
+validation passes fresh strict desktop Clippy, the complete desktop workspace
+tests, native checking and isolated staged service restart acceptance. Signed
+app/DMG, WKWebView, relocation and additional platform gates remain independent.
+
 <!-- generated-navigation -->
 
 ## Pages

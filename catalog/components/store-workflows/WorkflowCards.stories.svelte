@@ -104,11 +104,13 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Actions for Build parser" }),
     );
-    await expect(
-      await within(document.body).findByRole("menuitem", {
-        name: "Edit workflow",
-      }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await within(document.body).findByRole("menuitem", {
+          name: "Edit workflow",
+        }),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
   }}>{#snippet template()}<WorkflowsFixture />{/snippet}</Story
 >

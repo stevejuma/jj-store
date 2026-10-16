@@ -112,7 +112,8 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
   const g = workspaceGraph();
   const inputs = sourceEdges(g);
   assert.deepEqual(inputs.uncertain, []);
-  assert.equal(cohortPackages(g, "ordinary").length, 16);
+  assert.equal(cohortPackages(g, "ordinary").length, 17);
+  assert.ok(cohortPackages(g, "ordinary").includes("jj-forge"));
   assert.deepEqual(
     impact(["crates/jj-store-read-index/src/lib.rs"], false, g, inputs)
       .packages,

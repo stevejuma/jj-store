@@ -3364,6 +3364,70 @@
     {
       "local": "web/src/lib/ui/store-workflows/workflow-card.css",
       "reason": "Owned workflow summary, stacked icon and description presentation with released Design Core; Buzz desktop references and Apache-2.0 attribution are recorded in desktopWorkflows. No external source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeDescription.svelte",
+      "reason": "Application-owned composition of the maintained local chat composer and Markdown renderer for PR descriptions; no new Community source copied or external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgePanel.svelte",
+      "reason": "Independently implemented forge controls using released Design Core; jjbutler and Changeyard are design references only. No source copied from their checkouts."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgePullRequest.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/store-forge.css",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeChecks.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeSetup.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeButton.svelte",
+      "reason": "Owned forge presentation, independently implemented with released Design Core and maintained local components. Design references and source revisions are recorded in forgeStacks; no external checkout imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeIcon.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeCheckIcon.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgeCheckRow.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/StoreForgePanelActions.svelte",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/store-forge/forge-icons.ts",
+      "reason": "Application-owned PR detail/check presentation using released Design Core and maintained local components. Design references are recorded in forgeStacks; locally bundled brand paths are attributed in forgeIcons."
+    },
+    {
+      "local": "web/src/lib/ui/community-markdown-content/CommunityExternalLink.svelte",
+      "reason": "Application-owned inline external links and selective standalone local cards using released Mira extension points and Design Core Tooltip. Independently authored; Buzz is a read-only behavior reference."
+    },
+    {
+      "local": "web/src/lib/ui/community-markdown-content/CommunityLinkPreview.svelte",
+      "reason": "Application-owned inline external links and selective standalone local cards using released Mira extension points and Design Core Tooltip. Independently authored; Buzz is a read-only behavior reference."
+    },
+    {
+      "local": "web/src/lib/ui/community-markdown-content/syntax-external-links.ts",
+      "reason": "Application-owned inline external links and selective standalone local cards using released Mira extension points and Design Core Tooltip. Independently authored; Buzz is a read-only behavior reference."
+    },
+    {
+      "local": "web/src/lib/ui/store-mutations/commit-tags.ts",
+      "reason": "Application-owned mapping of current native bookmark and workspace labels into released TagList data; no shared domain policy."
     }
   ],
   "desktopAppearance": {
@@ -3917,5 +3981,161 @@
       "web/src/lib/ui/store-workflows/workflow-history-tree.css"
     ],
     "adaptations": "Selectable source repositories and workflows, All workflows, flat runs, avatar-backed author filters, bookmark/status/manual-event filters, bounded paging, full-width pinned details and accessible mobile/resize controls. Repository Actions fixes scope to its source repository and provides full-body pinned details. Workflow navigation and overview cards share an owned action menu; the repository page owns the Actions-only full-width divider."
+  },
+  "forgeStacks": {
+    "local": [
+      "web/src/lib/ui/store-forge/StoreForgePullRequest.svelte",
+      "web/src/lib/ui/store-forge/store-forge.css",
+      "web/src/lib/ui/store-forge/StoreForgeChecks.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeSetup.svelte",
+      "web/src/lib/ui/store-forge/StoreForgePanel.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeButton.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeBranchStatus.svelte",
+      "web/src/lib/controller/forge/branch-status.ts",
+      "web/src/lib/controller/forge/effects.svelte.ts",
+      "web/src/lib/controller/forge/view-lifecycle.ts",
+      "web/src/lib/controller/forge/polling.svelte.ts",
+      "web/src/lib/controller/forge/controller.svelte.ts",
+      "web/src/lib/controller/forge/types.ts",
+      "web/src/lib/controller/forge/inline.svelte.ts",
+      "web/src/lib/ui/store-forge/StoreForgeCreate.svelte",
+      "web/src/lib/ui/store-forge/StoreForgeDetails.svelte",
+      "web/src/lib/ui/store-forge/StoreForgePullRequestActions.svelte",
+      "web/src/lib/ui/store-forge/forge-inline.css",
+      "web/src/lib/ui/store-stack-workspace/StoreStackBookmarkHeader.svelte",
+      "web/src/lib/ui/store-stack-workspace/StoreStackLaneMenu.svelte",
+      "web/src/lib/controller/stack-workspace/details-columns.ts",
+      "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetailsColumn.svelte",
+      "web/src/lib/ui/store-stack-workspace/stack-workspace-details.css"
+    ],
+    "references": [
+      {
+        "project": "jjbutler",
+        "revision": "a9763eebc79c17c75edc9c903c6cf6ff68003d5a",
+        "license": "FSL-1.1-MIT",
+        "paths": [
+          "apps/desktop/src/lib/forge/interface/forge.ts",
+          "apps/desktop/src/components/ReviewCreation.svelte",
+          "apps/desktop/src/lib/forge/github/githubChecksMonitor.svelte.ts",
+          "apps/desktop/src/components/PullRequestCard.svelte",
+          "apps/desktop/src/components/ChecksPolling.svelte",
+          "packages/ui/src/lib/utils/getForgeLogo.ts"
+        ],
+        "usage": "Read-only design reference for capability interfaces, contextual creation, PR cards and bounded monitoring; no code copied."
+      },
+      {
+        "project": "changeyard",
+        "revision": "4b90e180fd9f7f16aeeb9cb24f17b31ad9cb849a",
+        "paths": [
+          "src/providers/ChangeProvider.ts",
+          "src/vcs/jj/stack-submit.ts",
+          "packages/vcs/src/components/vcs-pull-request-actions.tsx",
+          "packages/web-ui/src/pull-request.tsx"
+        ],
+        "usage": "Read-only workflow reference; independently implemented effects and presentation."
+      }
+    ],
+    "communityInspection": "src/components/community-projects/CommunityProjectsPullRequestCreateDialog.svelte, maintained CommunityProjectsRepositoryLogDiff.svelte/repository-log-diff.css and owned Stack components inspected before presentation edits. Existing owned cards/avatars are reused. No new Community-derived component copy.",
+    "designCore": "Released @lapismd/design-core 0.3.2 ColumnCanvas, Button, Input, ScrollArea, Field, Dialog, Tooltip and DropdownMenu primitives; no foundational package changes."
+  },
+  "forgeIcons": {
+    "repository": "https://github.com/simple-icons/simple-icons",
+    "revision": "28241d80f8422eaed317ef968ad1e40b6d0d9163",
+    "version": "16.0.0",
+    "license": "CC0-1.0",
+    "licenseFile": "docs/licenses/simple-icons-CC0-1.0.md",
+    "local": [
+      "web/src/lib/links/site-icons.ts",
+      "web/src/lib/ui/store-forge/forge-icons.ts"
+    ],
+    "paths": ["icons/github.svg", "icons/gitlab.svg", "icons/forgejo.svg"],
+    "usage": "Locally bundled monochrome SVG paths rendered by the application-owned forge icon; no runtime external icon requests."
+  },
+  "detachablePanels": {
+    "local": [
+      "web/src/lib/ui/store-panels/StoreDetachablePanel.svelte",
+      "web/src/lib/ui/store-panels/detachable-panel.css"
+    ],
+    "references": [
+      {
+        "project": "jjbutler",
+        "revision": "66597dfb058ce156ec104e979ff77c802bea6a0a",
+        "license": "FSL-1.1-MIT",
+        "paths": [
+          "apps/desktop/src/components/CreateReviewBox.svelte",
+          "apps/desktop/src/components/FloatingCommitBox.svelte",
+          "apps/desktop/src/lib/floating/FloatingModal.svelte"
+        ],
+        "usage": "Read-only inline creation and floating composition reference; no code copied."
+      },
+      {
+        "project": "changeyard",
+        "revision": "b0caf0741f17454f2bc48ef3448d741d231f9299",
+        "paths": [
+          "packages/vcs/src/components/vcs-pull-request-actions.tsx",
+          "packages/vcs/src/views/jj-board-view.tsx"
+        ],
+        "usage": "Read-only contextual PR summary and viewport-constrained floating design reference; no code copied."
+      }
+    ],
+    "communityInspection": "CommunityProjectsPullRequestCreateDialog and maintained chat composer additionalActions seam inspected. Existing owned components are reused; no new Community-derived source copy.",
+    "designCore": "Released 0.3.2 WorkspaceFloatingLayer, WorkspaceShellController, imperative view registry, Dialog.Portal and shadcn primitives. Independent application adapter preserves one DOM/editor instance; foundation owns window geometry and controls."
+  },
+  "siteLinks": {
+    "local": [
+      "web/src/lib/links/site-links.ts",
+      "web/src/lib/links/site-icons.ts"
+    ],
+    "reference": {
+      "repository": "https://github.com/block/buzz",
+      "revision": "ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be",
+      "paths": [
+        "desktop/src/shared/ui/markdown/ExternalLinkAnchor.tsx",
+        "desktop/src/shared/ui/markdown/useMessageLinkPreviews.ts",
+        "desktop/src/shared/lib/linkPreview.ts",
+        "desktop/src/shared/ui/link-preview-list.tsx"
+      ],
+      "usage": "Read-only comparison: ordinary anchors remain inline, cards render separately from prepared metadata. Local icons and standalone-only eligibility are jj-store adaptations; no Buzz code copied."
+    },
+    "icons": [
+      {
+        "repository": "https://github.com/simple-icons/simple-icons",
+        "revision": "28241d80f8422eaed317ef968ad1e40b6d0d9163",
+        "version": "16.0.0",
+        "license": "CC0-1.0",
+        "licenseFile": "docs/licenses/simple-icons-CC0-1.0.md",
+        "paths": [
+          "icons/codeberg.svg",
+          "icons/bitbucket.svg",
+          "icons/facebook.svg",
+          "icons/x.svg",
+          "icons/google.svg",
+          "icons/linear.svg",
+          "icons/notion.svg",
+          "icons/figma.svg",
+          "icons/youtube.svg",
+          "icons/discord.svg",
+          "icons/reddit.svg",
+          "icons/stackoverflow.svg"
+        ]
+      },
+      {
+        "repository": "https://github.com/simple-icons/simple-icons",
+        "version": "15.0.0",
+        "source": "https://cdn.jsdelivr.net/npm/simple-icons@15.0.0/icons/slack.svg",
+        "license": "CC0-1.0",
+        "licenseFile": "docs/licenses/simple-icons-CC0-1.0.md",
+        "paths": ["icons/slack.svg"]
+      }
+    ],
+    "usage": "Locally bundled monochrome paths; no metadata, external images or favicon services. Existing forge icons share the same registry."
+  },
+  "tagListAdoption": {
+    "package": "@lapismd/design-core",
+    "version": "0.5.0",
+    "entry": "@lapismd/design-core/shadcn/tag-list",
+    "revision": "63d3033ef9830d7c2db5286dcd010bf4c3bb1801",
+    "license": "Apache-2.0",
+    "ownership": "Released component owns chip presentation and overflow; existing copied source attributions remain intact. Application-owned mappings preserve native labels, order and tones. Editable selections, entity links and single identity/status badges retain their controls."
   }
 }

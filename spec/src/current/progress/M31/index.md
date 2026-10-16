@@ -1,0 +1,93 @@
+# M31 forge-agnostic stack submission
+
+| ID  | Status      | Depends | Requirements                                                                                      | Gate                                                            | Next                                                                        | Evidence                                                                                                                                                                                                                                                                                                                                                                                          |
+| --- | ----------- | ------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M31 | In progress | M21     | JST-FORGE-001,JST-FORGE-002,JST-FORGE-003,JST-FORGE-004,JST-FORGE-005,JST-FORGE-006,JST-FORGE-007 | Focused CLI/app submission, editing, CI and merge qualification | Run credentialed disposable-forge acceptance and packaged app qualification | E-FORGE-STACKS-001,E-FORGE-WORKSPACE-001,E-FORGE-PANEL-001,E-FORGE-DETAILS-001,E-FORGE-BUTTONS-001,E-FORGE-UNSUBMITTED-001,E-FORGE-EDIT-001,E-FORGE-INLINE-001,E-FORGE-FLOAT-STYLE-001,E-FORGE-FLOAT-DISCLOSURE-001,E-FORGE-BRANCH-STATUS-001,E-FORGE-INLINE-CHECKS-001,E-FORGE-BRANCH-STATUS-002,E-FORGE-INTEGRATIONS-001,E-FORGE-AUTH-LIVE-001,E-FORGE-COMPACT-001,E-FORGE-MAIN-INTEGRATION-001 |
+
+The ordinary-local implementation includes submission, managed navigation,
+editing, CI controls, guarded merge and explicit Restack. Focused automated and
+real local-Git acceptance is recorded in E-FORGE-STACKS-001. Native submission,
+live provider/platform qualification and wider suite repairs remain separate.
+E-FORGE-WORKSPACE-001 adds a full application-shell catalog view of applied
+stacks beside PR details and submission preview, using owned production UI. M31
+remains In progress; no live forge or visual gate is promoted. E-FORGE-PANEL-001
+qualifies matching column headers, icon-only close controls, Markdown
+descriptions/composer editing and capability-owned shadcn merge menus in those
+scoped stories. E-FORGE-DETAILS-001 compares jjbutler and Changeyard PR
+presentation, adds forge badges and rendered-first details, and qualifies
+selection-guarded automatic checks, grouped CI rows and menu-owned connection
+controls. E-FORGE-BUTTONS-001 qualifies trailing title-row PR controls and
+opaque bordered button surfaces with distinct light/dark hover states. Submit
+stack appears beside Push on the topmost card and in the column kebab menu,
+using the same guarded submission preview. Live provider, packaged and visual
+gates stay open. E-FORGE-UNSUBMITTED-001 adds first-column unsubmitted-change
+coverage in the same contextual catalog, including Create PR preview and
+simulated submission; production contracts and M31 status remain unchanged.
+E-FORGE-EDIT-001 moves PR editing to a header pencil and removes the redundant
+description label, retaining composer previews, draft/save behavior and gates.
+E-FORGE-INLINE-001 adds topmost inline creation and the Op Log-style details
+column: an expandable PR section above the file diff, with explicit CI
+inspection and reusable floating hosts. Headers own the title, linked number,
+draft/state and compact actions, with repeated body identity removed. Focused
+qualification retains independent diff origins, operation/receipt guards and
+drafts; live provider, native/platform, packaged and visual gates remain open.
+E-FORGE-FLOAT-STYLE-001 refines float controls and the floating PR surface, and
+makes inline spacing leave with the detached PR. Focused presentation checks
+retain the same lifecycle and publication contracts; M31 status stays unchanged.
+E-FORGE-FLOAT-DISCLOSURE-001 makes the floating PR title static while retaining
+normal disclosure after redock. M31 remains In progress with existing gates
+open. E-FORGE-BRANCH-STATUS-001 adds a compact under-title PR/push/check row on
+the topmost change, retaining neutral button styling and explicit uncertain
+states. M31 remains In progress; no provider, native, packaged or visual gate is
+promoted. E-FORGE-INLINE-CHECKS-001 places explicit CI inspection in the
+existing PR body and qualifies visible header-action hover surfaces in both
+themes. Drafts, file diffs and floating lifecycle stay retained. M31 remains In
+progress; live provider, native/platform, packaged and visual gates remain open.
+E-FORGE-BRANCH-STATUS-002 extends under-title PR/status rows to dependent
+bookmarks and matches the running badge to compact PR controls. M31 remains In
+progress; provider, native/platform, packaged and visual gates remain open.
+
+E-FORGE-INTEGRATIONS-001 adds installation-owned GitHub accounts with native OS
+credential custody, device OAuth/PAT/Enterprise setup, repository detection and
+account-bound submission previews, and compact grouped in-body checks. Targeted
+account, transport, native-discovery, controller and browser acceptance is
+recorded separately from live sign-in. The jj-store OAuth app is registered;
+permission approval and cold authenticated restart/read acceptance were
+initially open. E-FORGE-AUTH-LIVE-001 records subsequent user-approved GitHub
+OAuth, macOS Keychain persistence across backend restarts, automatic binding to
+the existing sample connection with target `trunk`, and live PR/check reads. It
+also qualifies serialized repository forge requests after a live journal-lease
+collision, preserving exact pending effects. M31 remains In progress;
+GitLab/Forgejo live qualification, native submission, packaged/platform and
+visual gates are not promoted.
+
+E-FORGE-COMPACT-001 replaces forge/inventory periodic refresh with bounded
+session-only cached observations and explicit refresh, retaining device OAuth
+polling, account isolation and exact uncertain effects. It qualifies the themed
+authorization guide, content-sized icon menus, collapsed checks footer with a
+trailing chevron, single-line timed checks, latest GitHub workflow/check
+selection and a guarded bottom merge bar. Cold live read qualification and
+focused tests remain distinct from mutation and platform acceptance. M31 remains
+In progress; native submission, other providers/platforms, packaged app,
+disposable mutations and visual approval remain open.
+
+E-FORGE-MAIN-INTEGRATION-001 integrates the committed forge, integrations,
+inline-link and TagList work into the main workspace while preserving its
+independent CI/Search history. M31 remains In progress, with M16, M4.2 and M30
+statuses and original evidence retained. Tests were explicitly skipped for this
+integration; structural checks do not promote any qualification gate.
+
+E-MAIN-LOCAL-REPAIRS-001 records the user-authorized 2026-10-16 completed
+main-workspace repair validation and wider failure repairs. M31 retains its
+existing status and completion gates; local passes do not establish hosted,
+additional-platform, live-provider or visual-baseline qualification.
+E-MAIN-LOCAL-QUALIFICATION-001 records completed local main-workspace
+qualification and the separate standard CI result at its exact source head.
+Source-bound native, API, UI and cold application/profile acceptance retain all
+earlier failed attempts and declared skips. M31 stays In progress; native
+submission, disposable live-forge mutations, other providers/platforms, packaged
+delivery and visual approval remain open.
+
+<!-- generated-navigation -->
+
+## Pages

@@ -1,11 +1,19 @@
 <script module lang="ts">
   import { selectSettingsSubtab } from "./settings-shell-play.js";
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentLayoutFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent layout",
     component: Fixture,
+    beforeEach: async () => {
+      await Promise.all([
+        views.agentsRecorded(),
+        views.settings(),
+        views.projects(),
+      ]);
+    },
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });
@@ -173,6 +181,7 @@
         c.getByRole("button", { name: /Open profile menu for/ }),
       );
       await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
+      await waitFor(() => expect(body.queryByRole("menu")).toBeNull());
       await userEvent.click(
         await c.findByRole("button", { name: "Appearance" }),
       );

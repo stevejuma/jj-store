@@ -24,7 +24,7 @@ for rel in w['workspace']['members']+['runtime/embedded-rustfs']:
    path=(source.parent/value).resolve()
    assert path.is_relative_to(base),str(source)+' has an external compilation input '+value
    assert path.is_file(),str(source)+' missing '+value
-print('All 20 Cargo packages have registry dependencies and contained compilation inputs.')
+print(f'All {len(w["workspace"]["members"])+1} Cargo packages have registry dependencies and contained compilation inputs.')
 `,
   ],
   { stdio: "inherit" },

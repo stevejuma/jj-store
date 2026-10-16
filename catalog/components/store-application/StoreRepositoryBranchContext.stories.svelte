@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
@@ -9,6 +10,9 @@
     tags: ["visual-pending"],
     args: { initiallyCollapsed: false },
     parameters: { layout: "fullscreen", jjStoreShell: true },
+    beforeEach: async () => {
+      await Promise.all([views.log()]);
+    },
   });
 </script>
 
@@ -86,10 +90,18 @@
     const createTarget = within(createDialog).getByRole("combobox", {
       name: "Commit",
     });
-    await expect(createTarget).toHaveTextContent(
-      "Stream immutable native objects",
+    const createDetails = createDialog.ownerDocument.getElementById(
+      createTarget.getAttribute("aria-describedby")!,
+    )!;
+    await expect(createTarget).toHaveAccessibleDescription(
+      /Stream immutable native objects/,
     );
-    await expect(createTarget).toHaveTextContent("feature/native-objects");
+    await waitFor(() =>
+      expect(createDetails).toHaveTextContent(
+        "Stream immutable native objects",
+      ),
+    );
+    await expect(createDetails).toHaveTextContent("feature/native-objects");
     await userEvent.click(createTarget);
     const search = page.getByRole("combobox", { name: "Select commit" });
     await userEvent.type(search, "Initialize native repository");
@@ -98,7 +110,7 @@
         name: /Initialize native repository/u,
       }),
     );
-    await expect(createTarget).toHaveTextContent(
+    await expect(createDetails).toHaveTextContent(
       "Initialize native repository",
     );
     await userEvent.click(
@@ -116,9 +128,11 @@
     await expect(within(dialog).getByLabelText("Bookmark")).toHaveValue(
       "feature/native-objects",
     );
-    await expect(
-      within(dialog).getByRole("combobox", { name: "Commit" }),
-    ).toHaveTextContent("Stream immutable native objects");
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole("combobox", { name: "Commit" }),
+      ).toHaveAccessibleDescription(/Stream immutable native objects/),
+    );
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Cancel" }),
     );

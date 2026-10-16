@@ -277,3 +277,14 @@ transport regression from live timings with older views still connected.
 E-UI-VIEW-READINESS-001 keeps JST-DOC-003 delivery and review gates unchanged.
 The browsing guide describes stable search-header geometry and shared file-tree
 presentation; fixture proof remains distinct from release qualification.
+
+E-UI-CI-003 documents Search save-error recovery under JST-DOC-002/003: status
+refresh retains the failed draft and notification, Cancel adopts the latest
+saved configuration, and retries require an explicit save. Neither refresh nor
+notification dismissal can replay a mutation.
+
+E-FORGE-STACKS-001 documents ordinary-local forge setup, preview/submit, CI,
+merge and explicit Restack in the Git guide and transport semantics. The new
+forge crate is covered by source review, and generated CLI/OpenAPI references
+retain their normal command/schema authority. Fixture acceptance does not
+promote live provider or packaged application qualification.

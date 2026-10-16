@@ -1,4 +1,5 @@
 import { expect, test, vi } from "vitest";
+import { createProductionBranchActions } from "../../src/lib/controller/production-branch-actions.js";
 import { createProductionReferenceReader } from "../../src/lib/controller/production-reference-reader.js";
 import { restoreProductionStoreRoute } from "../../src/lib/controller/production-route-restorer.js";
 import { createProductionStoreState } from "../../src/lib/controller/production-store-state.svelte.js";
@@ -258,4 +259,62 @@ test("selected commit and diff do not resolve the unused change picker", async (
     });
     f.history.destroy();
   }
+});
+
+test.each(["bookmark", "working copy"])(
+  "%s selection recovers an interrupted workspace read and rejects its late result",
+  async (kind) => {
+    const f = fixture();
+    f.history.replace({ ...f.history.route, page: "branches" });
+    await f.reader.loadReferences();
+    await f.reader.loadWorkingCopies();
+    let finish!: (value: ReturnType<typeof page>) => void;
+    f.references.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const superseded = f.reader.loadWorkingCopies();
+    expect(f.data.workingCopiesStatus).toBe("loading");
+    const actions = createProductionBranchActions({
+      data: f.data,
+      history: f.history,
+      reader: f.reads as never,
+      invalidate: f.invalidate,
+    });
+    try {
+      if (kind === "bookmark") await actions.selectBookmark("first");
+      else await actions.selectWorkingCopy(commit, "first");
+      await vi.waitFor(() => expect(f.data.workingCopiesStatus).toBe("ready"));
+      expect(f.data.workingCopies.map((item) => item.workspace)).toEqual([
+        "first",
+      ]);
+    } finally {
+      finish(page("obsolete", "workspace"));
+      await superseded;
+      expect(f.data.workingCopies.map((item) => item.workspace)).toEqual([
+        "first",
+      ]);
+      f.history.destroy();
+    }
+  },
+);
+
+test("branch selection reuses complete current reference windows", async () => {
+  const f = fixture();
+  f.history.replace({ ...f.history.route, page: "branches" });
+  await f.reader.loadReferences();
+  await f.reader.loadWorkingCopies();
+  const actions = createProductionBranchActions({
+    data: f.data,
+    history: f.history,
+    reader: f.reads as never,
+    invalidate: f.invalidate,
+  });
+  await actions.selectBookmark("first");
+  expect(f.references).toHaveBeenCalledTimes(2);
+  expect(f.data.workingCopiesStatus).toBe("ready");
+  expect(f.data.workingCopies.map((item) => item.workspace)).toEqual(["first"]);
+  f.history.destroy();
 });

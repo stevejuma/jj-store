@@ -1,0 +1,4 @@
+/* jj-store owns the utilities used by its app and catalog compositions. */
+@import "tailwindcss";
+@source "./";
+@source "../../catalog";

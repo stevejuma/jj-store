@@ -153,17 +153,21 @@
     const canvas = within(canvasElement);
     await canvas.findByRole("button", { name: "Back to repository" });
     await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
-    await expect(
-      await canvas.findByRole("tablist", { name: "Repository sections" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("tablist", { name: "Repository sections" }),
+      ).toBeVisible();
+    });
     await expect(
       canvas.queryByRole("region", { name: "Local stack workspace" }),
     ).toBeNull();
     await expect(canvas.getByRole("tab", { name: "Branches" })).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Stacks" }));
-    await expect(
-      await canvas.findByRole("region", { name: "Local stack workspace" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await canvas.findByRole("region", { name: "Local stack workspace" }),
+      ).toBeVisible();
+    });
     await expect(
       canvas.queryByRole("tablist", { name: "Repository sections" }),
     ).toBeNull();
@@ -262,7 +266,11 @@
       within(apiDiff).getByRole("button", { name: "Split selected changes" }),
     );
     const portal = within(canvasElement.ownerDocument.body);
-    await expect(await portal.findByLabelText("Commit message")).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await portal.findByLabelText("Commit message"),
+      ).toBeVisible();
+    });
     await messagePreview(canvasElement, "Separate mutation endpoint");
     await expect(
       await portal.findByText(/Only the selected changes in src\/api.ts/),

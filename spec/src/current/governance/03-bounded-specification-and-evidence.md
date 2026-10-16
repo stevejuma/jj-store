@@ -106,3 +106,7 @@ counts retain failures and ignored tests; missing output never means zero tests
 or a pass. Comparing workflow layouts requires the same source, inventory and
 completed coverage. An earlier canceled or producer-failed run is not a complete
 performance baseline.
+
+E-UI-TAG-LIST-001 retains JST-GOV-008 ownership: released Design Core 0.5.0 owns
+TagList presentation. Existing Community-derived compositions keep their pinned
+Apache-2.0 attribution; JJ labels and state mapping remain application-owned.

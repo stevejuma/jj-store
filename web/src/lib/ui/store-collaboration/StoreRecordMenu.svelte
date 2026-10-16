@@ -52,6 +52,7 @@
       </Button>{/snippet}
   </DropdownMenu.Trigger>
   <DropdownMenu.Content
+    tabindex={0}
     class="community-message__menu-content"
     style="min-width: 13.5rem;"
     align="end"
@@ -73,6 +74,7 @@
             />Copy</DropdownMenu.SubTrigger
           >
           <DropdownMenu.SubContent
+            tabindex={0}
             aria-label="Copy"
             class="community-message__menu-content"
             style="min-width: 13.5rem;"

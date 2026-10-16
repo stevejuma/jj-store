@@ -33,9 +33,11 @@
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
     );
     await userEvent.click(c.getByRole("tab", { name: "Runtimes" }));
-    await expect(
-      await c.findByRole("heading", { name: "Agent runtimes" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await c.findByRole("heading", { name: "Agent runtimes" }),
+      ).toBeVisible();
+    });
     await expect(
       c.queryByRole("region", { name: "Agent capture settings" }),
     ).toBeNull();
@@ -118,17 +120,23 @@
   name="Install is explicit and retains settings navigation"
   play={async ({ canvasElement }) => {
     const c = await open(canvasElement);
-    await expect(await c.findByText("Adapter needed")).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText("Adapter needed")).toBeVisible();
+    });
     await expect(
       c.getByLabelText("Installation command count"),
     ).toHaveTextContent("0");
     c.getByRole("button", { name: "Install Codex runtime" }).focus();
     await userEvent.keyboard("{Enter}");
     const page = within(document.body);
-    await expect(
-      await page.findByRole("dialog", { name: "Install Codex runtime?" }),
-    ).toBeVisible();
-    await expect(page.getByText(/Download Codex ACP 1.13.1/)).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        await page.findByRole("dialog", { name: "Install Codex runtime?" }),
+      ).toBeVisible();
+    });
+    await waitFor(async () => {
+      await expect(page.getByText(/Download Codex ACP 1.13.1/)).toBeVisible();
+    });
     const install = page.getByRole("button", {
       name: "Install runtime",
     });
@@ -146,7 +154,9 @@
     await userEvent.click(
       await page.findByRole("button", { name: "Install runtime" }),
     );
-    await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    });
     await expect(
       c.getByLabelText("Installation command actions"),
     ).toHaveTextContent("codex:install");
@@ -165,7 +175,9 @@
   args={{ scenario: "update" }}
   play={async ({ canvasElement }) => {
     const c = await open(canvasElement);
-    await expect(await c.findByText("Update available")).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText("Update available")).toBeVisible();
+    });
     await expect(c.getByText(/ACP 1.4.0/)).toBeVisible();
     await userEvent.click(
       c.getByRole("button", { name: "Update Codex runtime" }),
@@ -175,7 +187,9 @@
         name: "Update runtime",
       }),
     );
-    await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    });
     await expect(
       c.getByLabelText("Installation command actions"),
     ).toHaveTextContent("codex:update");
@@ -186,7 +200,9 @@
   args={{ scenario: "ready" }}
   play={async ({ canvasElement }) => {
     const c = await open(canvasElement);
-    await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    });
     await expect(
       c.queryByRole("button", { name: "Install Codex runtime" }),
     ).toBeNull();
@@ -232,7 +248,9 @@
     await userEvent.click(
       c.getByRole("button", { name: "Complete original installation" }),
     );
-    await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText(/Managed by jj-store/)).toBeVisible();
+    });
     await expect(
       c.getByLabelText("Installation command count"),
     ).toHaveTextContent("1");
@@ -265,6 +283,8 @@
       "true",
     );
     await userEvent.click(c.getByRole("button", { name: "Finish loading" }));
-    await expect(await c.findByText("Adapter needed")).toBeVisible();
+    await waitFor(async () => {
+      await expect(await c.findByText("Adapter needed")).toBeVisible();
+    });
   }}
 />

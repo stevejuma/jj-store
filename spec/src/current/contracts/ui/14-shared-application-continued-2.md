@@ -228,3 +228,22 @@ identities and rejects repeated cursors or more than 1,000 displayed nodes.
 Closing clears only the evolution anchor; changing page, main revision, bookmark
 or workspace closes the column. The compact Repositories section has the same
 zero top margin as the expanded section.
+
+## Responsive tag collections
+
+Revision and operation graph metadata, commit selectors, stack bookmark headers,
+forum thread tags, room facts, capture-source states/counts and named workflow
+commands use released Design Core TagList. Lists preserve native labels,
+supplied order and tones. They occupy one bounded row; overflow opens all tags
+without selecting the containing revision, branch, thread or commit. Long labels
+remain accessible through tooltips and the keyboard-accessible popover.
+Editable/removable selections, entity-link hover cards and standalone status or
+identity badges retain their existing controls. Revision and operation graph
+popovers show only tag labels, without repeated bookmark or workspace
+descriptions beneath them. Local and remote bookmarks remain in one flat list.
+No native model, command, identity, selection or authorization policy moves into
+Design Core.
+
+Commit-picker options retain searchable text summaries; the highlighted commit's
+TagList lives in a separate preview footer outside the listbox. This preserves
+valid option semantics while making every overflowed label accessible.

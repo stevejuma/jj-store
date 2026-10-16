@@ -29,7 +29,7 @@ fn kingfisher_redacts_secrets_and_normalizes_workspace_paths() {
     assert!(!text.contains(workspace.path().to_str().unwrap()));
     assert!(text.contains("[REDACTED]"));
     assert!(text.contains("$WORKSPACE/"));
-    assert_eq!(policy, "mongodb-kingfisher@2.7.0/builtin-medium/v1");
+    assert_eq!(policy, "kingfisher-scanner@1.4.0/builtin-medium/v1");
 
     let started = Instant::now();
     let status = Command::new(std::env::current_exe().unwrap())

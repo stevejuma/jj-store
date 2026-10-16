@@ -97,6 +97,25 @@ async fn location(
                 target: MoveCommitsTarget::Commits(vec![source.id().clone()]),
             })
         }
+        Command::ForgeRestack {
+            branch,
+            target_sha,
+            expected_base,
+            ..
+        } => {
+            let commits = segment(repo, config, branch).await?;
+            let oldest = commits.last().ok_or(Error::Invalid)?;
+            if oldest.parent_ids()[0].hex() != *expected_base {
+                return Err(Error::Stale);
+            }
+            let id = jj_lib::backend::CommitId::try_from_hex(target_sha).ok_or(Error::Invalid)?;
+            let target = repo.store().get_commit(&id).map_err(jj)?;
+            Ok(MoveCommitsLocation {
+                new_parent_ids: vec![target.id().clone()],
+                new_child_ids: vec![],
+                target: MoveCommitsTarget::Roots(vec![oldest.id().clone()]),
+            })
+        }
         Command::Rebase { branch } => {
             let commits = segment(repo, config, branch).await?;
             let target = resolve(repo, &config.active().ok_or(Error::Invalid)?.target)?;
@@ -151,7 +170,10 @@ pub(super) async fn validate(
     command: &Command,
 ) -> Result<Preview> {
     config.active().ok_or(Error::Invalid)?;
-    if matches!(command, Command::Move { .. } | Command::Rebase { .. }) {
+    if matches!(
+        command,
+        Command::Move { .. } | Command::Rebase { .. } | Command::ForgeRestack { .. }
+    ) {
         let loc = location(repo, config, command).await?;
         let ids = match &loc.target {
             MoveCommitsTarget::Commits(ids) | MoveCommitsTarget::Roots(ids) => ids,
@@ -179,7 +201,15 @@ pub(super) async fn execute(
     command: &Command,
 ) -> Result<()> {
     validate(repo, workspace, settings, config, command).await?;
-    if matches!(command, Command::Move { .. } | Command::Rebase { .. }) {
+    if let Command::ForgeRestack { target_sha, .. } = command {
+        let id = jj_lib::backend::CommitId::try_from_hex(target_sha).ok_or(Error::Invalid)?;
+        let target = repo.store().get_commit(&id).map_err(jj)?;
+        mutable.add_head(&target).await.map_err(jj)?;
+    }
+    if matches!(
+        command,
+        Command::Move { .. } | Command::Rebase { .. } | Command::ForgeRestack { .. }
+    ) {
         rewrite::move_commits(
             mutable,
             &location(repo, config, command).await?,

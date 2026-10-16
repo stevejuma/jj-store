@@ -8,7 +8,7 @@ import {
 export type ColorMode = "system" | "light" | "dark";
 export type FontSize = "smaller" | "default" | "larger";
 export type ConversationDensity = "compact" | "comfortable" | "spacious";
-export type LinkStyle = "compact" | "rich";
+export type LinkStyle = "inline" | "compact" | "rich";
 export type ConversationView = "document" | "classic";
 export type ThreadLayout = "focus" | "split";
 export interface AppearancePreferences {
@@ -36,7 +36,7 @@ export const defaultAppearance: AppearancePreferences = {
   prominent: false,
   fontSize: "default",
   density: "comfortable",
-  links: "compact",
+  links: "inline",
   threads: "split",
   conversationView: "document",
 };
@@ -79,7 +79,7 @@ export function parseAppearance(raw: string | null): AppearancePreferences {
         ["compact", "comfortable", "spacious"],
         "comfortable",
       ),
-      links: pick(value.links, ["compact", "rich"], "compact"),
+      links: pick(value.links, ["inline", "compact", "rich"], "inline"),
       threads: pick(value.threads, ["focus", "split"], "split"),
       conversationView: pick(
         value.conversationView,

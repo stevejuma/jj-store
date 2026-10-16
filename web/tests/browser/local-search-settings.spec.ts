@@ -113,12 +113,14 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
     .getByRole("button", { name: "Refresh settings", exact: true })
     .click();
   await expect(prefixes).toHaveValue("private");
+  await expect(page.getByText(/search settings changed/)).toBeVisible();
   // Refresh preserves the draft's original revision. Cancel explicitly adopts
   // the newer configuration before re-entering and saving these changes.
   await page
     .getByRole("button", { name: "Cancel changes", exact: true })
     .click();
   await expect(prefixes).toHaveValue("");
+  await expect(page.getByText(/search settings changed/)).toHaveCount(0);
   await prefixes.fill("private");
   await page
     .getByRole("button", { name: "Save settings", exact: true })

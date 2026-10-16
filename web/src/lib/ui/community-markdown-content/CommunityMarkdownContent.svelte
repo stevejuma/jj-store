@@ -72,6 +72,7 @@
   );
 
   const communityMarkdownExtension = createCommunityMarkdownExtension({
+    source: () => preview.content,
     members: () => preview.members,
     rooms: () => rooms,
     emojis: () => communityEmojis,
@@ -104,6 +105,7 @@
     --mira-font-mono: var(--font-mono, ui-monospace, monospace);
     --mira-font-size: inherit;
     --mira-line-height: var(--store-message-leading, 1.55);
+    --mira-link: var(--foreground);
 
     min-width: 0;
     color: var(--foreground);

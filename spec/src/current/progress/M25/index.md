@@ -158,6 +158,13 @@ limits, keyboard synchronization, cross-tab validation and serving disablement.
 Focused Compute/shared-control stories and live review pass. M25 remains In
 progress; paired inference, signed macOS/WKWebView/Linux distributions and
 independent M24 gates stay open. No visual baseline is approved.
+E-MAIN-LOCAL-REPAIRS-001 retains M25 In progress. The independently locked
+local-agent and compute workspaces pass strict Clippy and their complete default
+tests. Maintained-fork lint repairs preserve provider retries, tool permission,
+cancellation, source pins and no-replay behavior; exact transport regressions
+pass. The corpus writer is not a check. Installed GGUF/native runtime,
+authenticated provider and signed platform qualification stay open.
+
 <!-- generated-navigation -->
 
 ## Pages

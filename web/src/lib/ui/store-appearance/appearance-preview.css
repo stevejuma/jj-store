@@ -49,37 +49,9 @@
   color: var(--muted-foreground);
   font-size: var(--community-text-secondary);
 }
-.appearance-link-sample {
-  display: flex;
-  max-width: 30rem;
-  overflow: hidden;
-  gap: 0.75rem;
-  padding-right: 4rem;
-}
-.appearance-link-sample svg {
-  width: 5rem;
-  height: 3.5rem;
-  flex: none;
-  border-radius: 8px;
-}
-.appearance-link-sample strong,
-.appearance-link-sample small {
-  display: block;
-}
-.appearance-link-sample small,
-.appearance-link-sample p {
-  color: var(--muted-foreground);
-  font-size: var(--community-text-secondary);
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-.appearance-link-sample[data-layout="rich"] {
-  flex-direction: column;
-  border-radius: 8px;
-}
-.appearance-link-sample[data-layout="rich"] svg {
-  width: 100%;
-  height: auto;
+.appearance-link-examples {
+  padding-top: 0.75rem;
+  min-width: 0;
 }
 .appearance-thread-diagram {
   display: flex;

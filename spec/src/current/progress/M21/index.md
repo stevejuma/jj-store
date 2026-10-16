@@ -11,3 +11,9 @@
 ## Pages
 
 - [history](history/index.md)
+
+E-MAIN-LOCAL-REPAIRS-001 records the user-authorized completed repair-slice
+validation and retains failed/interrupted attempts until fresh completion. M21.1
+remains Partial and M21.2 remains In progress. Edge-to-edge unavailable diff
+alerts and labelled disabled settings controls retain JST-UI-020; no provider,
+publication, checkout or broader release gate is advanced.

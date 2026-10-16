@@ -1,3 +1,4 @@
+// LapisMD: subscription transport regression fixtures for the maintained Buzz fork.
 use super::*;
 fn cfg() -> Config {
     Config::for_discovery(Provider::OpenAi, "fixture-only".into(), API.into(), None)
@@ -159,11 +160,12 @@ async fn pre_stream_401_renews_once_tool_rounds_replay_and_uncertain_calls_never
             .text,
         "Complete"
     );
-    let requests = saved.lock().unwrap();
-    assert_eq!(requests[0], requests[1]);
-    assert_eq!(requests[2]["input"][1], output[0]);
-    assert_eq!(requests[2]["input"][2], output[1]);
-    drop(requests);
+    {
+        let requests = saved.lock().unwrap();
+        assert_eq!(requests[0], requests[1]);
+        assert_eq!(requests[2]["input"][1], output[0]);
+        assert_eq!(requests[2]["input"][2], output[1]);
+    }
     assert_eq!(auth.0.load(Ordering::SeqCst), 1);
     assert!(
         llm.complete(&config, "system", &history, &[], "account-model")

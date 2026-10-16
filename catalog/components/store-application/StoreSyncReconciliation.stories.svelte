@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import SyncReconciliationFixture from "../../fixtures/SyncReconciliationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Sync reconciliation",
@@ -21,18 +21,22 @@
     const dialog = await page.findByRole("dialog", {
       name: "Reconcile operations",
     });
-    await expect(
-      within(dialog).getByRole("button", { name: "Base operation" }),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByRole("button", { name: "Base operation" }),
+      ).toBeVisible();
+    });
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Preview reconciliation" }),
     );
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Apply command" }),
     );
-    await expect(
-      within(dialog).getByText("Publication outcome unknown"),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(
+        within(dialog).getByText("Publication outcome unknown"),
+      ).toBeVisible();
+    });
     await userEvent.keyboard("{Escape}");
     await userEvent.click(
       c.getByRole("button", { name: "Recover reconciliation" }),
@@ -40,12 +44,13 @@
     const recovered = await page.findByRole("dialog", {
       name: "Reconcile operations",
     });
+    await waitFor(() => expect(recovered).toBeVisible());
     await userEvent.click(
       within(recovered).getByRole("button", { name: "Check status" }),
     );
-    await expect(
-      within(recovered).getByText("Repository updated"),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(within(recovered).getByText("Repository updated")).toBeVisible(),
+    );
     await expect(c.getByTestId("captures")).toHaveTextContent("1");
   }}
 />

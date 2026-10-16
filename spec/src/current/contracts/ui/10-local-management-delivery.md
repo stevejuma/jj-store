@@ -46,6 +46,13 @@ readers; repository access and RustFS remain available. Retry follows normal
 recovery, whereas Rebuild constructs a new text-search projection from selected
 committed data. Native graph preparation remains a separate action.
 
+A failed Search save retains its scoped failure notice alongside the original
+draft revision. Successful manual or automatic status reads do not establish
+save success and MUST NOT clear that notice. Explicit cancellation of the draft
+or a successful explicit save resolves the failure. Status observation never
+retries Save or Apply. E-UI-CI-003 records the notification/refresh race under
+JST-UI-016/019; storage and HTTP formats are unchanged.
+
 Storage offers current readiness, checkpoint coverage, bounded integrity checks
 and non-destructive checkpoint publication through the running owner. Reports
 identify the captured position and any incomplete check; uncertain publication
@@ -84,6 +91,11 @@ Repository settings are scoped by their repository URL and have no repository
 picker. Installation-wide Protection and storage configuration live under Local
 service. Dirty drafts, pending commands and active work retain their existing
 owner-change guards; same-repository settings navigation preserves that owner.
+An unresolved repository action may remain retained while changing only a
+repository Settings category or subtab. Every other route field stays exact,
+including the repository, operation, workspace and file selection. Entering or
+leaving Settings, Global Settings, hubs and any changed owner remain guarded;
+category navigation never rebinds or replays the pending action.
 
 Repository review creation and Refresh share one trailing action group at the
 far right of the Reviews header.

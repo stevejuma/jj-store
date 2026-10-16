@@ -153,9 +153,27 @@ async fn linked_cursor_products_backfill_pause_follow_final_flush_and_restart_wi
         let mut r = RunningCodexCapture::start(prepare(&f, p)).unwrap();
         wait_message(&f, &r, "Cursor delayed final flush").await;
         r.shutdown().await.unwrap();
-        let data = serde_json::to_string(&details(&f).await).unwrap();
-        assert_eq!(data.matches("Cursor fixture backfill").count(), 1);
-        assert_eq!(details(&f).await.len(), 1);
+        let sessions = details(&f).await;
+        assert_eq!(sessions.len(), 1);
+        // Discovery excerpts may repeat message text; only activity records
+        // represent published messages.
+        let messages = sessions[0]["activity"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|activity| activity["type"] == "message")
+            .map(|activity| activity["content"]["content"].as_str().unwrap())
+            .collect::<Vec<_>>();
+        for text in [
+            "Cursor fixture backfill",
+            "Cursor paused tail",
+            "Cursor delayed final flush",
+        ] {
+            assert_eq!(
+                messages.iter().filter(|body| body.contains(text)).count(),
+                1
+            );
+        }
         assert!(f.spool.pending().unwrap().is_empty());
     }
 }

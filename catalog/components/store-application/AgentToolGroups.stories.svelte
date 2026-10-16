@@ -1,5 +1,6 @@
 <script module lang="ts">
   import { selectSettingsSubtab } from "./settings-shell-play.js";
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import { agentToolDurationPlay } from "./agent-tool-duration-play.js";
@@ -8,6 +9,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent tool groups",
     component: Fixture,
+    beforeEach: async () => {
+      await views.agentsRecorded();
+    },
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });

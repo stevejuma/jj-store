@@ -199,3 +199,20 @@ measurements include post-job cache saves. A failed producer requires a fresh
 coordinator run: partial reruns cannot combine receipts or payloads from
 different attempts. Standalone test retries may reuse the original successful
 producer attempt, even when unrelated tests failed.
+
+E-UI-CI-003 retains JST-ARCH-005: the Search notification repair uses an
+ordinary patch Changeset and PR checks. The failed standard browser gate
+prevented the new heavy run from starting its heavy suites; those suites remain
+unqualified.
+
+E-MAIN-LOCAL-REPAIRS-001 confirms unchanged JST-ARCH-005 release authority for
+the main-workspace repair slice and its patch Changeset. A user-requested draft
+PR may publish the verified repair snapshot while comprehensive local checks
+continue with their pending status explicit. It does not authorize merge or
+release, waive required checks, or establish full qualification.
+
+E-PR10-AUTOCOMPLETE-001 retains JST-ARCH-005: shared dependency defects are
+repaired and qualified in their source repository, then consumed through a
+released registry version. Packed-consumer evidence, released-package acceptance
+and hosted required checks remain distinct. Authorization to publish Design Core
+does not authorize jj-store publication or waive its qualification gates.

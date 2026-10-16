@@ -34,7 +34,8 @@ test("release rejects divergent helper, Changesets and tag identities", () => {
 });
 test("all public package versions have an acyclic coordinated graph", () => {
   const data = metadata();
-  assert.equal(data.packages.length, 20);
+  assert.equal(data.packages.length, 21);
+  assert.ok(data.packages.some((p) => p.name === "jj-forge"));
   assert.equal(orderedPackages(data).at(-1).name, "jj-store");
   validateVersion(data, data.version);
 });

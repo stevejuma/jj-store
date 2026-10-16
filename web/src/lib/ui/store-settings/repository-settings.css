@@ -26,6 +26,8 @@
   display: grid;
   gap: 0;
   min-width: 0;
+  /* Divided application rows own their inset, including the loading rows. */
+  padding-inline: 0;
 }
 :is(.store-settings--repository, .store-settings--global)
   .store-settings__editable-rows
