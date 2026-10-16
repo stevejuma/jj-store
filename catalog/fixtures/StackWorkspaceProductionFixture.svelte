@@ -7,14 +7,20 @@
   let {
     cold = false,
     dependent = false,
+    editing = false,
+    dragRead = "unique",
     clearTransientFeedback = false,
   }: {
     cold?: boolean;
     dependent?: boolean;
+    editing?: boolean;
+    dragRead?: "unique" | "ambiguous" | "failure";
     clearTransientFeedback?: boolean;
   } = $props();
   const controller = untrack(() =>
-    createProductionStoreController(productionStacksHttp(cold, dependent)),
+    createProductionStoreController(
+      productionStacksHttp(cold, dependent, editing, dragRead),
+    ),
   );
   const layoutStorage = untrack(createMemoryStoryStorage);
   onDestroy(() => controller.actions.destroy());

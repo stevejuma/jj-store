@@ -20,14 +20,14 @@ export function workspaceFileDrag(
       !controller.snapshot
     )
       return null;
-    const owner = source();
+    const displayed = source();
     if (!controller.details.lazy)
-      return workspaceFileSelection(controller.snapshot, owner, path);
-    if (
-      workspaceAggregateSource(owner) ||
-      !controller.filesFor(owner).some((f) => f.path === path)
-    )
-      return null;
+      return workspaceFileSelection(controller.snapshot, displayed, path);
+    const selected = controller
+      .filesFor(displayed)
+      .find((f) => f.path === path);
+    const owner = selected?.selectionSource ?? displayed;
+    if (workspaceAggregateSource(owner) || !selected) return null;
     if (
       owner !== "unassigned" &&
       !controller.snapshot.stacks.some((s) =>

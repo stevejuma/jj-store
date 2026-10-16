@@ -21,6 +21,17 @@ export function projectWorkspaceFiles(
   for (const stack of snapshot.stacks)
     for (const commit of stack.commits)
       if (commit.id === source) commit.files = cloneWorkspace(files);
+      else if (source.startsWith("branch:"))
+        for (const file of files.filter(
+          (file) => file.selectionSource === commit.id,
+        )) {
+          const existing = commit.files.find((item) => item.path === file.path);
+          if (existing && file.content?.status === "unloaded") continue;
+          commit.files = [
+            ...commit.files.filter((item) => item.path !== file.path),
+            cloneWorkspace(file),
+          ];
+        }
 }
 
 export function acceptWorkspaceFiles(

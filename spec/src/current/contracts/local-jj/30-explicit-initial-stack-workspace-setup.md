@@ -63,7 +63,9 @@ at the exact operation/configuration pin. Client patches and display-only IDs
 are rejected. Partial text deltas use native squash with emptied sources
 retained, without reconstructing the megamerge. Binary, conflict, mode/type and
 bounded-diff limits remain whole-file-only. Net branch comparisons remain
-presentation-only.
+presentation-only; the frontend may resolve one exact mutable commit delta using
+native file terms and issue that concrete source through the existing
+hunk/command boundaries.
 
 Local graph commands use native `move_commits` insertion/reordering and full
 `squash_commits` for squash/uncommit. WIP is retained as a native child; graph
@@ -98,8 +100,9 @@ never rebuild membership automatically. Explicit Reapply saved branches
 reconciles membership and preserves WIP. Operation/config/source guards and
 unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
-branch comparisons remain read-only. Undo/Redo remains available without a
-selected named workspace.
+branch comparisons are draggable only after the frontend proves a unique exact
+mutable commit delta; no net patch or branch source becomes command authority.
+Undo/Redo remains available without a selected named workspace.
 
 Production dependent branch segments derive from loaded native parent links and
 local bookmark annotations, with one bounded continuation for the exact

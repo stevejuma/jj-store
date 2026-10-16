@@ -77,13 +77,14 @@
       controller.can("split") ||
       controller.can("create_commit"),
   );
+  const selectionSource = $derived(file?.selectionSource ?? diff.source);
   const selection = $derived(
     diff.origin === TARGET_HISTORY_ORIGIN ||
-      workspaceAggregateSource(diff.source) ||
+      workspaceAggregateSource(selectionSource) ||
       !executable
       ? null
       : {
-          source: diff.source,
+          source: selectionSource,
           path: diff.path,
           ...(diff.hunks ? { hunks: diff.hunks } : {}),
         },
@@ -149,7 +150,7 @@
                       selection &&
                       onCommand({
                         kind: "split",
-                        commit: diff.source,
+                        commit: selection.source,
                         message: "",
                         selection,
                       })}><Columns aria-hidden="true" /></Button
@@ -226,6 +227,12 @@
       description="There are no changed text hunks for this file."
     />
   {:else if file && file.content?.status !== "unavailable"}
+    {#if controller.details.lazy && workspaceAggregateSource(diff.source) && !file.selectionSource}
+      <p class="stack-workspace__empty">
+        This comparison has no single movable commit delta. Select an individual
+        commit to move its changes.
+      </p>
+    {/if}
     <section
       class="stack-workspace__hunks"
       aria-label={`Diff hunks from ${diff.origin} · ${file.path}`}
@@ -245,7 +252,7 @@
             ? null
             : workspaceHunkSelection(
                 controller.snapshot!,
-                diff.source,
+                selectionSource,
                 file.path,
                 hunk.id,
               )}

@@ -112,11 +112,17 @@ export function workspaceHunkSelection(
       (file) =>
         file.path === path && file.hunks.some((item) => item.id === hunk),
     );
-  const owners = commits.filter((commit) => owns(commit.files));
+  const matches = commits.filter((commit) => owns(commit.files));
+  const owners = [
+    ...new Map(matches.map((commit) => [commit.id, commit])).values(),
+  ];
   const unassigned =
     (source === "combined" || source === "unassigned") &&
     owns(selectedWorkspace(snapshot)?.unassigned ?? []);
-  if (owners.length + Number(unassigned) !== 1 || owners[0]?.immutable)
+  if (
+    owners.length + Number(unassigned) !== 1 ||
+    matches.some((commit) => commit.immutable)
+  )
     return null;
   return {
     source: unassigned ? "unassigned" : owners[0]!.id,

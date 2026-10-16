@@ -35,6 +35,7 @@ not a completion gate selection.
 | [E-MAIN-LOCAL-REPAIRS-001](../../../../../history/2026/10/16/E-MAIN-LOCAL-REPAIRS-001/index.md)               | 2026-10-16 | pass            | Original outcome |
 | [E-STACKS-DETAILS-VISIBILITY-001](../../../../../history/2026/10/16/E-STACKS-DETAILS-VISIBILITY-001/index.md) | 2026-10-16 | pass            | Original outcome |
 | [E-REPOSITORY-TABS-SKELETON-001](../../../../../history/2026/10/16/E-REPOSITORY-TABS-SKELETON-001/index.md)   | 2026-10-16 | pass            | Original outcome |
+| [E-STACKS-NATIVE-DRAG-001](../../../../../history/2026/10/17/E-STACKS-NATIVE-DRAG-001/index.md)               | 2026-10-17 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 

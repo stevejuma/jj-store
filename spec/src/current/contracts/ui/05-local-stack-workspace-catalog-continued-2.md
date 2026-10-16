@@ -150,3 +150,12 @@ net diffs, bounded reads, capability eligibility, durable recovery and lifecycle
 wiring as integration work. The subsequent user request approves implementation
 of this delivery order; M21.2 remains incomplete until real provider, checkout
 and lifecycle acceptance is recorded.
+
+Native branch net files resolve a concrete owner only from a complete loaded
+linear segment (at most 40 commits and 50 file-summary pages), one changing
+commit per path, and identical ordered native file terms, modes and provenance.
+Only opening a resolved file requests that owner’s native hunk tokens;
+ambiguous, immutable or bounded-out comparisons remain read-only. Unresolved net
+diffs explain that an individual commit is required to move changes. Exact
+resolved files and native hunks reuse staging, commit transfer,
+return-to-Unstaged, keyboard assignment and explicit preview/apply.

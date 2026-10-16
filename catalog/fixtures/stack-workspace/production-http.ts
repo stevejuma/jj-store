@@ -1,3 +1,7 @@
+import {
+  productionDragResponse,
+  productionDragLane,
+} from "./production-http-drag.js";
 import type { StoreRouteBrowser } from "../../../web/src/lib/controller/store-route-history.svelte.js";
 import {
   stackRepository,
@@ -10,6 +14,7 @@ import {
   nodes,
   reference,
   fixtureNativeHistory,
+  fixtureStackDiff,
 } from "./production-http-data.js";
 export { stackRepository, stackOperation } from "./production-http-data.js";
 const json = (value: unknown, status = 200) =>
@@ -19,10 +24,15 @@ const json = (value: unknown, status = 200) =>
   });
 
 /** Isolated HTTP fixtures exercise the production bootstrap, lifecycle and adapter. */
-export function productionStacksHttp(cold = false, dependent = false) {
+export function productionStacksHttp(
+  cold = false,
+  dependent = false,
+  editing = false,
+  dragRead: "unique" | "ambiguous" | "failure" = "unique",
+) {
   const requests: { path: string; body: any }[] = [];
   let prepared = !cold,
-    hash = `#/repos/${stackRepository}/stacks?at_op=${stackOperation}&stack_tab=branches`;
+    hash = `#/repos/${stackRepository}/stacks?at_op=${stackOperation}&stack_tab=${editing ? "workspace" : "branches"}`;
   const browser: StoreRouteBrowser = {
     hash: () => hash,
     push: (next) => (hash = next),
@@ -71,6 +81,10 @@ export function productionStacksHttp(cold = false, dependent = false) {
           },
         ],
       });
+    if (editing) {
+      const response = productionDragResponse(path, body);
+      if (response) return response;
+    }
     if (path.endsWith("/stacks"))
       return json({
         version: 1,
@@ -88,7 +102,7 @@ export function productionStacksHttp(cold = false, dependent = false) {
         target_commit: body.target_commit,
         topology: {
           complete: true,
-          lanes: [],
+          lanes: editing ? [productionDragLane] : [],
           integrated: [],
           inventory: [
             {
@@ -248,37 +262,14 @@ export function productionStacksHttp(cold = false, dependent = false) {
         };
       else if (query.kind === "diff_paths" || query.kind === "diff") {
         const q = query.query;
-        data = {
-          version: 1,
-          from: q.from,
-          to: q.to,
-          ...(query.kind === "diff" ? { path: q.path } : {}),
-          changes: [
-            {
-              path: "src/topic.ts",
-              before: [{ type: "file", id: base, executable: false }],
-              after: [{ type: "file", id: topic, executable: false }],
-              sources: [],
-              content:
-                query.kind === "diff"
-                  ? {
-                      status: "text",
-                      hunks: [
-                        {
-                          kind: "different",
-                          before_start: 0,
-                          after_start: 0,
-                          before: "old\n",
-                          after: "new\n",
-                        },
-                      ],
-                    }
-                  : { status: "unavailable", reason: "not_requested" },
-            },
-          ],
-          next: null,
-          previous: null,
-        };
+        if (
+          editing &&
+          dragRead === "failure" &&
+          q.to === topic &&
+          q.from !== base
+        )
+          return json({ code: "local_query_failed" }, 500);
+        data = fixtureStackDiff(query, editing, dragRead);
       } else
         throw new Error(`Unexpected production Stacks query: ${query.kind}`);
       return json({

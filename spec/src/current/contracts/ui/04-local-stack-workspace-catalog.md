@@ -308,10 +308,10 @@ retains the original commit. Branch-segment deletion and squash preserve lower
 segments; every simulated mutation supports the same preview, stale and undo
 rules. Production Unstaged lists the active merge-to-WIP delta through bounded
 lazy reads. Whole-file selections can stage an inline commit and preview native
-insertion/squash; unsupported hunk transfers remain explicitly disabled until
-qualified. Loaded Unstaged summaries are retained in the draft selection model
-without eagerly reading patches. Remote tracking and PR actions remain outside
-the local UI scope.
+insertion/squash; partial selections require freshly issued native hunk tokens.
+Loaded Unstaged summaries are retained in the draft selection model without
+eagerly reading patches. Remote tracking and PR actions remain outside the local
+UI scope.
 
 JST-FORGE-001/007 add forge-owned PR controls to Branches and Workspace.
 Configured forges offer Create PR only on the topmost unsubmitted bookmark,

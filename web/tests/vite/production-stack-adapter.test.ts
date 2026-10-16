@@ -1361,6 +1361,131 @@ test("native hunk replacement retains the complete operation-pinned patch for co
     adapter.close();
   }
 });
+
+test("production branch drops resolve native ownership and preview the concrete guarded transfer", async () => {
+  const { source, binding, pin, calls } = fixture();
+  enableLocalState(source);
+  const execute = source.stacks!.execute;
+  source.stacks!.execute = async (request) => ({
+    ...(await execute(request)),
+    conflicts: [],
+  });
+  const original = source.stackHistory!;
+  source.stackHistory = async (query) => {
+    const result = await original(query);
+    const lower = structuredClone(result.data.commits[0]!);
+    lower.commit.id = parent;
+    lower.commit.parents = [base];
+    lower.edges = [{ target: base, kind: "direct" }];
+    return {
+      ...result,
+      data: { ...result.data, commits: [...result.data.commits, lower] },
+    };
+  };
+  const change = {
+    path: "src/owned.ts",
+    before: [{ type: "file", id: "6".repeat(40), executable: false }],
+    after: [{ type: "file", id: "7".repeat(40), executable: false }],
+    sources: [],
+    content: { status: "unavailable", reason: "not_requested" },
+  };
+  source.diffPaths = async (operation, from, to) =>
+    ({
+      snapshot: pin,
+      next_cursor: null,
+      previous_cursor: null,
+      data: { version: 1, from, to, changes: from === parent ? [] : [change] },
+    }) as never;
+  source.diff = async (_operation, from, to, path) =>
+    ({
+      snapshot: pin,
+      next_cursor: null,
+      previous_cursor: null,
+      data: {
+        version: 1,
+        from,
+        to,
+        path,
+        changes: [
+          {
+            ...change,
+            content: {
+              status: "text",
+              hunks: [
+                {
+                  kind: "different",
+                  before_start: 0,
+                  after_start: 0,
+                  before: "old\n",
+                  after: "new\n",
+                },
+              ],
+            },
+          },
+        ],
+      },
+    }) as never;
+  const token = "native:" + "a".repeat(64);
+  source.stacks!.hunks = async (request) => {
+    calls.push(["native-hunks", request]);
+    return {
+      source: request.source,
+      path: request.path,
+      reason: null,
+      hunks: [{ id: token, label: "owned", patch: "-old\n+new\n" }],
+    };
+  };
+  source.stacks!.preview = async (request) => {
+    calls.push(["native-preview", request]);
+    return { title: "Transfer", summary: "Exact source", paths: [change.path] };
+  };
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  const { StackWorkspaceController } =
+    await import("../../src/lib/controller/stack-workspace/controller.svelte.js");
+  const controller = new StackWorkspaceController(adapter);
+  try {
+    await controller.refresh();
+    const stack = controller.snapshot!.stacks.find(
+      (stack) => stack.name === "topic",
+    )!;
+    await controller.histories.load(stack.id);
+    const source = workspaceBranchSource(stack.id, "topic");
+    await controller.details.loadFiles(source);
+    expect(controller.filesFor(source)[0]?.selectionSource).toBe(parent);
+    expect(
+      calls.some((call) => Array.isArray(call) && call[0] === "native-hunks"),
+    ).toBe(false);
+    await controller.details.loadDiff(source, change.path);
+    expect(controller.filesFor(source)[0]?.hunks[0]?.id).toBe(token);
+    await controller.prepare({
+      kind: "transfer",
+      target: tip,
+      selection: { source: parent, path: change.path, hunks: [token] },
+    });
+    expect(controller.preview).not.toBeNull();
+    expect(calls).toContainEqual([
+      "native-preview",
+      {
+        version: 1,
+        binding_generation: 2,
+        operation,
+        revision: 1,
+        command: {
+          kind: "transfer",
+          target: tip,
+          selections: [{ source: parent, path: change.path, hunks: [token] }],
+        },
+      },
+    ]);
+  } finally {
+    controller.close();
+    adapter.close();
+  }
+});
 test("conflict reads preserve ordered multi-sided and unsupported descriptors and reject stale/foreign scopes", async () => {
   const { source, binding } = fixture();
   enableLocalState(source);
