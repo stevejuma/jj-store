@@ -114,6 +114,12 @@ acceptance retain pinned reads and stale-response rejection. Complete local
 qualification, hosted checks and the existing release/platform/visual gates
 remain separate.
 
+E-MAIN-SYNC-STORIES-001 supplies fresh combined-parent integration evidence for
+the unchanged product tree synchronized with remote main. The complete
+1,021-case Storybook inventory passes; failed attempts remain recorded. M30
+stays In progress. Complete cold application/profile, final governance and
+hosted qualification remain pending; no merge or publication is authorized.
+
 <!-- generated-navigation -->
 
 ## Pages

@@ -1,10 +1,14 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/ManagedAgentRepositoryFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Managed agent identity",
     component: Fixture,
+    beforeEach: async () => {
+      await Promise.all([views.agentsRecorded(), views.agentSidebar()]);
+    },
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });

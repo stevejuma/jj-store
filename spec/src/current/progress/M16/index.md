@@ -37,6 +37,12 @@ acceptance retain pinned reads and stale-response rejection. Complete local
 qualification, hosted checks and the existing release/platform/visual gates
 remain separate.
 
+E-MAIN-SYNC-STORIES-001 reviews the unchanged M16 scope after synchronization
+with remote main. Complete UI units and all 1,021 Storybook cases pass after
+private lazy-view fixture preparation. Source contracts, saved preferences and
+all existing registry, platform and visual gates remain unchanged. Complete cold
+application/profile and final governance qualification remain pending.
+
 <!-- generated-navigation -->
 
 ## Pages
