@@ -120,6 +120,14 @@ the unchanged product tree synchronized with remote main. The complete
 stays In progress. Complete cold application/profile, final governance and
 hosted qualification remain pending; no merge or publication is authorized.
 
+E-MAIN-LOCAL-QUALIFICATION-001 records the complete local qualification
+inventory, including source-bound repaired-target Rust proof, exact UI
+inventories, real storage, cold renewal and isolated profile restart. Earlier
+failures and environment prerequisite repairs remain explicit. Final consuming
+documentation and stable-tree tooling results accompany the same evidence. M30
+stays In progress: this local proof and the separately identified standard CI
+head do not qualify heavy hosted release, other platforms or publication.
+
 <!-- generated-navigation -->
 
 ## Pages

@@ -81,6 +81,13 @@ E-MAIN-LOCAL-REPAIRS-001 records the user-authorized 2026-10-16 completed
 main-workspace repair validation and wider failure repairs. M31 retains its
 existing status and completion gates; local passes do not establish hosted,
 additional-platform, live-provider or visual-baseline qualification.
+E-MAIN-LOCAL-QUALIFICATION-001 records completed local main-workspace
+qualification and the separate standard CI result at its exact source head.
+Source-bound native, API, UI and cold application/profile acceptance retain all
+earlier failed attempts and declared skips. M31 stays In progress; native
+submission, disposable live-forge mutations, other providers/platforms, packaged
+delivery and visual approval remain open.
+
 <!-- generated-navigation -->
 
 ## Pages

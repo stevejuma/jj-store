@@ -12,3 +12,10 @@ directory stories await their owned lazy modules before interacting, retaining
 all assertions, deadlines, delayed responses and accessibility checks. M24 stays
 In progress; complete cold application/profile qualification and the independent
 installed adapter, live-permission, platform and visual gates remain separate.
+
+E-MAIN-LOCAL-QUALIFICATION-001 reviews complete local acceptance with all
+conversation, notification, lazy-view and exact-command contracts retained.
+Fresh full units, Storybook, served browser and real-storage cold journeys
+retain original failures, declared skips and unsuppressed runtime diagnostics.
+M24 stays In progress for installed adapters, live permissions/cancellation,
+additional platforms, signed desktop, native IME and visual approval.
