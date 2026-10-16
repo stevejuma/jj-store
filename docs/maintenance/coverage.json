@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed branch selection recovery of interrupted operation-pinned reference reads. Current complete windows remain cached, obsolete results remain ignored, workspace loading recovers after accepted selections, and native command preview receipt readiness retains original identities and existing UI assertions.",
-      "fingerprint": "bfc998ac9439567bb60e02acfe64cd8709cd527155fa8139458758cdf85d1a80"
+      "reason": "Reviewed mapped browsing, editing, settings and conversion guides after the shared chat Jump to end focus/scroll repair. Browsing now explains draft focus before scrolling, full-draft visibility and immediate reduced-motion navigation. Provider setup, draft retention, command authority, conversion and credential contracts remain unchanged.",
+      "fingerprint": "05e85a6080a63c87d89ba635b8cfb56a962c53d5596a9b23002d5b7076933474"
     }
   },
   {

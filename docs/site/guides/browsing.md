@@ -371,6 +371,11 @@ conversations. Both support Document and Classic views and inline comments; the
 selected repository owns the messages and submissions. Unavailable local folders
 retain their unavailable state until access is restored.
 
+In Document view, use **Jump to end** on the conversation rail to return to the
+bottom. When an inline draft is present, it receives focus before scrolling so
+the whole draft remains visible. Reduced-motion preferences make the jump
+immediate.
+
 ### Follow agent file links and workspace changes
 
 Agent inbox chats also provide a footer workspace menu and a Files/Changes rail

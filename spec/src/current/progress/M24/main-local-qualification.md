@@ -19,3 +19,12 @@ Fresh full units, Storybook, served browser and real-storage cold journeys
 retain original failures, declared skips and unsuppressed runtime diagnostics.
 M24 stays In progress for installed adapters, live permissions/cancellation,
 additional platforms, signed desktop, native IME and visual approval.
+
+E-PR10-UI-READINESS-001 reviews the hosted provider-configuration story failure
+and its private interaction-readiness repair. Escape dismissals now await
+select-content removal before another control is opened. Shared chat navigation
+focuses the draft before its explicit viewport jump so an editor caret reveal
+cannot cancel navigation. A focused before/after regression retains the
+full-draft geometry bound, drafts, keyboard access and original deadlines. M24
+remains In progress; fresh hosted checks, installed adapters, live permissions,
+native IME, platform and visual approval stay independent.

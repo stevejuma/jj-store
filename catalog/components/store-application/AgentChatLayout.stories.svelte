@@ -85,6 +85,43 @@
 />
 
 <Story
+  name="Jump to end completes after the editor reveals its caret"
+  args={{ longHistory: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      c.getByRole("button", { name: "Open fixture conversation" }),
+    );
+    await c.findByText("Ready to help.");
+    const viewport = canvasElement.querySelector<HTMLElement>(
+      '.chat-body-reading-surface [data-ui-part="scroll-area-viewport"]',
+    )!;
+    const draft = c.getByRole("textbox", { name: "Markdown editor" });
+    let revealedCaret = false;
+    // Focusing an editor may reveal only its caret; the explicit jump must win.
+    draft.addEventListener(
+      "focus",
+      () => {
+        viewport.scrollTo({
+          top: viewport.scrollHeight - viewport.clientHeight - 80,
+          behavior: "instant",
+        });
+        revealedCaret = true;
+      },
+      { once: true },
+    );
+    await userEvent.click(c.getByRole("button", { name: "Jump to end" }));
+    await expect(revealedCaret).toBe(true);
+    await expect(draft).toHaveFocus();
+    await waitFor(() =>
+      expect(draft.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+        viewport.getBoundingClientRect().bottom + 1,
+      ),
+    );
+  }}
+/>
+
+<Story
   name="First message hover actions remain within the padded chat viewport"
   args={{ chatFeedback: "completed" }}
   play={async ({ canvasElement }) => {

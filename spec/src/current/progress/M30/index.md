@@ -128,6 +128,14 @@ documentation and stable-tree tooling results accompany the same evidence. M30
 stays In progress: this local proof and the separately identified standard CI
 head do not qualify heavy hosted release, other platforms or publication.
 
+E-PR10-UI-READINESS-001 records PR #10's single hosted Storybook failure at the
+otherwise locally qualified head. The private story waits for dismissed selects
+to finish closing. Broader acceptance also exposed editor focus interrupting
+chat navigation; focusing before the explicit jump retains the existing
+full-draft visibility contract. Qualification gates remain unchanged. M30 stays
+In progress. Fresh standard required checks must pass on the repair head; prior
+local or hosted passes do not substitute for that result.
+
 <!-- generated-navigation -->
 
 ## Pages

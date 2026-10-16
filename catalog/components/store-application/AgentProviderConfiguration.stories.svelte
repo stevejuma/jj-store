@@ -20,6 +20,12 @@
       expect(getComputedStyle(trigger).pointerEvents).not.toBe("none"),
     );
   }
+  async function dismissSelect() {
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(within(document.body).queryByRole("listbox")).toBeNull(),
+    );
+  }
 </script>
 
 <Story
@@ -75,7 +81,7 @@
       const option = await p.findByRole("option", { name: label });
       await expect(option.querySelector("svg, img")).not.toBeNull();
     }
-    await userEvent.keyboard("{Escape}");
+    await dismissSelect();
 
     await userEvent.type(
       p.getByRole("textbox", { name: "Agent name" }),
@@ -86,7 +92,7 @@
     await p.findByRole("option", {
       name: "Application default (This machine)",
     });
-    await userEvent.keyboard("{Escape}");
+    await dismissSelect();
     await waitFor(() =>
       expect(c.getByLabelText("Catalog preview requests")).toHaveTextContent(
         '"provider":"anthropic"',
