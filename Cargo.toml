@@ -14,6 +14,7 @@ homepage = "https://stevejuma.github.io/jj-store/"
 
 [workspace.dependencies]
 lapis-agent-redaction = { path = "../agent-redaction/crates/lapis-agent-redaction", version = "0.1.0" }
+lapis-ai-capture = { path = "../lapis-ai/crates/lapis-ai-capture", version = "0.1.1" }
 lapis-ai-runtime = { path = "../lapis-ai/crates/lapis-ai-runtime", version = "0.1.1" }
 lapis-ai-config = { path = "../lapis-ai/crates/lapis-ai-config", version = "0.1.1" }
 jj-store-native = { path = "crates/jj-store-native", version = "0.1.0" }

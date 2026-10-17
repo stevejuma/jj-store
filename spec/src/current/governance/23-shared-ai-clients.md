@@ -30,3 +30,8 @@ of Lapis AI. Core/model/WAL gain no privacy/runtime edge. The shared source
 materializer retains bounded archive requests, package-version checks, atomic
 installation and refusal to replace existing checkouts. This is temporary
 source-library consumption, not publication.
+
+M33 permits capture-to-`lapis-ai-capture` at its exact versioned sibling path
+and immutable Lapis AI source pin. Only discovery/header acquisition crosses
+this boundary; core/model/WAL and capture-to-runtime remain refused. Focused
+consumer recovery and complete source-library evidence remain distinct.

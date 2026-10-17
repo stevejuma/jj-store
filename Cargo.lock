@@ -4246,6 +4246,7 @@ dependencies = [
  "jj-store-service",
  "jj-store-wal",
  "lapis-agent-redaction",
+ "lapis-ai-capture",
  "serde",
  "serde_json",
  "sha2 0.10.9",
@@ -4941,6 +4942,14 @@ dependencies = [
  "kingfisher-scanner",
  "serde_json",
  "thiserror 2.0.21",
+]
+
+[[package]]
+name = "lapis-ai-capture"
+version = "0.1.1"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

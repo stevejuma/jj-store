@@ -1,11 +1,10 @@
-//! Read-only location selection and metadata candidates; no session admission.
+//! Read-only source acquisition; repository admission and Cursor binding stay here.
 use crate::{CaptureResult, profile::CaptureProfile};
-use std::{
-    fs::{self, Metadata},
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
 mod scanner;
+pub(crate) use lapis_ai_capture::discovery::PhysicalId;
+pub use lapis_ai_capture::discovery::{ApprovedCodexRoot, CodexSourceCandidate};
 pub use scanner::{CodexDirectoryScanner, CodexDiscoveryStep};
 
 pub fn resolve_codex_roots(
@@ -14,210 +13,26 @@ pub fn resolve_codex_roots(
     home: Option<&Path>,
     codex_home: Option<&Path>,
 ) -> CaptureResult<Vec<PathBuf>> {
-    if !matches!(
-        profile,
-        CaptureProfile::CodexCliJsonlV1 | CaptureProfile::CodexDesktopJsonlV1
-    ) {
-        return Err("profile does not qualify Codex locations".into());
-    }
-    if explicit.len() > 16 {
-        return Err("Codex root limit".into());
-    }
-    for path in explicit {
-        valid_path(path)?;
-    }
-    let roots = if explicit.is_empty() {
-        let data = match codex_home {
-            Some(root) => {
-                valid_path(root)?;
-                root.to_owned()
-            }
-            None => {
-                let home = home.ok_or("Codex user home unavailable")?;
-                valid_path(home)?;
-                home.join(".codex")
-            }
-        };
-        vec![data.join("sessions")]
-    } else {
-        explicit.to_vec()
-    };
-    let mut unique = std::collections::BTreeSet::new();
-    for root in &roots {
-        valid_path(root)?;
-        if !unique.insert(root) {
-            return Err("duplicate Codex root".into());
-        }
-    }
-    Ok(roots)
+    lapis_ai_capture::discovery::resolve_codex_roots(profile.into(), explicit, home, codex_home)
 }
 
-fn valid_path(path: &Path) -> CaptureResult<()> {
-    if !path.is_absolute()
-        || path.parent().is_none()
-        || path
-            .to_str()
-            .is_none_or(|v| v.len() > 4096 || v.chars().any(char::is_control))
-    {
-        return Err("invalid Codex location".into());
-    }
-    Ok(())
-}
-
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub(crate) struct PhysicalId {
-    pub(crate) device: u64,
-    pub(crate) inode: u64,
-}
-impl PhysicalId {
-    pub(crate) fn from(metadata: &Metadata) -> CaptureResult<Self> {
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::MetadataExt as _;
-            Ok(Self {
-                device: metadata.dev(),
-                inode: metadata.ino(),
-            })
-        }
-        #[cfg(not(unix))]
-        {
-            let _ = metadata;
-            Err("physical Codex discovery identity unavailable".into())
-        }
-    }
-}
-
-/// Device-only path capability. Never persisted or rendered in diagnostics.
-#[derive(Clone)]
-pub struct ApprovedCodexRoot {
-    logical: PathBuf,
-    physical: PathBuf,
-    identity: PhysicalId,
-}
-impl ApprovedCodexRoot {
-    pub fn open(logical: &Path) -> CaptureResult<Option<Self>> {
-        valid_path(logical)?;
-        let physical = match fs::canonicalize(logical) {
-            Ok(path) => path,
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-            Err(error) => return Err(error.into()),
-        };
-        valid_path(&physical)?;
-        let metadata = fs::symlink_metadata(&physical)?;
-        if !metadata.is_dir() || metadata.file_type().is_symlink() {
-            return Err("approved Codex root must be a directory".into());
-        }
-        let root = Self {
-            logical: logical.to_owned(),
-            physical,
-            identity: PhysicalId::from(&metadata)?,
-        };
-        if !root.revalidate()? {
-            return Err("approved Codex root changed".into());
-        }
-        Ok(Some(root))
-    }
-    pub(crate) fn current_binding(&self) -> CaptureResult<bool> {
-        let Some(resolved) = binding_observation(fs::canonicalize(&self.logical))? else {
-            return Ok(false);
-        };
-        let Some(metadata) = binding_observation(fs::symlink_metadata(&self.physical))? else {
-            return Ok(false);
-        };
-        Ok(resolved == self.physical
-            && metadata.is_dir()
-            && !metadata.file_type().is_symlink()
-            && PhysicalId::from(&metadata)? == self.identity)
-    }
-    pub fn revalidate(&self) -> CaptureResult<bool> {
-        let Ok(resolved) = fs::canonicalize(&self.logical) else {
-            return Ok(false);
-        };
-        let Ok(metadata) = fs::symlink_metadata(&self.physical) else {
-            return Ok(false);
-        };
-        Ok(resolved == self.physical
-            && metadata.is_dir()
-            && !metadata.file_type().is_symlink()
-            && PhysicalId::from(&metadata)? == self.identity)
-    }
-    fn contains_exact(&self, path: &Path) -> bool {
-        path.starts_with(&self.physical) && fs::canonicalize(path).is_ok_and(|p| p == path)
-    }
-}
-
-/// Metadata discovery is not header qualification or permission to ingest this file.
-#[derive(Clone)]
-pub struct CodexSourceCandidate {
-    root: ApprovedCodexRoot,
-    path: PathBuf,
-    identity: PhysicalId,
-}
-impl CodexSourceCandidate {
-    pub(crate) fn identity(&self) -> PhysicalId {
-        self.identity
-    }
-    pub fn path(&self) -> &Path {
-        &self.path
-    }
-    pub(crate) fn current_binding(&self) -> CaptureResult<bool> {
-        if !self.root.current_binding()? {
-            return Ok(false);
-        }
-        let Some(resolved) = binding_observation(fs::canonicalize(&self.path))? else {
-            return Ok(false);
-        };
-        if !self.path.starts_with(&self.root.physical) || resolved != self.path {
-            return Ok(false);
-        }
-        let Some(metadata) = binding_observation(fs::symlink_metadata(&self.path))? else {
-            return Ok(false);
-        };
-        Ok(metadata.is_file()
-            && !metadata.file_type().is_symlink()
-            && PhysicalId::from(&metadata)? == self.identity)
-    }
-    pub fn revalidate(&self) -> CaptureResult<bool> {
-        if !self.root.revalidate()? || !self.root.contains_exact(&self.path) {
-            return Ok(false);
-        }
-        let Ok(metadata) = fs::symlink_metadata(&self.path) else {
-            return Ok(false);
-        };
-        Ok(metadata.is_file()
-            && !metadata.file_type().is_symlink()
-            && PhysicalId::from(&metadata)? == self.identity)
-    }
-}
-
-// Absence is a known negative binding. Other OS outcomes cannot justify retirement.
-fn binding_observation<T>(result: std::io::Result<T>) -> CaptureResult<Option<T>> {
-    match result {
-        Ok(value) => Ok(Some(value)),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
-        Err(error) => Err(error.into()),
-    }
-}
-
-#[cfg(test)]
+#[cfg(all(test, unix))]
 mod binding_tests {
     use super::*;
-    use std::io::{Error, ErrorKind};
+    use std::{fs, os::unix::fs::symlink};
+
     #[test]
     fn current_binding_distinguishes_absence_from_unknown_io_outcomes() {
-        assert!(
-            binding_observation::<()>(Err(ErrorKind::NotFound.into()))
-                .unwrap()
-                .is_none()
-        );
-        for kind in [
-            ErrorKind::PermissionDenied,
-            ErrorKind::TimedOut,
-            ErrorKind::Other,
-        ] {
-            let error = binding_observation::<()>(Err(kind.into())).unwrap_err();
-            assert_eq!(error.downcast_ref::<Error>().unwrap().kind(), kind);
-        }
-        assert_eq!(binding_observation(Ok(1)).unwrap(), Some(1));
+        let temporary = tempfile::tempdir().unwrap();
+        let path = temporary.path().join("approved");
+        fs::create_dir(&path).unwrap();
+        let root = ApprovedCodexRoot::open(&path).unwrap().unwrap();
+        assert!(root.current_binding().unwrap());
+        fs::rename(&path, temporary.path().join("retained")).unwrap();
+        assert!(!root.current_binding().unwrap());
+        // A symlink loop is an unknown IO outcome, never retirement evidence.
+        symlink(&path, &path).unwrap();
+        assert!(root.current_binding().is_err());
+        assert!(!root.revalidate().unwrap());
     }
 }

@@ -108,3 +108,8 @@ shared-source prerequisites. The capture and local-compute manuals retain
 source-specific qualification, original policy identities and recovery limits;
 the capture crate README links the full guides. Generic conversation/UI and
 Notes/Tauri delivery remain planned in M33 until their own evidence qualifies.
+
+M33's capture manual identifies `lapis-ai-capture` as the read-only acquisition
+owner while JJ retains normalization, Cursor binding and publication. JST-DOC-001
+full documentation and concise crate READMEs keep admission distinct from
+metadata candidates; automatic local Git-folder discovery remains unqualified.

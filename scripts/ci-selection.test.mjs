@@ -301,3 +301,20 @@ test("only capture may consume the exact standalone native redaction source", ()
   data.packages[0].name = "jj-store-model";
   assert.throws(() => packageGraph(data, root), /Unmodelled/);
 });
+
+test("only capture may consume the exact standalone acquisition source", () => {
+  const data = metadata(["jj-store-capture"]);
+  const dependency = {
+    name: "lapis-ai-capture",
+    path: "/lapis-ai/crates/lapis-ai-capture",
+  };
+  data.packages[0].dependencies = [dependency];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  dependency.path = "/untrusted/lapis-ai-capture";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  dependency.path = "/lapis-ai/crates/lapis-ai-capture";
+  for (const name of ["jj-store-server", "jj-store-core", "jj-store-model"]) {
+    data.packages[0].name = name;
+    assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  }
+});

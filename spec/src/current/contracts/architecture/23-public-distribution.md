@@ -248,3 +248,8 @@ materializes Agent Redaction separately from Lapis AI, verifies the declared
 package version and refuses replacement of an existing source checkout. Only the
 exact capture-to-redaction path is admitted. These source-library changes do not
 publish either repository or weaken artifact/qualification gates.
+
+M33 acquisition consumption permits only the exact capture-to-`lapis-ai-capture`
+versioned sibling path. The immutable Lapis AI source pin includes this registry
+crate. Unknown source paths and runtime imports remain refused; JST-ARCH-005
+qualification and publication authority are unchanged.

@@ -104,3 +104,9 @@ Public builds use released Kingfisher scanner 1.4.0 with rules 1.2.1 and core
 1.0.3. The sanitization policy and compiled-cache namespace include the scanner
 version, so earlier caches cannot silently stand in for this rule set. A scan
 failure still withholds publication; distribution never bypasses sanitization.
+
+Read-only root selection, bounded metadata discovery and Codex header inspection
+are provided by `lapis-ai-capture`. JJ preserves exact profile versions,
+raw-header witnesses, Cursor sidecar admission and acknowledged progress.
+Discovery does not authorize ingestion. Automatic capture for ordinary local
+Git-backed folders still requires separate qualification.

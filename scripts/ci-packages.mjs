@@ -54,7 +54,12 @@ export function packageGraph(data, root = process.cwd()) {
           dep.name === "lapis-agent-redaction" &&
           resolve(dep.path) ===
             resolve(root, "../agent-redaction/crates/lapis-agent-redaction");
-        if (sharedAi || sharedPrivacy) continue;
+        const sharedAcquisition =
+          p.name === "jj-store-capture" &&
+          dep.name === "lapis-ai-capture" &&
+          resolve(dep.path) ===
+            resolve(root, "../lapis-ai/crates/lapis-ai-capture");
+        if (sharedAi || sharedPrivacy || sharedAcquisition) continue;
         throw Error(`Unmodelled path dependency: ${p.name} -> ${dep.path}`);
       }
       reverse.get(target.name).add(p.name);

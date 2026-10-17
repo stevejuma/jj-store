@@ -84,3 +84,8 @@ M33 native privacy extraction retains the existing Kingfisher hook/transcript
 policy IDs, canonical Agent payload bytes, public capture adapter signatures and
 Control V3 interpretation. Existing source identities, spool requests and
 publication receipts are not upgraded or rewritten by the new library boundary.
+
+M33 acquisition extraction retains all six serialized capture profiles and
+product versions, bounded complete headers, exact raw-header/device/inode
+witnesses and the Cursor sidecar requirement. JST-COMPAT-001/003/005 repository,
+spool and receipt formats remain unchanged; source discovery grants no admission.

@@ -50,12 +50,19 @@ impl CaptureProfile {
         }
     }
     pub fn product_version(self) -> &'static str {
-        match self {
-            Self::CodexCliJsonlV1 => "0.156.1",
-            Self::CodexDesktopJsonlV1 => "0.159.2",
-            Self::CursorDesktopTranscriptV1 => "3.22.7",
-            Self::CursorCliTranscriptV1 => "2026.09.26-dd393fe",
-            Self::OpencodeReadOnlyApiV1 | Self::OpencodeExportJsonV1 => "1.18.30",
+        lapis_ai_capture::SourceProfile::from(self).product_version()
+    }
+}
+
+impl From<CaptureProfile> for lapis_ai_capture::SourceProfile {
+    fn from(profile: CaptureProfile) -> Self {
+        match profile {
+            CaptureProfile::CodexCliJsonlV1 => Self::CodexCliJsonlV1,
+            CaptureProfile::CodexDesktopJsonlV1 => Self::CodexDesktopJsonlV1,
+            CaptureProfile::CursorDesktopTranscriptV1 => Self::CursorDesktopTranscriptV1,
+            CaptureProfile::CursorCliTranscriptV1 => Self::CursorCliTranscriptV1,
+            CaptureProfile::OpencodeReadOnlyApiV1 => Self::OpencodeReadOnlyApiV1,
+            CaptureProfile::OpencodeExportJsonV1 => Self::OpencodeExportJsonV1,
         }
     }
 }

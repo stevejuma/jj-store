@@ -11,6 +11,7 @@ readme = "README.md"
 
 [dependencies]
 lapis-agent-redaction.workspace = true
+lapis-ai-capture.workspace = true
 jj-collab.workspace = true
 jj-agent.workspace = true
 jj-store-model.workspace = true

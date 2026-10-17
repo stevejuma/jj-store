@@ -48,3 +48,10 @@ extraction; local history/Tauri; Notes integration; addressed agents; explicit
 import and opt-in capture; and standalone qualification. Every crate has a short
 README; full documentation remains in the manual. Public package release is a
 separate operator action.
+
+M33 acquisition adapters consume `lapis-ai-capture` for approved roots, bounded
+metadata walks and exact Codex header inspection. The JJ Cursor scanner retains
+its required `jj-store.json` hint; the source library knows no JJ sidecar.
+Existing device/inode and raw-header witness hashing remains in the JJ adapter.
+Source profile inventory maps explicitly without changing serialized JJ profiles.
+Availability fences cannot prove retirement after an unknown IO outcome.

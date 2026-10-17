@@ -17,3 +17,9 @@ Native privacy is delegated to the independently owned `lapis-agent-redaction`
 crate. This crate retains JJ payload bounds, source normalization and
 publication recovery. The two native policy IDs and existing sanitized record
 formats remain unchanged.
+
+Read-only session discovery and bounded Codex header inspection delegate to
+`lapis-ai-capture`. Use `resolve_codex_roots` and `CodexDirectoryScanner` for
+metadata candidates; admission and publication remain the host's responsibility.
+The Cursor adapter still requires the JJ binding sidecar. JJ normalization,
+source witnesses and durable acknowledged progress remain owned here.

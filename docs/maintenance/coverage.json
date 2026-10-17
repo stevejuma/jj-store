@@ -42,15 +42,20 @@
       "scripts/ci-redaction-source.mjs",
       "scripts/agent-redaction-source.json"
     ],
-    "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
+    "pages": [
+      "docs/site/guides/capture.md",
+      "docs/site/technical/capture.md"
+    ],
     "review": {
-      "reason": "Reviewed native privacy delegation with preserved CaptureResult cache-warming API, exact canonical domain bytes and policy IDs; source leases, prepared spools and original receipts are unchanged.",
-      "fingerprint": "49bb6a2cf5c18217bb702a05e46e24c04f7f162521bd1d82c3509ee677ae8c62"
+      "reason": "Reviewed independent acquisition delegation and actual absent versus unknown-IO binding regression, preserved Cursor sidecar requirement and exact raw-header witness bytes with unchanged durable recovery.",
+      "fingerprint": "f6e8c28a13cbb10aa93faf3ecb791bcd37d23215751ad4bd2805768452ed531b"
     }
   },
   {
     "id": "local",
-    "sources": ["crates/jj-store-jj/src"],
+    "sources": [
+      "crates/jj-store-jj/src"
+    ],
     "pages": [
       "docs/site/technical/local.md",
       "docs/site/guides/git.md",
@@ -63,7 +68,10 @@
   },
   {
     "id": "services",
-    "sources": ["crates/jj-store-service/src", "crates/jj-store-rpc/src"],
+    "sources": [
+      "crates/jj-store-service/src",
+      "crates/jj-store-rpc/src"
+    ],
     "pages": [
       "docs/site/technical/architecture.md",
       "docs/site/reference/transport.md",
@@ -76,8 +84,14 @@
   },
   {
     "id": "search",
-    "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
-    "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
+    "sources": [
+      "crates/jj-store-adapters/src",
+      "crates/jj-store-tantivy/src"
+    ],
+    "pages": [
+      "docs/site/technical/reads.md",
+      "docs/site/guides/search.md"
+    ],
     "review": {
       "reason": "Reviewed equivalent native read-context iteration after release lint cleanup. Rebuildable search authority and bounded read behavior are unchanged.",
       "fingerprint": "44511ad330c06eccd325f5abd7eeb77eadec857f6e32907ba3ba037274cf775f"
@@ -85,8 +99,13 @@
   },
   {
     "id": "replication",
-    "sources": ["crates/jj-store-replication/src"],
-    "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
+    "sources": [
+      "crates/jj-store-replication/src"
+    ],
+    "pages": [
+      "docs/site/technical/replication.md",
+      "docs/site/guides/sync.md"
+    ],
     "review": {
       "reason": "Reviewed sync semantic projection suppressing idle scheduler churn while preserving checkpoint, pause and fault notices; replication authority is unchanged.",
       "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2"
@@ -94,7 +113,9 @@
   },
   {
     "id": "configuration",
-    "sources": ["crates/jj-store-server/src"],
+    "sources": [
+      "crates/jj-store-server/src"
+    ],
     "pages": [
       "docs/site/reference/configuration.md",
       "docs/site/reference/environment.md",
@@ -107,7 +128,9 @@
   },
   {
     "id": "cli",
-    "sources": ["crates/jj-store-cli/src"],
+    "sources": [
+      "crates/jj-store-cli/src"
+    ],
     "pages": [
       "docs/site/cli/index.md",
       "docs/site/getting-started/install.md",
@@ -120,7 +143,9 @@
   },
   {
     "id": "http",
-    "sources": ["crates/jj-store-http/src"],
+    "sources": [
+      "crates/jj-store-http/src"
+    ],
     "pages": [
       "docs/site/reference/transport.md",
       "docs/site/reference/security.md",
@@ -133,7 +158,9 @@
   },
   {
     "id": "application",
-    "sources": ["web/src"],
+    "sources": [
+      "web/src"
+    ],
     "pages": [
       "docs/site/guides/browsing.md",
       "docs/site/guides/editing.md",
@@ -147,8 +174,13 @@
   },
   {
     "id": "desktop",
-    "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
-    "pages": ["docs/site/technical/lifecycle.md"],
+    "sources": [
+      "desktop/src",
+      "desktop/crates/terminal-engine/src"
+    ],
+    "pages": [
+      "docs/site/technical/lifecycle.md"
+    ],
     "review": {
       "reason": "Reviewed shared native resource verification, complete Lapis helper staging and unchanged service ownership and paired JJ lifecycle.",
       "fingerprint": "ad916d5efa57aa8b06d1b31cb9cffb9382ee0043f4f9ca345c5b0527fbb9cfc2"
@@ -156,8 +188,14 @@
   },
   {
     "id": "contracts",
-    "sources": ["schemas/openapi.json", "docs/cli"],
-    "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
+    "sources": [
+      "schemas/openapi.json",
+      "docs/cli"
+    ],
+    "pages": [
+      "docs/site/reference/transport.md",
+      "docs/site/cli/index.md"
+    ],
     "review": {
       "reason": "Reviewed the updated executable example path; public HTTP/RPC DTOs and command fields remain unchanged by local AI client adoption.",
       "fingerprint": "dd01364c68a7d85e1126d388d8d6ffc657b78f448acc758d4d9a77531124ef2f"
@@ -180,8 +218,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed shared pinned-source materialization for Lapis AI and native privacy; local development prerequisites are documented, with existing helper launch, resources, credentials and compute behavior retained.",
-      "fingerprint": "747b5dc88827e31b6868591d9ae86eed2e897eeaaee0c3d4fa4b1c8d44ab0263"
+      "reason": "Reviewed immutable Lapis AI acquisition source pin alongside existing runtime clients; admitted acquisition has no runtime or model authority and execution bundle contracts are unchanged.",
+      "fingerprint": "8fbe7b93ac6aa4c8d25a033f13329a3b568a4e720beaab219a6fb7ebb36ecee6"
     }
   },
   {
@@ -202,8 +240,13 @@
   },
   {
     "id": "forge-stacks",
-    "sources": ["crates/jj-forge/src"],
-    "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
+    "sources": [
+      "crates/jj-forge/src"
+    ],
+    "pages": [
+      "docs/site/guides/git.md",
+      "docs/site/reference/transport.md"
+    ],
     "review": {
       "reason": "Reviewed equivalent forge let-chain guards after strict Rust lint: stale PR identity rejection, retained navigation context and latest-check filtering preserve short-circuit order and documented submission/check/credential semantics.",
       "fingerprint": "b19a8560984447c3c9e8e06f83185a04dc61f27cbf87bed45861123d113df3fd"

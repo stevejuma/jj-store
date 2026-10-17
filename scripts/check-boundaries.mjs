@@ -15,7 +15,9 @@ export function dependencyErrors(packages) {
               dependency.name,
             )) ||
           (pkg.name === "jj-store-capture" &&
-            dependency.name === "lapis-agent-redaction")
+            ["lapis-agent-redaction", "lapis-ai-capture"].includes(
+              dependency.name,
+            ))
         )
       )
         errors.push(`${pkg.name} cannot depend on ${dependency.name}`);
