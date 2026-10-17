@@ -111,3 +111,9 @@ before actor creation or staging. The Git library rejects missing validation.
 Public domain reads admit only current or retained committed metadata
 selections; low-level candidate audits do not grant selected-domain read
 membership.
+
+Conversation metadata publication validates frozen AgentStore source IDs against
+the selected committed record inventory, retaining older captured snapshots when
+the active session advances. Exact kind, identity, session membership, closure
+and evidence checks remain required. This internal validation admits no
+unselected staged data and does not widen public pinned-snapshot reads.

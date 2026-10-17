@@ -21,17 +21,19 @@ pub struct Resources {
 }
 impl Resources {
     pub fn from_root(root: &Path) -> Result<Self> {
-        let mut value = Self {
+        let ai = crate::agent_resources::configure(root)?;
+        let value = Self {
             server: root.join("jj-store"),
             jj: root.join("jj-store-jj"),
             rustfs: root.join("jj-store-rustfs"),
             web: root.join("web"),
-            helpers: Vec::new(),
-            native_runtime: root
-                .join("native-runtime")
-                .is_dir()
-                .then(|| root.join("native-runtime")),
-            acp: root.join("jj-acp").exists().then(|| root.join("jj-acp")),
+            helpers: [
+                ("JJ_STORE_COMPUTE_EXECUTABLE", ai.runtime.compute),
+                ("JJ_STORE_LOCAL_AGENT_EXECUTABLE", ai.runtime.agent),
+                ("JJ_STORE_AGENT_TOOLS_EXECUTABLE", ai.runtime.tools),
+            ].into_iter().filter_map(|(name, path)| path.map(|path| (name.into(), path))).collect(),
+            native_runtime: ai.compute.native_runtime,
+            acp: ai.runtime.acp,
         };
         for file in [
             &value.server,
@@ -59,16 +61,6 @@ impl Resources {
                     .is_symlink())
         {
             return Err("Invalid bundled ACP executable".into());
-        }
-        if root.join("agent-resources.json").exists() {
-            crate::agent_resources::verify(root)?;
-            for (name, variable) in [
-                ("jj-store-compute", "JJ_STORE_COMPUTE_EXECUTABLE"),
-                ("jj-store-local-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE"),
-                ("jj-store-agent-tools", "JJ_STORE_AGENT_TOOLS_EXECUTABLE"),
-            ] {
-                value.helpers.push((variable.into(), root.join(name)));
-            }
         }
         Ok(value)
     }

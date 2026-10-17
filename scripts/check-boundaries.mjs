@@ -5,6 +5,18 @@ import { fileURLToPath } from "node:url";
 
 export function dependencyErrors(packages) {
   const errors = [];
+  for (const pkg of packages)
+    for (const dependency of pkg.dependencies ?? []) {
+      if (
+        /^lapis-(?:ai-|acp|agent|compute)/.test(dependency.name) &&
+        !(
+          pkg.name === "jj-store-server" &&
+          ["lapis-ai-runtime", "lapis-ai-config"].includes(dependency.name)
+        )
+      )
+        errors.push(`${pkg.name} cannot depend on ${dependency.name}`);
+    }
+
   const native = new Set(["jj-store-jj", "jj-store"]);
   const layers = {
     "jj-forge": [],

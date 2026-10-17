@@ -6,7 +6,7 @@ async fn provider_preview_is_ephemeral_credential_scoped_and_reaped() {
     let fixture = Fixture::new().await;
     let actor = fixture.actor;
     let resources = fixture.resources.clone();
-    let helper = resources.executable.with_file_name("jj-store-local-agent");
+    let helper = resources.executable.with_file_name("lapis-agent");
     fs::write(&helper, r#"#!/usr/bin/python3
 import os, sys, json, time
 assert sys.argv[1:] == ['--models']
@@ -101,10 +101,7 @@ async fn managed_catalog_does_not_start_compute_or_mutate_the_journal() {
     let actor = fixture.actor;
     let root = fixture.resources.root.clone();
     fs::write(
-        fixture
-            .resources
-            .executable
-            .with_file_name("jj-store-local-agent"),
+        fixture.resources.executable.with_file_name("lapis-agent"),
         "unused helper",
     )
     .unwrap();

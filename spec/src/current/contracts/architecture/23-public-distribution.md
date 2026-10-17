@@ -77,9 +77,9 @@ The embedded runtime builds and passes strict lint on an independent runner;
 storage and cold browser acceptance reuse it. An explicit CI-only prebuilt
 profile validates regular executable files and complete browser/Help manifests
 before replacing any disposable process. Ordinary development retains its build
-path. Cold acceptance uses a fresh isolated fixture, checksum-pinned published
-jj-acp 0.1.0 with control-version-3 prepared-context admission, and the
-collision-safe `jj-store-jj` client. No fixture ACP, installed CLI or
+path. Cold acceptance uses a fresh isolated fixture, Lapis ACP built from the
+recorded Lapis AI source revision with Control V3 prepared-context admission,
+and the collision-safe `jj-store-jj` client. No fixture ACP, installed CLI or
 interactive state may be substituted. Missing resources fail; existing tests and
 acceptance assertions remain required. The complete qualification gate includes
 the runtime producer.

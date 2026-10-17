@@ -41,6 +41,13 @@ records its actual acceptance and remaining work; partial interface or package
 checks cannot complete provider migration. WorkflowStore retains its current
 native provider. Dynamic-library loading and publication are separate work.
 
+E-LAPIS-AI-001 preserves JST-ARCH-006's public store construction, selected
+publication and pinned-read contracts. Internal conversation metadata validation
+uses the committed AgentStore inventory for exact retained source snapshots
+after active capture advances. It admits no staged objects and does not widen
+public snapshot reads. Lapis AI dependencies remain in server/desktop
+composition; the reusable stores retain no controller or inference dependency.
+
 The standalone Git carrier owns generic ref publication, bounded object access
 and readonly selected-root capabilities. JJ evidence and historical stack
 retention stay in the JJ integration; its focused companion feature omits native

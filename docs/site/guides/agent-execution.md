@@ -6,6 +6,13 @@ and conversation metadata.
 
 ## Enable execution
 
+For local source development, keep the sibling `lapis-ai` checkout and run
+`pnpm ai:prepare`. Development launchers select that verified bundle. Headless
+services select it with `JJ_STORE_AI_BUNDLE_DIR`; all sessions and model
+discovery use Control V3. See
+[compute guidance](#compute-defaults-and-captured-context) for lifecycle
+controls.
+
 ### Use an agent on another server
 
 Choose **Add server** above Help and sign in to an authenticated server. Select
@@ -56,7 +63,7 @@ use.
 ### Configure the execution service
 
 Start the LocalTrusted server with `JJ_STORE_ACP_EXECUTABLE` set to the absolute
-path of a rebuilt `jj-acp` binary supporting control version 2. Keep the paired
+path of a rebuilt `lapis-acp` binary supporting Control V3. Keep the paired
 custom `jj` beside the server, or select it with `JJ_STORE_AGENT_JJ_EXECUTABLE`.
 
 ### Install and check agent tooling
@@ -88,16 +95,17 @@ launch is available.
 
 ### Stage desktop resources
 
-For desktop resource staging, pass `--acp-executable /absolute/path/to/jj-acp`
-to `node scripts/desktop.mjs stage`. The optional executable is bundled with the
-paired JJ runtime. Without it, ordinary browsing remains available.
+For desktop resource staging, pass
+`--ai-bundle /absolute/path/to/lapis-ai-bundle` to
+`node scripts/desktop.mjs stage`. All four verified helpers are bundled with the
+paired JJ runtime. Model weights remain separate explicit downloads.
 
 ### Check limits and repository access
 
-The legacy version-2 profile admits one warm process at a time, up to sixteen
-queued commands, sixty-four retained sessions and sixty-four saved setups. The
-version-3 reusable fleet admits four workers, sixteen queued turns per
-participation and sixty-four queued turns in total.
+The per-session Control V3 profile admits one warm process at a time, up to
+sixteen queued commands, sixty-four retained sessions and sixty-four saved
+setups. The version-3 reusable fleet admits four workers, sixteen queued turns
+per participation and sixty-four queued turns in total.
 
 Setups and lifecycle receipts are private device state outside repository
 checkouts. Repository history remains subject to independent code-repository
@@ -238,10 +246,10 @@ status, so a failed workspace refresh does not obscure a known Idle agent.
 
 ### Find a conversation
 
-**View chats** also provides the retained session inbox. Its legacy version-2
-setup form still supports exact workspace/revision selection and negotiated
-runtime options. Historical sessions and their existing qualified controls
-remain available independently of the new contextual chat.
+**View chats** also provides the retained session inbox. Its per-session setup
+form still supports exact workspace/revision selection and negotiated runtime
+options. Historical sessions and their existing qualified controls remain
+available independently of the new contextual chat.
 
 Threads and agent sessions use the same compact sidebar header. **All** shows
 the loaded conversations; narrow sidebars move tabs into **More**, including All

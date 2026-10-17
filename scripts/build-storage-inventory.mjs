@@ -17,8 +17,6 @@ export const cargoRoots = [
   [".", "target"],
   ["desktop", "desktop/target"],
   ["runtime/embedded-rustfs", "runtime/embedded-rustfs/target"],
-  ["runtime/local-agent", "runtime/local-agent/target"],
-  ["runtime/compute", "runtime/compute/target"],
   [
     "crates/jj-store-jj/tests/fixtures/store-consumer",
     "crates/jj-store-jj/tests/fixtures/store-consumer/target",

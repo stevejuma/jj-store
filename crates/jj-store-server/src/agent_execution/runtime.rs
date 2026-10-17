@@ -1,11 +1,9 @@
 //! One warm harness per session; bounded frames and process group ownership.
 use super::*;
 use jj_store_capture::transcript_sanitization::TranscriptSanitizer;
+use lapis_ai_runtime::{AcpClient, AcpCommands};
 use std::process::Stdio;
-use tokio::{
-    io::{AsyncBufReadExt as _, AsyncWriteExt as _, BufReader},
-    process::{Child, Command},
-};
+use tokio::process::Command;
 pub(super) async fn sanitizer(this: &Supervisor, workspace: &Path) -> Result<TranscriptSanitizer> {
     let ready = this.0.sanitizer.lock().map_err(|_| Error::Unavailable)?;
     ready
@@ -15,38 +13,6 @@ pub(super) async fn sanitizer(this: &Supervisor, workspace: &Path) -> Result<Tra
         .map_err(|_| Error::Unavailable)
 }
 pub(super) use super::runtime_privacy::safe;
-pub(super) struct OwnedChild(pub(super) Child);
-impl OwnedChild {
-    pub(super) async fn stop(&mut self) {
-        if let Some(pid) = self
-            .0
-            .id()
-            .and_then(|p| rustix::process::Pid::from_raw(p as i32))
-        {
-            let _ = rustix::process::kill_process_group(pid, rustix::process::Signal::TERM);
-            if tokio::time::timeout(Duration::from_secs(2), self.0.wait())
-                .await
-                .is_err()
-            {
-                let _ = rustix::process::kill_process_group(pid, rustix::process::Signal::KILL);
-                let _ = self.0.start_kill();
-                let _ = tokio::time::timeout(Duration::from_secs(2), self.0.wait()).await;
-            }
-        }
-    }
-}
-impl Drop for OwnedChild {
-    fn drop(&mut self) {
-        if let Some(pid) = self
-            .0
-            .id()
-            .and_then(|p| rustix::process::Pid::from_raw(p as i32))
-        {
-            let _ = rustix::process::kill_process_group(pid, rustix::process::Signal::KILL);
-        }
-        let _ = self.0.start_kill();
-    }
-}
 impl Supervisor {
     pub(super) async fn spawn(&self, id: &str, load: Option<String>) -> Result<()> {
         if self.tooling_busy()? {
@@ -65,22 +31,12 @@ impl Supervisor {
             options: saved.options.clone(),
         };
         let mut command = Command::new(&self.0.resources.executable);
-        command.arg("serve");
         self.launch_environment(&mut command, &setup)?;
         self.local_launch(&mut command, &setup, true).await?;
         let chatgpt_lease = self.chatgpt_launch(&mut command, &setup, id, 0).await?;
         self.register_launch_secrets(&command, &setup)?;
         let sanitizer = sanitizer(self, &saved.workspace.path).await?;
 
-        let mut runtimes = self.0.runtimes.lock().map_err(|_| Error::Unavailable)?;
-        if !runtimes.is_empty()
-            || self
-                .0
-                .catalog_active
-                .load(std::sync::atomic::Ordering::Acquire)
-        {
-            return Err(Error::Busy);
-        }
         command
             .env("PATH", paths)
             .args([
@@ -94,8 +50,6 @@ impl Supervisor {
                 "2",
                 "--reap-timeout",
                 "2",
-                "--control-version",
-                "2",
                 "--runner",
                 &saved.view.runner,
                 "--cwd",
@@ -108,9 +62,17 @@ impl Supervisor {
             .kill_on_drop(true);
         #[cfg(unix)]
         command.process_group(0);
-        let mut child = OwnedChild(command.spawn().map_err(|_| Error::Unavailable)?);
-        let stdin = child.0.stdin.take().ok_or(Error::Unavailable)?;
-        let stdout = child.0.stdout.take().ok_or(Error::Unavailable)?;
+        let mut child = native_runtime::start(&command).await?;
+        let stdin = child.commands();
+        let mut runtimes = self.0.runtimes.lock().map_err(|_| Error::Unavailable)?;
+        if !runtimes.is_empty()
+            || self
+                .0
+                .catalog_active
+                .load(std::sync::atomic::Ordering::Acquire)
+        {
+            return Err(Error::Busy);
+        }
         let (tx, rx) = mpsc::channel(16);
         runtimes.insert(id.into(), tx);
         let this = self.clone();
@@ -119,10 +81,10 @@ impl Supervisor {
         let task = tokio::spawn(async move {
             let mut chatgpt_lease = chatgpt_lease;
             let result = tokio::select! {
-                result=this.run(&id, &mut child, stdin, stdout, rx, load, sanitizer)=>result,
+                result=this.run(&id, &mut child, stdin, rx, load, sanitizer)=>result,
                 _=chatgpt::broker::cancelled(&mut chatgpt_lease)=>Err(Error::Denied),
             };
-            child.stop().await;
+            let _ = child.shutdown().await;
             if let Ok(mut map) = this.0.runtimes.lock() {
                 map.remove(&id);
             }
@@ -178,15 +140,17 @@ impl Supervisor {
     async fn run(
         &self,
         id: &str,
-        child: &mut OwnedChild,
-        mut stdin: tokio::process::ChildStdin,
-        stdout: tokio::process::ChildStdout,
+        child: &mut AcpClient,
+        stdin: AcpCommands,
         mut commands: mpsc::Receiver<Value>,
         load: Option<String>,
         sanitizer: TranscriptSanitizer,
     ) -> Result<()> {
-        let mut reader = BufReader::new(stdout);
-        let mut bytes = Vec::new();
+        native_runtime::send(
+            &stdin,
+            json!({"version":3,"type":"warm","requestId":format!("warm-{id}")}),
+        )
+        .await?;
         let mut assistant = BTreeMap::<String, String>::new();
         let mut privacy = super::runtime_privacy::StreamPrivacy::default();
         let mut tools = BTreeMap::<String, Value>::new();
@@ -215,11 +179,12 @@ impl Supervisor {
                 } else if let Ok((prepared, lease)) = result {
                     workspace_lease = Some(lease);
                     frame = prepared;
-                    frame
-                        .as_object_mut()
-                        .ok_or(Error::Invalid)?
-                        .remove("sessionId");
-                    write(&mut stdin, frame).await?;
+                    frame["version"] = json!(3);
+                    frame["sessionId"] = json!(id);
+                    if !matches!(frame["type"].as_str(), Some("close" | "status")) {
+                        frame["sessionId"] = json!(id);
+                    }
+                    native_runtime::send(&stdin, frame).await?;
                 } else {
                     let request = frame["requestId"].as_str().ok_or(Error::Invalid)?;
                     let failure = json!({"type":"error","sessionId":id,"requestId":request,"code":"dispatch_not_sent"});
@@ -259,16 +224,17 @@ impl Supervisor {
                     closing = frame["type"] == "close";
                     if closing { closing_request = frame["requestId"].as_str().and_then(|id| id.parse::<RequestId>().ok()); }
                     if closing { close_deadline.as_mut().reset(tokio::time::Instant::now() + Duration::from_secs(15)); }
-                    write(&mut stdin, frame).await?;
+                    if !matches!(frame["type"].as_str(), Some("close" | "status")) { frame["sessionId"] = json!(id); }
+                    native_runtime::send(&stdin, frame).await?;
                 },
-                line = bounded_line(&mut reader, &mut bytes) => {
-                    if !line? { break; }
-                    let raw: Value = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-                    bytes.clear();
-                    if raw["version"] != 2 { return Err(Error::Unavailable); }
-                    if raw["type"] == "ready" {
-                        write(&mut stdin, json!({"version":2,"type":"open","requestId":format!("open-{id}"),"loadSessionId":load})).await?;
+                frame = child.next(Duration::from_secs(86400)) => {
+                    let raw = frame.map_err(|_| Error::Unavailable)?;
+                    if raw["version"] != 3 { return Err(Error::Unavailable); }
+                    if raw["type"] == "warmed" {
+                        native_runtime::send(&stdin, json!({"version":3,"type":"open","requestId":format!("open-{id}"),"sessionId":id,"cwd":self.saved(id)?.workspace.path,"loadSessionId":load})).await?;
+                        continue;
                     }
+                    if !matches!(raw["type"].as_str(), Some("closed" | "error" | "status")) && raw["sessionId"] != id { return Err(Error::Unavailable); }
                     let fresh=sanitizer.for_oauth_secrets(&self.oauth_redactions()?).map_err(|_|Error::Unavailable)?;
                     for mut value in privacy.frames(&fresh, raw)? {
                     let request = value["requestId"].as_str().unwrap_or("").to_owned();
@@ -301,10 +267,10 @@ impl Supervisor {
                         "opened" => {
                             opened = true;
                             self.update(|s| { let session = &mut s.sessions.get_mut(id).ok_or(Error::Invalid)?.view;
-                                session.adapter_session_id = value["sessionId"].as_str().map(str::to_owned);
+                                session.adapter_session_id = value["adapterSessionId"].as_str().map(str::to_owned);
                                 session.capabilities = json!({"initialize":value["capabilities"],"session":value["session"]}); session.state = "idle".into(); session.last_error = None; Ok(()) })?;
                             let p = self.saved(id)?.view.preferences;
-                            if p.mode.is_some() { write(&mut stdin, json!({"version":2,"type":"configure","requestId":format!("configure-{id}"),"model":p.model,"effort":p.effort,"mode":p.mode})).await?; }
+                            if p.mode.is_some() { native_runtime::send(&stdin, json!({"version":3,"sessionId":id,"type":"configure","requestId":format!("configure-{id}"),"model":p.model,"effort":p.effort,"mode":p.mode})).await?; }
                         },
                         "started" => { self.session_state(id, "running", None)?; },
                         "record" => {
@@ -345,10 +311,7 @@ impl Supervisor {
                 },
             }
         }
-        tokio::time::timeout(Duration::from_secs(10), child.0.wait())
-            .await
-            .map_err(|_| Error::Unavailable)?
-            .map_err(|_| Error::Unavailable)?;
+        child.shutdown().await.map_err(|_| Error::Unavailable)?;
         Ok(())
     }
     pub(super) fn session_state(&self, id: &str, state: &str, error: Option<&str>) -> Result<()> {
@@ -375,44 +338,5 @@ impl Supervisor {
             .and_then(|options| options.iter().find(|o| o["optionId"] == *option))
             .map(|o| o["kind"].clone())
             .unwrap_or(Value::Null))
-    }
-}
-pub(super) async fn write(stdin: &mut tokio::process::ChildStdin, value: Value) -> Result<()> {
-    let mut bytes = serde_json::to_vec(&value).map_err(|_| Error::Invalid)?;
-    if bytes.len() > 1024 * 1024 {
-        return Err(Error::Limit);
-    }
-    bytes.push(b'\n');
-    tokio::time::timeout(Duration::from_secs(5), stdin.write_all(&bytes))
-        .await
-        .map_err(|_| Error::Unavailable)?
-        .map_err(|_| Error::Unavailable)
-}
-pub(super) async fn bounded_line(
-    reader: &mut BufReader<tokio::process::ChildStdout>,
-    bytes: &mut Vec<u8>,
-) -> Result<bool> {
-    loop {
-        let buffer = reader.fill_buf().await.map_err(|_| Error::Unavailable)?;
-        if buffer.is_empty() {
-            return if bytes.is_empty() {
-                Ok(false)
-            } else {
-                Err(Error::Unavailable)
-            };
-        }
-        let n = buffer
-            .iter()
-            .position(|b| *b == b'\n')
-            .map_or(buffer.len(), |i| i + 1);
-        if bytes.len() + n > 1024 * 1024 {
-            return Err(Error::Limit);
-        }
-        let complete = buffer[n - 1] == b'\n';
-        bytes.extend_from_slice(&buffer[..n]);
-        reader.consume(n);
-        if complete {
-            return Ok(true);
-        }
     }
 }

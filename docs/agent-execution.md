@@ -57,7 +57,7 @@ its disposable root. The deterministic ACP process proves integration, not
 installed provider or production deployment qualification.
 
 For installed Codex and operator-UI acceptance on the same machine, use
-`python3 scripts/remote-agent-administration-acceptance.py --server /absolute/path/to/jj-store --jj /absolute/path/to/jj --rustfs /absolute/path/to/jj-store-rustfs --acp /absolute/path/to/jj-acp --web /absolute/path/to/web/dist`.
+`python3 scripts/remote-agent-administration-acceptance.py --server /absolute/path/to/jj-store --jj /absolute/path/to/jj --rustfs /absolute/path/to/jj-store-rustfs --acp /absolute/path/to/lapis-acp --web /absolute/path/to/web/dist`.
 This provisions two disposable real RustFS instances, synthetic role tokens and
 native repositories, exercises the cold built app, then sends a bounded
 file-edit prompt to the already installed and authenticated Codex provider. It
@@ -165,8 +165,14 @@ files. It does not merge or push agent changes.
 
 ## Enable execution
 
+For local source development, keep the sibling `lapis-ai` checkout and run
+`pnpm ai:prepare`. Development launchers select that verified bundle. Headless
+services select it with `JJ_STORE_AI_BUNDLE_DIR`; all sessions and model
+discovery use Control V3. See [local compute](local-compute.md) for shared
+helper details.
+
 Start the LocalTrusted server with `JJ_STORE_ACP_EXECUTABLE` set to the absolute
-path of a rebuilt `jj-acp` binary supporting control version 2. Keep the paired
+path of a rebuilt `lapis-acp` binary supporting Control V3. Keep the paired
 custom `jj` beside the server, or select it with `JJ_STORE_AGENT_JJ_EXECUTABLE`.
 Open **Settings → Agents → Runtimes** to check tooling on this device. Codex's
 **Install** or **Update** action downloads ACP 1.13.1 and CLI 0.156.1 into
@@ -185,9 +191,10 @@ retain the original request for status checks; interrupted staging is not used
 or replayed after restart. Privacy preparation may briefly show Preparing agent
 sessions before launch is available.
 
-For desktop resource staging, pass `--acp-executable /absolute/path/to/jj-acp`
-to `node scripts/desktop.mjs stage`. The optional executable is bundled with the
-paired JJ runtime. Without it, ordinary browsing remains available.
+For desktop resource staging, pass
+`--ai-bundle /absolute/path/to/lapis-ai-bundle` to
+`node scripts/desktop.mjs stage`. All four verified helpers are bundled with the
+paired JJ runtime. Model weights remain separate explicit downloads.
 
 Execution currently admits one warm process at a time, up to sixteen queued
 commands, sixty-four retained sessions and sixty-four saved setups. Setups and

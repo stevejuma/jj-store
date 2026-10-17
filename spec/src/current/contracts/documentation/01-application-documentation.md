@@ -1,5 +1,10 @@
 # Application documentation
 
+E-LAPIS-AI-001 updates the agent and compute guides for locally linked Lapis AI
+clients and helpers using Control V3. Crate-root READMEs retain brief
+orientation and usage; the manual owns detailed configuration, lifecycle and
+packaging.
+
 Each maintained Cargo crate has a root README with its role, usage entry points
 and context. These are concise introductions; detailed integration, operation
 and development guidance stays under `docs` and is linked from the overview.

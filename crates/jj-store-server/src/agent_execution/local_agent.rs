@@ -10,8 +10,7 @@ impl Supervisor {
         if setup.runner != "local" {
             return Ok(());
         }
-        let executable =
-            self.companion("jj-store-local-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")?;
+        let executable = self.companion("lapis-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")?;
         let catalog = self.0.resources.root.join("local-runner.json");
         let value = json!({"runners":[{"id":"local","label":"jj-agent","command":executable,"args":[],"env":{}}]});
         private_json(&catalog, &value)?;
@@ -19,7 +18,7 @@ impl Supervisor {
         self.local_environment(command, setup, true).await?;
         if tools {
             let executable =
-                self.companion("jj-store-agent-tools", "JJ_STORE_AGENT_TOOLS_EXECUTABLE")?;
+                self.companion("lapis-agent-tools", "JJ_STORE_AGENT_TOOLS_EXECUTABLE")?;
             let path = self.0.resources.root.join("local-tools.json");
             private_json(
                 &path,
@@ -48,15 +47,18 @@ impl Supervisor {
                 self.ensure_compute().await?;
             }
             let runtime = self.0.compute.lock().await;
-            let mut endpoint = runtime.endpoint.clone().ok_or(Error::Unavailable)?;
-            if setup.options.provider.as_deref() == Some("paired") {
+            let connection = runtime.connection.as_ref().ok_or(Error::Unavailable)?;
+            let endpoint = if setup.options.provider.as_deref() == Some("paired") {
                 let peer = self.read(|s| s.compute.target_peer.clone().ok_or(Error::Invalid))?;
-                endpoint = endpoint.replace("/v1", &format!("/peer/{peer}/v1"));
-            }
-            command.env("OPENAI_COMPAT_BASE_URL", endpoint).env(
-                "OPENAI_COMPAT_API_KEY",
-                runtime.token.as_ref().ok_or(Error::Unavailable)?.as_str(),
-            );
+                connection
+                    .peer_endpoint(&peer)
+                    .map_err(|_| Error::Invalid)?
+            } else {
+                connection.endpoint().clone()
+            };
+            command
+                .env("OPENAI_COMPAT_BASE_URL", endpoint.as_str())
+                .env("OPENAI_COMPAT_API_KEY", connection.bearer_token());
         }
         Ok(())
     }

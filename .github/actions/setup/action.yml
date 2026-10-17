@@ -1,5 +1,5 @@
 name: Release toolchain
-description: Pinned tools and registry-only workspace dependencies
+description: Pinned tools and local-source Rust integration dependencies
 inputs:
   native-dependencies:
     description: Install credential-store headers for native crate builds
@@ -21,6 +21,11 @@ runs:
       with:
         node-version: 22
         cache: pnpm
+    - name: Materialize pinned Lapis AI into the sibling Cargo path
+      run: node scripts/ci-lapis-source.mjs
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
     - name: Install pinned upstream JJ for repository fixtures
       run: node scripts/ci-setup-jj.mjs
       shell: bash
@@ -36,4 +41,8 @@ runs:
       with:
         tool: cargo-nextest@0.9.148,mdbook@0.5.4,uv@0.9.28
     - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      shell: bash
+    - name: Install shared AI development packaging dependencies
+      run: pnpm install --frozen-lockfile
+      working-directory: ../lapis-ai
       shell: bash

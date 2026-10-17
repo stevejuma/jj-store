@@ -36,6 +36,7 @@ mod provider_catalog;
 mod provider_launch;
 mod qualified_reviews;
 
+pub(crate) mod native_runtime;
 mod prompt_context;
 mod publication;
 mod runtime;
@@ -88,6 +89,7 @@ pub struct Supervisor(Arc<Inner>);
 struct Inner {
     chatgpt: chatgpt::Runtime,
     resources: Resources,
+    ai_bundle: Option<lapis_ai_runtime::Config>,
     delegation: Mutex<Option<Arc<dyn jj_store_service::access::Delegation>>>,
     worker_slots: Mutex<Option<Arc<tokio::sync::Semaphore>>>,
     state: Mutex<State>,
@@ -118,6 +120,7 @@ struct Inner {
 }
 impl Supervisor {
     pub fn open(mut resources: Resources) -> Result<Self> {
+        let ai_bundle = native_runtime::bundle()?;
         resources.root =
             crate::policy::outside_checkout(&resources.root).map_err(|_| Error::Invalid)?;
         resources.executable = resources
@@ -163,6 +166,7 @@ impl Supervisor {
         let (changed, _) = broadcast::channel(32);
         let supervisor = Self(Arc::new(Inner {
             chatgpt: Default::default(),
+            ai_bundle,
             resources,
             delegation: Mutex::new(None),
             worker_slots: Mutex::new(None),
@@ -482,6 +486,7 @@ impl Supervisor {
             .ok_or(Error::Unavailable)
     }
     fn send(&self, id: &str, mut frame: Value) -> Result<()> {
+        frame["version"] = json!(3);
         if self.saved(id)?.view.conversation_id.is_some() {
             frame["version"] = json!(3);
             frame["sessionId"] = json!(id);

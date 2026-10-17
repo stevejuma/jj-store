@@ -164,8 +164,10 @@ async fn model_discovery_before_any_agent_or_chat_is_cached_and_never_prompts() 
             .iter()
             .map(|v| v["type"].as_str().unwrap())
             .collect::<Vec<_>>(),
-        vec!["open", "close"]
+        vec!["warm", "open", "close"]
     );
+    assert!(values.iter().all(|frame| frame["version"] == 3));
+    assert_eq!(values[1]["sessionId"], "catalog");
     supervisor.catalog(actor, "codex".into()).await.unwrap();
     assert_eq!(fs::read_to_string(&frames_path).unwrap(), frames);
     let after = supervisor.status(actor).await.unwrap();

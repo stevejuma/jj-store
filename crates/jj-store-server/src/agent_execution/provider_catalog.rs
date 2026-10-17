@@ -2,10 +2,7 @@
 use super::*;
 use jj_store_service::agent_execution::catalog::Catalog;
 use std::{process::Stdio, sync::atomic::Ordering};
-use tokio::{
-    io::{AsyncReadExt, BufReader},
-    process::Command,
-};
+use tokio::process::Command;
 struct Reservation<'a>(&'a std::sync::atomic::AtomicBool);
 impl Drop for Reservation<'_> {
     fn drop(&mut self) {
@@ -42,8 +39,7 @@ impl Supervisor {
             self.0.catalog_active.store(true, Ordering::Release);
         }
         let _reservation = Reservation(&self.0.catalog_active);
-        let executable =
-            self.companion("jj-store-local-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")?;
+        let executable = self.companion("lapis-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")?;
         let mut command = Command::new(executable);
         if let Err(error) = self.launch_environment_preview(&mut command, setup, secrets) {
             return if matches!(error, Error::Unavailable) {
@@ -82,7 +78,6 @@ impl Supervisor {
         journal::private_directory(&path)?;
         let sanitizer = runtime::sanitizer(self, &path).await?;
         command
-            .arg("--models")
             .current_dir(&path)
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
@@ -90,23 +85,28 @@ impl Supervisor {
             .kill_on_drop(true);
         #[cfg(unix)]
         command.process_group(0);
-        let mut child = runtime::OwnedChild(command.spawn().map_err(|_| Error::Unavailable)?);
+        let plan = lapis_ai_runtime::PreparedLaunch::from_command(command.as_std())
+            .map_err(|_| Error::Invalid)?;
         drop(guard);
-        let mut bytes = Vec::new();
-        let stdout = child.0.stdout.take().ok_or(Error::Unavailable)?;
-        let mut reader = BufReader::new(stdout).take(2 * 1024 * 1024 + 1);
-        let result = tokio::time::timeout(Duration::from_secs(25), async {
-            tokio::select! {
-                read = reader.read_to_end(&mut bytes) => { read.map_err(|_| Error::Unavailable)?; },
-                _ = async { while !self.0.stopping.load(Ordering::Acquire) { tokio::time::sleep(Duration::from_millis(100)).await; } } => return Err(Error::Unavailable),
-            }
-            if bytes.len() > 2 * 1024 * 1024 { return Err(Error::Limit); }
-            let value: Value = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-            let status = value["status"].as_str().filter(|s| matches!(*s,"ready"|"empty"|"authentication_required"|"unavailable")).ok_or(Error::Unavailable)?;
-            Ok(Catalog {runner:"local".into(), status:Some(status.into()), facts:runtime::safe(&sanitizer,value["facts"].clone())?})
-        }).await.map_err(|_| Error::Unavailable).and_then(|v|v);
-        child.stop().await;
+        let result = tokio::select! {
+            result = lapis_ai_runtime::AgentClient::models_prepared(plan, native_runtime::limits(2 * 1024 * 1024), Duration::from_secs(25)) => result.map_err(|_|Error::Unavailable),
+            _ = async { while !self.0.stopping.load(Ordering::Acquire) { tokio::time::sleep(Duration::from_millis(100)).await; } } => Err(Error::Unavailable),
+        };
         let value = result?;
+        let status = value["status"]
+            .as_str()
+            .filter(|s| {
+                matches!(
+                    *s,
+                    "ready" | "empty" | "authentication_required" | "unavailable"
+                )
+            })
+            .ok_or(Error::Unavailable)?;
+        let value = Catalog {
+            runner: "local".into(),
+            status: Some(status.into()),
+            facts: runtime::safe(&sanitizer, value["facts"].clone())?,
+        };
         if value.status.as_deref() == Some("ready") {
             cache.insert(key, (tokio::time::Instant::now(), value.clone()));
         }

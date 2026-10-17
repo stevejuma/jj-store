@@ -1796,3 +1796,23 @@ retention, publication and checkout resume the original candidate and identity.
 This begins Stage 4; membership/switching and dirty-work capture still require
 separate engines. Command transport, writable production UI and the remaining
 approved stages remain incomplete. No setup is triggered by browsing.
+
+## Lapis AI integration — 17 October 2026
+
+Consume the sibling `lapis-ai` working tree through versioned Cargo path
+dependencies now; switch to crates.io after publication. Use its Rust clients
+and verified four-helper bundle for agent execution, discovery, metadata and
+compute. Retire duplicated local-agent/compute source trees.
+
+All live execution and discovery require Control V3, including the per-session
+API. No V2 compatibility client is retained. Historical capture profile and
+normalizer identifiers remain stable storage identities. The application keeps
+admission, credential custody, installation journals and repository publication.
+
+Validate the exact execution and recovery regressions, remote/workflow direct
+consumers, bundle preflight, desktop resource ownership and cold native compute
+with restart and retained identity/model receipts. Record actual evidence under
+E-LAPIS-AI-001; keep installed-provider, signed macOS/WKWebView and Linux CPU
+qualification distinct. M24/M25 distribution gates and release status remain
+unchanged. Crate-root READMEs give a high-level introduction and usage; detailed
+manuals stay in docs.

@@ -47,7 +47,7 @@
     "dev:restart": "node scripts/dev-demo.mjs restart",
     "dev:ui": "node scripts/dev-ui.mjs",
     "dev:backend:restart": "node scripts/dev-ui.mjs backend",
-    "dev:backend:build": "node scripts/managed-cargo.mjs build -p jj-store --bins --locked",
+    "dev:backend:build": "pnpm ai:prepare && node scripts/managed-cargo.mjs build -p jj-store --bins --locked",
     "test:dev:ui": "node scripts/dev-ui.acceptance.mjs",
     "dev:reset": "node scripts/dev-demo.mjs reset",
     "dev:stop": "node scripts/dev-demo.mjs stop",
@@ -94,7 +94,8 @@
     "release:orchestrate": "node scripts/release-orchestrate.mjs",
     "release:registry": "node scripts/release-registry.mjs",
     "test:release": "node --test scripts/release.test.mjs scripts/ci*.test.mjs scripts/automation-governance.test.mjs",
-    "ci:plan": "node scripts/ci-plan.mjs"
+    "ci:plan": "node scripts/ci-plan.mjs",
+    "ai:prepare": "node scripts/lapis-ai.mjs"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",

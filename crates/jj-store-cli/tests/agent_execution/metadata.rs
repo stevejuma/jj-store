@@ -31,10 +31,7 @@ async fn start_with_title(title: bool) -> (Fixture, Supervisor) {
         );
         fs::write(&f.resources.executable, script).unwrap();
     }
-    let helper = f
-        .resources
-        .executable
-        .with_file_name("jj-store-local-agent");
+    let helper = f.resources.executable.with_file_name("lapis-agent");
     fs::write(&helper, HELPER).unwrap();
     #[cfg(unix)]
     {

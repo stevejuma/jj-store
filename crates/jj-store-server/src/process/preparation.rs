@@ -214,8 +214,10 @@ pub(super) async fn prepare(
             permission: jj_store_service::auth::Permission::Admin,
         },
         Some(executable),
-    ) = (&http_access, std::env::var_os("JJ_STORE_ACP_EXECUTABLE"))
-    {
+    ) = (
+        &http_access,
+        crate::agent_execution::native_runtime::executable(),
+    ) {
         let jj = std::env::var_os("JJ_STORE_AGENT_JJ_EXECUTABLE")
             .map(std::path::PathBuf::from)
             .or_else(|| {
@@ -227,7 +229,7 @@ pub(super) async fn prepare(
             crate::agent_execution::Supervisor::open(crate::agent_execution::Resources {
                 actor: *principal,
                 root: state.join("agent-execution"),
-                executable: executable.into(),
+                executable,
                 jj_executable: jj.clone(),
                 driver: Arc::new(crate::agent_execution::driver::Driver(
                     jj_store_jj::agent_workspaces::Provider { executable: jj },

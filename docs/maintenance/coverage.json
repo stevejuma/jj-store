@@ -97,8 +97,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed server conversation-home WorkStore factory composition and local status adaptation. Existing configuration and lifecycle manuals retain their schemas, owned processes and original-request recovery; no new configuration or execution capability is introduced.",
-      "fingerprint": "dc50b864b752c2c69cd95f978ebe8c2eb95824f9b6f65d73e8686d797db49a25"
+      "reason": "Reviewed local Lapis AI executable and verified bundle selection; removing an identity PathBuf conversion preserves configuration, admission and lifecycle behavior.",
+      "fingerprint": "629d5eb22a8014c46337a641d72a89d070ae79cdd6777f122ae1c9acc21aa586"
     }
   },
   {
@@ -146,8 +146,8 @@
     "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
     "pages": ["docs/site/technical/lifecycle.md"],
     "review": {
-      "reason": "Reviewed the equivalent optional ACP regular-file and symlink guard in Resources::from_root against lifecycle documentation. Fresh desktop Clippy, complete workspace tests, native checking and staged restart acceptance pass; private installation, owner lifetime and independent signed-platform gates remain unchanged.",
-      "fingerprint": "80e70ceb50bf3ea5024a73ae3cedacabb73c8cbf62a5b76c70bb257b69d3b59b"
+      "reason": "Reviewed shared native resource verification, complete Lapis helper staging and unchanged service ownership and paired JJ lifecycle.",
+      "fingerprint": "ad916d5efa57aa8b06d1b31cb9cffb9382ee0043f4f9ca345c5b0527fbb9cfc2"
     }
   },
   {
@@ -155,20 +155,19 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated OpenAPI against installation and type references. Regeneration adds already-committed repository deletion routes, outcomes and optional capability; store injection adds no wire fields or CLI commands.",
-      "fingerprint": "4daa374e592c3ba92a3c961416b8a46fe530d3c6261554084898ba3df762eba1"
+      "reason": "Reviewed the updated executable example path; public HTTP/RPC DTOs and command fields remain unchanged by local AI client adoption.",
+      "fingerprint": "dd01364c68a7d85e1126d388d8d6ffc657b78f448acc758d4d9a77531124ef2f"
     }
   },
   {
     "id": "local-compute",
     "sources": [
-      "runtime/compute/src",
-      "runtime/local-agent/src",
-      "runtime/local-agent/tools/src",
-      "runtime/local-agent/vendor/buzz-agent/src",
+      "crates/jj-store-server/src/agent_execution",
+      "scripts/lapis-ai.mjs",
       "scripts/agent-runtime-resources.mjs",
-      "runtime/compute/Cargo.toml",
-      "scripts/desktop-resources.mjs"
+      "scripts/desktop-resources.mjs",
+      "scripts/ci-lapis-source.mjs",
+      "scripts/lapis-ai-source.json"
     ],
     "pages": [
       "docs/local-compute.md",
@@ -176,8 +175,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed the maintained local-agent hint and bounded catalog simplifications, unchanged item ordering, lexical synthetic request lock and nonempty request-read assertion against the compute, agent and security guides. Permission/cancellation, backend credential custody, single-attempt metadata and uncertain-inference no-replay behavior retain their exact tests and contracts; native GGUF/live-provider/platform gates remain separate.",
-      "fingerprint": "f5cfbd9c2d6a1e666b27ae3315a2aa2998b1fd78839c8a591a6d1a4169d9a03e"
+      "reason": "Reviewed local Lapis AI path consumption, four-helper bundle preparation and final staging path, V3-only execution, preserved compute caches, identity and original receipts.",
+      "fingerprint": "95ebc9159207a32e8bddf7b1147da8ba33a33fc1c4106759955f39ff42bfdf91"
     }
   },
   {
@@ -217,8 +216,8 @@
       "docs/site/technical/architecture.md"
     ],
     "review": {
-      "reason": "Reviewed all five core traits, independently named factories, sealed selected participants and Git/native adapters against the standalone guide and executable external host. Guide retains host policy, runtime publication-group compatibility, immutable pins, exact preparation and original receipt recovery.",
-      "fingerprint": "956f40b1cd02e6643172e28d36a28ba8c6b518b3d50b65b8a9521f6bca878fba"
+      "reason": "Reviewed retained-source metadata validation: selected inventory preserves historical source snapshots while public active-closure reads remain pinned; published store interfaces and SDK usage are unchanged.",
+      "fingerprint": "f835f9680ef7237525f2e3780967db6c4932083fbfd4dce5ed66b1dc192059cc"
     }
   }
 ]

@@ -10,3 +10,5 @@
 - [history](history/index.md)
   {{#include history/SUMMARY.nav.md}}
 - [Main local qualification review](main-local-qualification.md)
+
+- [Lapis AI integration review](lapis-ai-review.md)

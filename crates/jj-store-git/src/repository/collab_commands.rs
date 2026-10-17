@@ -1,6 +1,7 @@
 use super::{LocalError, LocalRepository, LocalResult, collab_graph, collab_types::*};
 use crate::domain::{
-    AgentObjectV1, AgentSnapshotRead, CollabTargetReaderV1, ReviewObjectV1, ReviewSnapshotRead,
+    AgentObjectIo, AgentObjectV1, AgentSnapshotRead, CollabTargetReaderV1, ReviewObjectV1,
+    ReviewSnapshotRead,
 };
 use crate::metadata::{Domain, Preparation, PublishOutcome, Update};
 use jj_collab::*;
@@ -77,7 +78,8 @@ impl LocalRepository {
                             let AgentObjectV1::SessionSnapshot(snapshot) = agents
                                 .as_ref()
                                 .ok_or(LocalError::Unsupported)?
-                                .read_object(source.snapshot)
+                                .io
+                                .read_agent_object(source.snapshot)
                                 .await?
                             else {
                                 return Err(LocalError::NotFound);

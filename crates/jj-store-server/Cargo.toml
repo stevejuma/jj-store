@@ -10,6 +10,8 @@ homepage.workspace = true
 readme = "README.md"
 
 [dependencies]
+lapis-ai-runtime.workspace = true
+lapis-ai-config.workspace = true
 jj-collab.workspace = true
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp"] }
 pulldown-cmark = { version = "=0.13.4", default-features = false }

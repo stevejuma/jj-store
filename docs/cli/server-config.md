@@ -41,7 +41,7 @@ configuration file.
 
 ```toml
 [remote_agents]
-acp_executable = "/opt/jj-store/bin/jj-acp"
+acp_executable = "/opt/jj-store/lapis-ai/lapis-acp"
 jj_executable = "/opt/jj-store/bin/jj"
 
 [[remote_agents.agents]]

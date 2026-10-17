@@ -2,10 +2,9 @@
 
 JST-COMPAT-001, JST-COMPAT-003 and JST-COMPAT-005 retain their JJ 0.45.1,
 manifest-selected authority and embedded-RustFS requirements. Interactive
-execution adds strict installation-local HTTP schemas and control version 2
-without changing native object/manifest identity encodings. The private
-execution journal is installation state; it is not a repository format or
-authority.
+execution uses strict installation-local HTTP schemas and Control V3 without
+changing native object/manifest identity encodings. The private execution
+journal is installation state; it is not a repository format or authority.
 
 Read-only recorded_session_ids, workspace_name and workspace_operation are
 additive local status fields with legacy journal defaults. Stored projections
@@ -39,9 +38,9 @@ remain separate.
 M24 adds explicitly selected control version 3, warm workers, conversation homes
 and additive local status/binding fields with journal defaults. Canonical
 AgentStore and ThreadStore formats and manifest/ref-CAS authority remain
-unchanged. M23 version-2 qualification stays separate. Fleet fixture, installed
-adapters, native materialization and cold built-browser gates are recorded
-independently.
+unchanged. Historical M23 version-2 evidence stays separate; current M23/M24
+execution uses Control V3 exclusively. Fleet fixture, installed adapters, native
+materialization and cold built-browser gates are recorded independently.
 
 Workspace inspection adds strict typed read DTOs and private execution events
 for exact pre-dispatch snapshots. Legacy records missing a start boundary remain

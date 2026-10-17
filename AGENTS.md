@@ -197,11 +197,13 @@ successful state change or a distinct request establishes a new episode.
 
 ## Local execution
 
-Development launchers enable agent management using the bundled
-`desktop/resources/jj-acp` and paired custom `jj` by default on every restart.
-Missing or stale ACP resources fail preflight before stopping a running service.
-Stage control-version-3 resources with
-`pnpm desktop:prepare -- --acp-executable /absolute/path/to/jj-acp` when needed.
+Development launchers enable agent management using the verified Lapis AI bundle
+and paired custom `jj` by default on every restart. Keep the sibling `lapis-ai`
+checkout and run `pnpm ai:prepare` to build and stage all four helpers under
+`.local/lapis-ai`; packaged resources live under `desktop/resources/lapis-ai`.
+Missing or stale resources fail preflight before stopping a running service. All
+execution and model discovery use Control V3. Desktop preparation accepts
+`pnpm desktop:prepare -- --ai-bundle /absolute/path/to/verified-bundle`.
 Explicit `JJ_STORE_ACP_EXECUTABLE` and `JJ_STORE_AGENT_JJ_EXECUTABLE` overrides
 remain supported; ordinary restarts require no shell exports.
 

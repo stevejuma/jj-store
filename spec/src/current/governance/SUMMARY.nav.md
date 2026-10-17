@@ -20,3 +20,5 @@
 - [Local Stacks main-workspace integration](21-local-stacks-main-workspace-integration.md)
 - [Interactive agent execution qualification](22-interactive-agent-execution.md)
 - [Change map](spec-governance.md)
+
+- [Shared AI client integration](23-shared-ai-clients.md)

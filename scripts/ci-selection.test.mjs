@@ -112,7 +112,28 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
   const g = workspaceGraph();
   const inputs = sourceEdges(g);
   assert.deepEqual(inputs.uncertain, []);
-  assert.equal(cohortPackages(g, "ordinary").length, 17);
+  assert.deepEqual(cohortPackages(g, "ordinary"), [
+    "jj-agent",
+    "jj-collab",
+    "jj-forge",
+    "jj-review",
+    "jj-store-adapters",
+    "jj-store-core",
+    "jj-store-git",
+    "jj-store-http",
+    "jj-store-jj",
+    "jj-store-model",
+    "jj-store-native",
+    "jj-store-object",
+    "jj-store-read-index",
+    "jj-store-replication",
+    "jj-store-rpc",
+    "jj-store-service",
+    "jj-store-tantivy",
+    "jj-store-wal",
+    "jj-work",
+    "jj-workflow",
+  ]);
   assert.ok(cohortPackages(g, "ordinary").includes("jj-forge"));
   assert.deepEqual(
     impact(["crates/jj-store-read-index/src/lib.rs"], false, g, inputs)
@@ -126,7 +147,7 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     ],
   );
   const core = impact(["crates/jj-store-model/src/lib.rs"], false, g, inputs);
-  assert.equal(core.packages.length, 15);
+  assert.equal(core.packages.length, 18);
   assert.equal(core.web, true);
 });
 test("invalid metadata and invalid or partial cohort requests fail closed", () => {
@@ -247,4 +268,19 @@ test("Help and preview-tool dependencies select core UI acceptance", () => {
     "crates/jj-store-server/src/lib.rs",
   ])
     assert.equal(impact([path], false, g).web, true, path);
+});
+
+test("only the server may consume the explicitly named sibling AI client crates", () => {
+  const data = metadata(["jj-store-server"]);
+  data.packages[0].dependencies = [
+    { name: "lapis-ai-runtime", path: "/lapis-ai/crates/lapis-ai-runtime" },
+  ];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  data.packages[0].dependencies[0].path = "/untrusted/lapis-ai-runtime";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  data.packages[0].dependencies[0] = {
+    name: "lapis-compute",
+    path: "/lapis-ai/crates/lapis-compute",
+  };
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
 });

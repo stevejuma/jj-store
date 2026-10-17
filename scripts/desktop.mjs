@@ -1,4 +1,4 @@
-import { stageAgentResources } from "./agent-runtime-resources.mjs";
+import { prepareAi, selectedAiBundle, verifyAiBundle } from "./lapis-ai.mjs";
 import { stageDesktopResources } from "./desktop-resources.mjs";
 import { spawn } from "node:child_process";
 import { resolve, join } from "node:path";
@@ -14,7 +14,7 @@ const { positionals, values } = parseArgs({
     "rustfs-runtime": { type: "string" },
     "web-root": { type: "string" },
     "state-dir": { type: "string" },
-    "acp-executable": { type: "string" },
+    "ai-bundle": { type: "string" },
     "native-runtime-dir": { type: "string" },
     destination: { type: "string" },
   },
@@ -42,37 +42,15 @@ async function stage() {
   const destination = resolve(
     values.destination ?? join(root, "desktop/resources"),
   );
-  const acp = values["acp-executable"] ?? process.env.JJ_STORE_ACP_EXECUTABLE;
-  if (!acp)
-    throw Error("Provide the pinned jj-acp executable using --acp-executable");
+  const bundle = resolve(values["ai-bundle"] ?? (await selectedAiBundle(root)));
+  await verifyAiBundle(bundle);
   await stageDesktopResources({
     target,
     runtime,
     web,
     destination,
-    acp: resolve(acp),
+    aiBundle: bundle,
   });
-  await stageAgentResources(
-    destination,
-    {
-      "jj-acp": resolve(acp),
-      "jj-store-local-agent": join(
-        root,
-        "runtime/local-agent/target/debug/jj-store-local-agent",
-      ),
-      "jj-store-agent-tools": join(
-        root,
-        "runtime/local-agent/target/debug/jj-store-agent-tools",
-      ),
-      "jj-store-compute": join(
-        root,
-        "runtime/compute/target/debug/jj-store-compute",
-      ),
-    },
-    values["native-runtime-dir"]
-      ? resolve(values["native-runtime-dir"])
-      : undefined,
-  );
 }
 if (mode === "prepare") {
   await run("pnpm", ["web:build"]);
@@ -83,19 +61,8 @@ if (mode === "prepare") {
     "runtime/embedded-rustfs/Cargo.toml",
     "--locked",
   ]);
-  await run("cargo", [
-    "build",
-    "--manifest-path",
-    "runtime/local-agent/Cargo.toml",
-    "--workspace",
-    "--locked",
-  ]);
-  await run("cargo", [
-    "build",
-    "--manifest-path",
-    "runtime/compute/Cargo.toml",
-    "--locked",
-  ]);
+  if (!values["ai-bundle"])
+    await prepareAi({ nativeRuntime: values["native-runtime-dir"] });
   await stage();
 } else if (mode === "stage") await stage();
 else if (mode === "check")

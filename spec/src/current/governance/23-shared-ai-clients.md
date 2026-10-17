@@ -1,0 +1,25 @@
+# Shared AI client integration
+
+E-LAPIS-AI-001 moves shared native agent/compute implementation to the owning
+Lapis AI repository and links its local public Rust clients. Only server
+composition and desktop resource verification consume those clients. Storage,
+model and WAL have no inference/controller edge. CI admits only the two named
+sibling client paths for the server, retaining fail-closed unknown-dependency
+checks. Current runtime paths use Control V3; historical normalization
+identities and evidence remain retained.
+
+The duplicated local-agent and compute Cargo roots are retired. Build storage
+tracks the remaining owning roots; the sibling Lapis AI repository maintains its
+own outputs. Application configuration, journals, admission, credentials and
+publication remain owned by jj-store. Crate-root READMEs give short orientation
+and usage; the manual and canonical specification retain full documentation.
+
+Development HMR readiness allows a bounded 60-second native startup window for
+complete helper and native-artifact verification before the backend serves.
+Missing resources still fail preflight before stopping an existing service.
+
+JST-GOV-002/003/004/011 require actual shared-package and consumer validation,
+including focused source regressions and cold application lifecycle evidence.
+M23's historical evidence is retained, while M24/M25 adapter and packaged
+platform qualification remain independently gated. Local source consumption is
+temporary; publication and a future crates.io switch require separate work.

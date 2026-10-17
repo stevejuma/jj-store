@@ -22,7 +22,7 @@ async fn runtime_receipts_recover_without_execution_or_automatic_install_replay(
     assert_eq!(local.state, "bundle_needed");
     assert!(local.action.is_none());
     let bin = resources.executable.parent().unwrap();
-    for name in ["jj-store-local-agent", "jj-store-agent-tools"] {
+    for name in ["lapis-agent", "lapis-agent-tools"] {
         fs::write(bin.join(name), "fixture companion").unwrap();
     }
     let bundled = supervisor.runtime_status(actor).await.unwrap();
@@ -47,7 +47,7 @@ async fn runtime_receipts_recover_without_execution_or_automatic_install_replay(
             .label,
         "JJ Agent"
     );
-    fs::remove_file(bin.join("jj-store-agent-tools")).unwrap();
+    fs::remove_file(bin.join("lapis-agent-tools")).unwrap();
     assert_eq!(
         supervisor
             .runtime_status(actor)

@@ -40,7 +40,9 @@ export function start(
 }
 
 export async function ready(origin) {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
+  // Native startup verifies the full helper/native bundle before serving.
+  const deadline = performance.now() + 60_000;
+  while (performance.now() < deadline) {
     try {
       const response = await fetch(`${origin}v1/bootstrap`, {
         headers: {

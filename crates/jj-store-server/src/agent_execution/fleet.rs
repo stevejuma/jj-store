@@ -2,7 +2,7 @@
 use super::*;
 use jj_store_service::agent_execution::fleet::{Control, LiveAgent};
 use std::process::Stdio;
-use tokio::{io::BufReader, process::Command};
+use tokio::process::Command;
 pub(super) struct Worker {
     pub configuration: String,
     pub inference_host: Option<String>,
@@ -183,7 +183,7 @@ impl Supervisor {
         for session in ids {
             let _ = self.send(
                 &session,
-                json!({"version":2,"type":"close","requestId":"stop-agent"}),
+                json!({"version":3,"type":"close","requestId":"stop-agent"}),
             );
         }
         Ok(())
@@ -310,7 +310,6 @@ impl Supervisor {
             .transpose()?;
         let root = self.0.resources.root.join("workspaces");
         let mut command = Command::new(&self.0.resources.executable);
-        command.arg("serve");
         self.launch_environment(&mut command, &setup)?;
         self.local_launch(&mut command, &setup, true).await?;
         self.register_launch_secrets(&command, &setup)?;
@@ -330,6 +329,30 @@ impl Supervisor {
             .chatgpt_launch(&mut command, &setup, id, generation)
             .await?;
         self.register_launch_secrets(&command, &setup)?;
+        command
+            .env("PATH", paths)
+            .args(["--runner", &setup.runner, "--cwd"])
+            .arg(&root)
+            .args([
+                "--queue-capacity",
+                "64",
+                "--idle-timeout",
+                "300",
+                "--max-turn-duration",
+                "3600",
+                "--cancel-grace",
+                "2",
+                "--reap-timeout",
+                "2",
+            ])
+            .current_dir(&root)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .kill_on_drop(true);
+        #[cfg(unix)]
+        command.process_group(0);
+        let child = native_runtime::start(&command).await?;
         let mut workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;
         if workers.get(id).is_some_and(|w| !w.sender.is_closed()) {
             self.0.chatgpt.revoke_worker(id, Some(generation));
@@ -353,30 +376,6 @@ impl Supervisor {
             return Err(Error::Limit);
         }
 
-        command
-            .env("PATH", paths)
-            .args(["--control-version", "3", "--runner", &setup.runner, "--cwd"])
-            .arg(&root)
-            .args([
-                "--queue-capacity",
-                "64",
-                "--idle-timeout",
-                "300",
-                "--max-turn-duration",
-                "3600",
-                "--cancel-grace",
-                "2",
-                "--reap-timeout",
-                "2",
-            ])
-            .current_dir(&root)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::null())
-            .kill_on_drop(true);
-        #[cfg(unix)]
-        command.process_group(0);
-        let child = command.spawn().map_err(|_| Error::Unavailable)?;
         let (sender, receiver) = mpsc::channel(64);
         let (stop, stopping) = tokio::sync::watch::channel(false);
         workers.insert(
@@ -413,20 +412,19 @@ impl Supervisor {
         &self,
         id: &str,
         generation: u64,
-        child: tokio::process::Child,
+        child: lapis_ai_runtime::AcpClient,
         mut commands: mpsc::Receiver<Value>,
         mut stopping: tokio::sync::watch::Receiver<bool>,
     ) {
-        let mut child = runtime::OwnedChild(child);
+        let mut child = child;
         let mut failure_code = None;
         let result: Result<()> = async {
-            let mut input=child.0.stdin.take().ok_or(Error::Unavailable)?;
-            let mut output=BufReader::new(child.0.stdout.take().ok_or(Error::Unavailable)?);
+            let input=child.commands();
+            native_runtime::send(&input,json!({"version":3,"type":"warm","requestId":format!("warm-{id}-{generation}")})).await?;
             let startup=tokio::time::sleep(Duration::from_secs(90));tokio::pin!(startup);
             let mut warmed=false;
             let mut closing=false;
             let deadline=tokio::time::sleep(Duration::from_secs(3600));tokio::pin!(deadline);
-            let mut bytes=Vec::new();
             let mut stream=super::conversation_frames::Stream::default();
             let mut prompts=super::workspace_turns::PromptQueue::default();
             let mut workspace_lease = None;
@@ -440,7 +438,7 @@ impl Supervisor {
                         retry_at = tokio::time::Instant::now() + Duration::from_millis(100);
                     } else if let Ok((prepared, lease)) = result {
                         workspace_lease = Some(lease);
-                        runtime::write(&mut input,prepared).await?;
+                        native_runtime::send(&input,prepared).await?;
                     } else {
                         let session=frame["sessionId"].as_str().ok_or(Error::Invalid)?;
                         let request=frame["requestId"].as_str().ok_or(Error::Invalid)?;
@@ -456,7 +454,7 @@ impl Supervisor {
                 _ = tokio::time::sleep_until(retry_at), if !closing && !prompts.is_active() && prompts.has_pending() => {},
                 _=stopping.changed(),if !closing => {
                     closing=true;deadline.as_mut().reset(tokio::time::Instant::now()+Duration::from_secs(15));
-                    runtime::write(&mut input,json!({"version":3,"type":"close","requestId":format!("stop-{id}")})).await?;
+                    native_runtime::send(&input,json!({"version":3,"type":"close","requestId":format!("stop-{id}")})).await?;
                 },
                 _=&mut deadline,if closing => return Err(Error::Unavailable),
                 _=&mut startup,if !warmed => return Err(Error::Unavailable),
@@ -479,17 +477,16 @@ impl Supervisor {
                         continue;
                     }
                     if frame["type"]=="close" { closing=true;deadline.as_mut().reset(tokio::time::Instant::now()+Duration::from_secs(15)); }
-                    runtime::write(&mut input,frame).await?;
+                    native_runtime::send(&input,frame).await?;
                 },
-                line=runtime::bounded_line(&mut output,&mut bytes)=> {
-                    if !line? { return Err(Error::Unavailable); }
-                    let frame: Value=serde_json::from_slice(&bytes).map_err(|_|Error::Unavailable)?;bytes.clear();
+                frame=child.next(Duration::from_secs(86400))=> {
+                    let frame = frame.map_err(|_|Error::Unavailable)?;
                     if frame["version"]!=3 {return Err(Error::Unavailable);}
                     if frame["sessionId"].is_string(){
                         self.touch_worker(id,generation);
                         self.conversation_frame(id,generation,frame.clone(),&mut stream).await?;
                         prompts.completed(&frame);
-                        // These failures tear down the adapter inside jj-acp. Its
+                        // These failures tear down the adapter inside lapis-acp. Its
                         // control process may remain alive, but it is no longer warm.
                         if frame["type"] == "error" && matches!(frame["code"].as_str(),
                             Some("timed_out" | "agent_exited" | "protocol_error" | "cancelled")) {
@@ -500,7 +497,6 @@ impl Supervisor {
                         continue;
                     }
                     match frame["type"].as_str() {
-                        Some("ready")=>runtime::write(&mut input,json!({"version":3,"type":"warm","requestId":format!("warm-{id}-{generation}")})).await?,
                         Some("warmed")=>{warmed=true;self.worker_state(id,generation,"idle",None);},
                         Some("closed") if frame["confirmedStopped"]==true => return Ok(()),
                         Some("error")=>return Err(Error::Unavailable),
@@ -509,7 +505,7 @@ impl Supervisor {
                 }
             } }
         }.await;
-        child.stop().await;
+        let _ = child.shutdown().await;
         self.0.chatgpt.revoke_worker(id, Some(generation));
         let _ = self.interrupt_participations(id, generation);
         self.worker_state(

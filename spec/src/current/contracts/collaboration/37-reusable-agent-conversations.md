@@ -1,6 +1,6 @@
 # Reusable agents and contextual conversations
 
-M24 extends M23 with explicitly selected jj-acp control version 3. M23's prior
+M24 extends M23 with explicitly selected Lapis ACP Control V3. M23's prior
 qualification remains unchanged. A saved agent is installation-wide; its worker
 is initialized independently of sessions. Start warms in place with no prompt,
 repository or workspace. Stop retains history/workspaces and disables background

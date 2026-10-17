@@ -14,3 +14,9 @@ See [desktop development](../docs/desktop-development.md) for staging, tests,
 lifecycle and terminal details, and
 [process lifecycle](../docs/site/technical/lifecycle.md) for the application
 host model.
+
+The desktop stages a verified Lapis AI helper bundle built from the sibling
+checkout. Run `pnpm ai:prepare` or let `pnpm desktop:prepare` build it. Native
+resource verification uses the locally linked shared Rust crate. Agent and
+compute requests continue through the owned server API. See
+[local compute](../docs/local-compute.md) for bundle selection and lifecycle.
