@@ -55,3 +55,18 @@ Provider-neutral requests may retain an existing native publication identity and
 outcomes retain exact provider receipts for adaptation without identity
 synthesis. Git factories reject native publication identities rather than
 silently dropping them.
+
+The loader seals a private registry of the actual selected participants after
+all factories are bound. Store handles are exposed through immutable accessors;
+post-load field replacement cannot retain a stale built-in participant. A
+cross-domain command requires the selected source's compatible runtime provider
+capability and fresh source admission before staging. Disabled, unbound or
+incompatible sources fail explicitly. Ordinary independent commands load no
+unrelated current source domain. Retained immutable dependency inventories still
+receive their full historical closure audit.
+
+Sharing a publication capability is an implementation contract: participants
+must use the same domain representations, captured source selections and atomic
+publication semantics. Wrappers may delegate that capability; an unrelated store
+cannot claim compatibility from matching names or scope strings. Separately
+authorized repository-review references retain their explicit reader capability.

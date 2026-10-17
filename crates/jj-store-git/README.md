@@ -23,7 +23,7 @@ custom_work::register(&mut factories, "custom")?;
 let mut config = jj_store_core::StoreConfig::all("git");
 config.enable(jj_store_core::StoreKind::Work, "custom");
 let stores = factories.loader().open(&config, context)?;
-let work = stores.work.as_ref().unwrap().snapshot().await?;
+let work = stores.work().unwrap().snapshot().await?;
 ```
 
 Use `RepositoryStores::execute_agent` for capture with a Thread binding. It

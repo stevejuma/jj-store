@@ -4,6 +4,7 @@ use crate::domain::{
 };
 use crate::metadata::{Domain, Preparation, PublishOutcome, Update};
 use jj_collab::*;
+use jj_store_core::{StoreKind, reaction_source_store, thread_source_stores};
 use jj_store_model as m;
 
 impl LocalRepository {
@@ -19,6 +20,13 @@ impl LocalRepository {
         qualified: Option<&dyn QualifiedReviewRead>,
     ) -> LocalResult<LocalCollabOutcome> {
         request.validate()?;
+        let sources = match &request.command {
+            LocalCollabCommand::Thread { intent } => thread_source_stores(intent),
+            LocalCollabCommand::Reaction { intent } => {
+                reaction_source_store(intent.target()).into_iter().collect()
+            }
+            LocalCollabCommand::Emoji { .. } => Default::default(),
+        };
         self.check_identity(self.metadata.read()?.as_ref())?;
         let actor = self.ensure_actor()?;
         let proposed = Self::proposed_repository()?;
@@ -37,18 +45,40 @@ impl LocalRepository {
                 return receipt(value);
             }
             let repository = pin.as_ref().map_or(proposed, |s| s.repository());
-            let mut threads = self.thread_store_at(pin.as_ref()).await?;
-            let mut reactions = self.reaction_store_at(pin.as_ref(), repository).await?;
-            let agents = self.agent_store_at(pin.as_ref(), repository).await?;
-            let reviews = self.review_store_at(pin.as_ref(), repository).await?;
+            let mut threads = if matches!(request.command, LocalCollabCommand::Thread { .. })
+                || sources.contains(&StoreKind::Thread)
+            {
+                Some(self.thread_store_at(pin.as_ref()).await?)
+            } else {
+                None
+            };
+            let mut reactions = if !matches!(request.command, LocalCollabCommand::Thread { .. }) {
+                Some(self.reaction_store_at(pin.as_ref(), repository).await?)
+            } else {
+                None
+            };
+            let agents = if sources.contains(&StoreKind::Agent) {
+                Some(self.agent_store_at(pin.as_ref(), repository).await?)
+            } else {
+                None
+            };
+            let reviews = if sources.contains(&StoreKind::Review) {
+                Some(self.review_store_at(pin.as_ref(), repository).await?)
+            } else {
+                None
+            };
             let (domain, bytes, retained, result) = match &request.command {
                 LocalCollabCommand::Thread { intent: command } => {
+                    let threads = threads.as_mut().ok_or(LocalError::Corrupt)?;
                     if let ThreadCommandV1::SetMetadata { value, .. } = command
                         && !value.source_refs().is_empty()
                     {
                         for source in value.source_refs() {
-                            let AgentObjectV1::SessionSnapshot(snapshot) =
-                                agents.read_object(source.snapshot).await?
+                            let AgentObjectV1::SessionSnapshot(snapshot) = agents
+                                .as_ref()
+                                .ok_or(LocalError::Unsupported)?
+                                .read_object(source.snapshot)
+                                .await?
                             else {
                                 return Err(LocalError::NotFound);
                             };
@@ -58,8 +88,12 @@ impl LocalRepository {
                         }
                     }
                     if let ThreadCommandV1::CreateAgentDiscussion { target, .. } = command {
-                        let reader =
-                            CollabTargetReaderV1::new(repository, None, Some(&agents), None)?;
+                        let reader = CollabTargetReaderV1::new(
+                            repository,
+                            None,
+                            agents.as_ref().map(|v| v as &dyn AgentSnapshotRead),
+                            None,
+                        )?;
                         resolve_reaction_target(&reader, target).await?;
                     }
                     if !command.conversation_sources().is_empty()
@@ -68,8 +102,8 @@ impl LocalRepository {
                         let reader = CollabTargetReaderV1::new(
                             repository,
                             Some((threads.state.root.clone(), &threads.graph)),
-                            Some(&agents),
-                            Some(&reviews),
+                            agents.as_ref().map(|v| v as &dyn AgentSnapshotRead),
+                            reviews.as_ref().map(|v| v as &dyn ReviewSnapshotRead),
                         )?
                         .with_qualified_reviews(qualified);
                         for source in command.conversation_sources() {
@@ -86,7 +120,7 @@ impl LocalRepository {
                             resolve_reaction_target(&reader, target).await?;
                         }
                     }
-                    validate_link(command, &agents, &reviews).await?;
+                    validate_link(command, agents.as_ref(), reviews.as_ref()).await?;
                     let (root, result) = threads.state.apply(
                         command,
                         actor,
@@ -111,22 +145,31 @@ impl LocalRepository {
                     )
                 }
                 LocalCollabCommand::Reaction { intent: command } => {
-                    let work = self.work_state(pin.as_ref())?;
-                    let reader = CollabTargetReaderV1::new(
+                    let reactions = reactions.as_mut().ok_or(LocalError::Corrupt)?;
+                    let work = if sources.contains(&StoreKind::Work) {
+                        Some(self.work_state(pin.as_ref())?)
+                    } else {
+                        None
+                    };
+                    let mut reader = CollabTargetReaderV1::new(
                         repository,
-                        Some((threads.state.root.clone(), &threads.graph)),
-                        Some(&agents),
-                        Some(&reviews),
+                        threads.as_ref().map(|v| (v.state.root.clone(), &v.graph)),
+                        agents.as_ref().map(|v| v as &dyn AgentSnapshotRead),
+                        reviews.as_ref().map(|v| v as &dyn ReviewSnapshotRead),
                     )?
-                    .with_work(repository, &work)?;
+                    .with_qualified_reviews(qualified);
+                    if let Some(work) = &work {
+                        reader = reader.with_work(repository, work)?;
+                    }
                     resolve_reaction_target(&reader, command.target()).await?;
-                    for reference in threads
-                        .graph
-                        .closure(command.target().collab_dependencies())?
-                    {
-                        let object = threads.graph.get(reference)?.clone();
-                        if reactions.graph.stage(object)? != reference {
-                            return Err(LocalError::Corrupt);
+                    let dependencies = command.target().collab_dependencies();
+                    if !dependencies.is_empty() {
+                        let threads = threads.as_ref().ok_or(LocalError::Unsupported)?;
+                        for reference in threads.graph.closure(dependencies)? {
+                            let object = threads.graph.get(reference)?.clone();
+                            if reactions.graph.stage(object)? != reference {
+                                return Err(LocalError::Corrupt);
+                            }
                         }
                     }
                     let (root, result) = reactions.state.apply(
@@ -154,6 +197,7 @@ impl LocalRepository {
                     )
                 }
                 LocalCollabCommand::Emoji { intent: command } => {
+                    let reactions = reactions.as_mut().ok_or(LocalError::Corrupt)?;
                     let (root, version) =
                         reactions
                             .state
@@ -222,8 +266,8 @@ impl LocalRepository {
 }
 async fn validate_link(
     command: &ThreadCommandV1,
-    agents: &super::LocalAgentStore,
-    reviews: &super::LocalReviewStore,
+    agents: Option<&super::LocalAgentStore>,
+    reviews: Option<&super::LocalReviewStore>,
 ) -> LocalResult<()> {
     let ThreadCommandV1::Link { target, .. } = command else {
         return Ok(());
@@ -236,6 +280,7 @@ async fn validate_link(
             ..
         } => {
             agents
+                .ok_or(LocalError::Unsupported)?
                 .reads()
                 .validate_capture_gap(*source_state, *event_batch)
                 .await?;
@@ -246,6 +291,7 @@ async fn validate_link(
             snapshot,
             ..
         } => {
+            let agents = agents.ok_or(LocalError::Unsupported)?;
             let selected = agents
                 .lookup(
                     crate::domain::AgentCatalogKind::Sessions,
@@ -268,6 +314,7 @@ async fn validate_link(
             review_id,
             snapshot,
         } => {
+            let reviews = reviews.ok_or(LocalError::Unsupported)?;
             let selected = reviews
                 .lookup(
                     crate::domain::ReviewCatalogKind::Threads,
@@ -296,7 +343,10 @@ async fn validate_link(
                 return Err(LocalError::Unsupported);
             }
             if let Some(reference) = evidence {
-                agents.read_object(*reference).await?;
+                agents
+                    .ok_or(LocalError::Unsupported)?
+                    .read_object(*reference)
+                    .await?;
             }
         }
     }

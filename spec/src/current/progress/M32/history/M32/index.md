@@ -12,6 +12,10 @@ not a completion gate selection.
 [E-CRATE-READMES-001](../../../../../history/2026/10/17/E-CRATE-READMES-001/index.md)
 | 2026-10-17 | pass | Original outcome |
 
+|
+[E-INJECTABLE-STORES-003](../../../../../history/2026/10/17/E-INJECTABLE-STORES-003/index.md)
+| 2026-10-17 | pass | Original outcome |
+
 <!-- generated-navigation -->
 
 ## Pages

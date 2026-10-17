@@ -6,8 +6,13 @@ use crate::{Error, Result};
 pub use commands::*;
 pub use factories::*;
 use jj_store_model::{PrincipalId, RepositoryId, RequestId};
-use std::{collections::BTreeSet, sync::Arc};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    sync::{Arc, OnceLock},
+};
 pub use traits::*;
+mod sources;
+pub use sources::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum StoreKind {
@@ -57,14 +62,49 @@ pub trait StoreHost: Send + Sync {
 pub struct StoreContext {
     pub scope: PublicationScope,
     pub host: Arc<dyn StoreHost>,
-    pub enabled: BTreeSet<StoreKind>,
+    enabled: BTreeSet<StoreKind>,
+    participants: Arc<OnceLock<BTreeMap<StoreKind, Option<Arc<PublicationGroup>>>>>,
 }
 impl StoreContext {
+    pub fn new(scope: PublicationScope, host: Arc<dyn StoreHost>) -> Self {
+        Self {
+            scope,
+            host,
+            enabled: BTreeSet::new(),
+            participants: Arc::new(OnceLock::new()),
+        }
+    }
+
     pub async fn admit(&self, kind: StoreKind, access: Access) -> Result<()> {
         if !self.enabled.contains(&kind) {
             return Err(Error::Unsupported("store disabled"));
         }
         self.host.authorize(kind, access).await
+    }
+
+    /// Admit only source implementations selected by this loader assembly.
+    pub async fn admit_sources<I>(
+        &self,
+        group: &Arc<PublicationGroup>,
+        sources: I,
+        access: Access,
+    ) -> Result<()>
+    where
+        I: IntoIterator<Item = StoreKind> + Send,
+        I::IntoIter: Send,
+    {
+        let selected = self
+            .participants
+            .get()
+            .ok_or(Error::Unsupported("unbound source participants"))?;
+        for kind in sources {
+            match selected.get(&kind).and_then(Option::as_ref) {
+                Some(source) if Arc::ptr_eq(source, group) => {}
+                _ => return Err(Error::Unsupported("incompatible or disabled source store")),
+            }
+            self.admit(kind, access).await?;
+        }
+        Ok(())
     }
 }
 #[derive(Clone, Debug)]

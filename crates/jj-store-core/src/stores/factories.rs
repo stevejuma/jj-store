@@ -66,11 +66,11 @@ pub struct StoreLoader<'a> {
 }
 #[derive(Default)]
 pub struct RepositoryStores {
-    pub agent: Option<Arc<dyn AgentStore>>,
-    pub work: Option<Arc<dyn WorkStore>>,
-    pub review: Option<Arc<dyn ReviewStore>>,
-    pub thread: Option<Arc<dyn ThreadStore>>,
-    pub reaction: Option<Arc<dyn ReactionStore>>,
+    agent: Option<Arc<dyn AgentStore>>,
+    work: Option<Arc<dyn WorkStore>>,
+    review: Option<Arc<dyn ReviewStore>>,
+    thread: Option<Arc<dyn ThreadStore>>,
+    reaction: Option<Arc<dyn ReactionStore>>,
 }
 impl StoreLoader<'_> {
     pub fn open(
@@ -79,6 +79,7 @@ impl StoreLoader<'_> {
         mut context: StoreContext,
     ) -> Result<RepositoryStores> {
         context.enabled = config.enabled();
+        context.participants = Arc::new(std::sync::OnceLock::new());
         // Resolve every name before invoking any factory.
         for (kind, name) in &config.implementations {
             let exists = match kind {
@@ -111,10 +112,43 @@ impl StoreLoader<'_> {
                 StoreKind::Reaction => load!(reaction),
             }
         }
+        let mut participants = BTreeMap::new();
+        macro_rules! participant {
+            ($kind:ident, $field:ident) => {
+                if let Some(store) = &stores.$field {
+                    participants.insert(StoreKind::$kind, store.publication_group());
+                }
+            };
+        }
+        participant!(Agent, agent);
+        participant!(Work, work);
+        participant!(Review, review);
+        participant!(Thread, thread);
+        participant!(Reaction, reaction);
+        context
+            .participants
+            .set(participants)
+            .map_err(|_| Error::Invalid("source participants already bound"))?;
         Ok(stores)
     }
 }
 impl RepositoryStores {
+    pub fn agent(&self) -> Option<&Arc<dyn AgentStore>> {
+        self.agent.as_ref()
+    }
+    pub fn work(&self) -> Option<&Arc<dyn WorkStore>> {
+        self.work.as_ref()
+    }
+    pub fn review(&self) -> Option<&Arc<dyn ReviewStore>> {
+        self.review.as_ref()
+    }
+    pub fn thread(&self) -> Option<&Arc<dyn ThreadStore>> {
+        self.thread.as_ref()
+    }
+    pub fn reaction(&self) -> Option<&Arc<dyn ReactionStore>> {
+        self.reaction.as_ref()
+    }
+
     pub fn require_shared_publication(&self, kinds: &[StoreKind]) -> Result<()> {
         let mut previous: Option<&dyn StoreBinding> = None;
         for kind in kinds {
@@ -145,6 +179,9 @@ impl RepositoryStores {
             .as_ref()
             .ok_or(Error::Unsupported("AgentStore disabled"))?;
         if request.command.has_thread_binding() {
+            if let Some(outcome) = agent.replay(request).await? {
+                return Ok(outcome);
+            }
             let thread = self
                 .thread
                 .as_ref()

@@ -1,11 +1,8 @@
 use jj_store_core::*;
 use jj_store_model::{PrincipalId, RequestId};
-use std::{
-    collections::BTreeSet,
-    sync::{
-        Arc,
-        atomic::{AtomicUsize, Ordering},
-    },
+use std::sync::{
+    Arc,
+    atomic::{AtomicUsize, Ordering},
 };
 
 struct Host;
@@ -22,14 +19,13 @@ impl StoreHost for Host {
     }
 }
 fn context() -> StoreContext {
-    StoreContext {
-        scope: PublicationScope {
+    StoreContext::new(
+        PublicationScope {
             repository: None,
             authority: "test-repository".into(),
         },
-        host: Arc::new(Host),
-        enabled: BTreeSet::new(),
-    }
+        Arc::new(Host),
+    )
 }
 struct ExternalWork {
     context: StoreContext,
@@ -98,12 +94,12 @@ async fn external_factory_is_independent_and_loading_never_reads_or_initializes(
     let stores = factories.loader().open(&config, context()).unwrap();
     assert_eq!(calls.load(Ordering::SeqCst), 0);
     assert!(
-        stores.agent.is_none()
-            && stores.review.is_none()
-            && stores.thread.is_none()
-            && stores.reaction.is_none()
+        stores.agent().is_none()
+            && stores.review().is_none()
+            && stores.thread().is_none()
+            && stores.reaction().is_none()
     );
-    let work = stores.work.as_ref().unwrap();
+    let work = stores.work().unwrap();
     assert!(work.snapshot().await.unwrap().data.projects.is_empty());
     assert_eq!(calls.load(Ordering::SeqCst), 1);
     assert!(matches!(
@@ -159,7 +155,7 @@ fn provider_binding_mismatch_and_disabled_stores_fail_closed() {
     ));
     config.disable(StoreKind::Work);
     let stores = factories.loader().open(&config, context()).unwrap();
-    assert!(stores.work.is_none());
+    assert!(stores.work().is_none());
     assert!(
         PublicationScope {
             repository: None,

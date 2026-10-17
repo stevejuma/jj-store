@@ -125,55 +125,8 @@ impl GitStore {
         request: &StoreRequest<AgentCommand>,
     ) -> Result<StoreOutcome<AgentResult>> {
         self.context.admit(StoreKind::Agent, Access::Write).await?;
-        reject_native_identity(request)?;
-        let command = match &request.command {
-            AgentCommand::Prepared { .. } => {
-                return Err(Error::Unsupported(
-                    "native prepared agent delta in Git provider",
-                ));
-            }
-            AgentCommand::Initialize => LocalAgentCommand::Initialize,
-            AgentCommand::Capture {
-                profile,
-                batch,
-                binding: None,
-            } => LocalAgentCommand::Capture {
-                profile: profile.clone(),
-                batch: batch.clone(),
-            },
-            AgentCommand::Capture {
-                profile,
-                batch,
-                binding: Some(binding),
-            } => LocalAgentCommand::BoundCapture {
-                profile: profile.clone(),
-                batch: batch.clone(),
-                binding: binding.clone(),
-            },
-            AgentCommand::Provenance {
-                expected,
-                object,
-                evidence,
-            } => LocalAgentCommand::Provenance {
-                expected: *expected,
-                object: object.clone(),
-                evidence: evidence
-                    .iter()
-                    .map(|e| LocalCodeEvidenceV1 {
-                        reference: e.reference.clone(),
-                        bytes: e.bytes.clone(),
-                    })
-                    .collect(),
-            },
-        };
-        let outcome = self
-            .repository
-            .apply_agent_command(&LocalAgentRequest {
-                version: 1,
-                request_id: request.request_id,
-                command,
-            })
-            .await?;
+        let local = local_agent_request(request)?;
+        let outcome = self.repository.apply_agent_command(&local).await?;
         self.context.admit(StoreKind::Agent, Access::Write).await?;
         agent_outcome(outcome)
     }
@@ -182,19 +135,90 @@ impl GitStore {
         request: RequestId,
         command: LocalCollabCommand,
         kind: StoreKind,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
     ) -> Result<StoreOutcome<jj_collab::CollabCommandResultV1>> {
         self.context.admit(kind, Access::Write).await?;
+        let local = LocalCollabRequest {
+            version: 1,
+            request_id: request,
+            command,
+        };
+        let prior = self.repository.collab_command_status(request)?;
+        if let LocalCollabOutcome::Committed { receipt } = &prior {
+            if local.intent_for(receipt.actor)? != receipt.intent {
+                return Err(Error::IntentConflict);
+            }
+            self.context.admit(kind, Access::Write).await?;
+            return collab_outcome(prior, kind);
+        }
+        let sources = match &local.command {
+            LocalCollabCommand::Thread { intent } => thread_source_stores(intent),
+            LocalCollabCommand::Reaction { intent } => {
+                reaction_source_store(intent.target()).into_iter().collect()
+            }
+            LocalCollabCommand::Emoji { .. } => Default::default(),
+        };
+        self.context
+            .admit_sources(&self.group, sources.clone(), Access::Read)
+            .await?;
         let outcome = self
             .repository
-            .apply_collab_command(&LocalCollabRequest {
-                version: 1,
-                request_id: request,
-                command,
-            })
+            .apply_collab_command_with_reviews(&local, qualified)
             .await?;
         self.context.admit(kind, Access::Write).await?;
+        self.context
+            .admit_sources(&self.group, sources, Access::Read)
+            .await?;
         collab_outcome(outcome, kind)
     }
+}
+fn local_agent_request(request: &StoreRequest<AgentCommand>) -> Result<LocalAgentRequest> {
+    reject_native_identity(request)?;
+    let command = match &request.command {
+        AgentCommand::Prepared { .. } => {
+            return Err(Error::Unsupported(
+                "native prepared agent delta in Git provider",
+            ));
+        }
+        AgentCommand::Initialize => LocalAgentCommand::Initialize,
+        AgentCommand::Capture {
+            profile,
+            batch,
+            binding: None,
+        } => LocalAgentCommand::Capture {
+            profile: profile.clone(),
+            batch: batch.clone(),
+        },
+        AgentCommand::Capture {
+            profile,
+            batch,
+            binding: Some(binding),
+        } => LocalAgentCommand::BoundCapture {
+            profile: profile.clone(),
+            batch: batch.clone(),
+            binding: binding.clone(),
+        },
+        AgentCommand::Provenance {
+            expected,
+            object,
+            evidence,
+        } => LocalAgentCommand::Provenance {
+            expected: *expected,
+            object: object.clone(),
+            evidence: evidence
+                .iter()
+                .map(|e| LocalCodeEvidenceV1 {
+                    reference: e.reference.clone(),
+                    bytes: e.bytes.clone(),
+                })
+                .collect(),
+        },
+    };
+    Ok(LocalAgentRequest {
+        version: 1,
+        request_id: request.request_id,
+        command,
+    })
 }
 fn reject_native_identity<C>(request: &StoreRequest<C>) -> Result<()> {
     if request.publication_id.is_some() {
@@ -206,12 +230,34 @@ fn reject_native_identity<C>(request: &StoreRequest<C>) -> Result<()> {
 }
 #[async_trait::async_trait]
 impl AgentStore for GitStore {
+    async fn replay(
+        &self,
+        request: &StoreRequest<AgentCommand>,
+    ) -> Result<Option<StoreOutcome<AgentResult>>> {
+        self.context.admit(StoreKind::Agent, Access::Write).await?;
+        let local = local_agent_request(request)?;
+        let prior = self.repository.agent_command_status(request.request_id)?;
+        match &prior {
+            LocalAgentOutcome::Committed { receipt } => {
+                if local.intent_for(receipt.actor)? != receipt.intent {
+                    return Err(Error::IntentConflict);
+                }
+            }
+            LocalAgentOutcome::NotKnown { .. } => return Ok(None),
+            LocalAgentOutcome::OutcomeUnknown { .. } => {}
+        }
+        self.context.admit(StoreKind::Agent, Access::Write).await?;
+        Ok(Some(agent_outcome(prior)?))
+    }
     async fn prepare_with_thread(
         &self,
         request: &StoreRequest<AgentCommand>,
         thread: &dyn ThreadStore,
     ) -> Result<StoreRequest<AgentCommand>> {
         require_atomic_participants(self, thread)?;
+        self.context
+            .admit_sources(&self.group, [StoreKind::Thread], Access::Write)
+            .await?;
         Ok(request.clone())
     }
 
@@ -237,6 +283,9 @@ impl AgentStore for GitStore {
         request: &StoreRequest<AgentCommand>,
     ) -> Result<StoreOutcome<AgentResult>> {
         if request.command.has_thread_binding() {
+            if let Some(outcome) = self.replay(request).await? {
+                return Ok(outcome);
+            }
             return Err(Error::Unsupported(
                 "use the selected ThreadStore atomic participant",
             ));
@@ -249,9 +298,13 @@ impl AgentStore for GitStore {
         thread: &dyn ThreadStore,
     ) -> Result<StoreOutcome<AgentResult>> {
         require_atomic_participants(self, thread)?;
-        self.context.admit(StoreKind::Thread, Access::Write).await?;
+        self.context
+            .admit_sources(&self.group, [StoreKind::Thread], Access::Write)
+            .await?;
         let result = self.agent(request).await?;
-        self.context.admit(StoreKind::Thread, Access::Write).await?;
+        self.context
+            .admit_sources(&self.group, [StoreKind::Thread], Access::Write)
+            .await?;
         Ok(result)
     }
     async fn status(&self, request: RequestId) -> Result<StoreOutcome<AgentResult>> {
@@ -339,15 +392,31 @@ impl ReviewStore for GitStore {
                     .collect(),
             },
         };
-        let value = self
-            .repository
-            .apply_review_command(&LocalReviewRequest {
-                version: 1,
-                request_id: request.request_id,
-                command,
-            })
+        let local = LocalReviewRequest {
+            version: 1,
+            request_id: request.request_id,
+            command,
+        };
+        let prior = self.repository.review_command_status(request.request_id)?;
+        if let LocalReviewOutcome::Committed { receipt } = &prior {
+            if local.intent_for(receipt.actor)? != receipt.intent {
+                return Err(Error::IntentConflict);
+            }
+            self.context.admit(StoreKind::Review, Access::Write).await?;
+            return review_outcome(prior);
+        }
+        let sources = match &request.command {
+            ReviewCommand::Apply { command, .. } => review_source_stores(command)?,
+            _ => Default::default(),
+        };
+        self.context
+            .admit_sources(&self.group, sources.clone(), Access::Read)
             .await?;
+        let value = self.repository.apply_review_command(&local).await?;
         self.context.admit(StoreKind::Review, Access::Write).await?;
+        self.context
+            .admit_sources(&self.group, sources, Access::Read)
+            .await?;
         review_outcome(value)
     }
     async fn status(
@@ -379,6 +448,13 @@ impl ThreadStore for GitStore {
         &self,
         request: &StoreRequest<jj_collab::ThreadCommandV1>,
     ) -> Result<StoreOutcome<jj_collab::CollabCommandResultV1>> {
+        ThreadStore::execute_with_reviews(self, request, None).await
+    }
+    async fn execute_with_reviews(
+        &self,
+        request: &StoreRequest<jj_collab::ThreadCommandV1>,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> Result<StoreOutcome<jj_collab::CollabCommandResultV1>> {
         reject_native_identity(request)?;
         self.collab(
             request.request_id,
@@ -386,6 +462,7 @@ impl ThreadStore for GitStore {
                 intent: request.command.clone(),
             },
             StoreKind::Thread,
+            qualified,
         )
         .await
     }
@@ -427,6 +504,13 @@ impl ReactionStore for GitStore {
         &self,
         request: &StoreRequest<ReactionCommand>,
     ) -> Result<StoreOutcome<jj_collab::CollabCommandResultV1>> {
+        ReactionStore::execute_with_reviews(self, request, None).await
+    }
+    async fn execute_with_reviews(
+        &self,
+        request: &StoreRequest<ReactionCommand>,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> Result<StoreOutcome<jj_collab::CollabCommandResultV1>> {
         reject_native_identity(request)?;
         let command = match &request.command {
             ReactionCommand::Reaction(intent) => LocalCollabCommand::Reaction {
@@ -436,7 +520,7 @@ impl ReactionStore for GitStore {
                 intent: intent.clone(),
             },
         };
-        self.collab(request.request_id, command, StoreKind::Reaction)
+        self.collab(request.request_id, command, StoreKind::Reaction, qualified)
             .await
     }
     async fn status(

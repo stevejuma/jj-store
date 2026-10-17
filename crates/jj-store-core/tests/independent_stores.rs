@@ -196,27 +196,26 @@ async fn each_store_is_independently_replaceable_by_an_external_implementation()
             .loader()
             .open(
                 &config,
-                StoreContext {
-                    scope: PublicationScope {
+                StoreContext::new(
+                    PublicationScope {
                         repository: Some(RepositoryId::new([1; 16])),
                         authority: "external-host".into(),
                     },
-                    host: Arc::new(Host),
-                    enabled: BTreeSet::new(),
-                },
+                    Arc::new(Host),
+                ),
             )
             .unwrap();
         assert!(calls.lock().unwrap().is_empty());
-        stores.agent.as_ref().unwrap().snapshot().await.unwrap();
-        stores.work.as_ref().unwrap().snapshot().await.unwrap();
-        stores.review.as_ref().unwrap().snapshot().await.unwrap();
-        stores.thread.as_ref().unwrap().snapshot().await.unwrap();
-        stores.reaction.as_ref().unwrap().snapshot().await.unwrap();
+        stores.agent().unwrap().snapshot().await.unwrap();
+        stores.work().unwrap().snapshot().await.unwrap();
+        stores.review().unwrap().snapshot().await.unwrap();
+        stores.thread().unwrap().snapshot().await.unwrap();
+        stores.reaction().unwrap().snapshot().await.unwrap();
         assert_eq!(*calls.lock().unwrap(), BTreeSet::from([selected]));
         assert!(matches!(
             require_atomic_participants(
-                stores.agent.as_ref().unwrap().as_ref(),
-                stores.thread.as_ref().unwrap().as_ref()
+                stores.agent().unwrap().as_ref(),
+                stores.thread().unwrap().as_ref()
             ),
             Err(Error::Unsupported(_))
         ));

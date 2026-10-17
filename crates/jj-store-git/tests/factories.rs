@@ -56,14 +56,7 @@ fn open(
     configure(&provider, &mut factories, &mut config);
     factories
         .loader()
-        .open(
-            &config,
-            StoreContext {
-                scope: provider.scope(),
-                host,
-                enabled: BTreeSet::new(),
-            },
-        )
+        .open(&config, StoreContext::new(provider.scope(), host))
         .unwrap()
 }
 fn committed<T>(outcome: StoreOutcome<T>) -> StoreReceipt<T> {
@@ -115,11 +108,11 @@ async fn factories_are_read_only_on_load_and_all_five_domains_reopen_and_replay(
     assert_eq!(host.writes.load(Ordering::SeqCst), 0);
     assert!(repo(dir.path()).repository().unwrap().is_none());
     assert!(!dir.path().join("lapis").exists());
-    let agents = stores.agent.as_ref().unwrap();
-    let work = stores.work.as_ref().unwrap();
-    let reviews = stores.review.as_ref().unwrap();
-    let threads = stores.thread.as_ref().unwrap();
-    let reactions = stores.reaction.as_ref().unwrap();
+    let agents = stores.agent().unwrap();
+    let work = stores.work().unwrap();
+    let reviews = stores.review().unwrap();
+    let threads = stores.thread().unwrap();
+    let reactions = stores.reaction().unwrap();
     assert_eq!(agents.snapshot().await.unwrap().version, 0);
     assert_eq!(work.snapshot().await.unwrap().version, 0);
     assert_eq!(reviews.snapshot().await.unwrap().version, 0);
@@ -194,53 +187,25 @@ async fn factories_are_read_only_on_load_and_all_five_domains_reopen_and_replay(
         a.provider_receipt
     );
     assert_eq!(
-        committed(reopened.work.as_ref().unwrap().execute(&wr).await.unwrap()).provider_receipt,
+        committed(reopened.work().unwrap().execute(&wr).await.unwrap()).provider_receipt,
         w.provider_receipt
     );
     assert_eq!(
-        committed(
-            reopened
-                .review
-                .as_ref()
-                .unwrap()
-                .execute(&rr)
-                .await
-                .unwrap()
-        )
-        .provider_receipt,
+        committed(reopened.review().unwrap().execute(&rr).await.unwrap()).provider_receipt,
         r.provider_receipt
     );
     assert_eq!(
-        committed(
-            reopened
-                .thread
-                .as_ref()
-                .unwrap()
-                .execute(&tr)
-                .await
-                .unwrap()
-        )
-        .provider_receipt,
+        committed(reopened.thread().unwrap().execute(&tr).await.unwrap()).provider_receipt,
         t.provider_receipt
     );
     assert_eq!(
-        committed(
-            reopened
-                .reaction
-                .as_ref()
-                .unwrap()
-                .execute(&xr)
-                .await
-                .unwrap()
-        )
-        .provider_receipt,
+        committed(reopened.reaction().unwrap().execute(&xr).await.unwrap()).provider_receipt,
         x.provider_receipt
     );
     assert_eq!(
         committed(
             reopened
-                .agent
-                .as_ref()
+                .agent()
                 .unwrap()
                 .status(ar.request_id)
                 .await
@@ -252,8 +217,7 @@ async fn factories_are_read_only_on_load_and_all_five_domains_reopen_and_replay(
     assert_eq!(
         committed(
             reopened
-                .work
-                .as_ref()
+                .work()
                 .unwrap()
                 .status(wr.request_id)
                 .await
@@ -265,8 +229,7 @@ async fn factories_are_read_only_on_load_and_all_five_domains_reopen_and_replay(
     assert_eq!(
         committed(
             reopened
-                .review
-                .as_ref()
+                .review()
                 .unwrap()
                 .status(rr.request_id)
                 .await
@@ -278,8 +241,7 @@ async fn factories_are_read_only_on_load_and_all_five_domains_reopen_and_replay(
     assert_eq!(
         committed(
             reopened
-                .thread
-                .as_ref()
+                .thread()
                 .unwrap()
                 .status(tr.request_id)
                 .await
@@ -291,8 +253,7 @@ async fn factories_are_read_only_on_load_and_all_five_domains_reopen_and_replay(
     assert_eq!(
         committed(
             reopened
-                .reaction
-                .as_ref()
+                .reaction()
                 .unwrap()
                 .status(xr.request_id)
                 .await
@@ -302,12 +263,7 @@ async fn factories_are_read_only_on_load_and_all_five_domains_reopen_and_replay(
         x.provider_receipt
     );
     assert!(matches!(
-        reopened
-            .thread
-            .as_ref()
-            .unwrap()
-            .status(xr.request_id)
-            .await,
+        reopened.thread().unwrap().status(xr.request_id).await,
         Err(Error::IntentConflict)
     ));
 }
@@ -330,15 +286,7 @@ async fn bound_capture_requires_selected_atomic_participant_before_any_write() {
             baseline: None,
         },
     );
-    let t = committed(
-        stores
-            .thread
-            .as_ref()
-            .unwrap()
-            .execute(&create)
-            .await
-            .unwrap(),
-    );
+    let t = committed(stores.thread().unwrap().execute(&create).await.unwrap());
     let jj_collab::CollabCommandResultV1::Thread { result: t } = t.result else {
         panic!("thread")
     };
@@ -413,16 +361,15 @@ async fn authorization_is_fresh_and_reading_or_rejection_never_initializes() {
     let stores = open(repo(dir.path()), host.clone(), |_, _, config| {
         config.disable(StoreKind::Agent);
     });
-    assert!(stores.agent.is_none());
+    assert!(stores.agent().is_none());
     host.denied.store(true, Ordering::SeqCst);
     assert!(matches!(
-        stores.work.as_ref().unwrap().snapshot().await,
+        stores.work().unwrap().snapshot().await,
         Err(Error::Denied)
     ));
     assert!(matches!(
         stores
-            .thread
-            .as_ref()
+            .thread()
             .unwrap()
             .status(m::RequestId::new([1; 16]))
             .await,
@@ -505,4 +452,167 @@ fn missing_qualified_evidence_validator_rejects_anchored_data() {
     ));
     assert!(!dir.path().join("lapis").exists());
     assert!(repository.repository().unwrap().is_none());
+}
+
+async fn excluded_thread_source(replace: bool) {
+    let dir = tempfile::tempdir().unwrap();
+    gix::init(dir.path()).unwrap();
+    let host = host();
+    let original = open(repo(dir.path()), host.clone(), |_, _, _| {});
+    original
+        .thread()
+        .unwrap()
+        .execute(&request(
+            81,
+            jj_collab::ThreadCommandV1::Create {
+                thread_id: jj_collab::ThreadId::new([81; 16]),
+                title: "Existing source".into(),
+                baseline: None,
+            },
+        ))
+        .await
+        .unwrap();
+    let selected = repo(dir.path())
+        .metadata_store()
+        .read()
+        .unwrap()
+        .unwrap()
+        .commit();
+    let writes = host.writes.load(Ordering::SeqCst);
+    let stores = open(repo(dir.path()), host.clone(), |_, factories, config| {
+        if replace {
+            GitProvider::new(repo(dir.path()))
+                .add_thread_store(factories, "replacement")
+                .unwrap();
+            config.enable(StoreKind::Thread, "replacement");
+        } else {
+            config.disable(StoreKind::Thread);
+        }
+    });
+    let outcome = stores
+        .reaction()
+        .unwrap()
+        .execute(&request(
+            82,
+            ReactionCommand::Reaction(jj_collab::ReactionCommandV1::Set {
+                emoji: None,
+                target: jj_collab::ReactionTargetV1::Thread {
+                    thread_id: jj_collab::ThreadId::new([81; 16]),
+                },
+                value: jj_collab::ReactionValueV1::Like,
+                observed: BTreeSet::new(),
+            }),
+        ))
+        .await;
+    assert!(
+        matches!(outcome, Err(Error::Unsupported(_))),
+        "unselected built-in source was used"
+    );
+    assert_eq!(host.writes.load(Ordering::SeqCst), writes);
+    assert_eq!(
+        repo(dir.path())
+            .metadata_store()
+            .read()
+            .unwrap()
+            .unwrap()
+            .commit(),
+        selected
+    );
+}
+#[tokio::test]
+async fn reactions_reject_disabled_thread_sources_before_staging() {
+    excluded_thread_source(false).await
+}
+#[tokio::test]
+async fn reactions_reject_replaced_thread_sources_before_staging() {
+    excluded_thread_source(true).await
+}
+
+#[tokio::test]
+async fn committed_reaction_replays_without_the_current_source_store() {
+    let dir = tempfile::tempdir().unwrap();
+    gix::init(dir.path()).unwrap();
+    let host = host();
+    let stores = open(repo(dir.path()), host.clone(), |_, _, _| {});
+    let thread_id = jj_collab::ThreadId::new([91; 16]);
+    stores
+        .thread()
+        .unwrap()
+        .execute(&request(
+            91,
+            jj_collab::ThreadCommandV1::Create {
+                thread_id,
+                title: "Receipt source".into(),
+                baseline: None,
+            },
+        ))
+        .await
+        .unwrap();
+    let command = request(
+        92,
+        ReactionCommand::Reaction(jj_collab::ReactionCommandV1::Set {
+            emoji: None,
+            target: jj_collab::ReactionTargetV1::Thread { thread_id },
+            value: jj_collab::ReactionValueV1::Like,
+            observed: BTreeSet::new(),
+        }),
+    );
+    let original = committed(stores.reaction().unwrap().execute(&command).await.unwrap());
+    let reopened = open(repo(dir.path()), host.clone(), |_, _, config| {
+        config.disable(StoreKind::Thread)
+    });
+    let writes = host.writes.load(Ordering::SeqCst);
+    let replay = committed(
+        reopened
+            .reaction()
+            .unwrap()
+            .execute(&command)
+            .await
+            .unwrap(),
+    );
+    assert_eq!(replay.provider_receipt, original.provider_receipt);
+    assert_eq!(host.writes.load(Ordering::SeqCst), writes);
+}
+
+#[tokio::test]
+async fn different_registration_names_can_share_the_selected_atomic_provider() {
+    let dir = tempfile::tempdir().unwrap();
+    gix::init(dir.path()).unwrap();
+    let stores = open(repo(dir.path()), host(), |provider, factories, config| {
+        provider.add_thread_store(factories, "other-name").unwrap();
+        config.enable(StoreKind::Thread, "other-name");
+    });
+    stores
+        .require_shared_publication(&[StoreKind::Agent, StoreKind::Thread])
+        .unwrap();
+    let thread_id = jj_collab::ThreadId::new([93; 16]);
+    stores
+        .thread()
+        .unwrap()
+        .execute(&request(
+            93,
+            jj_collab::ThreadCommandV1::Create {
+                thread_id,
+                title: "Selected thread".into(),
+                baseline: None,
+            },
+        ))
+        .await
+        .unwrap();
+    committed(
+        stores
+            .reaction()
+            .unwrap()
+            .execute(&request(
+                94,
+                ReactionCommand::Reaction(jj_collab::ReactionCommandV1::Set {
+                    emoji: None,
+                    target: jj_collab::ReactionTargetV1::Thread { thread_id },
+                    value: jj_collab::ReactionValueV1::Like,
+                    observed: BTreeSet::new(),
+                }),
+            ))
+            .await
+            .unwrap(),
+    );
 }
