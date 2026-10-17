@@ -1,5 +1,10 @@
 # Delivery and validation
 
+The M33 delivery checklist under `docs/maintenance` summarizes completed slices,
+current work, previews and remaining gates. Update its stable task IDs after
+verified implementation slices; canonical milestone ledgers retain status
+authority and evidence keeps original qualification failures visible.
+
 M33's crate README and local manual describe independent local-history
 construction, private cache admission and retained read pins. Original query
 budgets and public paths remain unchanged. Source review retains the separate
