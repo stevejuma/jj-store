@@ -99,3 +99,8 @@ M33 stream extraction preserves Control V3 frame ordering, terminal prefix
 flush, assistant/tool bounds, participant isolation and exact native scanner
 behavior. JST-COMPAT-001/003/005 and journal/publication formats are unchanged;
 only metadata-only private-buffer lifecycle observations become public.
+
+M33 prompt coordination preserves original parent/child request derivation,
+prepared/accepted receipt states, exact context release and deferred file
+queues. No journal field or canonical store encoding changes. Scoped host ports
+retain JST-COMPAT-001/003/005 and uncertain prompts never replay.

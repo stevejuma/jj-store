@@ -263,3 +263,8 @@ M33 registers `jj-store-conversations` in the coordinated library inventory with
 contained compilation inputs, a short README and public feature/dependency
 checks. Its initial stream primitives import no application/runtime/storage
 crate. JST-ARCH-005 publication and complete qualification remain separate.
+
+Shared conversation coordination adds async trait ports without an asynchronous
+runtime or transport dependency. Borrowed host capabilities retain their scoped
+lease; independent crate and native consumer tests qualify the public boundary.
+JST-ARCH-005 release and packaged downstream acceptance remain separate.

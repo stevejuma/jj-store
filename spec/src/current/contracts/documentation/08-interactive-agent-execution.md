@@ -123,3 +123,8 @@ The reusable conversation crate README describes its injected privacy capability
 and safe frame projection. The full bundled embedding manual describes host
 admission, one raw event owner and durable capture before display/ACK, preserving
 JST-DOC-001 and existing native policy/lifecycle qualification boundaries.
+
+The conversation embedding manual documents injected typed admission/context/
+journal/runtime ports, scoped host leases, the all-recipient prepared fence and
+proven-not-sent versus unknown delivery. JST-DOC-001 keeps store/workspace host
+ownership and provider acceptance distinct from local queue acceptance.

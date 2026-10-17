@@ -1,8 +1,8 @@
 # jj-store-conversations
 
 Headless conversation coordination shared by JJ applications. The library
-currently provides Control V3 stream privacy and bounded assistant/tool
-projections, with a host-injected sanitization capability. It has no server,
+provides durable prompt coordination, Control V3 stream privacy and bounded
+assistant/tool projections, with host-injected capabilities. It has no server,
 transport, Tauri, runtime or repository storage dependency.
 
 Implement `privacy::Sanitizer` with the host's admitted privacy policy, then pass
@@ -15,3 +15,9 @@ The host owns credentials, source admission, journal lifetime, publication and
 UI delivery. A participant ID is attribution and grants no execution authority.
 See the [conversation embedding guide](../../docs/site/technical/conversations.md) for the
 pipeline and ownership contracts.
+
+Implement `coordination::Types` with your existing command/outcome types and
+inject `Admission`, `Context`, `Journal` and `Runtime` ports into `Coordinator`.
+`send` prepares every recipient before dispatch and retains uncertain delivery
+without replay. Ports may borrow a scoped host lease. Store publication,
+workspace preparation and exact journal receipt storage remain host-owned.

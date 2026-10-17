@@ -117,3 +117,9 @@ same admitted native sanitizer and retains bounded payload construction, private
 journal ordering, publication and runtime ownership. This extraction does not
 change credentials, process admission, provider acknowledgement or capture
 policy IDs. See `docs/site/technical/conversations.md` for host embedding.
+
+Prompt coordination also uses the shared library's typed admission, context,
+journal and runtime ports. The server retains the same exclusive conversation
+lease, home/workspace/store preparation, stable child requests and prepared/
+accepted receipts. Queue acceptance remains separate from provider execution;
+uncertain prompts keep their original identity and do not replay.

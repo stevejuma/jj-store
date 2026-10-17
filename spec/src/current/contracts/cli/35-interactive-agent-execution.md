@@ -145,3 +145,8 @@ M33 shared stream extraction retains JST-CLI-004 executable custody and existing
 Control V3 interpretation. No CLI parser, installed helper, process admission or
 prompt replay behavior changes. Native streaming privacy tests exercise the
 admitted host adapter before and after extraction.
+
+M33 prompt coordination leaves JST-CLI-004 helper selection and CLI parsing
+unchanged. Existing real-JJ controlled-harness conversation tests qualify
+original child receipts, context/deferred queues and no-replay behavior; live
+provider and installer download evidence remains separate.

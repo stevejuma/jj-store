@@ -46,6 +46,7 @@ mod sent_context;
 mod targets;
 mod thread_workspace;
 mod tooling;
+mod turn_coordination;
 mod workspace_deferred;
 mod workspace_freeze;
 mod workspace_inspection;

@@ -70,3 +70,13 @@ sanitizer performs prefix replacement and final frame scanning; the library
 holds undecidable prefixes only in memory. JJ's adapter preserves its admitted
 native privacy policy and domain payload limits. Hosts retain one raw event
 owner and journal sanitized output before publication, display or ACK.
+
+Durable prompt coordination injects admission, context preparation, private
+journal and runtime delivery ports. Journal admission either claims a new
+explicit turn or returns retained outcomes. Every recipient is prepared before
+any dispatch; preparation failure releases exact prior reservations. A durable
+prepared fence precedes dispatch. Proven not-sent delivery releases its own
+reservation; an uncertain delivery remains unknown and cannot replay. Runtime
+enqueue acceptance is distinct from provider delivery and captured answers.
+Existing JJ home/workspace/store preparation remains host-owned and retains its
+native publication and exact request identities.
