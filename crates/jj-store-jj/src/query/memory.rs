@@ -1,16 +1,12 @@
 //! Process-wide admission for immutable resident index allocations.
 use super::{Error, Result};
+#[cfg(feature = "native")]
+use std::path::PathBuf;
 use std::sync::{
     Arc, OnceLock,
     atomic::{AtomicU64, Ordering},
 };
-use std::{
-    collections::BTreeMap,
-    fs,
-    io::Read as _,
-    path::{Path, PathBuf},
-    sync::Mutex,
-};
+use std::{collections::BTreeMap, fs, io::Read as _, path::Path, sync::Mutex};
 pub(crate) mod framing;
 mod retained;
 pub(crate) use retained::Retained;
@@ -89,13 +85,16 @@ impl Drop for Lease {
 }
 
 #[derive(Default)]
+#[cfg(feature = "native")]
 struct Held {
     directories: BTreeMap<PathBuf, (u64, Vec<Lease>)>,
     parents: Vec<Arc<Indexes>>,
 }
 /// A query and its retained immutable index share ownership of allocation leases.
 #[derive(Default)]
+#[cfg(feature = "native")]
 pub(crate) struct Indexes(Mutex<Held>);
+#[cfg(feature = "native")]
 impl Indexes {
     pub(crate) fn directory_bytes(&self) -> u64 {
         self.0

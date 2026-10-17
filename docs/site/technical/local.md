@@ -15,10 +15,26 @@ publish metadata; factory configuration remains host-owned.
 
 Native and local code readers share storage-independent read limits,
 diagnostics, cancellation and non-queuing worker admission internally. Existing
-public query paths and default budgets remain unchanged. Independent local
-history without native storage is still under development; selecting only
-`companion` does not enable the browser history reader. Host admission and
-operation pinning remain required at every read boundary.
+public query paths and default budgets remain unchanged. For an embedded history
+reader, select `jj-store-jj` with `default-features = false` and
+`features = ["local-history"]`. This includes the companion adapters and the
+existing `local_browser` history, content and diff API, without native object
+storage, WAL, application services or execution runtimes. The default `native`
+profile retains all existing readers and mutations; `companion` alone remains
+the smaller metadata-only profile.
+
+The embedding host implements `local_browser::Access`, rechecking physical
+source identity and current authorization, and supplies a registration
+generation. Create a bounded `local_browser::Executor`, select an explicit
+operation from `heads`, and reserve a private `query::cache::managed::Namespace`
+with a matching local repository/generation binding.
+`prepare_managed_code_index` builds the private standard JJ index; retain its
+handle for `read_code_index` requests. Cancellation releases owned work after
+worker exit. An external writer may advance the repository while old handles
+retain their original operation; a changed registration generation or withdrawn
+authorization rejects the read. Readers never snapshot dirty working files,
+repair source indexes or reconcile heads. Working-tree inspection and checkout
+remain native-only. The crate README provides an entry-point overview.
 
 ```mermaid
 flowchart TB

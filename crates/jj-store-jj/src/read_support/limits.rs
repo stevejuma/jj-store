@@ -1,4 +1,5 @@
 //! Trusted read budgets shared by native and Git readers.
+#[cfg(feature = "native")]
 use super::{Error, Result};
 use std::time::Duration;
 
@@ -20,6 +21,7 @@ impl Default for MetadataLimits {
     }
 }
 impl MetadataLimits {
+    #[cfg(feature = "native")]
     pub(crate) fn validate(self) -> Result<()> {
         if !(1..=16_000_000).contains(&self.max_nodes)
             || !(1..=257).contains(&self.max_merge_terms)
@@ -49,6 +51,7 @@ impl Default for PredicateLimits {
     }
 }
 impl PredicateLimits {
+    #[cfg(feature = "native")]
     pub(crate) fn validate(self) -> Result<()> {
         if !(1..=1024 * 1024).contains(&self.max_file_bytes)
             || !(1..=16 * 1024 * 1024).contains(&self.max_total_file_bytes)

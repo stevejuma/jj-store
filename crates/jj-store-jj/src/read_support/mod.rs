@@ -6,4 +6,8 @@ pub mod workers;
 
 pub use accounting::{Cancellation, Stats};
 pub use error::{Diagnostic, Error, Result};
-pub use limits::{ContentLimits, GraphLimits, MetadataLimits, PredicateLimits};
+#[cfg(feature = "native")]
+pub use limits::PredicateLimits;
+pub use limits::{ContentLimits, GraphLimits, MetadataLimits};
+
+pub(crate) const QUERY_CACHE_PROFILE: &str = "jj-native-0.45.1-v1";

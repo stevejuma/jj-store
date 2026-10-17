@@ -8,29 +8,43 @@ pub(crate) mod blame_probe;
 pub mod cache;
 pub mod code_index;
 pub mod content;
+#[cfg(feature = "native")]
 pub mod copy_index;
+#[cfg(feature = "native")]
 mod graphs;
+#[cfg(feature = "native")]
 mod index;
 pub mod language;
 pub(crate) mod memory;
+#[cfg(feature = "native")]
 mod operation_neighbors;
+#[cfg(feature = "native")]
 pub mod predicates;
+#[cfg(feature = "native")]
 pub mod preparation;
 pub(crate) mod prepared;
+#[cfg(feature = "native")]
 mod projection;
 pub mod workers;
+pub(crate) use crate::read_support::QUERY_CACHE_PROFILE as PROFILE;
+#[cfg(feature = "native")]
 use crate::{
-    backend::BackendLimits,
-    factories::{NativeStores, PROFILE},
-    objects::NativeObjects,
+    backend::BackendLimits, factories::NativeStores, objects::NativeObjects,
     operation_stores::OperationLimits,
 };
-use access::{Budget, ReadOnlyAuthority, ReadStore};
+use access::Budget;
+#[cfg(feature = "native")]
+use access::{ReadOnlyAuthority, ReadStore};
+#[cfg(feature = "native")]
 use jj_lib::{config::StackedConfig, settings::UserSettings};
 use jj_store_model as m;
+#[cfg(feature = "native")]
 use jj_store_object::ObjectStore;
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeSet, path::PathBuf, sync::Arc, time::Duration};
+#[cfg(feature = "native")]
+use std::time::Duration;
+use std::{collections::BTreeSet, path::PathBuf, sync::Arc};
+#[cfg(feature = "native")]
 use workers::Workers;
 
 /// Exact identity projections; unrelated object kinds are never result rows.
@@ -59,6 +73,7 @@ pub trait ReadAccess: Send + Sync {
     async fn inventory(&self) -> Result<Arc<BTreeSet<m::ObjectKey>>>;
     /// Optional selected copy-family projection. Required seeds must be selected;
     /// optional seeds can be acknowledged staged ancestors in the caller.
+    #[cfg(feature = "native")]
     async fn copy_family(
         &self,
         _seeds: &BTreeSet<m::CopyId>,
@@ -240,6 +255,7 @@ pub struct IndexReport {
     pub cache: cache::Report,
     pub stats: Stats,
 }
+#[cfg(feature = "native")]
 enum Work {
     Graph(Request, Page),
     References(content::references::Request, content::Limits),
@@ -247,11 +263,13 @@ enum Work {
 }
 #[derive(Serialize)]
 #[serde(untagged)]
+#[cfg(feature = "native")]
 enum Output {
     Graph(GraphPage),
     Index(IndexReport),
     References(content::references::Page),
 }
+#[cfg(feature = "native")]
 impl Work {
     fn is_query(&self) -> bool {
         matches!(self, Self::Graph(..) | Self::References(..))
@@ -305,6 +323,7 @@ impl Work {
 }
 /// Bounded jobs and operation-specific local caches; no physical working copy.
 #[derive(Clone)]
+#[cfg(feature = "native")]
 pub struct GraphExecutor {
     live_limits: Option<Arc<dyn Fn(Limits) -> Limits + Send + Sync>>,
     root: PathBuf,
@@ -314,6 +333,7 @@ pub struct GraphExecutor {
     cache_policy: cache::Policy,
     residents: Arc<cache::resident::Residents>,
 }
+#[cfg(feature = "native")]
 impl GraphExecutor {
     pub fn with_live_limits(
         mut self,
@@ -784,6 +804,7 @@ impl GraphExecutor {
     }
 }
 
+#[cfg(feature = "native")]
 impl Limits {
     pub(crate) fn validate(&self) -> Result<()> {
         self.metadata.validate()?;

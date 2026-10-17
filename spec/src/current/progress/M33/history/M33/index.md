@@ -12,3 +12,4 @@ not a completion gate selection.
 | [E-REUSABLE-AGENTS-005](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-005/index.md) | 2026-10-17 | pass            | Original outcome |
 | [E-REUSABLE-AGENTS-006](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-006/index.md) | 2026-10-17 | pending         | Original outcome |
 | [E-REUSABLE-AGENTS-007](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-007/index.md) | 2026-10-17 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-008](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-008/index.md) | 2026-10-17 | pass | Original outcome |

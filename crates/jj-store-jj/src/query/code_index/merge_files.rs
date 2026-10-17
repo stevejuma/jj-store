@@ -11,6 +11,7 @@ use std::{
 
 pub(crate) enum Hash {
     Git,
+    #[cfg(feature = "native")]
     Native,
 }
 struct File {
@@ -68,6 +69,7 @@ impl Files {
                     .map_err(|_| Error::Corrupt)?
                     .as_bytes(),
             ),
+            #[cfg(feature = "native")]
             Hash::Native => {
                 use blake2::{Blake2b512, Digest};
                 FileId::from_bytes(&Blake2b512::digest(&bytes))

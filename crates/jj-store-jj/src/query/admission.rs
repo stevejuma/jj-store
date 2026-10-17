@@ -1,11 +1,16 @@
 //! Shape admission before native metadata allocation; never a persistence codec.
+#[cfg(feature = "native")]
 use super::{Error, Result, access::Budget};
 pub use crate::read_support::MetadataLimits as Limits;
+#[cfg(feature = "native")]
 use jj_store_model::{ObjectKey, ObjectKind, envelope};
+#[cfg(feature = "native")]
 use serde::de::{self, DeserializeSeed, MapAccess, SeqAccess, Visitor};
+#[cfg(feature = "native")]
 use std::fmt;
 
 #[derive(Clone, Copy)]
+#[cfg(feature = "native")]
 enum Shape {
     Value,
     Commit,
@@ -23,6 +28,7 @@ enum Shape {
     Edges,
     Entries,
 }
+#[cfg(feature = "native")]
 impl Shape {
     fn field(self, name: &str) -> Self {
         match (self, name) {
@@ -52,6 +58,7 @@ impl Shape {
         }
     }
 }
+#[cfg(feature = "native")]
 pub(super) fn check(key: ObjectKey, bytes: &[u8], budget: &Budget) -> Result<()> {
     let payload = envelope::decode(bytes, key, crate::codec::MAX_METADATA_BYTES)
         .map_err(|_| budget.fail(Error::Corrupt))?;
@@ -81,11 +88,13 @@ pub(super) fn check(key: ObjectKey, bytes: &[u8], budget: &Budget) -> Result<()>
 
 // Scan string/number scalars without retaining them. serde_json may use scratch
 // for a single escaped string; the already enforced metadata byte cap bounds it.
+#[cfg(feature = "native")]
 struct Scan<'a> {
     budget: &'a Budget,
     shape: Shape,
     depth: usize,
 }
+#[cfg(feature = "native")]
 impl<'de> DeserializeSeed<'de> for Scan<'_> {
     type Value = ();
     fn deserialize<D: de::Deserializer<'de>>(
@@ -99,6 +108,7 @@ impl<'de> DeserializeSeed<'de> for Scan<'_> {
         decoder.deserialize_any(self)
     }
 }
+#[cfg(feature = "native")]
 impl<'de> Visitor<'de> for Scan<'_> {
     type Value = ();
     fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -154,10 +164,12 @@ impl<'de> Visitor<'de> for Scan<'_> {
         Ok(())
     }
 }
+#[cfg(feature = "native")]
 struct Field<'a> {
     budget: &'a Budget,
     shape: Shape,
 }
+#[cfg(feature = "native")]
 impl<'de> DeserializeSeed<'de> for Field<'_> {
     type Value = Shape;
     fn deserialize<D: de::Deserializer<'de>>(
@@ -168,6 +180,7 @@ impl<'de> DeserializeSeed<'de> for Field<'_> {
         decoder.deserialize_str(self)
     }
 }
+#[cfg(feature = "native")]
 impl<'de> Visitor<'de> for Field<'_> {
     type Value = Shape;
     fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -179,7 +192,7 @@ impl<'de> Visitor<'de> for Field<'_> {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "native"))]
 mod tests {
     use super::*;
     use jj_store_model as m;

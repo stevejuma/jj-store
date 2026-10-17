@@ -21,6 +21,7 @@ pub mod preparation;
 pub mod references;
 mod scoped;
 pub mod stacks;
+#[cfg(feature = "native")]
 pub mod working_tree;
 pub use crate::query::Error;
 pub use crate::query::content::{Direction, Limits};

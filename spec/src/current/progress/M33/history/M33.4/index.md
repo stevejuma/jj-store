@@ -6,3 +6,4 @@ not a completion gate selection.
 | Evidence                                                                                  | Date       | Original result | Later context    |
 | ----------------------------------------------------------------------------------------- | ---------- | --------------- | ---------------- |
 | [E-REUSABLE-AGENTS-007](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-007/index.md) | 2026-10-17 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-008](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-008/index.md) | 2026-10-17 | pass | Original outcome |

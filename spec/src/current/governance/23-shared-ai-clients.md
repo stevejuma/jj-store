@@ -51,3 +51,9 @@ exports. The separately publishable package retains registry metadata and no UI
 or runtime dependencies. Independent runtime/type archive acceptance, existing
 consumer regressions and source dependency checks qualify the boundary; source
 aliases and implicit prompt retry remain forbidden.
+
+M33 local-history governance checks the normal transitive dependency closure and
+explicit integration/example feature gates. Default native keeps every original
+target. Headless feature selection excludes native publication, Forge and host
+runtimes; source graph inspection adds no service or build lifetime. Real-source
+read acceptance and native/server consumers qualify their own boundaries.

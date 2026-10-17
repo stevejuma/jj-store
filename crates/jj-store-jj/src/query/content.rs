@@ -1,34 +1,52 @@
 //! Complete native metadata and verified binary reads through committed pins.
 pub use crate::read_support::ContentLimits as Limits;
+#[cfg(feature = "native")]
 pub mod code_summary;
+#[cfg(feature = "native")]
 pub mod conflicts;
+#[cfg(feature = "native")]
 pub mod diff;
+#[cfg(feature = "native")]
 mod diff_copies;
+#[cfg(feature = "native")]
 pub mod diff_summary;
+#[cfg(feature = "native")]
 mod native;
+#[cfg(feature = "native")]
 pub mod operation_changes;
+#[cfg(feature = "native")]
 pub mod operations;
 pub mod paths;
+#[cfg(feature = "native")]
 pub mod references;
+#[cfg(feature = "native")]
 mod trees;
+#[cfg(feature = "native")]
 use super::{
     Error, ReadAccess, Result, Stats,
     access::{Budget, ReadStore},
     workers::Workers,
 };
+#[cfg(feature = "native")]
 use crate::{
     codec::{NativeCodec as _, NativeSymlink},
     native_dto as dto,
     objects::{self, NativeObjects},
     roots,
 };
+#[cfg(feature = "native")]
 use jj_lib::{backend as b, op_store as o};
+#[cfg(feature = "native")]
 use jj_store_model as m;
+#[cfg(feature = "native")]
 use jj_store_object::{ByteRange, ObjectStore, StagedUpload};
 use serde::Serialize;
+#[cfg(feature = "native")]
 use std::{sync::Arc, time::Duration};
+#[cfg(feature = "native")]
 use tokio::{io::AsyncReadExt as _, sync::OwnedSemaphorePermit};
 
+#[cfg(feature = "native")]
 pub use trees::{TreeEntry, TreePage, TreeRequest};
 #[derive(
     Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, serde::Deserialize, schemars::JsonSchema,
@@ -39,10 +57,12 @@ pub enum Direction {
     Forward,
     Backward,
 }
+#[cfg(feature = "native")]
 const CHUNK: usize = 64 * 1024;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "ContentObjectData")]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
+#[cfg(feature = "native")]
 pub enum ObjectData {
     Commit(dto::Commit),
     Tree(dto::Tree),
@@ -54,6 +74,7 @@ pub enum ObjectData {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "ContentObject")]
+#[cfg(feature = "native")]
 pub struct Object {
     pub version: u32,
     pub profile: &'static str,
@@ -64,6 +85,7 @@ pub struct Object {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "ContentFileInfo")]
+#[cfg(feature = "native")]
 pub struct FileInfo {
     pub version: u32,
     pub id: m::FileId,
@@ -72,6 +94,7 @@ pub struct FileInfo {
     pub end: u64,
 }
 /// No raw reader, spool, or local path escapes this authorization boundary.
+#[cfg(feature = "native")]
 pub struct VerifiedFile {
     info: FileInfo,
     reader: jj_store_object::Reader,
@@ -83,11 +106,13 @@ pub struct VerifiedFile {
     chunk_in_progress: bool,
     pristine: bool,
 }
+#[cfg(feature = "native")]
 impl std::fmt::Debug for VerifiedFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("VerifiedFile").finish_non_exhaustive()
     }
 }
+#[cfg(feature = "native")]
 impl VerifiedFile {
     pub fn info(&self) -> impl std::future::Future<Output = Result<FileInfo>> + Send + use<> {
         let budget = self.budget.clone();
@@ -142,6 +167,7 @@ impl VerifiedFile {
     }
 }
 #[derive(Clone)]
+#[cfg(feature = "native")]
 pub struct ContentReader {
     live_limits: Option<Arc<dyn Fn(Limits) -> Limits + Send + Sync>>,
     limits: Limits,
@@ -149,6 +175,7 @@ pub struct ContentReader {
     graph: Option<super::GraphExecutor>,
     code_index: Option<Arc<super::code_index::Prepared>>,
 }
+#[cfg(feature = "native")]
 pub(super) struct Context {
     pub(super) limits: Limits,
     pub(super) code_index: Option<Arc<super::code_index::Prepared>>,
@@ -157,6 +184,7 @@ pub(super) struct Context {
     pub(super) objects: Arc<NativeObjects>,
     pub(super) permit: Option<OwnedSemaphorePermit>,
 }
+#[cfg(feature = "native")]
 impl ContentReader {
     pub fn with_live_limits(
         mut self,
@@ -408,6 +436,7 @@ impl ContentReader {
         .await
     }
 }
+#[cfg(feature = "native")]
 impl Context {
     async fn member(&self, key: m::ObjectKey) -> Result<()> {
         self.budget.authorize(self.access.as_ref()).await?;
@@ -521,6 +550,7 @@ impl Context {
         })
     }
 }
+#[cfg(feature = "native")]
 fn map_object(error: objects::Error) -> Error {
     use jj_store_object::Error as S;
     match error {

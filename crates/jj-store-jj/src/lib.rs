@@ -15,9 +15,9 @@ pub mod dependencies;
 pub mod factories;
 #[cfg(feature = "native")]
 pub mod git_bridge;
-#[cfg(feature = "native")]
+#[cfg(any(feature = "native", feature = "local-history"))]
 mod line_diff;
-#[cfg(feature = "native")]
+#[cfg(any(feature = "native", feature = "local-history"))]
 pub mod local_browser;
 pub mod local_evidence;
 #[cfg(feature = "native")]
@@ -33,9 +33,9 @@ pub mod objects;
 pub mod operation_stores;
 #[cfg(feature = "native")]
 pub mod policy;
-#[cfg(feature = "native")]
+#[cfg(any(feature = "native", feature = "local-history"))]
 pub mod query;
-#[cfg(feature = "native")]
+#[cfg(any(feature = "native", feature = "local-history"))]
 mod read_support;
 #[cfg(feature = "native")]
 pub mod replication;

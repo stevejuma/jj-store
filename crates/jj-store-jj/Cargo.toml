@@ -12,7 +12,8 @@ readme = "README.md"
 [features]
 default = ["native"]
 companion = ["tokio/time"]
-native = ["gix/default", "companion", "tokio/fs", "tokio/io-util", "tokio/sync", "tokio/rt", "tokio/process", "dep:jj-store-object", "dep:jj-store-wal", "dep:jj-forge", "dep:redb", "dep:prost", "dep:prost-build", "dep:tonic-prost-build", "dep:protoc-bin-vendored", "dep:base64", "dep:zeroize", "dep:url", "dep:async-trait", "dep:toml", "dep:blake2", "dep:chrono", "dep:tempfile", "dep:futures", "dep:etcetera", "dep:whoami", "dep:tokio-util", "dep:rustix"]
+local-history = ["companion", "tokio/macros", "dep:prost", "tokio/fs", "tokio/io-util", "tokio/sync", "tokio/rt", "dep:async-trait", "dep:futures", "dep:tempfile", "dep:tokio-util", "dep:redb", "dep:etcetera", "dep:whoami", "dep:blake2", "dep:chrono"]
+native = ["local-history", "gix/default", "companion", "tokio/fs", "tokio/io-util", "tokio/sync", "tokio/rt", "tokio/process", "dep:jj-store-object", "dep:jj-store-wal", "dep:jj-forge", "dep:redb", "dep:prost", "dep:prost-build", "dep:tonic-prost-build", "dep:protoc-bin-vendored", "dep:base64", "dep:zeroize", "dep:url", "dep:async-trait", "dep:toml", "dep:blake2", "dep:chrono", "dep:tempfile", "dep:futures", "dep:etcetera", "dep:whoami", "dep:tokio-util", "dep:rustix"]
 
 [dependencies]
 jj-store-git.workspace = true
@@ -55,3 +56,111 @@ tonic-prost = "0.14"
 prost-build = { version = "0.14", optional = true }
 tonic-prost-build = { version = "0.14", optional = true }
 protoc-bin-vendored = { version = "3", optional = true }
+
+[[test]]
+name = "agent_workspaces"
+required-features = ["native"]
+
+[[test]]
+name = "compatibility"
+required-features = ["native"]
+
+[[test]]
+name = "conversion"
+required-features = ["native"]
+
+[[test]]
+name = "copy_index"
+required-features = ["native"]
+
+[[test]]
+name = "git_bridge"
+required-features = ["native"]
+
+[[test]]
+name = "local_history"
+required-features = ["local-history"]
+
+[[test]]
+name = "local_stacks"
+required-features = ["native"]
+
+[[test]]
+name = "native_backend"
+required-features = ["native"]
+
+[[test]]
+name = "native_codec"
+required-features = ["native"]
+
+[[test]]
+name = "native_inventory"
+required-features = ["native"]
+
+[[test]]
+name = "native_objects"
+required-features = ["native"]
+
+[[test]]
+name = "native_operations"
+required-features = ["native"]
+
+[[test]]
+name = "replication_heads"
+required-features = ["native"]
+
+[[test]]
+name = "rustfs"
+required-features = ["native"]
+
+[[test]]
+name = "stack_foreground"
+required-features = ["native"]
+
+[[test]]
+name = "stack_head_publication"
+required-features = ["native"]
+
+[[test]]
+name = "stack_operation_archive"
+required-features = ["native"]
+
+[[test]]
+name = "stack_preparation_retention"
+required-features = ["native"]
+
+[[test]]
+name = "stack_reword_preparation"
+required-features = ["native"]
+
+[[test]]
+name = "stack_setup_preparation"
+required-features = ["native"]
+
+[[test]]
+name = "stack_source_recovery"
+required-features = ["native"]
+
+[[test]]
+name = "stack_tree_checkout"
+required-features = ["native"]
+
+[[test]]
+name = "stack_unchanged_checkout"
+required-features = ["native"]
+
+[[test]]
+name = "working_tree_baseline"
+required-features = ["native"]
+
+[[test]]
+name = "working_tree_current"
+required-features = ["native"]
+
+[[example]]
+name = "content_qualification"
+required-features = ["native"]
+
+[[example]]
+name = "query_qualification"
+required-features = ["native"]

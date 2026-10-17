@@ -48,6 +48,7 @@ pub(super) struct Lookup {
     _memory: Lease,
 }
 impl Lookup {
+    #[cfg(feature = "native")]
     pub(super) fn weight(&self) -> u64 {
         self.edges.capacity() as u64 * 256 + 64 * 1024
     }

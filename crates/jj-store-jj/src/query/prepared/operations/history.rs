@@ -183,6 +183,7 @@ impl Graph {
         }
         Ok(())
     }
+    #[cfg(feature = "native")]
     pub(crate) fn weight(&self) -> u64 {
         self.weight
     }

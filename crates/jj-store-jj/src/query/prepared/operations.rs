@@ -71,6 +71,7 @@ pub(super) fn write(
     Ok(())
 }
 impl Lookup {
+    #[cfg(feature = "native")]
     pub(crate) fn weight(&self) -> u64 {
         self.ids.capacity() as u64 * 256
             + 64 * 1024

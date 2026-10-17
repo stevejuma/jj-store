@@ -5,15 +5,25 @@ operation and view codecs, operation-pinned reads, local Git repository access
 and qualified source evidence. Upstream JJ types stay at this boundary.
 
 Native and local readers share owned budgets, diagnostics, cancellation and
-worker admission. Their existing public query paths are preserved. A focused
-standalone local-history feature remains under development; `companion` alone
-does not enable the browser's history reader.
+worker admission. Their existing public query paths are preserved. The optional
+`local-history` feature exposes the same operation-pinned filesystem history,
+content and diff readers without native object storage, WAL or application
+runtimes. `companion` alone does not enable history reads.
 
 The default `native` feature provides the full adapter. For a Git-only
 embedding, select `default-features = false` and `features = ["companion"]` in
 the Cargo dependency. `local_repository::metadata_store` resolves the existing
 GitBackend without reconciling heads; `MetadataStore::carrier()` includes the
 qualified `local_evidence::JjEvidenceValidator` for `jj-store-git`.
+
+For read-only history, select `default-features = false` and
+`features = ["local-history"]`. Implement `local_browser::Access` with current
+physical-source authorization and a registration generation. Create a bounded
+`local_browser::Executor`, select an operation from `heads`, and use
+`query::cache::managed::Namespace` to admit a private disposable index before
+`prepare_managed_code_index`. Keep the prepared operation pin for subsequent
+`read_code_index` requests. Neither the cache nor the feature grants source
+access. Source indexes, metadata and dirty working files stay read-only.
 
 Use `local_evidence::inspect` to capture exact source capsules for typed store
 commands. See

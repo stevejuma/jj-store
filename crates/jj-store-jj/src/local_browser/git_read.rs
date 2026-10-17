@@ -30,6 +30,7 @@ impl Reader {
     }
     /// Recovery must preserve original JJ extras, never infer a synthetic
     /// change identity when the original record has disappeared.
+    #[cfg(feature = "native")]
     pub(crate) fn exact_commit(
         &self,
         backend: &dyn b::Backend,

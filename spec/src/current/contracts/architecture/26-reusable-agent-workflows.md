@@ -103,3 +103,10 @@ execution. Existing native and local browser public paths re-export the same
 types and preserve default budgets, diagnostic schemas and worker sharing. This
 internal refactor alone does not expose an independent local-history feature or
 qualify a Tauri reader; those retain separate delivery gates.
+
+The focused `local-history` profile exposes operation-pinned filesystem read
+adapters and admitted private query caches without native object storage, WAL,
+application services or transports. Native backend factories, conversion,
+checkout and mutation remain separately gated. Hosts still supply current
+physical-source admission, private cache reservations and worker lifetime;
+enabling a feature alone grants no authority or repository mutation.

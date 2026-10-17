@@ -1,14 +1,18 @@
 //! Shared non-queuing interactive admission and one reserved preparation worker.
+#[cfg(feature = "native")]
 use super::{GraphExecutor, Limits, Result, cache, content};
 pub use crate::read_support::workers::{Status, Workers};
+#[cfg(feature = "native")]
 use std::path::PathBuf;
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::query::Error;
+    #[cfg(feature = "native")]
     use std::sync::Arc;
     #[test]
+    #[cfg(feature = "native")]
     fn retained_query_clones_capture_updated_limits_for_new_jobs() {
         let seconds = Arc::new(std::sync::atomic::AtomicU64::new(30));
         let graph_seconds = seconds.clone();
@@ -69,11 +73,13 @@ mod tests {
 /// The serving composition creates this once and shares its clones. Standalone
 /// executors remain useful for isolated callers with an independently owned budget.
 #[derive(Clone)]
+#[cfg(feature = "native")]
 pub struct Executors {
     graph: GraphExecutor,
     content: content::ContentReader,
     workers: Workers,
 }
+#[cfg(feature = "native")]
 impl Executors {
     /// All retained executor clones share the serving owner's live limits. Running jobs keep their captured budget.
     pub fn with_live_limits(

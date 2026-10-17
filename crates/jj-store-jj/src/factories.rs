@@ -24,7 +24,7 @@ use std::{
     sync::Arc,
 };
 
-pub const PROFILE: &str = "jj-native-0.45.1-v1";
+pub const PROFILE: &str = crate::read_support::QUERY_CACHE_PROFILE;
 /// Shared, repository-bound authority, with independently implemented read,
 /// staging and publication operations. The service supplies the authenticated implementation.
 pub trait NativeAuthority: BackendAuthority + OperationAuthority {

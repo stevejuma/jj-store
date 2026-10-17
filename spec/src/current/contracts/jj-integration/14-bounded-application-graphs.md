@@ -6,6 +6,13 @@ language public paths re-export the same owned types. Default allowances,
 diagnostic/error schemas, cancellation and shared worker slots are unchanged;
 source pins and current authorization remain with their existing adapters.
 
+The additive `local-history` feature reuses these algorithms for filesystem
+repositories without native object/WAL or service dependencies. Private caches,
+retained operation membership, cancellation, registration generations and
+completion authorization keep the same requirements. Native-only integration and
+qualification examples remain enabled by default and explicitly gated in
+headless builds.
+
 Core browsing uses the pinned `jj-lib::DefaultIndexStore` and its standard
 incremental builder in server-owned storage. One repository/profile/authority
 namespace contains JJ's per-operation associations; bookmarks share its graph.

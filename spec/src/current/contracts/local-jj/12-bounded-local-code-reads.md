@@ -116,3 +116,11 @@ following symlinks and ignore access events. At most 128 session/repository
 watches are retained per controller; session cleanup and shutdown release them.
 Matching hints invalidate current UI reads through the existing application
 feed, without periodic browser requests or changes to publication authority.
+
+Independent hosts may select `jj-store-jj/local-history` with defaults disabled
+to consume these same pinned filesystem readers. The feature neither registers a
+folder nor grants source or cache authority. The host owns fresh physical
+admission, generation changes, private cache reservations and worker lifetime.
+Source indexes and dirty files stay unchanged, and reads require completion
+reauthorization. Native working-tree inspection and mutation remain separately
+gated; Tauri admission and application integration need their own qualification.

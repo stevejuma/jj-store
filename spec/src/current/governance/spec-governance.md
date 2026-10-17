@@ -5,11 +5,11 @@ stays in jj-store-jj; core/Git/native stores keep their owned boundaries.
 E-FORGE-PANEL-001/E-FORGE-DETAILS-001/E-FORGE-INLINE-001 retain JST-GOV-008.
 E-FORGE-BRANCH-STATUS-001 adds owned status UI with released controls.
 
-E-CUSTOM-INDEX-001 introduces the isolated derived read-index crate under
-JST-ADAPT-008. The dependency allowlist permits service-to-read-index only;
-native/model/WAL authority remains independent. New crate/manifest boundaries
-require owning architecture, adapter and fresh M29 evidence. Index codecs are
-disposable derived formats, with no native codec or publication changes.
+E-CUSTOM-INDEX-001's JST-ADAPT-008 index crate allows service-to-read-index;
+native/model/WAL stay independent. New crates need architecture, adapter and M29
+evidence. Index codecs are disposable; native codecs/publication are unchanged.
+M33 governance checks local-history dependency closure and target feature gates,
+preserving native defaults. Tauri/Notes/release gates stay separate.
 
 E-WORKFLOW-GITHUB-001 adds an owned local YAML executor adapter and typed scoped
 reporting. Forgejo Runner v13.2.0 remains an external MIT-licensed executable

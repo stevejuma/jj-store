@@ -281,3 +281,10 @@ Shared read admission remains contained in the existing JJ crate. Its internal
 modules retain public re-exports and add no feature or dependency requirement.
 Package input checks and native/companion consumer checks remain distinct from
 future independent local-history and Tauri qualification under JST-ARCH-005.
+
+The additive `jj-store-jj/local-history` profile includes local read and shared
+query modules in the existing crate with no native storage or execution runtime
+closure. Default `native` includes it, retains all native integration binaries
+and qualification examples, and preserves wire formats. Feature checks are
+source qualification; independent archive and Tauri release acceptance remain
+separate gates.

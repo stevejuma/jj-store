@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed shared owned read budgets, diagnostics, cancellation and worker admission; native/local public aliases and original allowances remain exact, while the companion-only profile still excludes independent history reads.",
-      "fingerprint": "c2ab31b978d6271c23205559cab77890e22266068f838b2f6b6ca3d221b566b7"
+      "reason": "Reviewed focused local-history dependency closure, retained physical admission and operation pins, private standard-index construction, native-only execution gates and explicit unqualified Tauri integration.",
+      "fingerprint": "a690b6b0df3cca61ce082e91a5e2683fb7a537cb83d8ed934e84a2439cad2958"
     }
   },
   {

@@ -9,9 +9,13 @@ pub(crate) mod operations;
 mod segment;
 mod tables;
 pub(crate) mod visible;
-use super::{Error, Result, access::Budget};
+#[cfg(feature = "native")]
+use super::access::Budget;
+use super::{Error, Result};
 use disk::{Disk, Space, Table, io_error};
-use jj_lib::{backend, object_id::ObjectId as _, operation::Operation, store::Store};
+#[cfg(feature = "native")]
+use jj_lib::store::Store;
+use jj_lib::{backend, object_id::ObjectId as _, operation::Operation};
 use redb::TableDefinition;
 use std::{path::Path, sync::Arc};
 use tables::Tables;
@@ -86,6 +90,7 @@ impl Node {
 }
 
 #[derive(Default)]
+#[cfg(feature = "native")]
 pub(super) struct Features {
     pub filtering: bool,
     pub operations: bool,
@@ -93,6 +98,7 @@ pub(super) struct Features {
 
 /// The containing cache owns cleanup and reserves `max_bytes` before entry.
 /// No operation link is installed until a complete segment has been synced.
+#[cfg(feature = "native")]
 pub(super) async fn build(
     path: &Path,
     operation: &Operation,
@@ -134,6 +140,7 @@ pub(crate) struct Description {
     _memory: super::memory::Lease,
 }
 impl Description {
+    #[cfg(feature = "native")]
     fn from_string(text: String) -> Result<Self> {
         let memory = super::memory::Lease::reserve(4096 + text.len() as u64 * 2)?;
         Ok(Self {
@@ -177,6 +184,7 @@ pub(crate) trait Source {
     async fn view(&self, operation: &Operation) -> Result<jj_lib::view::View>;
     async fn commit(&self, id: &backend::CommitId) -> Result<CommitFields>;
 }
+#[cfg(feature = "native")]
 struct NativeSource<'a> {
     operation: &'a Operation,
     store: &'a Arc<Store>,
@@ -186,6 +194,7 @@ struct NativeSource<'a> {
     lookup: bool,
     view_identity: std::cell::Cell<Option<[u8; 32]>>,
 }
+#[cfg(feature = "native")]
 impl Source for NativeSource<'_> {
     fn check(&self) -> Result<()> {
         self.budget.check()

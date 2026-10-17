@@ -196,6 +196,7 @@ impl Extras {
     pub fn record(&self, id: &[u8], budget: &Budget) -> Result<Record> {
         self.find_record(id, budget).map(Option::unwrap_or_default)
     }
+    #[cfg(feature = "native")]
     pub(in super::super) fn require(&self, id: &[u8], budget: &Budget) -> Result<()> {
         self.find_record(id, budget)?.ok_or(Error::Incomplete)?;
         Ok(())
