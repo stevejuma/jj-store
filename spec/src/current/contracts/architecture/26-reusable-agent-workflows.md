@@ -53,16 +53,17 @@ M33 acquisition adapters consume `lapis-ai-capture` for approved roots, bounded
 metadata walks and exact Codex header inspection. The JJ Cursor scanner retains
 its required `jj-store.json` hint; the source library knows no JJ sidecar.
 Existing device/inode and raw-header witness hashing remains in the JJ adapter.
-Source profile inventory maps explicitly without changing serialized JJ profiles.
-Availability fences cannot prove retirement after an unknown IO outcome.
+Source profile inventory maps explicitly without changing serialized JJ
+profiles. Availability fences cannot prove retirement after an unknown IO
+outcome.
 
 The optional `application` capture feature retains the original durable spool,
 WAL request and RPC/service adapters, enabled by default for compatibility.
 Without defaults, hosts receive read-only sources, sanitizers, source leases,
-reader progress and exact acknowledgement types with no WAL, object store,
-RPC, service or upstream JJ dependency. Hosts must durably retain sanitized
-records and matching progress before acknowledging them. The feature boundary
-neither supplies publication authority nor changes existing spool encodings.
+reader progress and exact acknowledgement types with no WAL, object store, RPC,
+service or upstream JJ dependency. Hosts must durably retain sanitized records
+and matching progress before acknowledging them. The feature boundary neither
+supplies publication authority nor changes existing spool encodings.
 
 The first `jj-store-conversations` slice extracts shared Control V3 stream
 framing and bounded per-participant assistant/tool accumulation. A host-injected
@@ -80,3 +81,18 @@ reservation; an uncertain delivery remains unknown and cannot replay. Runtime
 enqueue acceptance is distinct from provider delivery and captured answers.
 Existing JJ home/workspace/store preparation remains host-owned and retains its
 native publication and exact request identities.
+
+The headless TypeScript client lives in `@lapismd/jj-conversations` with public
+built ESM/type exports and no UI/runtime dependency. The private application
+consumes those exports through its source workspace; publishable manifests keep
+registry dependency metadata. Consumer commands build the package before use;
+there is no source alias. Mention tokens retain exact installation setup IDs,
+not member keys or execution grants. Delivery observations preserve full-width
+host sequences; existing UI adapters own any display-only numeric conversion.
+
+Typed client transports receive immutable exact encoded commands under a fixed
+host scope. A lost response retains an unknown operation; retries only read
+status and never silently submit it again. Restored unknown intents cannot start
+execution. Message publication, recipient delivery and captured answers remain
+distinct; session-only client state never substitutes for native durable
+receipts or host authorization.

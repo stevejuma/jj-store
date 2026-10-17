@@ -42,10 +42,7 @@
       "scripts/ci-redaction-source.mjs",
       "scripts/agent-redaction-source.json"
     ],
-    "pages": [
-      "docs/site/guides/capture.md",
-      "docs/site/technical/capture.md"
-    ],
+    "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
       "reason": "Reviewed additive headless source/progress/acknowledgement profile, optional exact application journal and unchanged default recovery encodings, with private host durability required before acknowledgement.",
       "fingerprint": "07cb8f7379fbfe4eaf01127fae81c6ed8e524a393cfc75793afc8121792408dc"
@@ -53,9 +50,7 @@
   },
   {
     "id": "local",
-    "sources": [
-      "crates/jj-store-jj/src"
-    ],
+    "sources": ["crates/jj-store-jj/src"],
     "pages": [
       "docs/site/technical/local.md",
       "docs/site/guides/git.md",
@@ -68,10 +63,7 @@
   },
   {
     "id": "services",
-    "sources": [
-      "crates/jj-store-service/src",
-      "crates/jj-store-rpc/src"
-    ],
+    "sources": ["crates/jj-store-service/src", "crates/jj-store-rpc/src"],
     "pages": [
       "docs/site/technical/architecture.md",
       "docs/site/reference/transport.md",
@@ -84,14 +76,8 @@
   },
   {
     "id": "search",
-    "sources": [
-      "crates/jj-store-adapters/src",
-      "crates/jj-store-tantivy/src"
-    ],
-    "pages": [
-      "docs/site/technical/reads.md",
-      "docs/site/guides/search.md"
-    ],
+    "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
+    "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
       "reason": "Reviewed equivalent native read-context iteration after release lint cleanup. Rebuildable search authority and bounded read behavior are unchanged.",
       "fingerprint": "44511ad330c06eccd325f5abd7eeb77eadec857f6e32907ba3ba037274cf775f"
@@ -99,13 +85,8 @@
   },
   {
     "id": "replication",
-    "sources": [
-      "crates/jj-store-replication/src"
-    ],
-    "pages": [
-      "docs/site/technical/replication.md",
-      "docs/site/guides/sync.md"
-    ],
+    "sources": ["crates/jj-store-replication/src"],
+    "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
     "review": {
       "reason": "Reviewed sync semantic projection suppressing idle scheduler churn while preserving checkpoint, pause and fault notices; replication authority is unchanged.",
       "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2"
@@ -113,9 +94,7 @@
   },
   {
     "id": "configuration",
-    "sources": [
-      "crates/jj-store-server/src"
-    ],
+    "sources": ["crates/jj-store-server/src"],
     "pages": [
       "docs/site/reference/configuration.md",
       "docs/site/reference/environment.md",
@@ -128,9 +107,7 @@
   },
   {
     "id": "cli",
-    "sources": [
-      "crates/jj-store-cli/src"
-    ],
+    "sources": ["crates/jj-store-cli/src"],
     "pages": [
       "docs/site/cli/index.md",
       "docs/site/getting-started/install.md",
@@ -143,9 +120,7 @@
   },
   {
     "id": "http",
-    "sources": [
-      "crates/jj-store-http/src"
-    ],
+    "sources": ["crates/jj-store-http/src"],
     "pages": [
       "docs/site/reference/transport.md",
       "docs/site/reference/security.md",
@@ -158,9 +133,7 @@
   },
   {
     "id": "application",
-    "sources": [
-      "web/src"
-    ],
+    "sources": ["web/src"],
     "pages": [
       "docs/site/guides/browsing.md",
       "docs/site/guides/editing.md",
@@ -168,19 +141,14 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed existing confirmed folder removal and native deletion recovery, tab-shaped history/Stacks loading and unique native file ownership since the previous acknowledgement. Settings and browsing guides now describe these exact behaviors; no UI implementation or qualification changes in this documentation slice.",
-      "fingerprint": "0da2411fa4d0741cf9cb04c9a85b017f8e5d24242f5f9074386585285e2e804c"
+      "reason": "Reviewed mechanical mention and delivery projection delegation to the owning built client package; original token bytes, legacy pubkey presentation alias, numeric display conversion, UI labels and operational feedback paths are unchanged.",
+      "fingerprint": "79ae5ad4bda4f49c906e83e1032e3c47d65249b0e87872429dc99112df3515d1"
     }
   },
   {
     "id": "desktop",
-    "sources": [
-      "desktop/src",
-      "desktop/crates/terminal-engine/src"
-    ],
-    "pages": [
-      "docs/site/technical/lifecycle.md"
-    ],
+    "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
+    "pages": ["docs/site/technical/lifecycle.md"],
     "review": {
       "reason": "Reviewed shared native resource verification, complete Lapis helper staging and unchanged service ownership and paired JJ lifecycle.",
       "fingerprint": "ad916d5efa57aa8b06d1b31cb9cffb9382ee0043f4f9ca345c5b0527fbb9cfc2"
@@ -188,14 +156,8 @@
   },
   {
     "id": "contracts",
-    "sources": [
-      "schemas/openapi.json",
-      "docs/cli"
-    ],
-    "pages": [
-      "docs/site/reference/transport.md",
-      "docs/site/cli/index.md"
-    ],
+    "sources": ["schemas/openapi.json", "docs/cli"],
+    "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
       "reason": "Reviewed the updated executable example path; public HTTP/RPC DTOs and command fields remain unchanged by local AI client adoption.",
       "fingerprint": "dd01364c68a7d85e1126d388d8d6ffc657b78f448acc758d4d9a77531124ef2f"
@@ -240,13 +202,8 @@
   },
   {
     "id": "forge-stacks",
-    "sources": [
-      "crates/jj-forge/src"
-    ],
-    "pages": [
-      "docs/site/guides/git.md",
-      "docs/site/reference/transport.md"
-    ],
+    "sources": ["crates/jj-forge/src"],
+    "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
     "review": {
       "reason": "Reviewed equivalent forge let-chain guards after strict Rust lint: stale PR identity rejection, retained navigation context and latest-check filtering preserve short-circuit order and documented submission/check/credential semantics.",
       "fingerprint": "b19a8560984447c3c9e8e06f83185a04dc61f27cbf87bed45861123d113df3fd"
@@ -270,15 +227,23 @@
   },
   {
     "id": "conversations",
-    "sources": [
-      "crates/jj-store-conversations/src"
-    ],
-    "pages": [
-      "docs/site/technical/conversations.md"
-    ],
+    "sources": ["crates/jj-store-conversations/src"],
+    "pages": ["docs/site/technical/conversations.md"],
     "review": {
       "reason": "Reviewed the final scoped generic prompt ports, durable receipt ordering and no-replay outcomes; native adapter binds immutable command digests and borrows its owning supervisor lease.",
       "fingerprint": "8a6b4a4d9bcb54064c3877aa687ca732879e054a707cc08da624d7f927f77d50"
+    }
+  },
+  {
+    "id": "conversation-client",
+    "sources": [
+      "packages/jj-conversations/src",
+      "packages/jj-conversations/package.json"
+    ],
+    "pages": ["docs/site/technical/conversations.md"],
+    "review": {
+      "reason": "Reviewed public ESM/type archive, scoped exact wire requests, status-only unknown recovery and identity-only restoration; full-width sequences and native authority remain distinct from transport receipt presence.",
+      "fingerprint": "ddd45cdca897f72bb3123cc03c7f0d2fe0207538c17297db041aad824753edd9"
     }
   }
 ]

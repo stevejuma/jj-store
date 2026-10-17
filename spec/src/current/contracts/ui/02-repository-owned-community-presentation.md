@@ -1,5 +1,11 @@
 # Repository-owned Community presentation
 
+M33 retains the Community-derived mention presentation adapter locally, with its
+existing legacy fields and source attribution. Its application-authored setup-ID
+codec and delivery projections use the headless SDK's public built exports. This
+extraction changes no visible composer, draft, queue or delivery behavior and
+moves no Community UI or Nostr implementation into a package.
+
 Rebase integration preserves collapsed section hints, project navigation and
 profile-gated native Threads alongside the local Git-backed browser. Search
 state types are kept in a small shared module so combining these contracts

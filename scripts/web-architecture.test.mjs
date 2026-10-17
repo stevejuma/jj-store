@@ -47,3 +47,13 @@ test("allows stories to consume production presentation modules", () => {
   });
   assert.deepEqual(architectureErrors(root, { files: {} }), []);
 });
+
+test("headless package sources share the production size boundary", () => {
+  const root = fixture({
+    "packages/jj-conversations/src/large.ts": "const value = 1;\n".repeat(301),
+  });
+  assert.match(
+    architectureErrors(root, { files: {} }).join("\n"),
+    /packages\/jj-conversations\/src\/large.ts: 301 counted lines exceeds 300/,
+  );
+});

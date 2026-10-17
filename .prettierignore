@@ -31,3 +31,5 @@ spec/.generated/
 
 # Canonical native codec fixture: whitespace is part of its byte-exact identity.
 crates/jj-agent/tests/fixtures/native-association-v1.json
+
+packages/jj-conversations/dist/

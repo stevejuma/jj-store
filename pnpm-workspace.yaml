@@ -1,0 +1,4 @@
+packages:
+  - .
+  - packages/jj-conversations
+linkWorkspacePackages: true

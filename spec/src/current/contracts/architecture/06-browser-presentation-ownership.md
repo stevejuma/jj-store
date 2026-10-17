@@ -98,3 +98,10 @@ catalog stylesheets. Its existing utility-based application compositions no
 longer depend on a shared package exporting a compiler entry. Design Core
 components continue to import their own native CSS; this adds no source alias,
 upstream override or copied component style.
+
+M33 retains Community-derived UI adapters and legacy presentation field mapping
+under `web/src/lib`. The independently authored setup-ID codec and delivery
+projections move to the headless conversation SDK. Original Community design
+credit remains recorded; no Community UI or Nostr implementation becomes a
+shared dependency. Presentation ownership and attribution requirements remain
+unchanged.

@@ -1,5 +1,11 @@
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync, writeFileSync, statSync } from "node:fs";
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+  statSync,
+} from "node:fs";
 export function sourceFingerprint(paths) {
   const hash = createHash("sha256");
   function add(path) {
@@ -56,6 +62,11 @@ export function review(id, reason) {
     ...readdirSync("crates", { withFileTypes: true })
       .filter((entry) => entry.isDirectory())
       .map((entry) => `crates/${entry.name}/src`),
+    ...(existsSync("packages")
+      ? readdirSync("packages", { withFileTypes: true })
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => `packages/${entry.name}/src`)
+      : []),
     "web/src",
     "desktop/src",
     "schemas/openapi.json",

@@ -1,10 +1,10 @@
 # Embedding conversation workflows
 
-`jj-store-conversations` contains reusable headless conversation mechanics.
-It coordinates explicit prompts through injected host ports and processes
-Control V3 events with private prefix buffering, final host scanning and bounded
-per-participant assistant/tool accumulation.
-The library imports no JJ service, runtime, object store or transport.
+`jj-store-conversations` contains reusable headless conversation mechanics. It
+coordinates explicit prompts through injected host ports and processes Control
+V3 events with private prefix buffering, final host scanning and bounded
+per-participant assistant/tool accumulation. The library imports no JJ service,
+runtime, object store or transport.
 
 Implement `privacy::Sanitizer` using an admitted native privacy policy. The
 capability must perform prefix-safe replacement and scan complete output frames,
@@ -28,8 +28,9 @@ pipeline before releasing authority.
 Message publication, prompt delivery and captured answers remain separate
 outcomes. Persisted participant attribution does not resolve a device-local
 executable or restore a provider session. Repository stores remain selected
-through the [injectable store interfaces](architecture.md). The remaining typed client, broader workspace/store adapters and Notes
-integration are tracked by the staged M33 specification.
+through the [injectable store interfaces](architecture.md). Broader
+workspace/store adapters and Notes integration are tracked by the staged M33
+specification.
 
 ## Durable explicit turns
 
@@ -48,8 +49,8 @@ Context preparation retains exact private delivery intent before returning each
 frame. All recipients prepare before `Journal::prepared` establishes the durable
 dispatch fence. If preparation fails, the coordinator releases prior exact
 reservations and sends no prompts. The host settles the parent error using its
-existing receipt policy. Journal errors retain original identities and cannot
-be treated as permission to retry a side effect.
+existing receipt policy. Journal errors retain original identities and cannot be
+treated as permission to retry a side effect.
 
 The runtime port must distinguish queue acceptance, proven not sent and unknown
 delivery. Queue acceptance does not prove provider execution. Only proven
@@ -65,3 +66,39 @@ deferred file queues and fixed failure diagnostics remain unchanged. The host
 continues publishing captured answers through its selected AgentStore and
 ThreadStore. Independent downstream adapters provide their own admitted
 workspace/store preparation and durable journal instead of importing the server.
+
+## Typed client and source package
+
+`@lapismd/jj-conversations` exports built ESM and declarations. The private
+jj-store application uses its source workspace through those public exports. The
+publishable package has no UI, runtime, network or storage dependency and keeps
+registry-only development metadata. Installation/publication remains a separate
+operator action. Build with `pnpm client:build`; focused package tests use
+`pnpm client:test`. An independent archive consumer verifies public runtime and
+type exports without access to the source tree.
+
+Construct `ConversationClient` for one app/vault scope with a typed transport
+and lossless encoder. The client binds each request ID to immutable exact
+encoded bytes in memory. Concurrent callers share one submission. A lost
+response keeps an unknown operation; `refresh` invokes only the injected status
+reader. Missing status never establishes non-delivery. A foreign receipt is
+rejected without changing the retained identity or resubmitting.
+
+The client has no durable storage. Restore interrupted work with
+`restoreUnknown(requestId)` from an admitted native journal, then read status.
+This needs no raw command body and cannot manufacture a new submission. Native
+receipts remain authoritative. Scope, credentials, transport admission and
+sanitization of any persisted records remain host-owned. No client error
+includes raw command bodies or transport exception text.
+
+A receipt response is separate from message publication, each recipient's
+delivery and captured answers. The client retains the host's typed outcome and
+full-width integers. Only an explicit host finality decision can retire an
+entry; unknown work is never evicted for capacity. Drain active calls before
+releasing the owning native scope.
+
+Mention tokens keep exact case-sensitive installation setup IDs. Decoding does
+not resolve a member key, executable or execution grant. Delivery projections
+retain full-width host sequences; the existing UI adapter preserves its prior
+display-only number conversion. The generic client imports no generated
+application schema: hosts use their canonical generated wire types directly.

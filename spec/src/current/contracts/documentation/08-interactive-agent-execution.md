@@ -110,9 +110,10 @@ the capture crate README links the full guides. Generic conversation/UI and
 Notes/Tauri delivery remain planned in M33 until their own evidence qualifies.
 
 M33's capture manual identifies `lapis-ai-capture` as the read-only acquisition
-owner while JJ retains normalization, Cursor binding and publication. JST-DOC-001
-full documentation and concise crate READMEs keep admission distinct from
-metadata candidates; automatic local Git-folder discovery remains unqualified.
+owner while JJ retains normalization, Cursor binding and publication.
+JST-DOC-001 full documentation and concise crate READMEs keep admission distinct
+from metadata candidates; automatic local Git-folder discovery remains
+unqualified.
 
 The capture README and technical manual describe headless feature selection,
 private host journaling before exact acknowledgement, and the default
@@ -121,10 +122,17 @@ the manual. No feature selection grants execution or repository authority.
 
 The reusable conversation crate README describes its injected privacy capability
 and safe frame projection. The full bundled embedding manual describes host
-admission, one raw event owner and durable capture before display/ACK, preserving
-JST-DOC-001 and existing native policy/lifecycle qualification boundaries.
+admission, one raw event owner and durable capture before display/ACK,
+preserving JST-DOC-001 and existing native policy/lifecycle qualification
+boundaries.
 
 The conversation embedding manual documents injected typed admission/context/
 journal/runtime ports, scoped host leases, the all-recipient prepared fence and
 proven-not-sent versus unknown delivery. JST-DOC-001 keeps store/workspace host
 ownership and provider acceptance distinct from local queue acceptance.
+
+The conversation manual and package README describe typed status-only recovery,
+scoped immutable requests, full-width delivery projections and mention identity.
+JST-DOC-001 distinguishes session-only client state from native receipts and
+separate publication/delivery/capture outcomes. Archive and registry evidence
+remain separate.

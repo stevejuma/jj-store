@@ -233,7 +233,8 @@ export default defineConfig({
           ],
         },
         {
-          pattern: "^crates/jj-store-conversations/",
+          pattern:
+            "^(?:crates/jj-store-conversations/|packages/jj-conversations/)",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/26-reusable-agent-workflows\\.md$",
           ],
@@ -302,14 +303,14 @@ export default defineConfig({
         },
         {
           pattern:
-            "^(?:Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|docs/implementation-plan\\.md$|docs/reference/)",
+            "^(?:Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-(?:lock|workspace)\\.yaml$|README\\.md$|LICENSE\\.md$|docs/implementation-plan\\.md$|docs/reference/)",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
           ],
         },
       ],
       protected: [
-        "^(?:mkdocs\\.yml$|pyproject\\.toml$|uv\\.lock$|rustfmt\\.toml$|desktop/|catalog/|\\.storybook/|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
+        "^(?:mkdocs\\.yml$|pyproject\\.toml$|uv\\.lock$|rustfmt\\.toml$|desktop/|catalog/|\\.storybook/|crates/|packages/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-(?:lock|workspace)\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
       ],
     },
   },

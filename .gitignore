@@ -38,3 +38,6 @@ spec/.generated/
 .qmd/index.sqlite*
 
 .release/
+
+/packages/jj-conversations/dist/
+/packages/jj-conversations/node_modules/

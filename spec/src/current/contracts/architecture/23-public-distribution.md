@@ -268,3 +268,11 @@ Shared conversation coordination adds async trait ports without an asynchronous
 runtime or transport dependency. Borrowed host capabilities retain their scoped
 lease; independent crate and native consumer tests qualify the public boundary.
 JST-ARCH-005 release and packaged downstream acceptance remain separate.
+
+The standalone `@lapismd/jj-conversations` archive ships built ESM/declarations,
+license, notice and a short README. Its private owning application uses a normal
+semver workspace dependency on public exports; published SDK metadata contains
+no source aliases or workspace dependencies. Source, archive acceptance and
+registry publication remain distinct under JST-ARCH-005. UI-only client source
+selects the web CI lane; shared root manifests keep their conservative
+selection.

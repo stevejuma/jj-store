@@ -107,6 +107,13 @@ test("empty and documentation selections stay light while force runs all standar
     assert.equal(impact(files, true, graph()).web, true);
   }
   assert.equal(impact(["web/src/new.ts"], false, graph()).web, true);
+  const client = impact(
+    ["packages/jj-conversations/src/client.ts"],
+    false,
+    graph(),
+  );
+  assert.equal(client.web, true);
+  assert.equal(client.rust, false);
 });
 test("real read-index and model impacts preserve the agreed standard cohort", () => {
   const g = workspaceGraph();

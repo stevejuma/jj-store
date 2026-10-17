@@ -2477,7 +2477,7 @@
     },
     {
       "local": "web/src/lib/community/agent-mentions.ts",
-      "reason": "Owned exact saved-ACP identity encoding extends the Community composer token presentation; no Nostr identity or dispatch authority is inferred.",
+      "reason": "Owned Community-inspired presentation adapter delegates the application-authored exact setup-ID codec to @lapismd/jj-conversations; legacy token fields remain local. No Community UI or Nostr implementation is moved into the shared package, and mentions grant no dispatch authority.",
       "sources": [
         {
           "path": "src/components/community-chat-composer/composer-mention-token.ts",
@@ -2955,7 +2955,7 @@
     },
     {
       "local": "web/src/lib/conversations/prompt-delivery.ts",
-      "reason": "Application-authored projection of queue/start/context-delivery acknowledgements and authored prompt content under existing execution contracts."
+      "reason": "Application-authored adapter delegates queue/start/context-delivery projections to @lapismd/jj-conversations while retaining legacy UI numeric conversion; no Community source or presentation dependency is moved."
     },
     {
       "local": "web/src/lib/conversations/legacy-recorded.ts",

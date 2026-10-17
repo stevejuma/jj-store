@@ -53,7 +53,11 @@ export function impact(
       if (/^crates\/jj-store-(?:model|http|rpc)\//.test(file)) web = true;
       continue;
     }
-    if (/^(?:web\/|catalog\/|\.storybook\/|docs\/site\/)/.test(file)) {
+    if (
+      /^(?:web\/|catalog\/|\.storybook\/|docs\/site\/|packages\/jj-conversations\/)/.test(
+        file,
+      )
+    ) {
       web = true;
       reasons.push(`${file}: web/catalog input`);
       continue;

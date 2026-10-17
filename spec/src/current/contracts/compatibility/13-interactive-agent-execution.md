@@ -88,7 +88,8 @@ publication receipts are not upgraded or rewritten by the new library boundary.
 M33 acquisition extraction retains all six serialized capture profiles and
 product versions, bounded complete headers, exact raw-header/device/inode
 witnesses and the Cursor sidecar requirement. JST-COMPAT-001/003/005 repository,
-spool and receipt formats remain unchanged; source discovery grants no admission.
+spool and receipt formats remain unchanged; source discovery grants no
+admission.
 
 The additive capture `application` feature is enabled by default. Disabling it
 omits application spool/publication APIs rather than interpreting their formats.
@@ -104,3 +105,9 @@ M33 prompt coordination preserves original parent/child request derivation,
 prepared/accepted receipt states, exact context release and deferred file
 queues. No journal field or canonical store encoding changes. Scoped host ports
 retain JST-COMPAT-001/003/005 and uncertain prompts never replay.
+
+M33's TypeScript extraction preserves exact mention token bytes, case/Unicode
+setup IDs, authored prompt stripping and delivery states. SDK sequences retain
+full host width; the existing UI keeps its prior display conversion. Generated
+wire schemas and canonical/native journal formats remain unchanged under
+JST-COMPAT-001/003/005.

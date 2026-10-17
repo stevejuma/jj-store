@@ -45,3 +45,9 @@ M33 shared conversation primitives are qualified as an independent crate and
 through the original native-policy consumer tests. Injected fixture policies do
 not establish scanner, provider or desktop acceptance. Distribution still
 requires complete package and consumer qualification.
+
+The private app consumes its owning headless SDK through built workspace public
+exports. The separately publishable package retains registry metadata and no UI
+or runtime dependencies. Independent runtime/type archive acceptance, existing
+consumer regressions and source dependency checks qualify the boundary; source
+aliases and implicit prompt retry remain forbidden.
