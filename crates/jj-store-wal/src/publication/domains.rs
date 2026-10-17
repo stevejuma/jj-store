@@ -24,7 +24,7 @@ impl Domain {
             Self::Reaction => RecordKind::ReactionRoot,
         }
     }
-    fn semantic_kind(self) -> SemanticKind {
+    pub(super) fn semantic_kind(self) -> SemanticKind {
         match self {
             Self::Agent => SemanticKind::AgentStateChanged,
             Self::Review => SemanticKind::ReviewStateChanged,

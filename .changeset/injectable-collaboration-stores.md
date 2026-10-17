@@ -3,4 +3,4 @@
 ---
 
 Expose injectable collaboration store interfaces and focused shared library
-engines.
+engines, Git and native providers, and independently named per-store factories.

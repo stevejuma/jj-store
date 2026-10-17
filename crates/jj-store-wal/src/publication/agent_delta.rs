@@ -45,6 +45,11 @@ impl AgentDeltaRequest {
         }
         self.delta.validate().map_err(agent_error)
     }
+    /// Exact original native intent, including IDs, result and Thread binding.
+    pub fn intent_digest(&self, repository: RepositoryId) -> Result<IntentDigest> {
+        self.validate()?;
+        self.intent(repository)
+    }
     fn intent(&self, repository: RepositoryId) -> Result<IntentDigest> {
         let mut hash = Sha256::new_with_prefix(b"jj-store/agent-delta/v1\0");
         hash.update(records::encode(&(repository, self), 8 * 1024 * 1024)?);

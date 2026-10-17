@@ -22,6 +22,8 @@ impl From<LocalError> for jj_store_core::Error {
             E::Invalid => Self::Invalid("Git command"),
             E::Unsupported => Self::Unsupported("Git store profile"),
             E::Busy => Self::Contended,
+            E::ThreadResolved => Self::ThreadResolved,
+            E::ThreadOpen => Self::ThreadOpen,
             _ => Self::Unavailable(e.to_string()),
         }
     }

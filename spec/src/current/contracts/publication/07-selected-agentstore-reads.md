@@ -59,3 +59,14 @@ engines. JST-PUB-001/004/005/007/009 remain unchanged: native authorization,
 manifest/WAL publication, original receipts, closure admission and unknown
 outcomes stay under the native coordinator. Native missing-object errors retain
 their neutral target-unavailable interpretation across the core boundary.
+
+M32's native store factories delegate publication to this coordinator. A bounded
+receipt-domain lookup verifies the selected receipt and its original transaction
+before returning its accepted immutable root and domain version. It never uses
+current roots to reinterpret historical receipts. Domain mismatch fails
+explicitly. Host-clock variants of typed command publication retain the same
+intent and receipt formats; existing entry points keep their clock defaults.
+Prepared Agent delta adapters preserve actor, request/publication IDs, result
+bytes and accepted Thread binding. JST-PUB-001/004/005/007/009 authority,
+unknown-outcome handling, exact immutable selection and WAL recovery remain
+unchanged.

@@ -237,3 +237,8 @@ and managed native object erasure. The note does not publish a release, modify
 installed tools or qualify external S3/shared/platform deployment. Existing
 source ownership, portable dependency metadata and coordinated release authority
 under JST-ARCH-005 remain unchanged.
+
+M32 includes jj-store-native in the coordinated library inventory with a concise
+crate README and portable path-plus-version dependencies. Its minor Changeset
+adds named native factories without publishing packages or changing existing
+manifest/WAL/receipt formats. JST-ARCH-005 release gates remain unchanged.

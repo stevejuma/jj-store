@@ -1,7 +1,7 @@
 # Change map
 
-E-FORGE-STACKS-001 adds JST-FORGE-001/007/M31; CLI/HTTP share contracts.
-jj-store-jj owns JJ; forge adapters stay outside storage/model/WAL.
+E-FORGE-STACKS-001 adds JST-FORGE-001/007/M31; CLI/HTTP share contracts. JJ
+stays in jj-store-jj; core/Git/native stores keep their owned boundaries.
 E-FORGE-PANEL-001/E-FORGE-DETAILS-001/E-FORGE-INLINE-001 retain JST-GOV-008.
 E-FORGE-BRANCH-STATUS-001 adds owned status UI with released controls.
 

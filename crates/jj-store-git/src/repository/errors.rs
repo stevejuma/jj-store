@@ -40,9 +40,9 @@ impl From<jj_store_core::engine::ReviewCommandError> for LocalError {
         use jj_store_core::engine::ReviewCommandError as E;
         match error {
             E::Publication(error) => error.into(),
-            E::Stale => Self::Stale,
             E::ThreadResolved => Self::ThreadResolved,
             E::ThreadOpen => Self::ThreadOpen,
+            E::Stale => Self::Stale,
             E::NotFound(_) => Self::NotFound,
             E::Invalid(_) => Self::Invalid,
         }
@@ -65,6 +65,8 @@ impl From<jj_store_core::Error> for LocalError {
     fn from(e: jj_store_core::Error) -> Self {
         use jj_store_core::Error as E;
         match e {
+            E::ThreadResolved => Self::ThreadResolved,
+            E::ThreadOpen => Self::ThreadOpen,
             E::Stale => Self::Stale,
             E::IntentConflict => Self::IntentConflict,
             E::NotFound => Self::Unavailable,

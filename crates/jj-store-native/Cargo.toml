@@ -1,0 +1,25 @@
+[package]
+name = "jj-store-native"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+description = "Injectable collaboration stores backed by native manifest and WAL publication"
+
+[dependencies]
+jj-store-core.workspace = true
+jj-store-model.workspace = true
+jj-store-wal.workspace = true
+jj-agent.workspace = true
+jj-review.workspace = true
+jj-work.workspace = true
+jj-collab.workspace = true
+async-trait = "0.1"
+serde_json = "1"
+
+[dev-dependencies]
+jj-store-object.workspace = true
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

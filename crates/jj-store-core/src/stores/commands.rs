@@ -51,6 +51,7 @@ pub enum ReactionCommand {
 /// request/publication IDs before retrying a potentially published outcome.
 #[derive(Clone, Debug)]
 pub struct PreparedAgentDelta {
+    pub actor: jj_store_model::PrincipalId,
     pub delta: jj_agent::AgentDeltaV1,
     pub result: Vec<u8>,
     pub thread_binding: Option<PreparedThreadBinding>,

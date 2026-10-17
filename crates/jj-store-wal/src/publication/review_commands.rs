@@ -6,14 +6,25 @@ impl Coordinator {
         &self,
         request: &ReviewCommandRequest,
     ) -> std::result::Result<PublishOutcome, ReviewCommandError> {
-        request.validate()?;
-        let intent = request.intent(self.records.repository)?;
         let accepted_at_millis = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_err(|_| ReviewCommandError::Invalid("review command time"))?
             .as_millis()
             .try_into()
             .map_err(|_| ReviewCommandError::Invalid("review command time"))?;
+        self.publish_review_command_at(request, accepted_at_millis)
+            .await
+    }
+    pub async fn publish_review_command_at(
+        &self,
+        request: &ReviewCommandRequest,
+        accepted_at_millis: i64,
+    ) -> std::result::Result<PublishOutcome, ReviewCommandError> {
+        request.validate()?;
+        if accepted_at_millis < 0 {
+            return Err(ReviewCommandError::Invalid("review command time"));
+        }
+        let intent = request.intent(self.records.repository)?;
         let unknown = || PublishOutcome::OutcomeUnknown {
             request_id: request.request_id,
             publication_id: request.publication_id,

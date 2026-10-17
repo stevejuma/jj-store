@@ -1,6 +1,6 @@
 [workspace]
 exclude = ["desktop", "runtime/local-agent", "runtime/compute"]
-members = ["crates/jj-store-git", "crates/jj-store-core", "crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
+members = ["crates/jj-store-native", "crates/jj-store-git", "crates/jj-store-core", "crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
 resolver = "2"
 
 [workspace.package]
@@ -13,6 +13,7 @@ repository = "https://github.com/stevejuma/jj-store"
 homepage = "https://stevejuma.github.io/jj-store/"
 
 [workspace.dependencies]
+jj-store-native = { path = "crates/jj-store-native", version = "0.1.0" }
 jj-store-git = { path = "crates/jj-store-git", version = "0.1.0" }
 jj-store-core = { path = "crates/jj-store-core", version = "0.1.0" }
 jj-forge = { path = "crates/jj-forge", version = "0.1.0" }

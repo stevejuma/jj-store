@@ -616,3 +616,80 @@ async fn different_registration_names_can_share_the_selected_atomic_provider() {
             .unwrap(),
     );
 }
+
+#[tokio::test]
+async fn git_review_state_errors_keep_their_public_meaning() {
+    let dir = tempfile::tempdir().unwrap();
+    gix::init(dir.path()).unwrap();
+    let stores = open(repo(dir.path()), host(), |_, _, _| {});
+
+    let review = stores.review().unwrap();
+    let body = jj_review::ReviewCommentBodyV1 {
+        schema_version: 1,
+        format: jj_review::ReviewBodyFormatV1::PlainText,
+        text: "Review".into(),
+        sanitizer_version: "plain@1".into(),
+    };
+    let created = committed(
+        review
+            .execute(&request(
+                61,
+                ReviewCommand::RepositoryThread { body: body.clone() },
+            ))
+            .await
+            .unwrap(),
+    )
+    .result
+    .unwrap();
+    let expected =
+        jj_review::ThreadSnapshotId::from_slice(created.thread_snapshot.id.as_bytes()).unwrap();
+    let apply = |id, command| {
+        request(
+            id,
+            ReviewCommand::Apply {
+                command: Box::new(command),
+                evidence: vec![],
+            },
+        )
+    };
+    assert!(matches!(
+        review
+            .execute(&apply(
+                62,
+                jj_review::ReviewCommandV1::ReopenThread {
+                    thread_id: created.thread_id,
+                    expected_thread_version: expected,
+                    reason: None
+                }
+            ))
+            .await,
+        Err(Error::ThreadOpen)
+    ));
+    committed(
+        review
+            .execute(&apply(
+                63,
+                jj_review::ReviewCommandV1::ResolveThread {
+                    thread_id: created.thread_id,
+                    expected_thread_version: expected,
+                    reason: None,
+                },
+            ))
+            .await
+            .unwrap(),
+    );
+    assert!(matches!(
+        review
+            .execute(&apply(
+                64,
+                jj_review::ReviewCommandV1::AppendReply {
+                    thread_id: created.thread_id,
+                    expected_workflow_version: 2,
+                    parent_comment_id: None,
+                    body
+                }
+            ))
+            .await,
+        Err(Error::ThreadResolved)
+    ));
+}

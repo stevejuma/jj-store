@@ -9,7 +9,7 @@ Register implementations by name in `StoreFactories`, select each domain with
 supplies admission, actor identity and time. `RepositoryStores` coordinates
 commands that need compatible participants in one publication provider.
 
-Use `jj-store-git` for Git companion persistence. Native adapters retain the
+Use `jj-store-git` for Git companion persistence or `jj-store-native` for the
 coordinator's manifest/WAL publication. Detailed ownership and persistence
 context lives in the
 [architecture guide](../../docs/site/technical/architecture.md) and

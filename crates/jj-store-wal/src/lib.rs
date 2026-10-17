@@ -42,6 +42,10 @@ impl From<jj_store_core::Error> for Error {
         match value {
             E::Corrupt(v) | E::Invalid(v) => Self::Corrupt(v),
             E::Unsupported(v) => Self::Unsupported(v),
+            E::ThreadResolved | E::ThreadOpen => {
+                Self::Corrupt("unexpected review state error at raw publication boundary")
+            }
+            E::ReplicationUnsupported => Self::Unsupported("WorkStore origin replication"),
             E::Limit(v) => Self::Limit(v),
             E::OutcomeUnknown => Self::OutcomeUnknown,
             E::Stale => Self::Stale,

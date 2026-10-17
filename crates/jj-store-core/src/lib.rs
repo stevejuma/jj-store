@@ -16,6 +16,12 @@ pub enum Error {
     Limit(&'static str),
     #[error("invalid store request: {0}")]
     Invalid(&'static str),
+    #[error("review thread is resolved")]
+    ThreadResolved,
+    #[error("review thread is already open")]
+    ThreadOpen,
+    #[error("WorkStore origin replication is unsupported")]
+    ReplicationUnsupported,
     #[error("store target not found")]
     NotFound,
     #[error("store snapshot is stale")]

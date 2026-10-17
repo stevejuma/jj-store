@@ -17,6 +17,16 @@ export function dependencyErrors(packages) {
       "jj-work",
       "jj-collab",
     ],
+    "jj-store-native": [
+      "jj-store-core",
+      "jj-store-model",
+      "jj-store-wal",
+      "jj-agent",
+      "jj-review",
+      "jj-work",
+      "jj-collab",
+      "jj-store-object",
+    ],
     "jj-store-git": [
       "jj-store-core",
       "jj-store-model",

@@ -70,3 +70,24 @@ must use the same domain representations, captured source selections and atomic
 publication semantics. Wrappers may delegate that capability; an unrelated store
 cannot claim compatibility from matching names or scope strings. Separately
 authorized repository-review references retain their explicit reader capability.
+
+The native library adapter lives in jj-store-native and depends on owned core,
+model and WAL interfaces only. Its five named factories use a host-supplied
+publication namespace and the coordinator's existing repository binding and
+limits. Native Agent and Review enablement remains an explicit host operation;
+loading and empty Work, Thread or Reaction reads stage no roots. Unsupported
+portable native evidence remains unsupported.
+
+Native capture preparation produces a durable typed delta carrying its admitted
+actor, exact request/publication IDs, result bytes and optional accepted Thread
+binding. Publishing requires this preparation; retries never silently prepare a
+new capture. Adapting existing requests preserves every field. Receipt
+adaptation uses the selected original transaction's domain root and version,
+even after later writes or compaction. A receipt for another domain is an intent
+conflict. Transient receipt-read failures after a committed publication remain
+unknown under the original request identity. Host clocks are explicit library
+capabilities; existing coordinator entry points retain their current
+system-clock defaults.
+
+Native and Git adapters preserve neutral stale, invalid, missing-target and
+review-state errors; application consumers retain their existing typed failures.

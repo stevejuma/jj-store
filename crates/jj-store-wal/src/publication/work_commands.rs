@@ -49,13 +49,23 @@ impl Coordinator {
         &self,
         request: &WorkCommandRequest,
     ) -> std::result::Result<PublishOutcome, WorkCommandError> {
-        let intent = request.intent_digest(self.records.repository)?;
         let at: i64 = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_err(|_| Error::Corrupt("work time"))?
             .as_millis()
             .try_into()
             .map_err(|_| Error::Limit("work time"))?;
+        self.publish_work_command_at(request, at).await
+    }
+    pub async fn publish_work_command_at(
+        &self,
+        request: &WorkCommandRequest,
+        at: i64,
+    ) -> std::result::Result<PublishOutcome, WorkCommandError> {
+        if at < 0 {
+            return Err(Error::Corrupt("work time").into());
+        }
+        let intent = request.intent_digest(self.records.repository)?;
         match tokio::time::timeout(
             self.limits.timeout,
             self.publish_work_command_inner(request, intent, at),

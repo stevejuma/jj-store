@@ -749,6 +749,11 @@ pub struct Coordinator {
     limits: Limits,
 }
 impl Coordinator {
+    /// Repository binding only; performs no reads or initialization.
+    pub fn repository_id(&self) -> RepositoryId {
+        self.records.repository
+    }
+
     pub fn new(
         store: Arc<dyn ObjectStore>,
         repository: RepositoryId,
