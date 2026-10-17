@@ -1,6 +1,6 @@
 # Reusable agent workflows: delivery checklist
 
-Last reviewed: 2026-10-17. Overall: **In progress**.
+Last reviewed: 2026-10-18. Overall: **In progress**.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -19,8 +19,11 @@ mean that the named slice has evidence; they do not complete its whole stage.
 - **Completed foundation:** injectable stores, crate READMEs, redaction/source
   acquisition, conversation primitives and SDKs, history libraries and native
   Notes admission/transport.
-- **Active task: NOTES-05A.** Repair Design Core's dark unified-diff syntax
-  contrast in its owning source package, then qualify the public artifact.
+- **Active task: NOTES-05B.** Retain the previously qualified tool-disclosure
+  accessibility fixes when preparing Design Core's 0.5 public artifact.
+- **Waiting for package compatibility: NOTES-05A.** Dark syntax, Docs embedding
+  and all 64 downstream history story checks pass. Complete shared-package
+  qualification follows the missing tool-disclosure fixes.
 - **Waiting on consumer acceptance: NOTES-04A.** The shared Notes API exact
   regression, ordinary aggregate unit lane, full build, specification lane and
   all 261 browser cases pass. Final consumer/artifact verification and its
@@ -131,21 +134,38 @@ that every task in it is executing simultaneously.
       and fixture stories do not substitute for visible native acceptance.
 - [ ] **NOTES-05 — Waiting for NOTES-04A/05A:** Add production-component review
       stories for history selection, diff, loading, empty/unavailable, failure
-      and recovery states; run interaction and accessibility checks. The initial
-      nine-scenario family passes desktop-light and narrow-light. Desktop-dark
-      has eight passes and one syntax-token contrast failure; narrow-dark has
-      not run. A stronger operation-switch assertion exposed retained old diff
-      state; its exact unit regression now passes after the fix. A tenth
-      scenario keeps unified diff accessibility under direct test. Final
-      both-theme qualification and visual baseline approval remain separate.
-- [ ] **NOTES-05A — Active:** Repair dark syntax-token defaults in Design Core.
-      The dedicated unified-diff story reproduces a 1.85:1 contrast failure for
-      unchanged Markdown headings. Preserve normal syntax highlighting and
-      custom theme overrides; qualify the source and Notes public-package
-      consumer without a consumer CSS workaround. The fix passes both exact
-      source regressions (previously two failures) and all 86 cases across eight
-      affected families. Full Design Core checks are running; packaging and
-      Notes acceptance remain pending.
+      and recovery states; run interaction and accessibility checks. Sixteen
+      scenarios now pass all 64 focused theme/viewport checks after the source
+      contrast repair. A stronger operation-switch assertion exposed retained
+      old diff state; its exact regression passes after the fix. The unified
+      diff has its own direct accessibility scenario. Complete renewed-package
+      qualification remains pending; visual approval stays separate.
+- [ ] **NOTES-05A — Waiting for NOTES-05B:** Repair dark syntax-token defaults
+      in Design Core. The dedicated unified-diff story reproduces a 1.85:1
+      contrast failure for unchanged Markdown headings. Preserve normal syntax
+      highlighting and custom theme overrides; qualify the source and Notes
+      public-package consumer without a consumer CSS workaround. The fix passes
+      both exact source regressions (previously two failures) and all 86 cases
+      across eight affected families. Full Design Core checks pass, including
+      821 unit tests, 828 stories and 170 browser cases (one existing
+      platform-specific skip). Both exact Docs embedding/public-source cases and
+      the 23 touched stories pass. The prepared public archive passes Notes'
+      exact dark unified diff regression and all 16 history scenarios in all
+      four configurations (64 checks). Final source qualification and complete
+      consumer acceptance remain open; the later source browser run includes a
+      live-document reload failure, and the full consumer lane exposes the
+      compatibility gap below.
+- [ ] **NOTES-05B — Active:** Carry Design Core's already qualified busy-tool
+      and complete disclosure-label fixes from source revisions `3571fb45` and
+      `9c51152a` into the 0.5 public artifact. The current preview omits those
+      fixes. Its complete Notes desktop-light catalog has 155 passes and 12
+      failures across eight families; the remaining three configurations have
+      not run. The exact Agent Trace reproduction confirms a disclosure name
+      missing its visible target. The carried-forward implementation now passes
+      all four exact source regressions (previously four failures) and all 186
+      affected AI/Chat cases. The original panel-toggle failure also passes its
+      cold exact retry with source files held fixed. Complete source checks,
+      renewed packaging and consumer acceptance remain in progress.
 - [ ] **NOTES-06:** Implement one native raw-event owner. Sanitize and durably
       capture before display/ACK; drain before releasing vault authority.
 - [ ] **NOTES-07:** Add receipt-aware AgentStore/ThreadStore conversation
