@@ -5,14 +5,29 @@ Last reviewed: 2026-10-17. Overall: **In progress**.
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
 is still pending. Notes' native repository admission and history transport are
-verified. Next is the visible history/diff panel, then durable conversation
-capture.
+verified. The visible history/diff panel is in progress, followed by durable
+conversation capture.
 
 This is the delivery checklist for the approved eight-stage plan. The
 [M33 milestone ledger](../../spec/src/current/progress/M33/index.md) owns formal
 status and gate selections. Notes' consumer gates live in the sibling
 `lapis-desktop/spec/src/current/progress/milestones.md` under M13. Checked items
 mean that the named slice has evidence; they do not complete its whole stage.
+
+## Current checkpoint
+
+- **Completed foundation:** injectable stores, crate READMEs, redaction/source
+  acquisition, conversation primitives and SDKs, history libraries and native
+  Notes admission/transport.
+- **Active task: NOTES-04A.** Qualify the shared Notes API dependency required
+  by the history view, including the remaining wider checks.
+- **Waiting: NOTES-04 and NOTES-05.** The history view and review scenarios
+  exist in isolated source workspaces; their acceptance and integration depend
+  on source qualification and the remaining Design Core contrast repair.
+- **Next product milestone:** NOTES-06 through NOTES-09, durable conversation
+  ownership, persistence and restart recovery.
+- **After that:** addressed agents/discussions, imports, opt-in capture and
+  standalone downstream qualification. These remain pending.
 
 ## Stage overview
 
@@ -85,13 +100,37 @@ Desktop evidence lives under the sibling `lapis-desktop/spec/src/history`.
 
 ## Current work and next tasks
 
-- [ ] **NOTES-04 — Next:** Add the visible Notes history/diff panel using the
-      public history client and Design Core exports. Verify the Design Core
-      dependency and retain existing Notes fixes through the owning package's
-      public artifacts.
-- [ ] **NOTES-05:** Add production-component review stories for history
-      selection, diff, loading, empty/unavailable, failure and recovery states;
-      run interaction and accessibility checks. Keep visual baseline approval
+Only **Active** identifies the task currently being advanced. **Waiting** means
+work has started but awaits a dependency or acceptance step; an unlabeled task
+is pending. One agent works through these tasks, with checks sometimes running
+in the background. Stage-level **In progress** means the stage has started, not
+that every task in it is executing simultaneously.
+
+- [ ] **NOTES-04 — Waiting for NOTES-04A/05/04B:** Add the visible Notes
+      history/diff panel using the public history client and Design Core
+      exports. Verify the Design Core dependency and retain existing Notes fixes
+      through the owning package's public artifacts. Work is isolated in
+      `lapis-desktop-history` to preserve concurrent Notes edits. Thirteen
+      focused reader/native-adapter cases and all 191 renderer/governance cases
+      pass; type checking has no errors or warnings. The implementation is not
+      yet committed or integrated.
+- [ ] **NOTES-04A — Active:** Qualify the owning Notes API attachment fix
+      required by the history view. Exact regression: two pass; complete
+      workspace: 131 pass; complete API: 1,160 pass; root check passes. Wider
+      unit and Storybook failures remain open below; source commit and public
+      artifact provenance must be finalized before integration.
+- [ ] **NOTES-04B:** Prove the visible history/diff flow in a cold actual native
+      WebView and complete M13.2's original gate. Hidden native API acceptance
+      and fixture stories do not substitute for visible native acceptance.
+- [ ] **NOTES-05 — Waiting for source qualification:** Add production-component
+      review stories for history selection, diff, loading, empty/unavailable,
+      failure and recovery states; run interaction and accessibility checks. The
+      initial nine-scenario family passes desktop-light and narrow-light.
+      Desktop-dark has eight passes and one syntax-token contrast failure;
+      narrow-dark has not run. A stronger operation-switch assertion exposed
+      retained old diff state; its exact unit regression now passes after the
+      fix. A tenth scenario keeps unified diff accessibility under direct test.
+      Final both-theme qualification and visual baseline approval remain
       separate.
 - [ ] **NOTES-06:** Implement one native raw-event owner. Sanitize and durably
       capture before display/ACK; drain before releasing vault authority.
@@ -131,9 +170,10 @@ are available while the local preview servers remain running.
 - [Design Core comments and queue](http://127.0.0.1:9210/?path=/story/chat-transcript--inline-comments-and-queue)
 - [Design Core split diff](http://127.0.0.1:9210/?path=/story/diff-file-diff--renders-a-split-file-diff)
 
-The new native history wiring currently has hidden WebView acceptance only.
-There is no new visible Notes history/persisted-chat story yet; NOTES-04/05 own
-it.
+The native history wiring has hidden WebView acceptance. New production history
+view stories are being qualified in the isolated Notes workspace; a preview link
+will follow acceptance. There is no persisted-chat story yet. NOTES-04/05 own
+the history UI delivery.
 
 ## Open qualification gaps
 
@@ -155,6 +195,18 @@ it.
       platform and release qualification remain separate. Fixture/native service
       success does not establish these gates. Publication requires a separate
       operator action.
+- [ ] **GAP-05:** NOTES-04A's required wider source unit lane stopped at two
+      5-second frozen Deno host timeouts (294 pass, two fail, one skipped). Its
+      root build did not run. Both exact cases pass at rest (18 others skipped);
+      the aggregate rerun passed that host but stopped at a different API
+      declaration-test timeout (1,159 pass, one fail). Earlier standalone API
+      qualification passed all 1,160 cases. Aggregate qualification and cause
+      investigation remain open; no timeout has been relaxed.
+- [ ] **GAP-06:** NOTES-04A's first cold source Storybook shard has 75 pass and
+      18 fail; three later shards have not run. A late dependency optimization
+      reloaded the frame and 16 failures report inaccessible axe imports. Two
+      editor diagnostic/marker assertions also failed. Verify each cause and
+      rerun without weakening assertions or accessibility checks.
 
 ## Keeping this list current
 
@@ -162,6 +214,11 @@ After each verified slice, update the affected stable task IDs, link its fresh
 evidence/commit, move the current-work marker and review the canonical milestone
 in the same delivery update. Keep unresolved failures and unrun gates explicit.
 If work splits, add a task ID rather than checking off an incomplete parent.
+When switching tasks, move the single Active marker and state why other started
+tasks are Waiting. Do not count a parent and its current child as separate work.
+Current uncommitted counts are progress observations, not accepted evidence or
+milestone completion. Replace them with final evidence/commit links once their
+owning slice passes its required gates.
 
 Do not infer an overall percentage from task counts: the tasks differ in size.
 Only mark a stage complete when its canonical acceptance gate is satisfied.
