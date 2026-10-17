@@ -41,3 +41,5 @@ spec/.generated/
 
 /packages/jj-conversations/dist/
 /packages/jj-conversations/node_modules/
+/packages/jj-history/dist/
+/packages/jj-history/node_modules/

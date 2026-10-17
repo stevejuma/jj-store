@@ -83,3 +83,10 @@ and checked for equality in the owning crate. It retains producer formatting by
 exact-path exclusion. Versioned JSON text carries full-width integers through
 Tauri without JavaScript rounding; no native caller or cache grant enters a
 frame.
+
+The typed history client has a schema-generation drift check and an exact
+size-policy exception for its generated type file, matching the existing HTTP
+generated contract rule. Authored client modules retain ordinary size checks.
+Normal governance qualifies built archive imports, independent type consumption,
+full-width integer handling and strict bounded frames. Its source selects web
+checks; native schema equality remains the Rust producer's separate gate.

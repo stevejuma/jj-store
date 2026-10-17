@@ -15,7 +15,7 @@
     "check:architecture": "node scripts/web-architecture.mjs",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:progress": "node scripts/check-progress.mjs",
-    "test:governance": "node --test scripts/web-manifest.test.mjs scripts/dev-demo-repository.test.mjs scripts/governance.test.mjs scripts/acquisition-boundaries.test.mjs scripts/capture-features.test.mjs scripts/conversations-features.test.mjs scripts/local-history-features.test.mjs scripts/conversation-client.test.mjs scripts/progress-mapping.test.mjs scripts/local-package-pnpmfile.test.mjs scripts/web-architecture.test.mjs scripts/ui-ownership.test.mjs scripts/build-storage.test.mjs scripts/managed-cargo.test.mjs",
+    "test:governance": "node --test scripts/web-manifest.test.mjs scripts/dev-demo-repository.test.mjs scripts/governance.test.mjs scripts/acquisition-boundaries.test.mjs scripts/capture-features.test.mjs scripts/conversations-features.test.mjs scripts/local-history-features.test.mjs scripts/conversation-client.test.mjs scripts/progress-mapping.test.mjs scripts/local-package-pnpmfile.test.mjs scripts/web-architecture.test.mjs scripts/ui-ownership.test.mjs scripts/build-storage.test.mjs scripts/managed-cargo.test.mjs scripts/history-client.test.mjs",
     "test": "pnpm test:governance && pnpm test:storage-harness && pnpm test:embedded-rustfs && pnpm test:managed-rustfs && pnpm test:local-trusted && pnpm test:contracts && pnpm web:test && pnpm catalog:test && pnpm test:storybook && pnpm catalog:test:browser && node scripts/managed-cargo.mjs test --workspace --locked",
     "spec:build": "spec-validator build",
     "spec:links": "python3 scripts/spec/book-audit.py",
@@ -98,7 +98,11 @@
     "ai:prepare": "node scripts/lapis-ai.mjs",
     "client:build": "pnpm --filter @lapismd/jj-conversations build",
     "client:check": "pnpm --filter @lapismd/jj-conversations check",
-    "client:test": "pnpm --filter @lapismd/jj-conversations test"
+    "client:test": "pnpm --filter @lapismd/jj-conversations test",
+    "history:contracts": "node scripts/history-contracts.mjs --check",
+    "history:build": "pnpm --filter @lapismd/jj-history build",
+    "history:check": "pnpm history:contracts && pnpm --filter @lapismd/jj-history check",
+    "history:test": "pnpm history:contracts && pnpm --filter @lapismd/jj-history test"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",

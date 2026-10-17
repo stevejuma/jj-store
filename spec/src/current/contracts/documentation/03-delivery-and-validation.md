@@ -307,3 +307,8 @@ and optional identity cannot substitute for a vault/window capability.
 Native history documentation distinguishes the typed Rust service from the
 versioned JSON text IPC envelope, its request/output bounds and lossless integer
 requirement. The schema example exports the actual owned contract.
+
+The standalone history client overview and local manual describe injected text
+transport, explicit operation/handle lifetime and exact integer decoding. Source
+coverage includes schema generation and the owned native schema. Independent
+runtime/type archive checks remain separate from Notes and release acceptance.

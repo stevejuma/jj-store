@@ -133,3 +133,12 @@ to JavaScript numbers; clients decode unsafe integer values without rounding.
 The inner Rust request types still deny unknown authority fields. Envelope
 version and byte bounds fail closed before admission, and output encoding stays
 bounded. Direct Rust service interfaces and native identities are unchanged.
+
+The headless `@lapismd/jj-history` client derives its types and runtime shape
+checks from the native adapter's checked schema. Each instance binds one opaque
+vault identity and an injected text transport. An optional Tauri entry sends
+only those frames. Full-width integers use exact `bigint` values when needed;
+unsafe JavaScript number inputs and malformed or oversized frames fail before
+transport. Responses retain their operation and handle identities. The caller
+owns handle closure and scope lifetime; the client adds no retry, polling,
+filesystem access, generation, cache or execution authority.

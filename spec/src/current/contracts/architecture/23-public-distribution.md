@@ -313,3 +313,10 @@ text-envelope transport. Generated client contracts derive from owned Rust
 frames; no HTTP/server dependency or upstream JJ import is added. Direct Rust
 interfaces and plugin permissions remain unchanged. Source/schema qualification
 is separate from native WebView and artifact acceptance.
+
+The independent history client archive includes built ESM and declarations, its
+generated runtime schema, licenses and a short README. Its main entry has no
+Tauri import; the optional entry injects Tauri invocation without native host
+policy. Generated contracts are checked against the owned native schema and
+independent archives prove runtime and type consumption without source aliases.
+Package checks do not publish the archive or qualify Notes integration.

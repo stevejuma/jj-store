@@ -78,7 +78,13 @@ export function sourceFiles(root) {
     ...(existsSync(join(root, "packages")) ? ["packages"] : []),
   ])
     visit(join(root, directory));
-  return found.filter((path) => path !== "web/src/lib/api/generated.ts");
+  return found.filter(
+    (path) =>
+      ![
+        "web/src/lib/api/generated.ts",
+        "packages/jj-history/src/generated.ts",
+      ].includes(path),
+  );
 }
 
 export function architectureErrors(root, baseline) {

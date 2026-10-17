@@ -1,4 +1,5 @@
 packages:
   - .
   - packages/jj-conversations
+  - packages/jj-history
 linkWorkspacePackages: true

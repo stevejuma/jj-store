@@ -258,5 +258,19 @@
       "reason": "Reviewed strict public inner frames, bounded version-one JSON text request/result envelopes, full-width integer preservation, generated Rust schema equality and unchanged typed service admission, permissions, source pins and lifecycle.",
       "fingerprint": "3e83c93ebab6140758a2532797218e4596393081f596572f960294cae20b1ead"
     }
+  },
+  {
+    "id": "history-client",
+    "sources": [
+      "packages/jj-history/src",
+      "packages/jj-history/package.json",
+      "scripts/history-contracts.mjs",
+      "crates/tauri-plugin-jj-store/schema.json"
+    ],
+    "pages": ["docs/site/technical/local.md"],
+    "review": {
+      "reason": "Reviewed generated native-schema types and runtime validation, bounded integer-only decoding, arbitrary record keys, immutable vault scope, explicit closure, transport errors and independent archive/type acceptance without Tauri or source aliases.",
+      "fingerprint": "84fb12642152d6e854b473de34618dfa02830144aef3d90fe7dd381aa283664f"
+    }
   }
 ]

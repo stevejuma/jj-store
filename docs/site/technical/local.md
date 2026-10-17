@@ -87,6 +87,30 @@ companion state remain untouched; conversion, mutation and metadata publication
 have no command here. Service fixtures and compilation do not establish Notes or
 native WebView product acceptance.
 
+### Typed renderer client
+
+`@lapismd/jj-history` supplies generated types and bounded runtime frame checks
+from the native schema. `HistoryClient` binds one opaque vault token to an
+injected text transport; `tauriHistory` from its `/tauri` entry accepts the
+application's public Tauri `invoke` function. Neither entry imports a native
+runtime or chooses source, cache, window or vault policy.
+
+Call `heads()`, select an explicit operation, and retain the handle returned by
+`open(operation)`. The application drives `status(handle)` while preparation is
+pending and calls `read(handle, query)` when ready. Call `close(handle)` when
+finished and retain a failed close for explicit recovery. Transport failures
+propagate; there are no implicit retries or polls. Vault teardown still requires
+the native drain described above.
+
+Safe integer tokens decode as JavaScript numbers; full-width values decode as
+`bigint`. Large inputs must be supplied as `bigint`; already rounded numbers are
+rejected. The integer-only decoder rejects duplicate keys, fractions, exponent
+tokens, invalid shapes and excess nesting while preserving arbitrary record key
+spelling. Strings retain exact Unicode and escaping. The generated contract and
+independent archive tests cover source drift, runtime imports and TypeScript
+consumption. These checks do not qualify Notes application integration or a
+published package.
+
 ```mermaid
 flowchart TB
   Folder[Registered JJ folder] --> Code[Existing JJ code and operation history]

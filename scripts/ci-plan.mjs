@@ -54,7 +54,7 @@ export function impact(
       continue;
     }
     if (
-      /^(?:web\/|catalog\/|\.storybook\/|docs\/site\/|packages\/jj-conversations\/)/.test(
+      /^(?:web\/|catalog\/|\.storybook\/|docs\/site\/|packages\/jj-(?:conversations|history)\/)/.test(
         file,
       )
     ) {
