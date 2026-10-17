@@ -19,18 +19,36 @@ mean that the named slice has evidence; they do not complete its whole stage.
 - **Completed foundation:** injectable stores, crate READMEs, redaction/source
   acquisition, conversation primitives and SDKs, history libraries and native
   Notes admission/transport.
-- **Active task: NOTES-05B.** Retain the previously qualified tool-disclosure
-  accessibility fixes when preparing Design Core's 0.5 public artifact.
-- **Waiting for package compatibility: NOTES-05A.** Dark syntax, Docs embedding
-  and all 64 downstream history story checks pass. Complete shared-package
-  qualification follows the missing tool-disclosure fixes.
-- **Waiting on consumer acceptance: NOTES-04A.** The shared Notes API exact
-  regression, ordinary aggregate unit lane, full build, specification lane and
-  all 261 browser cases pass. Final consumer/artifact verification and its
-  source commit follow the Design Core repair.
+- **Active task: NOTES-05D.** Repair the desktop-owned conflict error text's
+  dark contrast, exposed by current-app acceptance. Both exact regressions now
+  pass; affected-family and complete current-app qualification are running.
+- **Waiting for current-app acceptance: NOTES-04A.** The attachment fix and
+  newer guarded merged-conflict API pass renewed source gates. Final acceptance
+  waits for NOTES-05D; no separate API implementation is running.
+- **Waiting for current-app acceptance: NOTES-05C.** Both exact source contrast
+  cases, all 188 affected AI/Chat cases, all three exact consumer regressions
+  and all 100 affected consumer checks pass. Design Core's full qualification
+  passes: 821 unit tests, 834 stories and 172 browser cases, with one existing
+  skip. Final consumer acceptance and source commit remain.
+- **Waiting for current-app acceptance: NOTES-05A/05B.** Dark syntax, Docs
+  embedding and disclosure fixes pass their exact and complete source gates.
+  They share NOTES-05C's final package-consumer gate; no separate implementation
+  is running on these tasks.
+- **Current-app integration:** the history workspace now includes desktop
+  revision `447f8244`. Its two coverage-document conflicts retain both sets of
+  scenarios. The API fix is rebased onto `8a27bc36`; exact regressions, all
+  1,160 API cases and its public build pass. Renewed source check, unit, build,
+  Storybook and specification lanes pass. All 17 history stories pass in four
+  configurations (68 checks), including restored historical pins. The complete
+  desktop-light catalog has 169 passes and four failures; its other three
+  configurations have not run. Refreshing the stale Markdown archive and
+  adapting the sidebar/inert interactions clears all four exact cases (four
+  pass, 28 skipped). The affected families pass 32 cases in each light viewport,
+  then desktop-dark reports 30 pass and two conflict-error contrast failures.
+  Narrow-dark and the complete current-app retry have not run after that stop.
 - **Waiting: NOTES-04 and NOTES-05.** The history view and review scenarios
   exist in isolated source workspaces; their acceptance and integration depend
-  on source qualification and the remaining Design Core contrast repair.
+  on final public-package consumer acceptance and cold visible native proof.
 - **Next product milestone:** NOTES-06 through NOTES-09, durable conversation
   ownership, persistence and restart recovery.
 - **After that:** addressed agents/discussions, imports, opt-in capture and
@@ -121,51 +139,89 @@ that every task in it is executing simultaneously.
       focused reader/native-adapter cases and all 191 renderer/governance cases
       pass; type checking has no errors or warnings. The implementation is not
       yet committed or integrated.
-- [ ] **NOTES-04A — Waiting for consumer acceptance:** Qualify the owning Notes
-      API attachment fix required by the history view. Exact regression: two
-      pass; complete workspace: 131 pass; complete API: 1,160 pass. The ordinary
-      root unit lane passes all 18 tasks, and the full build passes all 10.
-      Eighteen cold editor stories pass after the optimizer fix; the complete
-      browser lane passes 261 cases across 59 files, and source specification
-      checks pass. Final consumer acceptance, commit and artifact provenance
-      must be finalized before integration.
+- [ ] **NOTES-04A — Waiting for current-app acceptance:** Qualify the owning
+      Notes API attachment fix required by the history view. Exact regression:
+      two pass; complete workspace: 131 pass; complete API: 1,160 pass. The
+      ordinary root unit lane passes all 18 tasks, and the full build passes
+      all 10. Eighteen cold editor stories pass after the optimizer fix; the
+      complete browser lane passes 261 cases across 59 files, and source
+      specification checks pass. Final consumer acceptance, commit and artifact
+      provenance must be finalized before integration. Those aggregate results
+      retain the earlier source base. The current app additionally needs the
+      existing guarded merged-conflict API, so the isolated fix now includes
+      producer `8a27bc36`. Its exact two regressions, all 1,160 API cases and
+      public build/declaration checks pass again. Renewed source check and unit
+      lanes pass all 18 tasks, build all ten, Storybook all 261 cases, and
+      specification checks pass. Current-app acceptance and owning commits
+      remain pending.
 - [ ] **NOTES-04B:** Prove the visible history/diff flow in a cold actual native
       WebView and complete M13.2's original gate. Hidden native API acceptance
       and fixture stories do not substitute for visible native acceptance.
 - [ ] **NOTES-05 — Waiting for NOTES-04A/05A:** Add production-component review
       stories for history selection, diff, loading, empty/unavailable, failure
       and recovery states; run interaction and accessibility checks. Sixteen
-      scenarios now pass all 64 focused theme/viewport checks after the source
-      contrast repair. A stronger operation-switch assertion exposed retained
-      old diff state; its exact regression passes after the fix. The unified
-      diff has its own direct accessibility scenario. Complete renewed-package
-      qualification remains pending; visual approval stays separate.
-- [ ] **NOTES-05A — Waiting for NOTES-05B:** Repair dark syntax-token defaults
-      in Design Core. The dedicated unified-diff story reproduces a 1.85:1
-      contrast failure for unchanged Markdown headings. Preserve normal syntax
-      highlighting and custom theme overrides; qualify the source and Notes
-      public-package consumer without a consumer CSS workaround. The fix passes
-      both exact source regressions (previously two failures) and all 86 cases
-      across eight affected families. Full Design Core checks pass, including
-      821 unit tests, 828 stories and 170 browser cases (one existing
-      platform-specific skip). Both exact Docs embedding/public-source cases and
-      the 23 touched stories pass. The prepared public archive passes Notes'
-      exact dark unified diff regression and all 16 history scenarios in all
-      four configurations (64 checks). Final source qualification and complete
-      consumer acceptance remain open; the later source browser run includes a
-      live-document reload failure, and the full consumer lane exposes the
-      compatibility gap below.
-- [ ] **NOTES-05B — Active:** Carry Design Core's already qualified busy-tool
-      and complete disclosure-label fixes from source revisions `3571fb45` and
-      `9c51152a` into the 0.5 public artifact. The current preview omits those
-      fixes. Its complete Notes desktop-light catalog has 155 passes and 12
-      failures across eight families; the remaining three configurations have
-      not run. The exact Agent Trace reproduction confirms a disclosure name
-      missing its visible target. The carried-forward implementation now passes
-      all four exact source regressions (previously four failures) and all 186
-      affected AI/Chat cases. The original panel-toggle failure also passes its
-      cold exact retry with source files held fixed. Complete source checks,
-      renewed packaging and consumer acceptance remain in progress.
+      scenarios originally passed all 64 focused theme/viewport checks after the
+      source contrast repair. A stronger operation-switch assertion exposed
+      retained old diff state; its exact regression passes after the fix. The
+      unified diff has its own direct accessibility scenario. Complete
+      renewed-package qualification remains pending; visual approval stays
+      separate. The current app adds a restored-operation regression: all 17
+      scenarios now pass all 68 theme/viewport checks. Its complete catalog
+      still needs qualification.
+- [ ] **NOTES-05A — Waiting for current-app acceptance:** Repair dark
+      syntax-token defaults in Design Core. The dedicated unified-diff story
+      reproduces a 1.85:1 contrast failure for unchanged Markdown headings.
+      Preserve normal syntax highlighting and custom theme overrides; qualify
+      the source and Notes public-package consumer without a consumer CSS
+      workaround. The fix passes both exact source regressions (previously two
+      failures) and all 86 cases across eight affected families. Full Design
+      Core checks pass, including 821 unit tests, 828 stories and 170 browser
+      cases (one existing platform-specific skip). Both exact Docs
+      embedding/public-source cases and the 23 touched stories pass. The
+      prepared public archive passes Notes' exact dark unified diff regression
+      and all 16 history scenarios in all four configurations (64 checks). Final
+      source qualification and complete consumer acceptance remain open. The
+      later live-document reload failure passes its cold exact retry and the
+      complete final source pipeline. The final pipeline includes the disclosure
+      and contrast fixes below.
+- [ ] **NOTES-05B — Waiting for current-app acceptance:** Carry Design Core's
+      already qualified busy-tool and complete disclosure-label fixes from
+      source revisions `3571fb45` and `9c51152a` into the 0.5 public artifact.
+      The initial preview omitted those fixes. Its complete Notes desktop-light
+      catalog had 155 passes and 12 failures across eight families; the
+      remaining three configurations have not run. The exact Agent Trace
+      reproduction confirms a disclosure name missing its visible target. The
+      carried-forward implementation now passes all four exact source
+      regressions (previously four failures) and all 186 affected AI/Chat cases.
+      The original panel-toggle failure also passes its cold exact retry with
+      source files held fixed. The renewed public package passes all 25 affected
+      cases in both light-mode viewports. Desktop-dark has 22 passes and three
+      error-status contrast failures; narrow-dark has not run. The superseded
+      source aggregate was explicitly interrupted after this source defect was
+      isolated. All 100 affected consumer checks and the complete final source
+      pipeline now pass after NOTES-05C. Final current-app acceptance and source
+      commit remain pending.
+- [ ] **NOTES-05C — Waiting for current-app acceptance:** Repair dark
+      error-status text in Design Core's Message Metadata component. Three
+      consumer stories report the same 3.45:1 contrast for 11px error text
+      against the Lapis conversation surface. Preserve accessible status,
+      semantic colors, presentation ownership and existing consumer assertions;
+      add owning source regressions and repeat the affected public-package
+      checks before complete qualification. Both exact source cases now pass
+      (previously two failures), all 188 affected source cases pass, and all
+      three exact dark consumer regressions plus all 100 affected consumer cases
+      pass through the fresh public archive. Source unit and complete Storybook
+      lanes pass 821 and 834 cases respectively; all 172 source browser cases
+      pass, with one existing skip. Final current-app acceptance and source
+      commit remain pending.
+- [ ] **NOTES-05D — Active:** Repair the desktop-owned conflict review's dark
+      error-text contrast. The affected retry passes both 32-case light runs,
+      then fails Failed Recovery and Stale Decision in desktop-dark at 3.45:1
+      for 13px error text. Keep light styling, error semantics, preserved
+      drafts, guarded recovery and accessibility checks intact. Repeat the exact
+      dark cases, all affected configurations and the complete current-app
+      catalog. The exact retry passes both cases (previously two failures), with
+      11 unrelated cases skipped. Wider retries are running.
 - [ ] **NOTES-06:** Implement one native raw-event owner. Sanitize and durably
       capture before display/ACK; drain before releasing vault authority.
 - [ ] **NOTES-07:** Add receipt-aware AgentStore/ThreadStore conversation

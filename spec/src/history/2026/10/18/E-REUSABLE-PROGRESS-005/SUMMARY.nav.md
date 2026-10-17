@@ -1,0 +1,2 @@
+- [Validation continuation 1](details-02.md)
+- [Validation continuation 2](details-03.md)
