@@ -96,3 +96,9 @@ reference for arguments.
 The [workflow guide](jj-workflow.md) explains metadata homes, operator
 admission, source export, CLI reporting and execution recovery. The small host
 profile does not implement remote Forgejo runner registration or polling.
+
+Local folder inspection uses the same library-owned default-settings workspace
+resolver available to embedded hosts. It observes existing repository links and
+metadata without loading a working copy, initializing identity or reconciling
+heads. This extraction adds no CLI command or repository configuration
+authority.

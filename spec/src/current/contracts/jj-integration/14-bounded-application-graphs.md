@@ -147,3 +147,9 @@ one non-queued preparation admission across cache acquisition and actual worker
 exit. Cache acquisition runs on a blocking worker. Per-window and per-handle
 leases reject canceled completion and drain active reads before cleanup returns.
 No new upstream JJ import or repository write method is exposed.
+
+Default-settings workspace discovery and existing metadata-carrier construction
+are exposed through owned JJ interfaces for native hosts. The CLI consumes the
+same read-only resolver and preserves its existing error categories. No working
+copy, head reconciliation, source initialization or executable configuration is
+loaded. Physical admission remains the caller's responsibility.

@@ -120,3 +120,9 @@ preparation jobs retain cancellation and worker ownership through exit. Close,
 window destruction and shutdown drain their exact jobs before releasing
 resources. Default permissions grant nothing, and the adapter grants no code
 mutation, repository conversion, prompt execution or companion publication.
+
+Native host integration reuses library-owned read-only JJ workspace discovery.
+The CLI and downstream hosts share default-settings resolution of the existing
+workspace, GitBackend and optional companion identity. Discovery neither loads a
+working copy nor reconciles heads or initializes metadata. Native physical vault
+and window admission remain host-owned; discovered paths grant no authority.

@@ -72,3 +72,8 @@ native transport qualification requirement.
 The executable spec-first map and tracked change map both route every history
 bridge crate input to the reusable-agent architecture chapter. New crates and
 generated permission descriptors remain protected, with no unmapped-file escape.
+
+Standalone workspace discovery is qualified in the companion profile and through
+the original native CLI folder provider. Feature governance keeps its discovery
+test binary available without native storage. Observations grant no physical or
+window authority, and source discovery does not waive application acceptance.

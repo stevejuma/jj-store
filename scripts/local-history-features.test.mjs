@@ -66,7 +66,9 @@ test("default native retains every integration binary and headless gates native-
     const expected =
       target.name === "local_history"
         ? ["local-history"]
-        : ["local_evidence", "local_metadata"].includes(target.name)
+        : ["local_evidence", "local_metadata", "local_discovery"].includes(
+              target.name,
+            )
           ? []
           : ["native"];
     assert.deepEqual(target["required-features"] ?? [], expected, target.name);

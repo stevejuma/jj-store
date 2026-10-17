@@ -302,3 +302,8 @@ publication edge precedes its consumer. It does not assume a fixed crate count
 or last leaf. Standard CI explicitly includes the history bridge and its model
 reverse dependency; heavy/provider/release qualification requirements stay
 intact.
+
+The owned workspace-discovery/default-settings entry points stay within the
+existing JJ crate and introduce no package or dependency edge. Native consumers
+need no upstream settings type. Source, headless and CLI consumer checks remain
+distinct from Notes application and release qualification.

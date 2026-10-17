@@ -131,3 +131,9 @@ and read cancellation drain owned work before scope release. Source fixtures
 accept only stock JJ 0.45.1 or the exact already-pinned official release commit
 suffix; this does not qualify another JJ profile or a native WebView
 application.
+
+Reusable workspace discovery shares the original CLI resolver, including bounded
+shared-repository link resolution and explicit symlink rejection. The owned
+result adds the observed Git directory for host binding, with no new source
+authority. Reopening rechecks paths and optional carrier identity. Physical
+vault and source-generation checks remain required for subsequent reads.

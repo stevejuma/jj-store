@@ -299,3 +299,7 @@ The history-bridge crate README and local manual document injected admission,
 opaque scoped handles, source/cache ownership, cancellation/draining and empty
 default permissions. Native service checks are distinct from native WebView and
 Notes application qualification; publication remains a separate gate.
+
+The crate README and local manual explain shared read-only workspace discovery,
+existing carrier construction and host-owned physical admission. Observed paths
+and optional identity cannot substitute for a vault/window capability.

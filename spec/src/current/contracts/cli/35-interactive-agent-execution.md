@@ -154,3 +154,8 @@ provider and installer download evidence remains separate.
 M33 history-bridge packaging preserves the CLI's native JJ feature explicitly
 when workspace defaults are disabled for selective embeddings. Helper custody,
 execution, parsing and command/publication contracts are unchanged.
+
+M33 moves the CLI's read-only folder resolver into the existing JJ library. Its
+native local provider maps the same invalid/unsupported/unavailable/limit and
+identity-change categories; default-only settings and
+no-init/no-snapshot/no-head reconciliation behavior remain unchanged.

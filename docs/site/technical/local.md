@@ -13,6 +13,18 @@ needed. Application defaults retain LocalTrusted folder admission and filesystem
 actor provenance. Loading and reading never initialize repository identity or
 publish metadata; factory configuration remains host-owned.
 
+For native hosts, `jj-store-jj::local_repository::inspect_workspace` resolves
+the existing workspace, canonical repository/Git paths and optional companion
+identity. It shares the CLI's existing default-settings discovery, including
+bounded repository links and symlink rejection. `WorkspaceInfo::open_metadata`
+rechecks the observed paths and carrier identity before opening the existing
+store. `default_metadata_store` opens a separately admitted metadata directory
+without exposing upstream settings types. Neither API loads or snapshots a
+working copy, reconciles heads, initializes identity or reads repository-owned
+executable settings. The host must still bind physical sources and current
+window/vault authority; observed paths are data, not an authorization
+capability.
+
 Native and local code readers share storage-independent read limits,
 diagnostics, cancellation and non-queuing worker admission internally. Existing
 public query paths and default budgets remain unchanged. For an embedded history

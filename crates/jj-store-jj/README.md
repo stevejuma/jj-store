@@ -25,6 +25,13 @@ physical-source authorization and a registration generation. Create a bounded
 `read_code_index` requests. Neither the cache nor the feature grants source
 access. Source indexes, metadata and dirty working files stay read-only.
 
+`local_repository::inspect_workspace` resolves an existing workspace (including
+shared repository links), Git storage and optional companion identity with
+library-owned default settings. `WorkspaceInfo::open_metadata` rechecks those
+observations; `default_metadata_store` opens an already admitted repository
+metadata directory. These entry points need no upstream JJ types in the host.
+They never initialize metadata or grant physical-source access.
+
 Use `local_evidence::inspect` to capture exact source capsules for typed store
 commands. See
 [local repository integration](../../docs/site/technical/local.md),
