@@ -122,8 +122,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed local Lapis AI executable and verified bundle selection; removing an identity PathBuf conversion preserves configuration, admission and lifecycle behavior.",
-      "fingerprint": "629d5eb22a8014c46337a641d72a89d070ae79cdd6777f122ae1c9acc21aa586"
+      "reason": "Reviewed source extraction into shared conversation stream primitives; executable configuration, helper verification, process admission and owning service lifecycle retain their existing contracts.",
+      "fingerprint": "b82be5a67a326ef18da50d05e7f113a0bf5bb72cd60ecee1fb0f64e1a31e4d21"
     }
   },
   {
@@ -218,8 +218,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed immutable Lapis AI acquisition source pin alongside existing runtime clients; admitted acquisition has no runtime or model authority and execution bundle contracts are unchanged.",
-      "fingerprint": "8fbe7b93ac6aa4c8d25a033f13329a3b568a4e720beaab219a6fb7ebb36ecee6"
+      "reason": "Reviewed supervisor delegation to shared stream primitives with original native scanner, bounded payloads, fixed error mapping and unchanged runtime/credential and publication policy.",
+      "fingerprint": "00eed4a2b9babbad76c527a63c619a29e61b05ceb70edeb1c87da43a20a08b80"
     }
   },
   {
@@ -266,6 +266,19 @@
     "review": {
       "reason": "Reviewed retained-source metadata validation: selected inventory preserves historical source snapshots while public active-closure reads remain pinned; published store interfaces and SDK usage are unchanged.",
       "fingerprint": "f835f9680ef7237525f2e3780967db6c4932083fbfd4dce5ed66b1dc192059cc"
+    }
+  },
+  {
+    "id": "conversations",
+    "sources": [
+      "crates/jj-store-conversations/src"
+    ],
+    "pages": [
+      "docs/site/technical/conversations.md"
+    ],
+    "review": {
+      "reason": "Reviewed extracted Control V3 prefix buffering, injected final scanner and exact participant/tool/assistant bounds; hosts retain admission, durable journal and acknowledgement ownership.",
+      "fingerprint": "6592a01e70527d8436a762c69272015ff6357aa2176e7c3e8a2ec024799bf983"
     }
   }
 ]

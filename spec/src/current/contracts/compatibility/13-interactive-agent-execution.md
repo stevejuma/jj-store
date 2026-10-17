@@ -94,3 +94,8 @@ The additive capture `application` feature is enabled by default. Disabling it
 omits application spool/publication APIs rather than interpreting their formats.
 Default serialized pending requests, reservation bytes, receipts and exact
 acknowledgements retain JST-COMPAT-001/003/005; no journal migration occurs.
+
+M33 stream extraction preserves Control V3 frame ordering, terminal prefix
+flush, assistant/tool bounds, participant isolation and exact native scanner
+behavior. JST-COMPAT-001/003/005 and journal/publication formats are unchanged;
+only metadata-only private-buffer lifecycle observations become public.

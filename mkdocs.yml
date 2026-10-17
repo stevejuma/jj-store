@@ -116,6 +116,7 @@ nav:
       - Local companion metadata: technical/local.md
       - Reads, search and refresh: technical/reads.md
       - Capture pipeline: technical/capture.md
+      - Conversation embedding: technical/conversations.md
       - Replication: technical/replication.md
       - Process lifecycle: technical/lifecycle.md
   - FAQ: faq.md

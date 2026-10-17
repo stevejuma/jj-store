@@ -40,3 +40,8 @@ Normal governance checks the headless capture dependency closure and acquisition
 admission. The default application feature retains its original recovery suite;
 headless source/progress tests run separately without optional publication APIs.
 Read-only Cargo graph inspection creates no build target or service lifetime.
+
+M33 shared conversation primitives are qualified as an independent crate and
+through the original native-policy consumer tests. Injected fixture policies do
+not establish scanner, provider or desktop acceptance. Distribution still
+requires complete package and consumer qualification.

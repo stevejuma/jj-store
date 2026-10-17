@@ -110,3 +110,10 @@ Delivery is distinguished as prepared, queued, sent, failed or unknown.
 Historical context uses its captured content and pinned identities. Old messages
 without snapshots are not reconstructed, and adapter-internal context is outside
 this disclosure.
+
+The shared `jj-store-conversations` library handles in-memory Control V3 privacy
+framing and per-participant assistant/tool projections. The server supplies the
+same admitted native sanitizer and retains bounded payload construction, private
+journal ordering, publication and runtime ownership. This extraction does not
+change credentials, process admission, provider acknowledgement or capture
+policy IDs. See `docs/site/technical/conversations.md` for host embedding.

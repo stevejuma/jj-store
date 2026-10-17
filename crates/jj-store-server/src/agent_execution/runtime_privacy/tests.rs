@@ -47,7 +47,7 @@ fn streamed_privacy_precedes_journal_and_terminal_frames() {
             .unwrap()
             .contains("/Users/synthetic")
     );
-    assert!(privacy.pending.is_empty());
+    assert!(!privacy.has_pending_text());
 }
 
 #[test]
@@ -77,5 +77,5 @@ fn message_and_tool_boundaries_flush_without_joining_distinct_answers() {
         )
         .unwrap();
     assert_eq!(tool.last().unwrap()["update"]["toolCallId"], "tool");
-    assert!(privacy.pending.is_empty());
+    assert!(!privacy.has_pending_text());
 }

@@ -99,6 +99,7 @@ export function dependencyErrors(packages) {
       "jj-store-wal",
     ],
     "jj-store-rpc": ["jj-store-model", "jj-store-object", "jj-store-service"],
+    "jj-store-conversations": [],
     "jj-store-capture": [
       "jj-agent",
       "jj-collab",
@@ -108,6 +109,7 @@ export function dependencyErrors(packages) {
       "jj-store-rpc",
     ],
     "jj-store-server": [
+      "jj-store-conversations",
       "jj-workflow",
       "jj-agent",
       "jj-collab",

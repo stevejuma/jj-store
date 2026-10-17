@@ -118,6 +118,7 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     "jj-forge",
     "jj-review",
     "jj-store-adapters",
+    "jj-store-conversations",
     "jj-store-core",
     "jj-store-git",
     "jj-store-http",

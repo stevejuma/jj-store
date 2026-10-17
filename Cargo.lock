@@ -4255,6 +4255,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "jj-store-conversations"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "thiserror 2.0.21",
+]
+
+[[package]]
 name = "jj-store-core"
 version = "0.1.0"
 dependencies = [
@@ -4497,6 +4505,7 @@ dependencies = [
  "jj-collab",
  "jj-store-adapters",
  "jj-store-capture",
+ "jj-store-conversations",
  "jj-store-http",
  "jj-store-jj",
  "jj-store-model",

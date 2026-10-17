@@ -1,6 +1,6 @@
 [workspace]
 exclude = ["desktop"]
-members = ["crates/jj-store-native", "crates/jj-store-git", "crates/jj-store-core", "crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
+members = ["crates/jj-store-conversations", "crates/jj-store-native", "crates/jj-store-git", "crates/jj-store-core", "crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
 resolver = "2"
 
 [workspace.package]
@@ -23,6 +23,7 @@ jj-store-core = { path = "crates/jj-store-core", version = "0.1.0" }
 jj-forge = { path = "crates/jj-forge", version = "0.1.0" }
 jj-store-read-index = { path = "crates/jj-store-read-index", version = "0.1.0" }
 jj-workflow = { path = "crates/jj-workflow", version = "0.1.0" }
+jj-store-conversations = { path = "crates/jj-store-conversations", version = "0.1.0" }
 jj-store-capture = { path = "crates/jj-store-capture", version = "0.1.0" }
 jj-collab = { path = "crates/jj-collab", version = "0.1.0" }
 jj-work = { path = "crates/jj-work", version = "0.1.0" }

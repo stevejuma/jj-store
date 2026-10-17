@@ -258,3 +258,8 @@ The additive capture feature split preserves default application APIs while
 allowing independent headless consumers. Package contents include the short
 README and feature contracts; JST-ARCH-005 release qualification remains
 separate from feature-specific source and consumer checks.
+
+M33 registers `jj-store-conversations` in the coordinated library inventory with
+contained compilation inputs, a short README and public feature/dependency
+checks. Its initial stream primitives import no application/runtime/storage
+crate. JST-ARCH-005 publication and complete qualification remain separate.

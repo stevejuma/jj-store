@@ -63,3 +63,10 @@ reader progress and exact acknowledgement types with no WAL, object store,
 RPC, service or upstream JJ dependency. Hosts must durably retain sanitized
 records and matching progress before acknowledging them. The feature boundary
 neither supplies publication authority nor changes existing spool encodings.
+
+The first `jj-store-conversations` slice extracts shared Control V3 stream
+framing and bounded per-participant assistant/tool accumulation. A host-injected
+sanitizer performs prefix replacement and final frame scanning; the library
+holds undecidable prefixes only in memory. JJ's adapter preserves its admitted
+native privacy policy and domain payload limits. Hosts retain one raw event
+owner and journal sanitized output before publication, display or ACK.

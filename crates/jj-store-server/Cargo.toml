@@ -20,6 +20,7 @@ jj-agent.workspace = true
 rustix = { version = "=1.1.5", features = ["process"] }
 notify = "8.2"
 jj-store-capture.workspace = true
+jj-store-conversations.workspace = true
 jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-jj.workspace = true

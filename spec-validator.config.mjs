@@ -233,6 +233,12 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^crates/jj-store-conversations/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/26-reusable-agent-workflows\\.md$",
+          ],
+        },
+        {
           pattern: "^crates/jj-store-capture/",
           chapterPatterns: [
             "^spec/src/current/contracts/collaboration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",

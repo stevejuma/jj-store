@@ -140,3 +140,8 @@ adapter with no acknowledged turn is opened with retained context instead of
 loading a nonexistent rollout. Development preflight checks prepared-context
 parsing without starting an agent; current jj-acp resources are rebuilt and
 staged only for the default demo, preserving its fixture and installed tools.
+
+M33 shared stream extraction retains JST-CLI-004 executable custody and existing
+Control V3 interpretation. No CLI parser, installed helper, process admission or
+prompt replay behavior changes. Native streaming privacy tests exercise the
+admitted host adapter before and after extraction.

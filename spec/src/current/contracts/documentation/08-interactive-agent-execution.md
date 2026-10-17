@@ -118,3 +118,8 @@ The capture README and technical manual describe headless feature selection,
 private host journaling before exact acknowledgement, and the default
 application spool. JST-DOC-001 keeps full pipeline/admission documentation in
 the manual. No feature selection grants execution or repository authority.
+
+The reusable conversation crate README describes its injected privacy capability
+and safe frame projection. The full bundled embedding manual describes host
+admission, one raw event owner and durable capture before display/ACK, preserving
+JST-DOC-001 and existing native policy/lifecycle qualification boundaries.

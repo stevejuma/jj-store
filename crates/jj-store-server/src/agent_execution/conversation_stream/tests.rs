@@ -47,6 +47,5 @@ fn fleet_privacy_isolated_by_participation_preserves_terminal_assistant_text() {
         }
         assert_eq!(terminal["assistantText"], expected);
     }
-    assert!(stream.privacy.is_empty());
-    assert!(stream.assistant.is_empty());
+    assert!(stream.is_drained());
 }
