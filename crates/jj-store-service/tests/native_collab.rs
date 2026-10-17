@@ -1074,3 +1074,35 @@ async fn native_work_comment_reactions_pin_versions_authorize_and_survive_cold_s
         Err(Error::NotFound)
     ));
 }
+
+#[tokio::test]
+async fn retained_library_handles_keep_the_session_permission_boundary() {
+    let fixture = Fixture::code().await;
+    let session = fixture.session(ACTOR, Permission::Read);
+    let before = session.snapshot().await.unwrap();
+    let stores = session.collaboration_stores().await.unwrap();
+    assert_eq!(
+        stores.thread().unwrap().snapshot().await.unwrap().version,
+        0
+    );
+    let request = jj_store_core::StoreRequest::new(
+        m::RequestId::new([96; 16]),
+        ThreadCommandV1::Create {
+            thread_id: ThreadId::new([96; 16]),
+            title: "Denied library write".into(),
+            baseline: None,
+        },
+    );
+    assert!(matches!(
+        stores.thread().unwrap().execute(&request).await,
+        Err(jj_store_core::Error::Denied)
+    ));
+    assert!(matches!(
+        stores.thread().unwrap().status(request.request_id).await,
+        Err(jj_store_core::Error::Denied)
+    ));
+    assert_eq!(
+        session.snapshot().await.unwrap().manifest(),
+        before.manifest()
+    );
+}

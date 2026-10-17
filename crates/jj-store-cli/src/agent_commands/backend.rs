@@ -131,8 +131,10 @@ impl Backend {
                     ));
                 };
                 Ok(Some(
-                    serde_json::to_value(repo.agent_command_status(*request_id).map_err(error)?)
-                        .map_err(error)?,
+                    serde_json::to_value(
+                        repo.agent_store_status(*request_id).await.map_err(error)?,
+                    )
+                    .map_err(error)?,
                 ))
             }
             AgentCommand::Drain => {

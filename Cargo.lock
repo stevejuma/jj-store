@@ -4509,6 +4509,7 @@ dependencies = [
  "jj-store-git",
  "jj-store-jj",
  "jj-store-model",
+ "jj-store-native",
  "jj-store-object",
  "jj-store-read-index",
  "jj-store-wal",

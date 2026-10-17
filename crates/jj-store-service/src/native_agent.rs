@@ -54,26 +54,23 @@ impl NativeSession {
                 .ok()
                 .and_then(|value| value.checked_mul(1_000))
                 .ok_or(wal::Error::Limit("agent capture activation time"))?;
-        let selected = self.snapshot().await?;
-        let root = selected
-            .manifest()
-            .agent_root
-            .ok_or(wal::Error::Corrupt("agent domain root"))?;
-        let pinned = self.coordinator.agent_store(root).await?;
-        let delta = self
-            .coordinator
-            .stage_agent_capture(&pinned, profile, batch, activated_at_millis)
+        let stores = self
+            .collaboration_stores_at(Some(activated_at_millis))
             .await?;
-        let current = self.principal(Permission::Write).await?;
-        if current.id() != principal.id() {
-            return Err(wal::Error::Denied);
-        }
-        let request =
-            AgentDeltaRequest::new(principal.id(), request_id, publication_id, delta, result)?;
-        match binding {
-            Some(binding) => request.with_thread_binding(binding.clone(), activated_at_millis),
-            None => Ok(request),
-        }
+        let adapted = jj_store_core::StoreRequest::new(
+            request_id,
+            jj_store_core::AgentCommand::Capture {
+                profile: profile.clone(),
+                batch: Box::new(batch.clone()),
+                binding: binding.cloned(),
+            },
+        )
+        .with_publication_id(publication_id);
+        let prepared = stores.prepare_agent(&adapted).await?;
+        let mut native = jj_store_native::to_agent_delta(principal.id(), &prepared)?;
+        native.result = result;
+        native.validate()?;
+        Ok(native)
     }
 
     pub async fn publish_agent_delta(
@@ -84,7 +81,10 @@ impl NativeSession {
         if principal.id() != request.principal {
             return Err(wal::Error::Denied);
         }
-        let outcome = self.coordinator.publish_agent_delta(request).await?;
+        let stores = self.collaboration_stores().await?;
+        let adapted = jj_store_native::from_agent_delta(request)?;
+        let value = stores.execute_agent(&adapted).await?;
+        let outcome = crate::native::publication_outcome(value, request.publication_id)?;
         if matches!(outcome, PublishOutcome::Committed(_)) {
             self.events.published(self.repository);
         }

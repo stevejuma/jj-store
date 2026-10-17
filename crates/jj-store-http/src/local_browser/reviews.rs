@@ -177,12 +177,16 @@ async fn status(
     let _ = binding(&state, repository).await?;
     let manager = manager(&state)?;
     pending.set(request);
+    let runtime = tokio::runtime::Handle::current();
     let outcome = blocking(&state, move || {
-        manager
-            .open(repository)
-            .map_err(map)?
-            .review_command_status(request)
-            .map_err(Error::from)
+        runtime.block_on(async {
+            manager
+                .open(repository)
+                .map_err(map)?
+                .review_store_status(request)
+                .await
+                .map_err(Error::from)
+        })
     })
     .await?;
     Ok(state

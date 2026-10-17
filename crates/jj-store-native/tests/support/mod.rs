@@ -61,6 +61,7 @@ pub struct Storage {
     pub mode: AtomicU8,
     pub puts: AtomicUsize,
     pub read_blocked: AtomicBool,
+    pub read_missing: AtomicBool,
 }
 #[async_trait::async_trait]
 impl ObjectStore for Storage {
@@ -69,7 +70,11 @@ impl ObjectStore for Storage {
     }
     async fn get(&self, key: &Key, range: Option<ByteRange>) -> jj_store_object::Result<Download> {
         if self.read_blocked.load(Ordering::SeqCst) {
-            return Err(jj_store_object::Error::Transport);
+            return Err(if self.read_missing.load(Ordering::SeqCst) {
+                jj_store_object::Error::NotFound
+            } else {
+                jj_store_object::Error::Transport
+            });
         }
         self.memory.get(key, range).await
     }
@@ -89,8 +94,9 @@ impl ObjectStore for Storage {
             return Ok(WriteOutcome::Unknown);
         }
         let result = self.memory.put(key, condition, upload).await?;
-        if (mode == 2 || mode == 3) && matches!(result, WriteOutcome::Applied(_)) {
+        if (mode == 2 || mode == 3 || mode == 4) && matches!(result, WriteOutcome::Applied(_)) {
             self.read_blocked.store(true, Ordering::SeqCst);
+            self.read_missing.store(mode == 4, Ordering::SeqCst);
         }
         if mode == 2 && matches!(result, WriteOutcome::Applied(_)) {
             Ok(WriteOutcome::Unknown)

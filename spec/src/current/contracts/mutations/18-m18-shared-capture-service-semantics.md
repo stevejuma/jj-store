@@ -130,3 +130,17 @@ strings alone cannot authorize a compound publication. Reject unsupported
 composition before actor creation or staging. Existing intent serialization and
 domain receipts are unchanged; provider-neutral envelopes retain each exact
 provider receipt.
+
+M32 routes native Work, Review, Thread, Reaction and prepared Agent commands
+through named library factories. The service supplies the currently admitted
+principal, repository epoch and original native publication identity; factory
+selection never grants access. Policy is rechecked at the existing coordinator
+boundary and before returning results. Existing native Agent preparation retains
+its session-clock acceptance time; other typed commands retain system-clock
+millisecond precision. Existing serialized AgentDeltaRequest and receipt bytes
+are adapted verbatim, including opaque results and atomic Thread bindings.
+LocalTrusted command facades compose the standalone Git factories with existing
+folder admission and device actor provenance. Synchronous local WorkStore
+compatibility and exact historical read APIs remain available. JST-MUT-001 and
+existing domain semantic failures, request identities and wire contracts retain
+their interpretation.

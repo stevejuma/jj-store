@@ -310,7 +310,8 @@ impl Supervisor {
                 .open(repository)
                 .map_err(|_| Error::Denied)?;
             match local
-                .collab_command_status(request)
+                .collab_store_status(request)
+                .await
                 .map_err(|_| Error::Unavailable)?
             {
                 // Keep the original command for receipt-checked replay when committed

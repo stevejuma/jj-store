@@ -314,3 +314,11 @@ require an explicit metadata commit and reject changed snapshots; reads do not
 initialize metadata, actor state or the agent registry. Native serving and cold
 local filesystem qualification remain distinct. These commands neither launch
 nor continue jj-acp or another agent process.
+
+M32's collaboration command adapters use the named Git/native library factories.
+Local Work writes and receipt lookups use their asynchronous facade; synchronous
+library compatibility entry points remain available. Existing CLI selectors,
+flags, result shapes, actor provenance, original request/publication IDs and
+uncertain-outcome handling under JST-CLI-001/002 are unchanged. Capture and
+server comment-submission callers share this composition; no installed binary or
+service is replaced by library registration.

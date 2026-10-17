@@ -665,3 +665,54 @@ fn bound_local_browser_commands_cannot_follow_replaced_repository_identity() {
         selected.commit()
     );
 }
+
+#[tokio::test]
+async fn factory_facade_replays_sync_receipts_and_keeps_semantic_errors() {
+    let (_root, repository) = fixture();
+    let command = request(
+        94,
+        WorkCommandV1::CreateProject {
+            id: ProjectId::new([94; 16]),
+            title: "Shared facade".into(),
+            body: String::new(),
+        },
+    );
+    let original = repository.apply_work_command(&command).unwrap();
+    assert_eq!(
+        repository.apply_work_command_async(&command).await.unwrap(),
+        original
+    );
+    assert_eq!(
+        repository
+            .work_store_status(command.request_id)
+            .await
+            .unwrap(),
+        original
+    );
+    let second = request(
+        95,
+        WorkCommandV1::CreateProject {
+            id: ProjectId::new([95; 16]),
+            title: "Async facade".into(),
+            body: String::new(),
+        },
+    );
+    let accepted = repository.apply_work_command_async(&second).await.unwrap();
+    assert_eq!(
+        repository.work_command_status(second.request_id).unwrap(),
+        accepted
+    );
+    let mut invalid = second;
+    invalid.command = WorkCommandV1::CreateProject {
+        id: ProjectId::new([96; 16]),
+        title: String::new(),
+        body: String::new(),
+    };
+    assert_eq!(
+        repository
+            .apply_work_command_async(&invalid)
+            .await
+            .unwrap_err(),
+        Error::Invalid
+    );
+}

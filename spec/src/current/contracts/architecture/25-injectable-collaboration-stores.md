@@ -91,3 +91,16 @@ system-clock defaults.
 
 Native and Git adapters preserve neutral stale, invalid, missing-target and
 review-state errors; application consumers retain their existing typed failures.
+
+Application command entry points compose their existing repository profile's
+factories. Native service hosts retain current principal/epoch admission and
+exact native receipts; LocalTrusted hosts retain folder admission and filesystem
+provenance. Typed invalid, target-missing and review-state errors pass through
+without becoming generic corruption or transport failures. Existing historical
+read and synchronous compatibility APIs remain explicit provider capabilities.
+
+A missing selected native receipt/control record during adaptation is a receipt
+availability failure, never a missing command target or proven nonpublication.
+After known commit it retains an unknown outcome; status retains the original
+request and reports unavailable authority until the selected receipt is
+readable.

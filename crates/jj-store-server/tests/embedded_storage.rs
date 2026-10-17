@@ -244,3 +244,262 @@ fn set_private(path: &std::path::Path) {
         std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600)).unwrap();
     }
 }
+
+#[tokio::test(flavor = "multi_thread")]
+#[ignore = "requires the separately built pinned embedded RustFS runtime"]
+async fn injectable_native_stores_replay_exact_receipts_after_cold_rustfs_restart() {
+    use jj_store_jj::{objects::NativeObjects, policy::Protection};
+    use jj_store_model as m;
+    use jj_store_service::{
+        auth::{Permission, SystemClock},
+        collab_mutations as collab,
+        native::{NativeSession, SessionLimits, create_repository_local_trusted},
+        review_model as r, review_mutations as review, work,
+    };
+    use std::{collections::BTreeSet, sync::Arc};
+    const REPO: m::RepositoryId = m::RepositoryId::new([71; 16]);
+    const ACTOR: m::PrincipalId = m::PrincipalId::new([72; 16]);
+    let root = tempfile::tempdir().unwrap();
+    std::fs::create_dir(root.path().join("volume")).unwrap();
+    let config = EmbeddedStorageConfig {
+        runtime_executable: std::fs::canonicalize(
+            std::env::var_os("JJ_STORE_RUSTFS_RUNTIME").expect("set JJ_STORE_RUSTFS_RUNTIME"),
+        )
+        .unwrap(),
+        volume: root.path().join("volume"),
+        address: format!(
+            "127.0.0.1:{}",
+            std::net::TcpListener::bind("127.0.0.1:0")
+                .unwrap()
+                .local_addr()
+                .unwrap()
+                .port()
+        ),
+        access_key: "injectable-qualification-access".into(),
+        secret_key: "injectable-qualification-secret".into(),
+        region: "us-east-1".into(),
+        bucket: "injectable-native-qualification".into(),
+        max_object_bytes: 8 * 1024 * 1024,
+        timeout: Duration::from_secs(30),
+    };
+    let first = EmbeddedStorageRuntime::start(config.clone()).await.unwrap();
+    first.store().ensure_bucket().await.unwrap();
+    let objects = Arc::new(NativeObjects::new(first.store(), REPO, 8 * 1024 * 1024).unwrap());
+    create_repository_local_trusted(
+        first.store(),
+        objects.clone(),
+        Permission::Admin,
+        m::EpochId::new([73; 16]),
+        SessionLimits::default().publication,
+    )
+    .await
+    .unwrap();
+    let session = Arc::new(
+        NativeSession::new_local_trusted(
+            first.store(),
+            objects.clone(),
+            ACTOR,
+            Permission::Admin,
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    let work_request = work::Request {
+        version: 1,
+        request_id: m::RequestId::new([74; 16]),
+        command: work::WorkCommandV1::CreateProject {
+            id: work::ProjectId::new([74; 16]),
+            title: "Cold library home".into(),
+            body: String::new(),
+        },
+    };
+    let work_receipt = work::WorkCommandService
+        .apply(session.clone(), &work_request)
+        .await
+        .unwrap();
+    let thread_request = collab::Request {
+        version: 1,
+        request_id: m::RequestId::new([75; 16]),
+        command: jj_collab::CollabCommandV1::Thread {
+            intent: jj_collab::ThreadCommandV1::Create {
+                thread_id: jj_collab::ThreadId::new([75; 16]),
+                title: "Cold library thread".into(),
+                baseline: None,
+            },
+        },
+    };
+    let thread_receipt = collab::CollabCommandService
+        .apply(session.clone(), &thread_request)
+        .await
+        .unwrap();
+    let collab::Outcome::Committed { receipt: thread } = &thread_receipt else {
+        panic!("committed thread")
+    };
+    let jj_collab::CollabCommandResultV1::Thread { result: thread } = &thread.result else {
+        panic!("thread result")
+    };
+    let observations: Vec<serde_json::Value> =
+        serde_json::from_slice(include_bytes!("fixtures/injectable-codex-hooks.json")).unwrap();
+    let batch = jj_agent::SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: jj_agent::CaptureBatchId::new([76; 16]),
+        integration: jj_agent::IntegrationId::Codex,
+        source_instance_id: jj_agent::SourceInstanceId::new([76; 16]),
+        sanitizer_version: "agent-redaction@0.1.0".into(),
+        representation: jj_agent::SanitizedRepresentation::SanitizedNative,
+        observations: observations
+            .into_iter()
+            .enumerate()
+            .map(|(i, value)| jj_agent::SanitizedObservationV1 {
+                observation_id: jj_agent::ObservationId::new([i as u8 + 1; 16]),
+                source_sequence: i as u64 + 1,
+                occurred_at_millis: Some(1725000000000 + i as i64),
+                source_kind: jj_agent::SourceKind::Hook,
+                source_trust: jj_agent::SourceTrust::LocalUserHook,
+                payload: jj_agent::SanitizedPayloadV1::new(
+                    jj_agent::SanitizedMediaType::Json,
+                    &serde_json::to_vec(&value).unwrap(),
+                )
+                .unwrap(),
+            })
+            .collect(),
+    };
+    let prepared = session
+        .prepare_agent_capture_with_binding(
+            m::RequestId::new([77; 16]),
+            m::PublicationId::new([78; 16]),
+            &jj_agent::NormalizerProfileV1::codex_0_156_1(),
+            &batch,
+            b"opaque retained result".to_vec(),
+            Some(&jj_collab::ThreadBindingV1 {
+                thread_id: thread.thread_id,
+                observed_thread: thread.version,
+                observed_assignment: None,
+            }),
+        )
+        .await
+        .unwrap();
+    let retained_preparation = serde_json::to_vec(&prepared).unwrap();
+    let agent_receipt = session.publish_agent_delta(&prepared).await.unwrap();
+    let review_request = review::Request {
+        version: 1,
+        request_id: m::RequestId::new([79; 16]),
+        command: r::ReviewCommandV1::CreateThread {
+            anchor: Box::new(r::ArtifactAnchorV1 {
+                schema_version: 1,
+                repository_id: REPO,
+                target: r::ArtifactTargetV1::Repository,
+                created_context: r::CreatedContextV1 {
+                    publication_position: None,
+                    code_state_version: None,
+                    agent_root: None,
+                },
+                sensitivity: r::SensitivityV1::Repository,
+            }),
+            body: r::ReviewCommentBodyV1 {
+                schema_version: 1,
+                format: r::ReviewBodyFormatV1::PlainText,
+                text: "Cold review".into(),
+                sanitizer_version: "plain@1".into(),
+            },
+        },
+    };
+    let review_receipt = review::ReviewCommandService
+        .apply(session.clone(), &review_request)
+        .await
+        .unwrap();
+    let reaction_request = collab::Request {
+        version: 1,
+        request_id: m::RequestId::new([80; 16]),
+        command: jj_collab::CollabCommandV1::Reaction {
+            intent: jj_collab::ReactionCommandV1::Set {
+                emoji: None,
+                target: jj_collab::ReactionTargetV1::Thread {
+                    thread_id: thread.thread_id,
+                },
+                value: jj_collab::ReactionValueV1::Like,
+                observed: BTreeSet::new(),
+            },
+        },
+    };
+    let reaction_receipt = collab::CollabCommandService
+        .apply(session.clone(), &reaction_request)
+        .await
+        .unwrap();
+    let selected = session.snapshot().await.unwrap().manifest().clone();
+    assert_eq!(selected.agent_state_version, 1);
+    assert_eq!(selected.thread_state_version, 2);
+    assert_eq!(selected.work_state_version, 1);
+    assert_eq!(selected.review_state_version, 1);
+    assert_eq!(selected.reaction_state_version, 1);
+    drop(session);
+    drop(objects);
+    first.shutdown().await;
+    let second = EmbeddedStorageRuntime::start(config).await.unwrap();
+    let objects = Arc::new(NativeObjects::new(second.store(), REPO, 8 * 1024 * 1024).unwrap());
+    let cold = Arc::new(
+        NativeSession::new_local_trusted(
+            second.store(),
+            objects,
+            ACTOR,
+            Permission::Admin,
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    assert_eq!(cold.snapshot().await.unwrap().manifest(), &selected);
+    assert_eq!(
+        work::WorkCommandService
+            .apply(cold.clone(), &work_request)
+            .await
+            .unwrap(),
+        work_receipt
+    );
+    assert_eq!(
+        review::ReviewCommandService
+            .apply(cold.clone(), &review_request)
+            .await
+            .unwrap(),
+        review_receipt
+    );
+    assert_eq!(
+        collab::CollabCommandService
+            .apply(cold.clone(), &thread_request)
+            .await
+            .unwrap(),
+        thread_receipt
+    );
+    assert_eq!(
+        collab::CollabCommandService
+            .apply(cold.clone(), &reaction_request)
+            .await
+            .unwrap(),
+        reaction_receipt
+    );
+    let retained = serde_json::from_slice(&retained_preparation).unwrap();
+    assert_eq!(
+        cold.publish_agent_delta(&retained).await.unwrap(),
+        agent_receipt
+    );
+    assert_eq!(cold.snapshot().await.unwrap().manifest(), &selected);
+    let stores = cold.collaboration_stores().await.unwrap();
+    assert_eq!(stores.agent().unwrap().snapshot().await.unwrap().version, 1);
+    assert_eq!(stores.work().unwrap().snapshot().await.unwrap().version, 1);
+    assert_eq!(
+        stores.review().unwrap().snapshot().await.unwrap().version,
+        1
+    );
+    assert_eq!(
+        stores.thread().unwrap().snapshot().await.unwrap().version,
+        2
+    );
+    assert_eq!(
+        stores.reaction().unwrap().snapshot().await.unwrap().version,
+        1
+    );
+    second.shutdown().await;
+}

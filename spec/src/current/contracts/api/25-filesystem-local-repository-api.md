@@ -94,3 +94,9 @@ continues bounded erasure; GET
 outcome. Capability `local_native_repository_deletion` is installation-gated.
 Deletion is unavailable to authenticated shared serving and never dispatches the
 folder removal endpoint.
+
+M32's local command and status handlers use the library store factories inside
+the existing bounded blocking-worker admission. Request identities, original
+receipts, route schemas, origin/protocol checks, deadline handling and folder
+admission under JST-API-001/002 remain unchanged. No UI behavior changes with
+this Rust composition refactor.

@@ -215,7 +215,7 @@ fn reaction(id: u8, thread: u8) -> StoreRequest<ReactionCommand> {
 }
 #[tokio::test]
 async fn unknown_after_apply_retains_original_receipt_and_replays_without_live_sources() {
-    for fault in [2, 3] {
+    for fault in [2, 3, 4] {
         let (storage, c, host, stores) = fixture().await;
         committed(stores.thread().unwrap().execute(&thread(30)).await.unwrap());
         let command = reaction(31, 30);

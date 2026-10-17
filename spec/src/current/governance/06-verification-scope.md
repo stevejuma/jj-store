@@ -9,7 +9,12 @@ JST-ARCH-006's library boundaries admit core and Git engines independently of
 native object/WAL and application packages. Verify their dependency closure,
 exact source-identity and receipt regressions, and affected direct consumers.
 Keep incomplete cross-domain substitution and native/external-provider gates in
-M32; passing an extraction family cannot complete those separate gates.
+M32; passing an extraction family cannot complete those separate gates. Native
+factory consumer migration runs the affected service, CLI, capture and transport
+families, exact original-request/receipt regressions and strict package checks.
+Cold embedded RustFS evidence reopens all five domains independently of
+fake-store fault tests. JST-GOV-002 keeps that evidence and explicit M32 review
+in the same change; unrelated UI and root aggregate lanes remain out of scope.
 
 E-CI-BROWSER-001 runs the complete affected UI unit and cold-browser surfaces
 because fixture selection/sharding and shared freshness owners affect

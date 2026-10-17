@@ -213,11 +213,49 @@ impl CollabCommandService {
             command: request.command.clone(),
         };
         let digest = command.intent_digest(session.repository)?;
-        match session
-            .coordinator
-            .publish_collab_command_with_reviews(&command, qualified)
-            .await?
-        {
+        let stores = session.collaboration_stores().await?;
+        let outcome = match &request.command {
+            jj_collab::CollabCommandV1::Thread { intent } => {
+                stores
+                    .thread()
+                    .ok_or(jj_store_core::Error::Unsupported("ThreadStore disabled"))?
+                    .execute_with_reviews(
+                        &jj_store_core::StoreRequest::new(request.request_id, intent.clone())
+                            .with_publication_id(publication_id),
+                        qualified,
+                    )
+                    .await?
+            }
+            jj_collab::CollabCommandV1::Reaction { intent } => {
+                stores
+                    .reaction()
+                    .ok_or(jj_store_core::Error::Unsupported("ReactionStore disabled"))?
+                    .execute_with_reviews(
+                        &jj_store_core::StoreRequest::new(
+                            request.request_id,
+                            jj_store_core::ReactionCommand::Reaction(intent.clone()),
+                        )
+                        .with_publication_id(publication_id),
+                        qualified,
+                    )
+                    .await?
+            }
+            jj_collab::CollabCommandV1::Emoji { intent } => {
+                stores
+                    .reaction()
+                    .ok_or(jj_store_core::Error::Unsupported("ReactionStore disabled"))?
+                    .execute_with_reviews(
+                        &jj_store_core::StoreRequest::new(
+                            request.request_id,
+                            jj_store_core::ReactionCommand::Emoji(intent.clone()),
+                        )
+                        .with_publication_id(publication_id),
+                        qualified,
+                    )
+                    .await?
+            }
+        };
+        match crate::native::publication_outcome(outcome, publication_id)? {
             PublishOutcome::Committed(receipt) => {
                 session.events.published(session.repository);
                 reauthorize(&session, principal, receipt.accepted.epoch).await?;
@@ -246,10 +284,31 @@ impl CollabCommandService {
         match tokio::time::timeout(session.limits.timeout, async {
             let principal = session.principal(Permission::Write).await?.id();
             let current = session.snapshot().await?;
-            let receipt = session
-                .coordinator
-                .receipt_at(&current, principal, request_id)
-                .await?;
+            let stores = session.collaboration_stores().await?;
+            let outcome = match stores
+                .thread()
+                .ok_or(jj_store_core::Error::Unsupported("ThreadStore disabled"))?
+                .status(request_id)
+                .await
+            {
+                Err(jj_store_core::Error::IntentConflict) => {
+                    stores
+                        .reaction()
+                        .ok_or(jj_store_core::Error::Unsupported("ReactionStore disabled"))?
+                        .status(request_id)
+                        .await?
+                }
+                result => result?,
+            };
+            let receipt = match outcome {
+                jj_store_core::StoreOutcome::Committed(value) => {
+                    Some(crate::native::native_receipt(value)?)
+                }
+                jj_store_core::StoreOutcome::NotKnown { .. } => None,
+                jj_store_core::StoreOutcome::Unknown { .. } => {
+                    return Ok(Status::OutcomeUnknown { request_id });
+                }
+            };
             reauthorize(&session, principal, current.manifest().epoch).await?;
             Ok(match receipt {
                 Some(receipt) => Status::Committed {
@@ -274,6 +333,11 @@ impl CollabCommandService {
 
 impl From<jj_store_core::Error> for Error {
     fn from(value: jj_store_core::Error) -> Self {
-        jj_store_wal::Error::from(value).into()
+        use jj_store_core::Error as E;
+        match value {
+            E::Invalid(_) => Self::Invalid,
+            E::NotFound => Self::NotFound,
+            other => jj_store_wal::Error::from(other).into(),
+        }
     }
 }

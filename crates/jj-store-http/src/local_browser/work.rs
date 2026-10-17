@@ -195,12 +195,16 @@ async fn apply(
     let manager = manager(&state)?;
     let _ = binding(&state, repository).await?;
     pending.set(request.request_id);
+    let runtime = tokio::runtime::Handle::current();
     let outcome = blocking(&state, move || {
-        manager
-            .open(repository)
-            .map_err(map)?
-            .apply_work_command(&request)
-            .map_err(Error::from)
+        runtime.block_on(async {
+            manager
+                .open(repository)
+                .map_err(map)?
+                .apply_work_command_async(&request)
+                .await
+                .map_err(Error::from)
+        })
     })
     .await?;
     Ok(state
@@ -242,12 +246,16 @@ async fn status(
     let manager = manager(&state)?;
     let _ = binding(&state, repository).await?;
     pending.set(request);
+    let runtime = tokio::runtime::Handle::current();
     let outcome = blocking(&state, move || {
-        manager
-            .open(repository)
-            .map_err(map)?
-            .work_command_status(request)
-            .map_err(Error::from)
+        runtime.block_on(async {
+            manager
+                .open(repository)
+                .map_err(map)?
+                .work_store_status(request)
+                .await
+                .map_err(Error::from)
+        })
     })
     .await?;
     Ok(state

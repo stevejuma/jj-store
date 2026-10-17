@@ -66,6 +66,7 @@ export function dependencyErrors(packages) {
       "jj-store-wal",
     ],
     "jj-store-service": [
+      "jj-store-native",
       "jj-store-git",
       "jj-store-core",
       "jj-forge",

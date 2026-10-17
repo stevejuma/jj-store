@@ -122,6 +122,18 @@ impl NativeStore {
         kind: StoreKind,
         request_id: RequestId,
     ) -> c::Result<StoreOutcome<Vec<u8>>> {
+        match self.status_inner(kind, request_id).await {
+            Err(c::Error::NotFound) => Err(c::Error::Unavailable(
+                "selected native receipt record unavailable".into(),
+            )),
+            result => result,
+        }
+    }
+    async fn status_inner(
+        &self,
+        kind: StoreKind,
+        request_id: RequestId,
+    ) -> c::Result<StoreOutcome<Vec<u8>>> {
         self.context.admit(kind, Access::Write).await?;
         let actor = self.actor(false)?;
         let current = self.coordinator.read().await?;
@@ -157,7 +169,7 @@ impl NativeStore {
     ) -> c::Result<StoreOutcome<Vec<u8>>> {
         let request_id = receipt.request_id;
         match self.committed_inner(kind, receipt).await {
-            Err(c::Error::Unavailable(_) | c::Error::OutcomeUnknown) => {
+            Err(c::Error::Unavailable(_) | c::Error::OutcomeUnknown | c::Error::NotFound) => {
                 Ok(StoreOutcome::Unknown { request_id })
             }
             result => result,

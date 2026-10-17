@@ -41,3 +41,12 @@ The
 retains all ten RustFS storage/publication probes after sharing the committed
 inventory reader. It uses the storage harness's test principals and does not
 replace authenticated RPC/HTTP or executable CLI acceptance.
+
+M32 adds a focused cold embedded-RustFS regression for the default injectable
+native provider. It creates Work, Review, Thread, Agent capture and Reaction
+state through application services, serializes the original prepared Agent
+request, stops/restarts its owned RustFS process and reopens fresh native
+sessions. Original receipts, all five selected roots/versions and the atomic
+Agent/Thread binding must replay exactly without new publication. This uses the
+existing macOS ARM64 embedded profile; it is separate from fake-store fault
+proofs and does not qualify new storage topologies or releases.
