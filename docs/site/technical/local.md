@@ -5,6 +5,14 @@ without converting its code into native object storage. Its existing JJ
 operation log and Git backend remain the code authority. An owned companion ref
 selects immutable application metadata.
 
+`jj-store-git` exposes this companion provider through independently named
+AgentStore, WorkStore, ReviewStore, ThreadStore and ReactionStore factories.
+Plain Git embedding needs no JJ or native storage dependency. The focused
+`jj-store-jj` companion feature supplies qualified JJ source evidence when
+needed. Application defaults retain LocalTrusted folder admission and filesystem
+actor provenance. Loading and reading never initialize repository identity or
+publish metadata; factory configuration remains host-owned.
+
 ```mermaid
 flowchart TB
   Folder[Registered JJ folder] --> Code[Existing JJ code and operation history]

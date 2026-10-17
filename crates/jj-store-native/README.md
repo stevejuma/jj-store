@@ -26,3 +26,6 @@ interface.
 See the [publication guide](../../docs/site/technical/publication.md) and
 [architecture guide](../../docs/site/technical/architecture.md) for full
 context.
+
+See the [embedding guide](../../docs/injectable-stores.md) and its independent
+consumer example for complete construction, extension and recovery details.

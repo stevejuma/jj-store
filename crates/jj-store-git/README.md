@@ -44,3 +44,6 @@ traits for application code. After an unknown outcome, retain the exact request
 and use its status operation; never create a replacement request ID.
 Provider-neutral receipts retain the exact canonical provider receipt for
 existing CLI and service contracts.
+
+See the [embedding guide](../../docs/injectable-stores.md) and its independent
+consumer example for complete construction, extension and recovery details.

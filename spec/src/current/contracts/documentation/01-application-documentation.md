@@ -7,6 +7,18 @@ Separate helper workspaces follow the same convention. Upstream vendored source
 keeps its original documentation and attribution. README coverage does not
 qualify a runtime, platform, provider or release.
 
+The standalone `docs/injectable-stores.md` library guide describes named factory
+selection, host capabilities, immutable readers, durable capture preparation and
+provider receipt recovery. Its independent Cargo example supplies executable
+usage and feature-specific dependency proofs. Crate READMEs link this guide;
+full API and operational context remain under docs. This developer manual adds
+no CLI commands, repository markers or transport schemas and stays outside
+bundled Help. The existing technical manuals describe provider composition and
+durable preparation. Source review also repairs stale documentation for already
+implemented repository deletion, tab-shaped placeholders and qualified native
+file dragging. Generated references follow the existing deletion schema; this
+documentation review adds no application behavior or runtime qualification.
+
 E-CI-BROWSER-001 reviews the current browser Settings/freshness sources under
 JST-DOC-001/002 and refreshes their explicit source fingerprint. The manual now
 states that opening Reload saved settings observes the latest revision without

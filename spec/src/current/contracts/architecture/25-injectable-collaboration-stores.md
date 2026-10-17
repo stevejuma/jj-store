@@ -2,7 +2,7 @@
 
 E-CRATE-READMES-001 explains the current core and focused JJ entry points and
 links detailed documentation. JST-ARCH-006 store construction and publication
-contracts are unchanged; the overview does not complete pending M32 gates.
+contracts are unchanged; provider qualification is recorded separately by M32.
 
 JST-ARCH-006 introduces library-owned AgentStore, WorkStore, ReviewStore,
 ThreadStore and ReactionStore interfaces beside stock jj-lib. Each store has its
@@ -104,3 +104,16 @@ availability failure, never a missing command target or proven nonpublication.
 After known commit it retains an unknown outcome; status retains the original
 request and reports unavailable authority until the selected receipt is
 readable.
+
+Independent embedding qualification uses a private Cargo workspace owned by the
+JJ integration's test subtree. Its plain Git, focused stock-JJ companion and
+optional native profiles exercise the public interfaces without application
+services, transports, search or runners. A one-store external implementation
+requires no sibling implementation. Complete feature-specific dependency audits
+and runtime receipt/source-preservation proofs accompany the SDK guide under
+docs; crate-root READMEs remain concise introductions.
+
+E-INJECTABLE-STORES-006 completes M32's source-library embedding qualification
+across plain Git, stock JJ, native without JJ and combined profiles. The
+application and real cold RustFS evidence remain in E005. This completes no
+WorkflowStore, new-platform, topology or package-publication gate.

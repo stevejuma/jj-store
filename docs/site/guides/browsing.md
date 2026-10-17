@@ -27,6 +27,10 @@ appropriate. A loading view retains the shell and current controller state. If
 its download fails, use Retry in the notification; navigation and pending work
 remain available.
 
+Repository history and Stacks placeholders also retain the selected tab,
+inspector and diff layout during their first module or data load. A refresh of
+loaded content keeps the existing rows visible.
+
 ## Select a workflow source
 
 Open **Workflows**, then use a card's **Run workflow** menu item. Its source
@@ -309,6 +313,11 @@ segment or commit. More history loads through a bounded continuation.
 In a text diff, use **Show unmodified lines** to expand unchanged context
 before, between or after the changes. The same controls work in unified and
 split views; expansion preserves the native hunk selections used for dragging.
+
+A file in a branch's net diff can be dragged when its complete change belongs to
+one mutable native commit. Ambiguous, combined or unsupported changes retain
+their inspection view without acquiring a guessed command target. Hunk dragging
+continues to use the exact selected native delta.
 
 Select an already selected stack header, commit row or Branches entry again to
 deselect it. Stack graphs retain per-row lane spacing and scroll horizontally

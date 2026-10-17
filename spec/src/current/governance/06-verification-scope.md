@@ -2,8 +2,12 @@
 
 Crate overview documentation checks the complete tracked Cargo-root inventory,
 first-party relative links, actual public entry points and Markdown formatting.
-The standalone desktop runbook maps to documentation and desktop chapters.
-E-CRATE-READMES-001 keeps all runtime and release qualification gates unchanged.
+The standalone desktop runbook maps to documentation and desktop chapters. The
+injectable-store SDK guide maps to documentation and architecture; its
+independent Cargo workspace is registered for managed target maintenance.
+Qualification retires its isolated target and preserves the existing dev
+fixture. E-CRATE-READMES-001 keeps all runtime and release qualification gates
+unchanged.
 
 JST-ARCH-006's library boundaries admit core and Git engines independently of
 native object/WAL and application packages. Verify their dependency closure,

@@ -111,6 +111,13 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^docs/injectable-stores\\.md$",
+          chapterPatterns: [
+            "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+            "^spec/src/current/contracts/architecture/25-injectable-collaboration-stores\\.md$",
+          ],
+        },
+        {
           pattern: "^docs/desktop-development\\.md$",
           chapterPatterns: [
             "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",

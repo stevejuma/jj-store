@@ -40,10 +40,20 @@ object-store operations. `jj-store-wal` owns dependency inventories, selected
 state, durable receipts and publication. Only the provider can select a new
 repository state.
 
-`jj-store-jj` adapts the pinned upstream JJ types and local Git storage.
-Upstream JJ imports stay there and in `jj-store-cli`; services consume owned
-interfaces. `jj-store-service` authorizes reads and applies typed commands. HTTP
-and RPC translate those contracts and retain the same semantic policy.
+`jj-store-core` owns the five injectable collaboration-store interfaces, named
+factories and shared projection/record engines. `jj-store-git` implements the
+companion provider; `jj-store-native` adapts the native WAL coordinator. Hosts
+select Agent, Work, Review, Thread and Reaction implementations independently
+and supply authorization, actor identity and clocks. Cross-domain publication
+requires compatible participants in one provider-owned publication group.
+
+`jj-store-jj` adapts the pinned upstream JJ types and qualified code evidence.
+Its focused `companion` feature can be consumed alongside stock `jj-lib` without
+native storage or application services. Upstream JJ imports stay there and in
+`jj-store-cli`; services consume owned interfaces. `jj-store-service` composes
+the providers, authorizes reads and applies typed commands. HTTP and RPC retain
+the same semantic policy. The source SDK guide is `docs/injectable-stores.md`;
+its independent Cargo example demonstrates embedding and one-store substitution.
 
 The Svelte application owns navigation, selections, drafts and request
 lifetimes. It does not infer commitment from a successful upload. Committed

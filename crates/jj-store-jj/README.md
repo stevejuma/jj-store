@@ -15,3 +15,6 @@ commands. See
 [local repository integration](../../docs/site/technical/local.md),
 [read semantics](../../docs/site/technical/reads.md) and
 [codec coverage](../../docs/codec-coverage.md).
+
+See the [embedding guide](../../docs/injectable-stores.md) and its independent
+consumer example for complete construction, extension and recovery details.

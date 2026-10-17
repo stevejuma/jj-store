@@ -38,6 +38,16 @@ preconditions: an already committed request remains recognizable even if the
 entity has subsequently changed. Typed review commands reapply intent after a
 manifest race while retaining their per-thread and per-comment checks.
 
+The injectable native provider preserves the coordinator's original receipt,
+selected transaction root and version. Native Agent capture has an explicit
+preparation step: retain its exact actor, request/publication identities, delta,
+result bytes and accepted Thread binding before attempting publication. Retry
+uses that preparation. A missing selected receipt/control record remains an
+availability failure or unknown outcome under the original identity. Shared
+canonical codecs and read/projection engines live in `jj-store-core`; native
+framing, inventories, WAL and manifest selection remain with their existing
+owners.
+
 ## Concurrent state
 
 Code, AgentStore, ReviewStore and other collaboration domains have independent
