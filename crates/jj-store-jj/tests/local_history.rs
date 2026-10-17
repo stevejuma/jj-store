@@ -121,7 +121,10 @@ fn log() -> q::Request {
 async fn standalone_history_preserves_source_pins_diffs_cancellation_and_current_admission() {
     let source = tempfile::tempdir().unwrap();
     let root = source.path().canonicalize().unwrap();
-    assert_eq!(jj(&root, &["--version"]), "jj 0.45.1");
+    let version = jj(&root, &["--version"]);
+    assert!(
+        version == "jj 0.45.1" || version == "jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5"
+    );
     jj(&root, &["git", "init", "--colocate"]);
     fs::write(root.join("note.md"), "first\n").unwrap();
     jj(&root, &["describe", "-m", "First"]);

@@ -141,6 +141,7 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     "jj-store-wal",
     "jj-work",
     "jj-workflow",
+    "tauri-plugin-jj-store",
   ]);
   assert.ok(cohortPackages(g, "ordinary").includes("jj-forge"));
   assert.deepEqual(
@@ -155,7 +156,8 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     ],
   );
   const core = impact(["crates/jj-store-model/src/lib.rs"], false, g, inputs);
-  assert.equal(core.packages.length, 18);
+  assert.equal(core.packages.length, 19);
+  assert.ok(core.packages.includes("tauri-plugin-jj-store"));
   assert.equal(core.web, true);
 });
 test("invalid metadata and invalid or partial cohort requests fail closed", () => {

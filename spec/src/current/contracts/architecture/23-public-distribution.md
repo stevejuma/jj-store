@@ -288,3 +288,17 @@ closure. Default `native` includes it, retains all native integration binaries
 and qualification examples, and preserves wire formats. Feature checks are
 source qualification; independent archive and Tauri release acceptance remain
 separate gates.
+
+The optional `tauri-plugin-jj-store` crate ships its short README, license,
+permission descriptors and contained build inputs. Its default profile is a
+headless local-history service; the explicit `tauri` feature adds only the
+transport. Permissions default empty. Existing native applications explicitly
+select the native JJ profile when workspace dependency defaults are disabled.
+Source checks, native WebView acceptance and public release remain distinct.
+
+Release inventory regression compares the coordinated source metadata against
+Cargo's real workspace plus the embedded runtime, and checks every internal
+publication edge precedes its consumer. It does not assume a fixed crate count
+or last leaf. Standard CI explicitly includes the history bridge and its model
+reverse dependency; heavy/provider/release qualification requirements stay
+intact.

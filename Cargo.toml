@@ -1,6 +1,6 @@
 [workspace]
 exclude = ["desktop"]
-members = ["crates/jj-store-conversations", "crates/jj-store-native", "crates/jj-store-git", "crates/jj-store-core", "crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
+members = ["crates/tauri-plugin-jj-store", "crates/jj-store-conversations", "crates/jj-store-native", "crates/jj-store-git", "crates/jj-store-core", "crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
 resolver = "2"
 
 [workspace.package]
@@ -38,7 +38,7 @@ jj-store-wal = { path = "crates/jj-store-wal", version = "0.1.0" }
 jj-store-replication = { path = "crates/jj-store-replication", version = "0.1.0" }
 jj-store-service = { path = "crates/jj-store-service", version = "0.1.0" }
 jj-store-rpc = { path = "crates/jj-store-rpc", version = "0.1.0" }
-jj-store-jj = { path = "crates/jj-store-jj", version = "0.1.0" }
+jj-store-jj = { path = "crates/jj-store-jj", version = "0.1.0", default-features = false }
 jj-store-server = { path = "crates/jj-store-server", version = "0.1.0" }
 jj-store-http = { path = "crates/jj-store-http", version = "0.1.0" }
 jj-lib = "=0.45.1"

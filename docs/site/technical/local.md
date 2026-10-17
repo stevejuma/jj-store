@@ -36,6 +36,37 @@ authorization rejects the read. Readers never snapshot dirty working files,
 repair source indexes or reconcile heads. Working-tree inspection and checkout
 remain native-only. The crate README provides an entry-point overview.
 
+## Embedding in Tauri
+
+`tauri-plugin-jj-store` provides an optional read-only bridge using the focused
+local-history profile. Its default service can be tested without Tauri; enable
+its `tauri` feature to register `Builder::new(history).build()`. Default plugin
+permissions are empty. Grant `jj-store:local-history` only to intended windows.
+
+Implement `Admission::admit` using the host's actual caller window/URL, live
+vault token and physical root. Return a fresh `local::Access` with current
+identity and generation checks at every entry and completion. The host supplies
+a private absolute cache directory and trusted `Config`; neither roots nor
+generations are renderer inputs. Stored vault/handle strings grant no source
+authority.
+
+The transport accepts `heads`, `open`, `status`, `read` and `close`, each with a
+strict `request` object. `heads` takes `vault`; `open` adds an exact `operation`
+from the admitted heads or retained selection and returns an opaque handle.
+`status` takes `vault` and `handle`, reporting `preparing`, `ready` with the
+exact snapshot, or a retained failure. `read` adds the existing local query
+object. Close releases only the invoking window's exact vault/handle.
+
+At most one preparation runs at a time; ordinary reads retain separate worker
+capacity. The service bounds retained handles and window scopes. Cancel/close
+waits for actual owned work to exit. Native `revoke(window)` cancels and drains
+only that window; `shutdown()` fences admission and drains all scopes, including
+cleanup already in progress. Hosts must await these calls before releasing vault
+authority. Destroyed-window/exit transport hooks provide final cleanup. Code and
+companion state remain untouched; conversion, mutation and metadata publication
+have no command here. Service fixtures and compilation do not establish Notes or
+native WebView product acceptance.
+
 ```mermaid
 flowchart TB
   Folder[Registered JJ folder] --> Code[Existing JJ code and operation history]

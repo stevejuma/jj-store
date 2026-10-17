@@ -141,3 +141,9 @@ load a placeholder object. The application diff layer treats placeholders as
 lineage boundaries, retaining complete structural deltas and all source choices.
 It does not invoke the pinned experimental copy-history diff helper, whose graph
 walker requires every parent (including placeholders) to be a stored history.
+
+The Tauri adapter consumes only owned filesystem reader interfaces and retains
+one non-queued preparation admission across cache acquisition and actual worker
+exit. Cache acquisition runs on a blocking worker. Per-window and per-handle
+leases reject canceled completion and drain active reads before cleanup returns.
+No new upstream JJ import or repository write method is exposed.

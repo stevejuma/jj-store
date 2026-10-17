@@ -41,6 +41,6 @@ tempfile = "3"
 jj-store-adapters.workspace = true
 jj-agent.workspace = true
 jj-review.workspace = true
-jj-store-jj.workspace = true
+jj-store-jj = { workspace = true, features = ["native"] }
 jj-store-replication.workspace = true
 jj-store-wal.workspace = true

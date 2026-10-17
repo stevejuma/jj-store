@@ -100,6 +100,7 @@ export function dependencyErrors(packages) {
     ],
     "jj-store-rpc": ["jj-store-model", "jj-store-object", "jj-store-service"],
     "jj-store-conversations": [],
+    "tauri-plugin-jj-store": ["jj-store-jj", "jj-store-model"],
     "jj-store-capture": [
       "jj-agent",
       "jj-collab",

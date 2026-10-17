@@ -1,0 +1,32 @@
+[package]
+name = "tauri-plugin-jj-store"
+links = "tauri-plugin-jj-store"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+description = "Host-admitted read-only local JJ history for Tauri applications"
+
+[features]
+default = []
+tauri = ["dep:tauri", "dep:tauri-plugin"]
+
+[dependencies]
+jj-store-jj = { workspace = true, default-features = false, features = ["local-history"] }
+jj-store-model.workspace = true
+async-trait = "0.1"
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["rt", "sync"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+tauri = { version = "=2.12.4", default-features = false, optional = true }
+
+[build-dependencies]
+tauri-plugin = { version = "2", features = ["build"], optional = true }
+
+[dev-dependencies]
+serde_json = "1"
+tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }

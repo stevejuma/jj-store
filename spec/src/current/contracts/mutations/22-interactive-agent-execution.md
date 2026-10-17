@@ -92,3 +92,7 @@ and physical change hints grant no mutation capability and publish no repository
 state. Restored forwarding of open/configure/cancel/close controls preserves
 their existing admission and receipts; only eligible prompts enter workspace
 preparation. Unknown effects still retain their original identities.
+
+M33 history-bridge packaging explicitly retains the service's native JJ feature.
+The new optional read transport exposes no mutation or publication command;
+existing authorization, receipts and execution semantics remain unchanged.

@@ -124,3 +124,10 @@ admission, generation changes, private cache reservations and worker lifetime.
 Source indexes and dirty files stay unchanged, and reads require completion
 reauthorization. Native working-tree inspection and mutation remain separately
 gated; Tauri admission and application integration need their own qualification.
+
+The optional Tauri bridge retains these read-only contracts through host-owned
+window/vault/generation admission and explicit operation handles. Preparation
+and read cancellation drain owned work before scope release. Source fixtures
+accept only stock JJ 0.45.1 or the exact already-pinned official release commit
+suffix; this does not qualify another JJ profile or a native WebView
+application.

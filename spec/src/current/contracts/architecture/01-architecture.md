@@ -314,3 +314,10 @@ erasure; `quick-xml` parses bounded storage maintenance responses.
 Installation-owned journals, fences and discovery guards remain server-owned. UI
 and transport consume owned deletion DTOs, without upstream JJ or storage client
 imports. JST-ARCH-001 layer independence remains unchanged.
+
+M33's `tauri-plugin-jj-store` composes owned local-history readers behind
+injected physical-vault/window admission. Its optional transport derives caller
+identity from Tauri and its default service depends on no Tauri or native object
+store. Workspace dependency defaults are disabled for selective embeddings;
+existing CLI, RPC, service and server consumers explicitly enable their native
+profile.

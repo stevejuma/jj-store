@@ -110,3 +110,13 @@ application services or transports. Native backend factories, conversion,
 checkout and mutation remain separately gated. Hosts still supply current
 physical-source admission, private cache reservations and worker lifetime;
 enabling a feature alone grants no authority or repository mutation.
+
+The reusable Tauri history adapter injects current host admission and accepts
+only opaque vault and handle identities from its renderer. Tauri derives the
+actual window and URL. Source paths, cache policy, repository identity and
+registration generation are native-owned. Each retained read reauthorizes its
+original window/vault binding; changed generations reject old handles. Bounded
+preparation jobs retain cancellation and worker ownership through exit. Close,
+window destruction and shutdown drain their exact jobs before releasing
+resources. Default permissions grant nothing, and the adapter grants no code
+mutation, repository conversion, prompt execution or companion publication.

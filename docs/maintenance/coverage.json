@@ -245,5 +245,18 @@
       "reason": "Reviewed public ESM/type archive, scoped exact wire requests, status-only unknown recovery and identity-only restoration; full-width sequences and native authority remain distinct from transport receipt presence.",
       "fingerprint": "ddd45cdca897f72bb3123cc03c7f0d2fe0207538c17297db041aad824753edd9"
     }
+  },
+  {
+    "id": "history-bridge",
+    "sources": [
+      "crates/tauri-plugin-jj-store/src",
+      "crates/tauri-plugin-jj-store/build.rs",
+      "crates/tauri-plugin-jj-store/permissions/default.toml"
+    ],
+    "pages": ["docs/site/technical/local.md"],
+    "review": {
+      "reason": "Reviewed host-admitted read-only history service, opaque strict transport frames, empty permission defaults, blocking cache admission, exact window/vault/generation pins and cancellation with native scope draining. Native WebView and Notes integration remain separately unqualified.",
+      "fingerprint": "d96af7a73206559343b14c597f520b3fe786f57d54b0b23c1922712bb715db38"
+    }
   }
 ]

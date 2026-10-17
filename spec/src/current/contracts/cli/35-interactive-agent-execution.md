@@ -150,3 +150,7 @@ M33 prompt coordination leaves JST-CLI-004 helper selection and CLI parsing
 unchanged. Existing real-JJ controlled-harness conversation tests qualify
 original child receipts, context/deferred queues and no-replay behavior; live
 provider and installer download evidence remains separate.
+
+M33 history-bridge packaging preserves the CLI's native JJ feature explicitly
+when workspace defaults are disabled for selective embeddings. Helper custody,
+execution, parsing and command/publication contracts are unchanged.

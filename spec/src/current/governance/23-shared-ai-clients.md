@@ -57,3 +57,18 @@ explicit integration/example feature gates. Default native keeps every original
 target. Headless feature selection excludes native publication, Forge and host
 runtimes; source graph inspection adds no service or build lifetime. Real-source
 read acceptance and native/server consumers qualify their own boundaries.
+
+The history bridge retains a headless default dependency closure and an explicit
+optional Tauri transport. Existing native consumers select their original
+profile explicitly. Normal governance guards the closure and CI package
+selection; release graph regression follows actual Cargo inventory and all
+internal ordering edges instead of a stale fixed package count.
+
+Tauri's generated permission reference and schema retain their producer's exact
+format and are excluded by exact path from the prose formatter. Hand-authored
+permissions and source remain checked; this changes no permission grant or
+native transport qualification requirement.
+
+The executable spec-first map and tracked change map both route every history
+bridge crate input to the reusable-agent architecture chapter. New crates and
+generated permission descriptors remain protected, with no unmapped-file escape.

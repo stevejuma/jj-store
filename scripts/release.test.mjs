@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import {
   orderedPackages,
   validateVersion,
@@ -34,8 +35,49 @@ test("release rejects divergent helper, Changesets and tag identities", () => {
 });
 test("all public package versions have an acyclic coordinated graph", () => {
   const data = metadata();
-  assert.equal(data.packages.length, 21);
+  const graph = JSON.parse(
+    execFileSync(
+      "cargo",
+      [
+        "metadata",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--format-version",
+        "1",
+      ],
+      { encoding: "utf8" },
+    ),
+  );
+  const members = new Set(graph.workspace_members);
+  const expected = graph.packages
+    .filter((pkg) => members.has(pkg.id))
+    .map((pkg) => pkg.name);
+  expected.push("jj-store-embedded-rustfs");
+  assert.deepEqual(
+    data.packages.map((pkg) => pkg.name).sort(),
+    expected.sort(),
+  );
   assert.ok(data.packages.some((p) => p.name === "jj-forge"));
-  assert.equal(orderedPackages(data).at(-1).name, "jj-store");
+  const order = new Map(
+    orderedPackages(data).map((pkg, index) => [pkg.name, index]),
+  );
+  const external = {
+    "jj-store-capture": ["lapis-agent-redaction", "lapis-ai-capture"],
+    "jj-store-server": ["lapis-ai-runtime", "lapis-ai-config"],
+  };
+  for (const pkg of data.packages)
+    for (const dependency of pkg.dependencies) {
+      if (!order.has(dependency))
+        assert.ok(
+          external[pkg.name]?.includes(dependency),
+          `unmodelled external dependency ${dependency}`,
+        );
+      else
+        assert.ok(
+          order.get(dependency) < order.get(pkg.name),
+          `${dependency} before ${pkg.name}`,
+        );
+    }
   validateVersion(data, data.version);
 });

@@ -72,3 +72,56 @@ test("default native retains every integration binary and headless gates native-
     assert.deepEqual(target["required-features"] ?? [], expected, target.name);
   }
 });
+
+test("history bridge defaults to a headless service and preserves native consumers", () => {
+  const tree = cargo([
+    "tree",
+    "--locked",
+    "--offline",
+    "-p",
+    "tauri-plugin-jj-store",
+    "--no-default-features",
+    "--edges",
+    "normal",
+    "--prefix",
+    "none",
+    "--format",
+    "{p}",
+  ]);
+  assert.deepEqual(
+    tree
+      .split("\n")
+      .filter((line) =>
+        /^(?:jj-store-(?:object|wal|native|service|rpc|http|server)|jj-forge|lapis-ai-runtime|tauri) v/.test(
+          line,
+        ),
+      ),
+    [],
+  );
+  const metadata = JSON.parse(
+    cargo([
+      "metadata",
+      "--locked",
+      "--offline",
+      "--no-deps",
+      "--format-version",
+      "1",
+    ]),
+  );
+  const bridge = metadata.packages.find(
+    (pkg) => pkg.name === "tauri-plugin-jj-store",
+  );
+  assert.deepEqual(bridge.features.default, []);
+  for (const name of [
+    "jj-store",
+    "jj-store-service",
+    "jj-store-rpc",
+    "jj-store-server",
+  ]) {
+    const pkg = metadata.packages.find((pkg) => pkg.name === name);
+    const dependency = pkg.dependencies.find(
+      (dep) => dep.name === "jj-store-jj",
+    );
+    assert.ok(dependency.features.includes("native"), name);
+  }
+});
