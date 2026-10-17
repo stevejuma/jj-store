@@ -110,3 +110,13 @@ are provided by `lapis-ai-capture`. JJ preserves exact profile versions,
 raw-header witnesses, Cursor sidecar admission and acknowledged progress.
 Discovery does not authorize ingestion. Automatic capture for ordinary local
 Git-backed folders still requires separate qualification.
+
+The `jj-store-capture` default `application` feature provides the original
+private spool and native/local publication recovery. A headless Rust host can
+select `default-features = false` to use bounded source readers, privacy,
+leases, progress types and exact acknowledgements without service, RPC, WAL,
+object-store or upstream JJ dependencies. The host supplies admission, durable
+sanitized journaling and publication. A reader acknowledgement follows durable
+acceptance of the exact batch and cursor; it is not a publication receipt.
+Existing application spools require the application feature and keep their
+original schemas, identities, reservations and unknown-outcome behavior.

@@ -71,6 +71,7 @@ impl BoundCodexTranscriptReader {
     pub(crate) fn header_witness(&self) -> [u8; 32] {
         self.reader.header_witness()
     }
+    #[cfg(feature = "application")]
     pub(crate) fn recover_batch(
         &self,
         entry: &crate::agent_capture::PendingCaptureV1,

@@ -47,8 +47,8 @@
       "docs/site/technical/capture.md"
     ],
     "review": {
-      "reason": "Reviewed independent acquisition delegation and actual absent versus unknown-IO binding regression, preserved Cursor sidecar requirement and exact raw-header witness bytes with unchanged durable recovery.",
-      "fingerprint": "f6e8c28a13cbb10aa93faf3ecb791bcd37d23215751ad4bd2805768452ed531b"
+      "reason": "Reviewed additive headless source/progress/acknowledgement profile, optional exact application journal and unchanged default recovery encodings, with private host durability required before acknowledgement.",
+      "fingerprint": "07cb8f7379fbfe4eaf01127fae81c6ed8e524a393cfc75793afc8121792408dc"
     }
   },
   {

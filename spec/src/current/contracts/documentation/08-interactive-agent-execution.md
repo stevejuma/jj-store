@@ -113,3 +113,8 @@ M33's capture manual identifies `lapis-ai-capture` as the read-only acquisition
 owner while JJ retains normalization, Cursor binding and publication. JST-DOC-001
 full documentation and concise crate READMEs keep admission distinct from
 metadata candidates; automatic local Git-folder discovery remains unqualified.
+
+The capture README and technical manual describe headless feature selection,
+private host journaling before exact acknowledgement, and the default
+application spool. JST-DOC-001 keeps full pipeline/admission documentation in
+the manual. No feature selection grants execution or repository authority.

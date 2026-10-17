@@ -13,6 +13,7 @@ impl Drop for StateLease {
 }
 
 impl StateLease {
+    #[cfg(any(test, feature = "application"))]
     pub(crate) fn from_locked(file: File) -> Self {
         Self(file)
     }

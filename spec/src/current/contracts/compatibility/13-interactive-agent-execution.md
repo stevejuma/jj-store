@@ -89,3 +89,8 @@ M33 acquisition extraction retains all six serialized capture profiles and
 product versions, bounded complete headers, exact raw-header/device/inode
 witnesses and the Cursor sidecar requirement. JST-COMPAT-001/003/005 repository,
 spool and receipt formats remain unchanged; source discovery grants no admission.
+
+The additive capture `application` feature is enabled by default. Disabling it
+omits application spool/publication APIs rather than interpreting their formats.
+Default serialized pending requests, reservation bytes, receipts and exact
+acknowledgements retain JST-COMPAT-001/003/005; no journal migration occurs.

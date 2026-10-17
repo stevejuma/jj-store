@@ -55,3 +55,11 @@ its required `jj-store.json` hint; the source library knows no JJ sidecar.
 Existing device/inode and raw-header witness hashing remains in the JJ adapter.
 Source profile inventory maps explicitly without changing serialized JJ profiles.
 Availability fences cannot prove retirement after an unknown IO outcome.
+
+The optional `application` capture feature retains the original durable spool,
+WAL request and RPC/service adapters, enabled by default for compatibility.
+Without defaults, hosts receive read-only sources, sanitizers, source leases,
+reader progress and exact acknowledgement types with no WAL, object store,
+RPC, service or upstream JJ dependency. Hosts must durably retain sanitized
+records and matching progress before acknowledging them. The feature boundary
+neither supplies publication authority nor changes existing spool encodings.

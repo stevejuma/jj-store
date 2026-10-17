@@ -9,18 +9,74 @@ repository.workspace = true
 homepage.workspace = true
 readme = "README.md"
 
+[features]
+default = ["application"]
+application = ["dep:jj-store-service", "dep:jj-store-rpc", "dep:jj-store-wal"]
+
 [dependencies]
 lapis-agent-redaction.workspace = true
 lapis-ai-capture.workspace = true
 jj-collab.workspace = true
 jj-agent.workspace = true
 jj-store-model.workspace = true
-jj-store-service.workspace = true
-jj-store-rpc.workspace = true
-jj-store-wal.workspace = true
+jj-store-service = { workspace = true, optional = true }
+jj-store-rpc = { workspace = true, optional = true }
+jj-store-wal = { workspace = true, optional = true }
 async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
 tempfile = "3"
 thiserror = "2"
+
+[[test]]
+name = "codex_activity"
+required-features = ["application"]
+
+[[test]]
+name = "codex_bound_source"
+required-features = ["application"]
+
+[[test]]
+name = "codex_context"
+required-features = ["application"]
+
+[[test]]
+name = "codex_recovery"
+required-features = ["application"]
+
+[[test]]
+name = "codex_transcript"
+required-features = ["application"]
+
+[[test]]
+name = "cursor_transcript"
+required-features = ["application"]
+
+[[test]]
+name = "opencode_checkpoint"
+required-features = ["application"]
+
+[[test]]
+name = "opencode_ingress"
+required-features = ["application"]
+
+[[test]]
+name = "reader_progress"
+required-features = ["application"]
+
+[[test]]
+name = "reader_publication"
+required-features = ["application"]
+
+[[test]]
+name = "snapshot_publication"
+required-features = ["application"]
+
+[[test]]
+name = "source_parking"
+required-features = ["application"]
+
+[[test]]
+name = "transcript_sanitization"
+required-features = ["application"]

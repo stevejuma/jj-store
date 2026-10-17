@@ -28,6 +28,7 @@ impl QualifiedCodexSource {
     }
     /// Read-only exact queued-range proof; no identity, lease or cursor allocation.
     /// The caller must separately verify retained native eligibility and authorization.
+    #[cfg(feature = "application")]
     pub fn recover_batch(
         &self,
         source: SourceInstanceId,
@@ -193,6 +194,7 @@ impl LeasedCodexTranscriptReader {
         self.reader = reader;
         Ok(())
     }
+    #[cfg(feature = "application")]
     pub fn recover_batch(
         &self,
         entry: &crate::agent_capture::PendingCaptureV1,

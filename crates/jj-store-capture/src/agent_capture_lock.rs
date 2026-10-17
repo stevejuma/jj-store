@@ -1,5 +1,7 @@
 //! FIFO admission among forked in-process handles; filesystem locks stay authoritative.
-use crate::{CaptureResult, state_lease::StateLease};
+use crate::CaptureResult;
+#[cfg(feature = "application")]
+use crate::state_lease::StateLease;
 use std::sync::{Arc, Condvar, Mutex};
 #[derive(Default)]
 pub(crate) struct ForkMutations {
@@ -35,6 +37,7 @@ impl Drop for ForkTurn {
         self.0.changed.notify_all();
     }
 }
+#[cfg(feature = "application")]
 pub(crate) struct CaptureMutationLease {
     // Drop the authoritative OS lease before allowing the next local turn.
     pub(crate) _file: StateLease,

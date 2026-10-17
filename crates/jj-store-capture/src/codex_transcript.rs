@@ -15,11 +15,13 @@ pub(crate) mod context;
 pub(crate) mod file;
 mod poll;
 mod progress;
+#[cfg(feature = "application")]
 pub(crate) mod recovery;
 use crate::codex_discovery::PhysicalId;
 pub use context::CodexDirectoryContext;
 use context::{ContextReconstruction, DirectoryHistory};
 use file::{Header, Stamp};
+#[cfg(feature = "application")]
 pub use recovery::{CodexBatchRecovery, CodexRecoveryPoll, RecoveredCodexDirectory};
 pub(crate) fn native_session_key_valid(value: &str) -> bool {
     file::uuid_label(value)

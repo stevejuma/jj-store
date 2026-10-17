@@ -1,7 +1,9 @@
 //! Device-only acknowledged reader progress; sanitized pending evidence comes first.
 use crate::CaptureResult;
+#[cfg(feature = "application")]
 mod history;
 mod source;
+#[cfg(feature = "application")]
 mod spool;
 use jj_agent::{CaptureBatchId, CaptureCursorV1, NormalizerProfileV1, SanitizedObservationBatchV1};
 use jj_store_model::RepositoryId;
@@ -78,6 +80,7 @@ impl ReaderProgressV1 {
         }
         Ok(())
     }
+    #[cfg(feature = "application")]
     pub(super) fn from_pending(
         entry: &crate::agent_capture::PendingCaptureV1,
     ) -> CaptureResult<Option<Self>> {

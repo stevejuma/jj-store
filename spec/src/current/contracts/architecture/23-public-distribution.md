@@ -253,3 +253,8 @@ M33 acquisition consumption permits only the exact capture-to-`lapis-ai-capture`
 versioned sibling path. The immutable Lapis AI source pin includes this registry
 crate. Unknown source paths and runtime imports remain refused; JST-ARCH-005
 qualification and publication authority are unchanged.
+
+The additive capture feature split preserves default application APIs while
+allowing independent headless consumers. Package contents include the short
+README and feature contracts; JST-ARCH-005 release qualification remains
+separate from feature-specific source and consumer checks.

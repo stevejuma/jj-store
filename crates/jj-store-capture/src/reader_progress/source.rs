@@ -1,6 +1,10 @@
 //! Bounded physical selection and channel allocation floors; no new durable format.
-use super::{CaptureResult, ReaderProgressV1, history};
+use super::ReaderProgressV1;
+#[cfg(feature = "application")]
+use super::{CaptureResult, history};
+#[cfg(feature = "application")]
 use crate::agent_capture::{AgentCaptureSpool, PendingCaptureV1};
+#[cfg(feature = "application")]
 use jj_agent::{IntegrationId, SourceInstanceId};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -9,6 +13,7 @@ pub struct ReaderSourceProgress {
     pub generation_floor: u64,
     pub sequence_floor: u64,
 }
+#[cfg(feature = "application")]
 impl AgentCaptureSpool {
     /// Select one exact physical/header witness and global floors in one locked read.
     pub fn source_reader_progress(

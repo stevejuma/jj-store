@@ -132,8 +132,8 @@ fn malformed_or_unbound_index_withholds_registry_and_legacy_empty_index_is_reada
         )
         .unwrap();
     drop(lease);
-    let valid: serde_json::Value =
-        serde_json::from_slice(&fs::read(path.join("sources.json")).unwrap()).unwrap();
+    let valid_bytes = fs::read(path.join("sources.json")).unwrap();
+    let valid: serde_json::Value = serde_json::from_slice(&valid_bytes).unwrap();
     let mut old_admission = valid.clone();
     old_admission
         .as_object_mut()
@@ -161,10 +161,7 @@ fn malformed_or_unbound_index_withholds_registry_and_legacy_empty_index_is_reada
         old_registry.admitted_opencode_sessions([4; 32]).unwrap(),
         vec!["ses_A"]
     );
-    assert_eq!(
-        fs::read(path.join("sources.json")).unwrap(),
-        serde_json::to_vec(&valid).unwrap()
-    );
+    assert_eq!(fs::read(path.join("sources.json")).unwrap(), valid_bytes);
     drop((lease, old_registry));
     for field in [
         "native_session",

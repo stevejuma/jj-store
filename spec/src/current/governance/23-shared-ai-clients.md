@@ -35,3 +35,8 @@ M33 permits capture-to-`lapis-ai-capture` at its exact versioned sibling path
 and immutable Lapis AI source pin. Only discovery/header acquisition crosses
 this boundary; core/model/WAL and capture-to-runtime remain refused. Focused
 consumer recovery and complete source-library evidence remain distinct.
+
+Normal governance checks the headless capture dependency closure and acquisition
+admission. The default application feature retains its original recovery suite;
+headless source/progress tests run separately without optional publication APIs.
+Read-only Cargo graph inspection creates no build target or service lifetime.
