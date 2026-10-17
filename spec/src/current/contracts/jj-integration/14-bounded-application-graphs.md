@@ -1,5 +1,11 @@
 # Bounded application graphs
 
+M33 moves shared errors, accounting, budgets and worker admission into internal
+storage-independent modules. Existing query, content, admission, predicate and
+language public paths re-export the same owned types. Default allowances,
+diagnostic/error schemas, cancellation and shared worker slots are unchanged;
+source pins and current authorization remain with their existing adapters.
+
 Core browsing uses the pinned `jj-lib::DefaultIndexStore` and its standard
 incremental builder in server-owned storage. One repository/profile/authority
 namespace contains JJ's per-operation associations; bookmarks share its graph.

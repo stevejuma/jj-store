@@ -1,5 +1,6 @@
 //! Admission for native recursive merges and file predicates; evaluation stays native.
 use super::*;
+pub use crate::read_support::PredicateLimits as Limits;
 use jj_lib::{
     backend as b,
     repo::{ReadonlyRepo, Repo as _},
@@ -7,35 +8,6 @@ use jj_lib::{
 };
 use std::collections::BTreeMap;
 
-#[derive(Clone, Copy, Debug)]
-pub struct Limits {
-    pub max_file_bytes: u64,
-    pub max_total_file_bytes: u64,
-    pub max_lines: u64,
-    pub max_merge_terms: usize,
-}
-impl Default for Limits {
-    fn default() -> Self {
-        Self {
-            max_file_bytes: 256 * 1024,
-            max_total_file_bytes: 4 * 1024 * 1024,
-            max_lines: 1000,
-            max_merge_terms: 65,
-        }
-    }
-}
-impl Limits {
-    pub(super) fn validate(self) -> Result<()> {
-        if !(1..=1024 * 1024).contains(&self.max_file_bytes)
-            || !(1..=16 * 1024 * 1024).contains(&self.max_total_file_bytes)
-            || !(1..=4096).contains(&self.max_lines)
-            || !(1..=257).contains(&self.max_merge_terms)
-        {
-            return Err(Error::Limit);
-        }
-        Ok(())
-    }
-}
 fn count(expression: &UserRevsetExpression, budget: &Budget) -> Result<usize> {
     let mut stack = vec![expression];
     let mut filters = 0usize;

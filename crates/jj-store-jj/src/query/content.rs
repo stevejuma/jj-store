@@ -1,4 +1,5 @@
 //! Complete native metadata and verified binary reads through committed pins.
+pub use crate::read_support::ContentLimits as Limits;
 pub mod code_summary;
 pub mod conflicts;
 pub mod diff;
@@ -39,37 +40,6 @@ pub enum Direction {
     Backward,
 }
 const CHUNK: usize = 64 * 1024;
-#[derive(Clone, Copy)]
-pub struct Limits {
-    pub metadata: super::admission::Limits,
-    pub max_blob_bytes: u64,
-    pub max_read_bytes: u64,
-    pub max_output_bytes: usize,
-    pub max_work: usize,
-    pub max_history_visits: usize,
-    pub max_changes: usize,
-    pub max_text_bytes: usize,
-    pub max_diff_cells: usize,
-    pub max_page: usize,
-    pub timeout: Duration,
-}
-impl Default for Limits {
-    fn default() -> Self {
-        Self {
-            metadata: super::admission::Limits::default(),
-            max_blob_bytes: 256 * 1024 * 1024,
-            max_read_bytes: 512 * 1024 * 1024,
-            max_output_bytes: 16 * 1024 * 1024,
-            max_work: 1_000_000,
-            max_history_visits: 50_000,
-            max_changes: 1_000,
-            max_text_bytes: 256 * 1024,
-            max_diff_cells: 250_000,
-            max_page: 500,
-            timeout: Duration::from_secs(30),
-        }
-    }
-}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "ContentObjectData")]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]

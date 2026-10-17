@@ -4,6 +4,11 @@ Integration with the pinned stock `jj-lib`: native object/backend adapters,
 operation and view codecs, operation-pinned reads, local Git repository access
 and qualified source evidence. Upstream JJ types stay at this boundary.
 
+Native and local readers share owned budgets, diagnostics, cancellation and
+worker admission. Their existing public query paths are preserved. A focused
+standalone local-history feature remains under development; `companion` alone
+does not enable the browser's history reader.
+
 The default `native` feature provides the full adapter. For a Git-only
 embedding, select `default-features = false` and `features = ["companion"]` in
 the Cargo dependency. `local_repository::metadata_store` resolves the existing

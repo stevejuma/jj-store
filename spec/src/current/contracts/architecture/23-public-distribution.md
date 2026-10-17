@@ -276,3 +276,8 @@ no source aliases or workspace dependencies. Source, archive acceptance and
 registry publication remain distinct under JST-ARCH-005. UI-only client source
 selects the web CI lane; shared root manifests keep their conservative
 selection.
+
+Shared read admission remains contained in the existing JJ crate. Its internal
+modules retain public re-exports and add no feature or dependency requirement.
+Package input checks and native/companion consumer checks remain distinct from
+future independent local-history and Tauri qualification under JST-ARCH-005.

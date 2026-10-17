@@ -96,3 +96,10 @@ status and never silently submit it again. Restored unknown intents cannot start
 execution. Message publication, recipient delivery and captured answers remain
 distinct; session-only client state never substitutes for native durable
 receipts or host authorization.
+
+The local-history extraction first separates owned query errors, limits,
+cancellation, accounting and non-queuing worker admission from native store
+execution. Existing native and local browser public paths re-export the same
+types and preserve default budgets, diagnostic schemas and worker sharing. This
+internal refactor alone does not expose an independent local-history feature or
+qualify a Tauri reader; those retain separate delivery gates.

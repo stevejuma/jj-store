@@ -1,5 +1,10 @@
 # Delivery and validation
 
+M33's crate README and local manual distinguish shared internal read admission
+from an independently usable local-history feature. Original query budgets,
+public aliases and source pinning remain unchanged. Source review must retain
+the companion-only profile's limits and avoid claiming Tauri qualification.
+
 E-UI-CI-001 moves existing Chromium and WebKit Help acceptance into affected
 standard PR checks. JST-DOC-002/003 source-review, generated-reference and
 bundled-manual requirements remain unchanged. Browsing guidance records retained

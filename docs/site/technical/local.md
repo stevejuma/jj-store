@@ -13,6 +13,13 @@ needed. Application defaults retain LocalTrusted folder admission and filesystem
 actor provenance. Loading and reading never initialize repository identity or
 publish metadata; factory configuration remains host-owned.
 
+Native and local code readers share storage-independent read limits,
+diagnostics, cancellation and non-queuing worker admission internally. Existing
+public query paths and default budgets remain unchanged. Independent local
+history without native storage is still under development; selecting only
+`companion` does not enable the browser history reader. Host admission and
+operation pinning remain required at every read boundary.
+
 ```mermaid
 flowchart TB
   Folder[Registered JJ folder] --> Code[Existing JJ code and operation history]

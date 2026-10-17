@@ -36,6 +36,8 @@ pub mod policy;
 #[cfg(feature = "native")]
 pub mod query;
 #[cfg(feature = "native")]
+mod read_support;
+#[cfg(feature = "native")]
 pub mod replication;
 #[cfg(feature = "native")]
 pub mod roots;

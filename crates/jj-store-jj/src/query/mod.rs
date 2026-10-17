@@ -1,4 +1,5 @@
 //! Owned, bounded native graph queries. Upstream objects never cross this API.
+pub use crate::read_support::{Cancellation, Error, GraphLimits as Limits, Result, Stats};
 pub(crate) mod access;
 pub mod admission;
 pub mod blame;
@@ -32,46 +33,6 @@ use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, path::PathBuf, sync::Arc, time::Duration};
 use workers::Workers;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, thiserror::Error, schemars::JsonSchema)]
-#[schemars(rename = "GraphError")]
-#[serde(rename_all = "snake_case")]
-pub enum Error {
-    #[error("query request was canceled")]
-    Canceled,
-    #[error("blame progress expired; restart the same selection")]
-    BlameReset,
-    #[error("query is not authorized")]
-    Denied,
-    #[error("query object is not committed in this snapshot")]
-    NotCommitted,
-    #[error("repository epoch changed")]
-    EpochChanged,
-    #[error("query resource limit exceeded")]
-    Limit,
-    #[error("query cache or worker is busy")]
-    Busy,
-    #[error("native index exceeds the configured rebuild budget")]
-    IndexBudget,
-    #[error("native index requires an explicit preparation task")]
-    IndexRebuildRequired,
-    #[error("invalid query or missing query context")]
-    Invalid,
-    #[error("{0}")]
-    InvalidQuery(language::Diagnostic),
-    #[error("native query or cache is unavailable")]
-    Unavailable,
-    #[error("committed native object is corrupt")]
-    Corrupt,
-    #[error("committed native history is incomplete")]
-    Incomplete,
-    #[error("repository path is absent")]
-    NotFound,
-    #[error("repository path is not an unambiguous directory")]
-    NotDirectory,
-    #[error("file range is invalid or unsatisfiable")]
-    Range,
-}
-pub type Result<T> = std::result::Result<T, Error>;
 /// Exact identity projections; unrelated object kinds are never result rows.
 #[derive(Clone, Copy)]
 pub enum InventoryKind {
@@ -144,35 +105,6 @@ pub trait ReadAccess: Send + Sync {
         Ok(ids)
     }
     async fn authorize(&self) -> Result<()>;
-}
-#[derive(Clone, Copy)]
-pub struct Limits {
-    pub metadata: admission::Limits,
-    pub predicates: predicates::Limits,
-    pub max_page: usize,
-    pub max_index_commits: usize,
-    pub max_inline_rebuild_commits: usize,
-    pub max_work: usize,
-    pub max_object_bytes: u64,
-    pub max_output_bytes: usize,
-    pub max_revset_bytes: usize,
-    pub timeout: Duration,
-}
-impl Default for Limits {
-    fn default() -> Self {
-        Self {
-            metadata: admission::Limits::default(),
-            predicates: predicates::Limits::default(),
-            max_page: 500,
-            max_index_commits: 4_000_000,
-            max_inline_rebuild_commits: 1_000,
-            max_work: 1_000_000,
-            max_object_bytes: 256 * 1024 * 1024,
-            max_output_bytes: 8 * 1024 * 1024,
-            max_revset_bytes: 4096,
-            timeout: Duration::from_secs(10),
-        }
-    }
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "GraphRequest")]
@@ -290,16 +222,6 @@ pub enum Nodes {
     Operations(Vec<OperationNode>),
     Evolution(Vec<EvolutionNode>),
 }
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
-#[schemars(rename = "GraphStats")]
-pub struct Stats {
-    pub metadata_nodes: u64,
-    pub predicate_file_bytes: u64,
-    pub predicate_lines: u64,
-    pub object_reads: u64,
-    pub object_bytes: u64,
-    pub work: u64,
-}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "GraphPage")]
 pub struct GraphPage {
@@ -309,24 +231,6 @@ pub struct GraphPage {
     pub data: Nodes,
     pub next: Option<m::ObjectKey>,
     pub stats: Stats,
-}
-/// Cancellation is separate from dropping a request: a task owner can signal it
-/// and still await actual worker exit before reporting completion.
-#[derive(Clone, Default)]
-pub struct Cancellation(tokio_util::sync::CancellationToken);
-impl Cancellation {
-    pub(crate) fn token(&self) -> tokio_util::sync::CancellationToken {
-        self.0.clone()
-    }
-    pub async fn cancelled(&self) {
-        self.0.cancelled().await;
-    }
-    pub fn is_cancelled(&self) -> bool {
-        self.0.is_cancelled()
-    }
-    pub fn cancel(&self) {
-        self.0.cancel();
-    }
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[schemars(rename = "IndexReport")]
@@ -541,7 +445,7 @@ impl GraphExecutor {
             },
         };
         let mut budget = Budget::new(limits)?;
-        budget.cancellation = cancellation.0;
+        budget.cancellation = cancellation.token();
         let budget = Arc::new(budget);
         let permit = match &work {
             Work::Prepare => self.workers.acquire_preparation()?,
