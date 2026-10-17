@@ -218,10 +218,7 @@ impl<'source> ReviewCatalogEditor<'source> {
         })
     }
 
-    pub(super) async fn read_review_page(
-        &self,
-        reference: ReviewObjectRef,
-    ) -> Result<ReviewIndexPageV1> {
+    pub async fn read_review_page(&self, reference: ReviewObjectRef) -> Result<ReviewIndexPageV1> {
         match self.read_review_object(reference).await? {
             ReviewObjectV1::IndexPage(page) => Ok(page),
             _ => Err(Error::Corrupt("review catalog page kind")),

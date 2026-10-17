@@ -160,11 +160,13 @@ impl Coordinator {
         AgentCatalogEditor::new(self)
             .lookup_agent_catalog(page, key)
             .await
+            .map_err(Into::into)
     }
     async fn read_agent_page(&self, reference: AgentObjectRef) -> Result<AgentIndexPageV1> {
         AgentCatalogEditor::new(self)
             .read_agent_page(reference)
             .await
+            .map_err(Into::into)
     }
 }
 
@@ -180,20 +182,5 @@ pub(super) fn catalog_root(
         AgentCatalogKind::Relations => root.relations,
         AgentCatalogKind::Sources => root.sources,
         AgentCatalogKind::Projections => root.projections,
-    }
-}
-pub(super) fn set_catalog_root(
-    root: &mut AgentRootV1,
-    catalog: AgentCatalogKind,
-    value: Option<AgentObjectRef>,
-) {
-    match catalog {
-        AgentCatalogKind::Sessions => root.sessions = value,
-        AgentCatalogKind::Aliases => root.aliases = value,
-        AgentCatalogKind::Checkpoints => root.checkpoints = value,
-        AgentCatalogKind::Associations => root.associations = value,
-        AgentCatalogKind::Relations => root.relations = value,
-        AgentCatalogKind::Sources => root.sources = value,
-        AgentCatalogKind::Projections => root.projections = value,
     }
 }

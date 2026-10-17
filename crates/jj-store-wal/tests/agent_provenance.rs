@@ -175,7 +175,7 @@ async fn shared_native_provenance_projects_stale_safe_catalog_and_relations() {
         AgentProjector::new(&coordinator)
             .stage_agent_provenance(&current, None, &object)
             .await,
-        Err(wal::Error::Stale)
+        Err(jj_store_core::Error::Stale)
     ));
     let portable = AgentObjectV1::PortableAssociation(CodeAssociationV2 {
         schema_version: 2,

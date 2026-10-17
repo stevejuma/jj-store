@@ -2,9 +2,10 @@ use super::{
     LocalError, LocalProfile, LocalRepository, LocalResult, agent_io::AgentIo, records::GitRecords,
 };
 use super::{agent_descriptor::LocalAgentRootV2, agent_evidence::EvidenceIo};
+use jj_store_core as wal;
 use jj_store_jj::local_metadata::{Domain, GitOid, Snapshot};
 use jj_store_model as m;
-use jj_store_wal::{self as wal, publication::*};
+use jj_store_wal::publication::*;
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},

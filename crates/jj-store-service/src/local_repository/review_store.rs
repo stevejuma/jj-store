@@ -3,14 +3,14 @@ use super::{
     records::GitRecords,
     review_io::{LocalReviewRootV1, ReviewIo},
 };
+use jj_store_core as wal;
 use jj_store_jj::local_metadata::{Domain, GitOid, Snapshot};
 use jj_store_model as m;
 use jj_store_wal::publication::{
-    ReviewCatalogKey, ReviewCatalogKind, ReviewObjectRef, ReviewObjectV1, ReviewRootV1,
+    ReviewCatalogEditor, ReviewObjectIo, ReviewReader, ReviewSnapshotRead,
 };
-use jj_store_wal::{
-    self as wal,
-    publication::{ReviewCatalogEditor, ReviewObjectIo, ReviewReader, ReviewSnapshotRead},
+use jj_store_wal::publication::{
+    ReviewCatalogKey, ReviewCatalogKind, ReviewObjectRef, ReviewObjectV1, ReviewRootV1,
 };
 use std::{
     collections::{BTreeMap, BTreeSet},

@@ -368,13 +368,13 @@ impl ObjectStore for S3Store {
                 | StatusCode::NOT_FOUND => Err(Error::Rejected(response.status().as_u16())),
                 _ => Ok(WriteOutcome::Unknown),
             };
-            if matches!(outcome, Ok(WriteOutcome::Unknown)) {
-                if let Some(repository) = repository {
-                    uncertain
-                        .write()
-                        .expect("storage uncertainty lock")
-                        .insert(repository);
-                }
+            if matches!(outcome, Ok(WriteOutcome::Unknown))
+                && let Some(repository) = repository
+            {
+                uncertain
+                    .write()
+                    .expect("storage uncertainty lock")
+                    .insert(repository);
             }
             outcome
         })

@@ -297,7 +297,8 @@ async fn authorize_epoch(session: &NativeSession, epoch: m::EpochId) -> Result<(
     Ok(())
 }
 
-fn map_wal(error: wal::Error) -> Error {
+fn map_wal(error: impl Into<wal::Error>) -> Error {
+    let error = error.into();
     match error {
         wal::Error::Denied => Error::Denied,
         wal::Error::Limit(_) => Error::Limit,
@@ -343,4 +344,10 @@ async fn enrich(session: Arc<NativeSession>, rows: &mut [AgentSessionSummary]) -
         }
     }
     Ok(())
+}
+
+impl From<jj_store_core::Error> for Error {
+    fn from(value: jj_store_core::Error) -> Self {
+        map_wal(value)
+    }
 }

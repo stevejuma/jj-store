@@ -1,5 +1,10 @@
 # M18 shared capture service semantics
 
+Shared AgentStore and ReviewStore engines are library-owned under JST-ARCH-006.
+Service adapters consume their neutral immutable I/O interfaces and preserve the
+existing actor, admission, receipt and unknown-outcome mappings. Extraction does
+not authorize execution or introduce a new mutation publication path.
+
 The owned rescan command binds version, policy generation and expected revision,
 with an actor supplied independently by transport. Its response separates
 transient discovery-hint acceptance from observed status. It changes neither

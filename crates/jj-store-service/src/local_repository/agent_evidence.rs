@@ -1,11 +1,12 @@
 //! Selected capsule inventory and staging, independent of code publication.
 use super::{LocalError, LocalResult};
+use jj_store_core as wal;
 use jj_store_jj::{
     local_evidence::GitEvidenceCapsuleV1,
     local_metadata::{GitOid, MetadataStore, RetainedKind, Snapshot},
 };
 use jj_store_model::{CodeCapsuleId, portable::*};
-use jj_store_wal::{self as wal, publication::*};
+use jj_store_wal::publication::*;
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, sync::Mutex};
 

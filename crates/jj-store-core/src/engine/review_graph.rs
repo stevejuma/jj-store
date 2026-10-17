@@ -3,7 +3,7 @@ use super::replication_review_graph::{event_parent_map, graph_is_ancestor};
 use super::*;
 const MAX_REVIEW_FACTS: usize = 4096;
 impl ReviewProjector<'_> {
-    pub(super) async fn load_review_event_graph(
+    pub async fn load_review_event_graph(
         &self,
         root: ReviewObjectRef,
     ) -> Result<ReviewEventGraphV1> {
@@ -68,7 +68,7 @@ impl ReviewProjector<'_> {
             _ => Err(Error::Corrupt("review event graph kind")),
         }
     }
-    pub(super) async fn stage_review_event_graph(
+    pub async fn stage_review_event_graph(
         &self,
         graph: ReviewEventGraphV1,
     ) -> Result<ReviewObjectRef> {
@@ -76,7 +76,7 @@ impl ReviewProjector<'_> {
         self.stage_review_object(&ReviewObjectV1::EventGraph(graph))
             .await
     }
-    pub(super) async fn audit_review_event_graph(&self, graph: &ReviewEventGraphV1) -> Result<()> {
+    pub async fn audit_review_event_graph(&self, graph: &ReviewEventGraphV1) -> Result<()> {
         graph
             .validate()
             .map_err(|_| Error::Corrupt("review event graph"))?;
@@ -116,7 +116,7 @@ impl ReviewProjector<'_> {
         }
         Ok(())
     }
-    pub(super) async fn reduce_review_workflow(
+    pub async fn reduce_review_workflow(
         &self,
         graph: &ReviewEventGraphV1,
     ) -> Result<(ThreadStatusV1, Vec<ReviewActionId>, u64, u64)> {

@@ -78,3 +78,9 @@ impl From<wal::publication::WorkCommandError> for Error {
         }
     }
 }
+
+impl From<jj_store_core::Error> for Error {
+    fn from(value: jj_store_core::Error) -> Self {
+        jj_store_wal::Error::from(value).into()
+    }
+}

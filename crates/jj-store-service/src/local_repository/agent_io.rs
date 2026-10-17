@@ -1,7 +1,7 @@
 use super::agent_evidence::EvidenceIo;
 use super::records::GitRecords;
+use jj_store_core as wal;
 use jj_store_wal::{
-    self as wal,
     publication::*,
     records::{RecordKind, RecordRef, Records},
 };
@@ -43,7 +43,10 @@ impl AgentIo {
     }
     pub async fn stage_root(&self, root: &AgentRootV1) -> wal::Result<RecordRef> {
         self.audit(root).await?;
-        self.records.put(RecordKind::AgentRoot, None, root).await
+        self.records
+            .put(RecordKind::AgentRoot, None, root)
+            .await
+            .map_err(Into::into)
     }
     pub async fn root(&self, reference: RecordRef) -> wal::Result<AgentRootV1> {
         let root = self.records.get(reference, RecordKind::AgentRoot).await?;

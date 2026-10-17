@@ -1,5 +1,12 @@
 # Selected AgentStore reads
 
+The shared immutable reader, catalog and projection engines now live in
+jj-store-core under JST-ARCH-006. Native facades retain their existing audited
+root selection and translate errors at the provider boundary. These engines
+cannot publish a manifest, read an unselected native object or replace native
+authorization; JST-PUB-001/004/005 and existing canonical record bytes retain
+their interpretation.
+
 The WAL layer exposes an audited `AgentStoreSnapshot` for one manifest-selected
 root. Its exact transitive object count is available to higher-layer read-budget
 enforcement together with the already verified immutable object map; this count

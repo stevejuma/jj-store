@@ -1,7 +1,7 @@
 use super::{LocalError, LocalResult, records::GitRecords};
+use jj_store_core as wal;
 use jj_store_wal::publication::{ArtifactTargetV1, ReviewObjectRef, ReviewObjectV1, ReviewRootV1};
 use jj_store_wal::{
-    self as wal,
     publication::{ReviewObjectIo, ReviewProjector},
     records::{RecordKind, RecordRef, Records},
 };
@@ -163,7 +163,10 @@ impl ReviewIo {
     }
     pub async fn stage_root(&self, root: &ReviewRootV1) -> wal::Result<RecordRef> {
         self.audit(root).await?;
-        self.records.put(RecordKind::ReviewRoot, None, root).await
+        self.records
+            .put(RecordKind::ReviewRoot, None, root)
+            .await
+            .map_err(Into::into)
     }
     pub async fn root(&self, reference: RecordRef) -> wal::Result<ReviewRootV1> {
         let root = self.records.get(reference, RecordKind::ReviewRoot).await?;
@@ -249,11 +252,9 @@ impl LocalReviewRootV1 {
     }
 }
 
-fn missing_record(error: wal::Error) -> wal::Error {
-    match error {
-        wal::Error::Storage(jj_store_object::Error::NotFound) => {
-            wal::Error::Corrupt("missing local review record")
-        }
+fn missing_record(error: impl Into<wal::Error>) -> wal::Error {
+    match error.into() {
+        wal::Error::NotFound => wal::Error::Corrupt("missing local review record"),
         other => other,
     }
 }

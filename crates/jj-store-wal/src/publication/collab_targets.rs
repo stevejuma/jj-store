@@ -86,8 +86,10 @@ fn read_error(error: Error) -> jj_collab::Error {
         _ => jj_collab::Error::ReadUnavailable,
     }
 }
-fn read_result<T>(result: Result<T>) -> jj_collab::Result<Option<T>> {
-    match result {
+fn read_result<T, E: Into<Error>>(
+    result: std::result::Result<T, E>,
+) -> jj_collab::Result<Option<T>> {
+    match result.map_err(Into::into) {
         Ok(value) => Ok(Some(value)),
         Err(Error::Stale | Error::Denied | Error::Storage(jj_store_object::Error::NotFound)) => {
             Ok(None)

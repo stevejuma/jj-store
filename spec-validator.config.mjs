@@ -177,6 +177,12 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^crates/jj-store-(?:core|git|native)/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/25-injectable-collaboration-stores\\.md$",
+          ],
+        },
+        {
           pattern: "^crates/jj-store-wal/",
           chapterPatterns: [
             "^spec/src/current/contracts/publication/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",

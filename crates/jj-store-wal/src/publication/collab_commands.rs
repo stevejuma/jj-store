@@ -497,3 +497,9 @@ impl Coordinator {
         Ok(())
     }
 }
+
+impl From<jj_store_core::Error> for CollabCommandError {
+    fn from(value: jj_store_core::Error) -> Self {
+        Self::Publication(value.into())
+    }
+}

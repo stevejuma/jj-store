@@ -11,16 +11,16 @@ impl ReviewObjectIo for ForeignIo {
     async fn read_review_object(
         &self,
         _: jj_review::ReviewObjectRef,
-    ) -> jj_store_wal::Result<jj_review::ReviewObjectV1> {
+    ) -> jj_store_core::Result<jj_review::ReviewObjectV1> {
         self.0.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        Err(jj_store_wal::Error::Corrupt("unexpected foreign read"))
+        Err(jj_store_core::Error::Corrupt("unexpected foreign read"))
     }
     async fn stage_review_object(
         &self,
         _: &jj_review::ReviewObjectV1,
-    ) -> jj_store_wal::Result<jj_review::ReviewObjectRef> {
+    ) -> jj_store_core::Result<jj_review::ReviewObjectRef> {
         self.0.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        Err(jj_store_wal::Error::Corrupt("unexpected foreign stage"))
+        Err(jj_store_core::Error::Corrupt("unexpected foreign stage"))
     }
 }
 
@@ -68,7 +68,7 @@ async fn shared_review_catalog_preserves_native_root_and_publication_boundaries(
         ReviewCatalogEditor::new(&foreign)
             .apply_delta(&initial, &delta)
             .await,
-        Err(jj_store_wal::Error::Corrupt("review store repository"))
+        Err(jj_store_core::Error::Corrupt("review store repository"))
     ));
     assert_eq!(foreign.0.load(std::sync::atomic::Ordering::Relaxed), 0);
 }

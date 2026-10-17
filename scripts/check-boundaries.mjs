@@ -10,6 +10,13 @@ export function dependencyErrors(packages) {
     "jj-forge": [],
     "jj-store-read-index": [],
     "jj-store-model": [],
+    "jj-store-core": [
+      "jj-store-model",
+      "jj-agent",
+      "jj-review",
+      "jj-work",
+      "jj-collab",
+    ],
     "jj-work": ["jj-store-model"],
     "jj-workflow": ["jj-store-model", "jj-collab"],
     "jj-agent": ["jj-store-model"],
@@ -17,6 +24,7 @@ export function dependencyErrors(packages) {
     "jj-collab": ["jj-agent", "jj-review", "jj-work", "jj-store-model"],
     "jj-store-object": ["jj-store-model"],
     "jj-store-wal": [
+      "jj-store-core",
       "jj-workflow",
       "jj-collab",
       "jj-work",
@@ -39,6 +47,7 @@ export function dependencyErrors(packages) {
       "jj-store-wal",
     ],
     "jj-store-service": [
+      "jj-store-core",
       "jj-forge",
       "jj-store-read-index",
       "jj-workflow",

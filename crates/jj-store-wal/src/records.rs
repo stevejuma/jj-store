@@ -3,7 +3,6 @@ use crate::{Error, Result};
 use jj_store_model::{AttemptId, RecordDigest, RepositoryId};
 use jj_store_object::{Condition, Key, ObjectStore, StagedUpload, WriteOutcome};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
-use sha2::{Digest as _, Sha256};
 use std::sync::Arc;
 
 pub const MAX_RECORD_BYTES: u64 = 16 * 1024 * 1024;
@@ -241,39 +240,13 @@ impl Records {
     }
 }
 pub(crate) fn digest(bytes: &[u8]) -> RecordDigest {
-    RecordDigest::new(Sha256::digest(bytes).into())
+    jj_store_core::record_format::digest(bytes)
 }
 pub(crate) fn encode<T: Serialize>(value: &T, limit: u64) -> Result<Vec<u8>> {
-    // Write through a limit instead of allocating an unbounded encoded payload.
-    struct Limited {
-        bytes: Vec<u8>,
-        limit: u64,
-    }
-    impl std::io::Write for Limited {
-        fn write(&mut self, data: &[u8]) -> std::io::Result<usize> {
-            if (self.bytes.len() as u64).saturating_add(data.len() as u64) > self.limit {
-                return Err(std::io::Error::other("control record size limit"));
-            }
-            self.bytes.extend_from_slice(data);
-            Ok(data.len())
-        }
-        fn flush(&mut self) -> std::io::Result<()> {
-            Ok(())
-        }
-    }
-    let mut writer = Limited {
-        bytes: Vec::new(),
-        limit,
-    };
-    serde_json::to_writer(&mut writer, value)?;
-    Ok(writer.bytes)
+    jj_store_core::record_format::encode(value, limit).map_err(Into::into)
 }
 pub(crate) fn decode<T: Serialize + DeserializeOwned>(bytes: &[u8]) -> Result<T> {
-    let value: T = serde_json::from_slice(bytes)?;
-    if encode(&value, MAX_RECORD_BYTES)? != bytes {
-        return Err(Error::Corrupt("noncanonical control record"));
-    }
-    Ok(value)
+    jj_store_core::record_format::decode(bytes).map_err(Into::into)
 }
 pub fn new_attempt() -> Result<AttemptId> {
     let mut id = [0; 16];

@@ -67,3 +67,5 @@
   {{#include M30/SUMMARY.nav.md}}
 - [M31 forge-agnostic stack submission](M31/index.md)
   {{#include M31/SUMMARY.nav.md}}
+- [M32 injectable collaboration libraries](M32/index.md)
+  {{#include M32/SUMMARY.nav.md}}

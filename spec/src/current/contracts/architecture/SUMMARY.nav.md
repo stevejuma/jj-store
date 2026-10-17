@@ -24,3 +24,4 @@
 - [Custom data index ownership](22-custom-data-indexes.md)
 - [Public distribution and release orchestration](23-public-distribution.md)
 - [Forge-agnostic stack submission](24-forge-stacks.md)
+- [Injectable collaboration stores](25-injectable-collaboration-stores.md)

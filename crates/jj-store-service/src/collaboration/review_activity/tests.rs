@@ -1,7 +1,7 @@
 use super::Error;
 use super::*;
 use jj_review::*;
-use jj_store_wal::{self as wal, publication::ReviewSnapshotRead};
+use jj_store_wal::publication::ReviewSnapshotRead;
 use std::{collections::BTreeMap, sync::Mutex};
 
 pub(super) const REPO: m::RepositoryId = m::RepositoryId::new([81; 16]);
@@ -65,16 +65,21 @@ impl ReviewSnapshotRead for Store {
         &self,
         _: ReviewCatalogKind,
         _: ReviewCatalogKey,
-    ) -> wal::Result<Option<ReviewObjectRef>> {
+    ) -> jj_store_core::Result<Option<ReviewObjectRef>> {
         panic!("activity does not perform independent lookup")
     }
-    async fn read_object(&self, reference: ReviewObjectRef) -> wal::Result<ReviewObjectV1> {
+    async fn read_object(
+        &self,
+        reference: ReviewObjectRef,
+    ) -> jj_store_core::Result<ReviewObjectV1> {
         self.reads.lock().unwrap().push(reference);
         // Anchor/comment/body hydration fails the test immediately.
         self.values
             .get(&reference)
             .cloned()
-            .ok_or(wal::Error::Corrupt("Unexpected activity object read"))
+            .ok_or(jj_store_core::Error::Corrupt(
+                "Unexpected activity object read",
+            ))
     }
 }
 pub(super) fn reference(kind: ReviewObjectKind, byte: u8) -> ReviewObjectRef {

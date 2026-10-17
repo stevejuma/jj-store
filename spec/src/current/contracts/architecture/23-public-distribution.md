@@ -1,5 +1,9 @@
 # Public distribution and release orchestration
 
+JST-ARCH-006's injectable core is a coordinated library package under the
+existing JST-ARCH-005 release policy. Source extraction and package checks do
+not publish a release. Existing canonical storage formats remain unchanged.
+
 JST-ARCH-005 governs the coordinated public source, Cargo, native archive and
 container distribution. Changesets owns the release version and notes through
 the private npm workspace package; npm publication is disabled. The version PR

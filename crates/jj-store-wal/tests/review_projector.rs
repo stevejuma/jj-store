@@ -79,7 +79,7 @@ async fn independent_provider_preserves_native_command_bytes_and_pinned_stale_ru
     );
     assert!(matches!(
         empty.read_object(projected.result.thread_snapshot).await,
-        Err(jj_store_wal::Error::Stale)
+        Err(jj_store_core::Error::Stale)
     ));
     let first = local.pin(projected.root).await;
     let reply = request(
@@ -175,6 +175,6 @@ async fn independent_provider_rejects_forged_event_reconstruction() {
         .unwrap();
     assert!(matches!(
         engine.audit_root(&root).await,
-        Err(jj_store_wal::Error::Corrupt("review event history tail"))
+        Err(jj_store_core::Error::Corrupt("review event history tail"))
     ));
 }

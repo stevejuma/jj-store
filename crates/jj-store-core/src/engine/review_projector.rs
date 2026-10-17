@@ -45,7 +45,7 @@ impl<'a> ReviewProjector<'a> {
         self.audit_root_state(root, &closure.objects).await?;
         Ok(closure)
     }
-    pub(super) async fn audit_root_state(
+    pub async fn audit_root_state(
         &self,
         root: &ReviewRootV1,
         objects: &BTreeSet<ReviewObjectRef>,
@@ -53,10 +53,7 @@ impl<'a> ReviewProjector<'a> {
         self.audit_review_root(root, objects).await?;
         self.audit_review_threads(objects).await
     }
-    pub(super) async fn read_review_object(
-        &self,
-        reference: ReviewObjectRef,
-    ) -> Result<ReviewObjectV1> {
+    pub async fn read_review_object(&self, reference: ReviewObjectRef) -> Result<ReviewObjectV1> {
         let object = self.io.read_review_object(reference).await?;
         if object.kind() != reference.kind {
             return Err(Error::Corrupt("review object kind"));
@@ -69,13 +66,10 @@ impl<'a> ReviewProjector<'a> {
         }
         Ok(object)
     }
-    pub(super) async fn stage_review_object(
-        &self,
-        object: &ReviewObjectV1,
-    ) -> Result<ReviewObjectRef> {
+    pub async fn stage_review_object(&self, object: &ReviewObjectV1) -> Result<ReviewObjectRef> {
         self.io.stage_review_object(object).await
     }
-    pub(super) async fn audit_dependencies(
+    pub async fn audit_dependencies(
         &self,
         mut pending: Vec<ReviewObjectRef>,
     ) -> Result<ReviewDependencyClosure> {

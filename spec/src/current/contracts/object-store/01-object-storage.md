@@ -1,5 +1,9 @@
 # Object storage
 
+E-INJECTABLE-STORES-001 confirms JST-OBJ-001 is unchanged by collapsing the
+existing S3 unknown-outcome repository guard into one equivalent conditional.
+Unknown writes retain the same uncertainty fence and original request identity.
+
 Version tokens are opaque equality tokens. A timeout is unknown, never proof of
 failure. Test concurrent create and CAS, stale tokens, independent endpoints,
 restarts, lost responses, range requests, and partial uploads. The initial

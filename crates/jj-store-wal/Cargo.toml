@@ -10,6 +10,7 @@ homepage.workspace = true
 readme = "README.md"
 
 [dependencies]
+jj-store-core.workspace = true
 jj-workflow.workspace = true
 jj-collab.workspace = true
 jj-work.workspace = true

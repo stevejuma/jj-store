@@ -98,3 +98,9 @@ impl From<jj_store_object::Error> for LocalError {
         }
     }
 }
+
+impl From<jj_store_core::Error> for LocalError {
+    fn from(value: jj_store_core::Error) -> Self {
+        jj_store_wal::Error::from(value).into()
+    }
+}

@@ -147,6 +147,7 @@ impl Coordinator {
         ReviewCatalogEditor::new(self)
             .lookup_review_catalog(page, key)
             .await
+            .map_err(Into::into)
     }
     pub(super) async fn read_review_page(
         &self,
@@ -155,6 +156,7 @@ impl Coordinator {
         ReviewCatalogEditor::new(self)
             .read_review_page(reference)
             .await
+            .map_err(Into::into)
     }
 }
 
@@ -169,19 +171,5 @@ pub(super) fn catalog_root(
         ReviewCatalogKind::AnchorRelations => root.anchor_relations,
         ReviewCatalogKind::ArtifactRelations => root.artifact_relations,
         ReviewCatalogKind::Statuses => root.statuses,
-    }
-}
-pub(super) fn set_catalog_root(
-    root: &mut ReviewRootV1,
-    catalog: ReviewCatalogKind,
-    value: Option<ReviewObjectRef>,
-) {
-    match catalog {
-        ReviewCatalogKind::Threads => root.threads = value,
-        ReviewCatalogKind::Comments => root.comments = value,
-        ReviewCatalogKind::ThreadEvents => root.thread_events = value,
-        ReviewCatalogKind::AnchorRelations => root.anchor_relations = value,
-        ReviewCatalogKind::ArtifactRelations => root.artifact_relations = value,
-        ReviewCatalogKind::Statuses => root.statuses = value,
     }
 }

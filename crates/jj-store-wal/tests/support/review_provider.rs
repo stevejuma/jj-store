@@ -2,10 +2,10 @@
 use jj_review::{
     ReviewCatalogKey, ReviewCatalogKind, ReviewObjectRef, ReviewObjectV1, ReviewRootV1,
 };
+use jj_store_core as wal;
 use jj_store_model::RepositoryId;
 use jj_store_object::memory::MemoryStore;
 use jj_store_wal::{
-    self as wal,
     publication::{ReviewCatalogEditor, ReviewObjectIo, ReviewProjector, ReviewSnapshotRead},
     records::{RecordKind, RecordRef, Records},
 };

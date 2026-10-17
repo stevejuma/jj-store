@@ -207,10 +207,7 @@ impl<'source> AgentCatalogEditor<'source> {
         })
     }
 
-    pub(super) async fn read_agent_page(
-        &self,
-        reference: AgentObjectRef,
-    ) -> Result<AgentIndexPageV1> {
+    pub async fn read_agent_page(&self, reference: AgentObjectRef) -> Result<AgentIndexPageV1> {
         match self.read_agent_object(reference).await? {
             AgentObjectV1::IndexPage(page) => Ok(page),
             _ => Err(Error::Corrupt("agent catalog page kind")),
