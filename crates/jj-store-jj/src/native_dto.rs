@@ -146,3 +146,40 @@ pub struct Operation {
     pub metadata: Metadata,
     pub commit_predecessors: Option<BTreeMap<m::CommitId, Vec<m::CommitId>>>,
 }
+
+use jj_lib::backend as b;
+impl From<b::Timestamp> for Timestamp {
+    fn from(t: b::Timestamp) -> Self {
+        Self {
+            millis: t.timestamp.0,
+            offset_minutes: t.tz_offset,
+        }
+    }
+}
+impl From<Timestamp> for b::Timestamp {
+    fn from(t: Timestamp) -> Self {
+        Self {
+            timestamp: b::MillisSinceEpoch(t.millis),
+            tz_offset: t.offset_minutes,
+        }
+    }
+}
+
+impl From<&b::Signature> for Signature {
+    fn from(s: &b::Signature) -> Self {
+        Self {
+            name: s.name.clone(),
+            email: s.email.clone(),
+            timestamp: s.timestamp.into(),
+        }
+    }
+}
+impl From<Signature> for b::Signature {
+    fn from(s: Signature) -> Self {
+        Self {
+            name: s.name,
+            email: s.email,
+            timestamp: s.timestamp.into(),
+        }
+    }
+}

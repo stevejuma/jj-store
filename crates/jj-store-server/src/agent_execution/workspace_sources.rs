@@ -99,12 +99,15 @@ impl Supervisor {
                 }
             }
             let revision = revisions[&(selected.operation, selected.commit.clone())].clone();
-            let capsule = evidence
+            let source_evidence = evidence
                 .iter()
                 .find(|e| e.reference == revision.evidence)
-                .ok_or(Error::Invalid)?
-                .validate()
-                .map_err(|_| Error::Invalid)?;
+                .ok_or(Error::Invalid)?;
+            let capsule = jj_store_jj::local_evidence::GitEvidenceCapsuleV1::decode_reference(
+                &source_evidence.reference,
+                &source_evidence.bytes,
+            )
+            .map_err(|_| Error::Invalid)?;
             let (id, bytes) = local
                 .metadata_store()
                 .read_capsule_file(

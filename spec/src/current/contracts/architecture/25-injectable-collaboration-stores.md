@@ -36,3 +36,18 @@ M32 owns incremental extraction and external-consumer qualification. Each slice
 records its actual acceptance and remaining work; partial interface or package
 checks cannot complete provider migration. WorkflowStore retains its current
 native provider. Dynamic-library loading and publication are separate work.
+
+The standalone Git carrier owns generic ref publication, bounded object access
+and readonly selected-root capabilities. JJ evidence and historical stack
+retention stay in the JJ integration; its focused companion feature omits native
+storage and application modules. Snapshot roots and constructors remain private
+across this boundary. The qualified JJ conflict header remains `jj:trees`.
+
+Each factory receives the same admitted host context but retains its independent
+registration. Compound Agent/Thread calls explicitly carry the selected Thread
+participant. Matching repository/provider strings do not establish transactional
+participation; implementations must share a provider-owned runtime capability.
+Provider-neutral requests may retain an existing native publication identity and
+outcomes retain exact provider receipts for adaptation without identity
+synthesis. Git factories reject native publication identities rather than
+silently dropping them.

@@ -9,42 +9,49 @@ repository.workspace = true
 homepage.workspace = true
 readme = "README.md"
 
+[features]
+default = ["native"]
+companion = ["tokio/time"]
+native = ["gix/default", "companion", "tokio/fs", "tokio/io-util", "tokio/sync", "tokio/rt", "tokio/process", "dep:jj-store-object", "dep:jj-store-wal", "dep:jj-forge", "dep:redb", "dep:prost", "dep:prost-build", "dep:tonic-prost-build", "dep:protoc-bin-vendored", "dep:base64", "dep:zeroize", "dep:url", "dep:async-trait", "dep:toml", "dep:blake2", "dep:chrono", "dep:tempfile", "dep:futures", "dep:etcetera", "dep:whoami", "dep:tokio-util", "dep:rustix"]
+
 [dependencies]
-base64 = "0.22"
-zeroize = "1"
-url = "2"
-jj-forge.workspace = true
+jj-store-git.workspace = true
+base64 = { version = "0.22", optional = true }
+zeroize = { version = "1", optional = true }
+url = { version = "2", optional = true }
+jj-forge = { workspace = true, optional = true }
 schemars.workspace = true
 jj-lib.workspace = true
 jj-store-model.workspace = true
-jj-store-object.workspace = true
-jj-store-wal.workspace = true
-async-trait = "0.1"
-tokio = { version = "1", features = ["fs", "io-util", "sync", "time", "rt", "process"] }
+jj-store-object = { workspace = true, optional = true }
+jj-store-wal = { workspace = true, optional = true }
+async-trait = { version = "0.1", optional = true }
+tokio = { version = "1", features = ["time"] }
 serde = { version = "1", features = ["derive"] }
-toml = "1.1.6"
+toml = { version = "1.1.6", optional = true }
 serde_json = { version = "1", features = ["preserve_order"] }
-blake2 = "0.10"
+blake2 = { version = "0.10", optional = true }
 sha2 = "0.10"
-chrono = "0.4"
-tempfile = "3"
+chrono = { version = "0.4", optional = true }
+tempfile = { version = "3", optional = true }
 thiserror = "2"
-futures = "0.3"
-gix = "=0.87.1"
-etcetera = "0.11"
-whoami = "2.1"
-tokio-util = { version = "0.7", features = ["compat"] }
-redb = "=4.3.0"
-prost = "0.14"
-rustix = { version = "=1.1.5", features = ["fs", "process"] }
+futures = { version = "0.3", optional = true }
+gix = { version = "=0.87.1", default-features = false, features = ["sha1", "max-performance-safe"] }
+etcetera = { version = "0.11", optional = true }
+whoami = { version = "2.1", optional = true }
+tokio-util = { version = "0.7", features = ["compat"] , optional = true }
+redb = { version = "=4.3.0", optional = true }
+prost = { version = "0.14", optional = true }
+rustix = { version = "=1.1.5", features = ["fs", "process"] , optional = true }
 
 [dev-dependencies]
+tempfile = "3"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync", "time"] }
 tokio-stream = { version = "0.1", features = ["net"] }
 tonic = { version = "0.14", features = ["transport"] }
 tonic-prost = "0.14"
 
 [build-dependencies]
-prost-build = "0.14"
-tonic-prost-build = "0.14"
-protoc-bin-vendored = "3"
+prost-build = { version = "0.14", optional = true }
+tonic-prost-build = { version = "0.14", optional = true }
+protoc-bin-vendored = { version = "3", optional = true }

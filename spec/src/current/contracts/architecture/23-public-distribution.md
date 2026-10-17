@@ -4,6 +4,12 @@ JST-ARCH-006's injectable core is a coordinated library package under the
 existing JST-ARCH-005 release policy. Source extraction and package checks do
 not publish a release. Existing canonical storage formats remain unchanged.
 
+The standalone Git provider is a coordinated package with contained source
+inputs and registry-qualified dependency metadata. Its normal dependency graph
+excludes native object/WAL and application transports. The focused JJ companion
+feature adds qualified source evidence without those native/application modules.
+This source-library qualification does not publish any package or native bundle.
+
 JST-ARCH-005 governs the coordinated public source, Cargo, native archive and
 container distribution. Changesets owns the release version and notes through
 the private npm workspace package; npm publication is disabled. The version PR

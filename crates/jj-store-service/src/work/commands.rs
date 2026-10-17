@@ -5,7 +5,6 @@ use jj_store_wal::{
     self as wal,
     publication::{
         PublishOutcome, Snapshot, WorkCommandRequest as WalRequest, WorkCommandResultV1,
-        WorkCommandV1,
     },
 };
 use serde::{Deserialize, Serialize};
@@ -13,14 +12,7 @@ use sha2::{Digest as _, Sha256};
 use std::sync::Arc;
 
 use super::{Error, Result};
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
-#[schemars(rename = "WorkCommandRequest")]
-#[serde(deny_unknown_fields)]
-pub struct Request {
-    pub version: u32,
-    pub request_id: m::RequestId,
-    pub command: WorkCommandV1,
-}
+pub use jj_store_git::work_api::Request;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "WorkCommandReceipt")]

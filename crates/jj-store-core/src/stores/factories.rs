@@ -116,21 +116,74 @@ impl StoreLoader<'_> {
 }
 impl RepositoryStores {
     pub fn require_shared_publication(&self, kinds: &[StoreKind]) -> Result<()> {
-        let mut previous: Option<&PublicationScope> = None;
+        let mut previous: Option<&dyn StoreBinding> = None;
         for kind in kinds {
-            let scope = match kind {
-                StoreKind::Agent => self.agent.as_ref().map(|s| s.scope()),
-                StoreKind::Work => self.work.as_ref().map(|s| s.scope()),
-                StoreKind::Review => self.review.as_ref().map(|s| s.scope()),
-                StoreKind::Thread => self.thread.as_ref().map(|s| s.scope()),
-                StoreKind::Reaction => self.reaction.as_ref().map(|s| s.scope()),
+            let binding: &dyn StoreBinding = match kind {
+                StoreKind::Agent => self.agent.as_deref().map(|s| s as &dyn StoreBinding),
+                StoreKind::Work => self.work.as_deref().map(|s| s as &dyn StoreBinding),
+                StoreKind::Review => self.review.as_deref().map(|s| s as &dyn StoreBinding),
+                StoreKind::Thread => self.thread.as_deref().map(|s| s as &dyn StoreBinding),
+                StoreKind::Reaction => self.reaction.as_deref().map(|s| s as &dyn StoreBinding),
             }
             .ok_or(Error::Unsupported("store disabled"))?;
             if let Some(before) = previous {
-                before.require_same(scope)?;
+                require_atomic_participants(before, binding)?;
             }
-            previous = Some(scope);
+            previous = Some(binding);
         }
         Ok(())
+    }
+}
+
+impl RepositoryStores {
+    pub async fn execute_agent(
+        &self,
+        request: &StoreRequest<AgentCommand>,
+    ) -> Result<StoreOutcome<AgentResult>> {
+        let agent = self
+            .agent
+            .as_ref()
+            .ok_or(Error::Unsupported("AgentStore disabled"))?;
+        if request.command.has_thread_binding() {
+            let thread = self
+                .thread
+                .as_ref()
+                .ok_or(Error::Unsupported("ThreadStore disabled"))?;
+            require_atomic_participants(agent.as_ref(), thread.as_ref())?;
+            agent.execute_with_thread(request, thread.as_ref()).await
+        } else {
+            agent.execute(request).await
+        }
+    }
+}
+pub fn require_atomic_participants(a: &dyn StoreBinding, b: &dyn StoreBinding) -> Result<()> {
+    a.scope().require_same(b.scope())?;
+    match (a.publication_group(), b.publication_group()) {
+        (Some(a), Some(b)) if Arc::ptr_eq(&a, &b) => Ok(()),
+        _ => Err(Error::Unsupported(
+            "stores do not share an atomic publication provider",
+        )),
+    }
+}
+
+impl RepositoryStores {
+    pub async fn prepare_agent(
+        &self,
+        request: &StoreRequest<AgentCommand>,
+    ) -> Result<StoreRequest<AgentCommand>> {
+        let agent = self
+            .agent
+            .as_ref()
+            .ok_or(Error::Unsupported("AgentStore disabled"))?;
+        if request.command.has_thread_binding() {
+            let thread = self
+                .thread
+                .as_ref()
+                .ok_or(Error::Unsupported("ThreadStore disabled"))?;
+            require_atomic_participants(agent.as_ref(), thread.as_ref())?;
+            agent.prepare_with_thread(request, thread.as_ref()).await
+        } else {
+            agent.prepare(request).await
+        }
     }
 }

@@ -2,6 +2,9 @@ use super::*;
 use crate::engine::{AgentSnapshotRead, ReviewSnapshotRead};
 
 pub trait StoreBinding: Send + Sync {
+    fn publication_group(&self) -> Option<Arc<PublicationGroup>> {
+        None
+    }
     fn name(&self) -> &str;
     fn scope(&self) -> &PublicationScope;
 }
@@ -28,12 +31,44 @@ macro_rules! store {
         }
     };
 }
-store!(
-    AgentStore,
-    Arc<dyn AgentSnapshotRead>,
-    AgentCommand,
-    AgentResult
-);
+#[async_trait::async_trait]
+pub trait AgentStore: StoreBinding {
+    /// Identity preparation is sufficient for providers whose command is already
+    /// durable. Native providers return stable typed deltas for caller retention.
+    async fn prepare(
+        &self,
+        request: &StoreRequest<AgentCommand>,
+    ) -> Result<StoreRequest<AgentCommand>> {
+        if request.command.has_thread_binding() {
+            return Err(Error::Unsupported(
+                "use selected ThreadStore for preparation",
+            ));
+        }
+        Ok(request.clone())
+    }
+    async fn prepare_with_thread(
+        &self,
+        _request: &StoreRequest<AgentCommand>,
+        _thread: &dyn ThreadStore,
+    ) -> Result<StoreRequest<AgentCommand>> {
+        Err(Error::Unsupported("atomic Agent/Thread preparation"))
+    }
+
+    async fn snapshot(&self) -> Result<Pinned<Arc<dyn AgentSnapshotRead>>>;
+    async fn execute(
+        &self,
+        request: &StoreRequest<AgentCommand>,
+    ) -> Result<StoreOutcome<AgentResult>>;
+    async fn status(&self, request: RequestId) -> Result<StoreOutcome<AgentResult>>;
+    /// Bound capture requires the selected Thread implementation's real transaction participant.
+    async fn execute_with_thread(
+        &self,
+        _request: &StoreRequest<AgentCommand>,
+        _thread: &dyn ThreadStore,
+    ) -> Result<StoreOutcome<AgentResult>> {
+        Err(Error::Unsupported("atomic Agent/Thread publication"))
+    }
+}
 store!(
     WorkStore,
     Arc<jj_work::WorkStateV1>,

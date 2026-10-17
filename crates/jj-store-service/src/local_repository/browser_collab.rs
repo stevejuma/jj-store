@@ -46,7 +46,7 @@ impl LocalRepository {
         };
         self.check_identity(pin.as_ref())?;
         let store = self.thread_store_at(pin.as_ref()).await?;
-        crate::conversation_discovery::project(&store.state, &store.graph)
+        crate::conversation_discovery::project(&store.state, store.graph())
             .map_err(|_| LocalError::Corrupt)
     }
     pub async fn conversation_metadata(
@@ -231,7 +231,7 @@ impl LocalRepository {
                     };
                     cursor = value.previous;
                     events.push(ThreadEventItemV1 {
-                        emojis: message_emoji_definitions(message.as_ref(), &store.graph)?,
+                        emojis: message_emoji_definitions(message.as_ref(), store.graph())?,
                         reference,
                         value,
                         message,
@@ -367,10 +367,10 @@ impl LocalRepository {
         };
         let threads = self.thread_store_at(pin.as_ref()).await?;
         let object = reactions
-            .graph
+            .graph()
             .objects
             .get(&reference)
-            .or_else(|| threads.graph.objects.get(&reference))
+            .or_else(|| threads.graph().objects.get(&reference))
             .cloned()
             .ok_or(LocalError::NotFound)?;
         let CollabObjectV1::ImageAsset(asset) = object else {

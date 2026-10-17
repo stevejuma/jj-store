@@ -4233,6 +4233,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "jj-store-git"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "base64 0.22.1",
+ "getrandom 0.4.3",
+ "gix",
+ "jj-agent",
+ "jj-collab",
+ "jj-review",
+ "jj-store-core",
+ "jj-store-model",
+ "jj-work",
+ "schemars",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+]
+
+[[package]]
 name = "jj-store-http"
 version = "0.1.0"
 dependencies = [
@@ -4274,6 +4297,7 @@ dependencies = [
  "gix",
  "jj-forge",
  "jj-lib",
+ "jj-store-git",
  "jj-store-model",
  "jj-store-object",
  "jj-store-wal",
@@ -4465,6 +4489,7 @@ dependencies = [
  "jj-review",
  "jj-store-adapters",
  "jj-store-core",
+ "jj-store-git",
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",

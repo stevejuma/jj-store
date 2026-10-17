@@ -53,3 +53,9 @@ maximum matched `occurred_at_millis` only when they are available within the
 4,096-event read bound; missing, mismatched or over-bound evidence reports no
 timing. The derived fields are service presentation data and add no AgentStore
 object, manifest, WAL or receipt encoding.
+
+M32 moves the pure cross-domain target resolver beside the shared immutable
+engines. JST-PUB-001/004/005/007/009 remain unchanged: native authorization,
+manifest/WAL publication, original receipts, closure admission and unknown
+outcomes stay under the native coordinator. Native missing-object errors retain
+their neutral target-unavailable interpretation across the core boundary.

@@ -11,6 +11,7 @@ readme = "README.md"
 
 [dependencies]
 jj-store-core.workspace = true
+jj-store-git.workspace = true
 jj-forge.workspace = true
 jj-store-read-index.workspace = true
 url = "2"

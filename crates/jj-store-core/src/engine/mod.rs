@@ -56,3 +56,6 @@ pub use review_read_engine::{ReviewCatalogPage, ReviewReader};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
+
+mod collab_targets;
+pub use collab_targets::CollabTargetReaderV1;

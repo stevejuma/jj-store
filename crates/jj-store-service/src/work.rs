@@ -84,3 +84,20 @@ impl From<jj_store_core::Error> for Error {
         jj_store_wal::Error::from(value).into()
     }
 }
+
+impl From<jj_store_git::work_api::Error> for Error {
+    fn from(e: jj_store_git::work_api::Error) -> Self {
+        use jj_store_git::work_api::Error as E;
+        match e {
+            E::Denied => Self::Denied,
+            E::Stale => Self::Stale,
+            E::IntentConflict => Self::IntentConflict,
+            E::NotFound => Self::NotFound,
+            E::Invalid => Self::Invalid,
+            E::Corrupt => Self::Corrupt,
+            E::Limit => Self::Limit,
+            E::Unavailable => Self::Unavailable,
+            E::Busy => Self::Busy,
+        }
+    }
+}

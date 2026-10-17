@@ -1,0 +1,31 @@
+[package]
+name = "jj-store-git"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+description = "Standalone Git companion collaboration store provider"
+
+[dependencies]
+jj-store-core.workspace = true
+jj-store-model.workspace = true
+jj-agent.workspace = true
+jj-review.workspace = true
+jj-work.workspace = true
+jj-collab.workspace = true
+schemars.workspace = true
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+sha2 = "0.10"
+gix = { version = "=0.87.1", default-features = false, features = ["sha1", "max-performance-safe"] }
+getrandom = "0.4"
+async-trait = "0.1"
+base64 = "0.22"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }
+tempfile = "3"

@@ -10,6 +10,9 @@ pub struct CodeEvidence {
 }
 #[derive(Clone, Debug)]
 pub enum AgentCommand {
+    Prepared {
+        delta: Box<PreparedAgentDelta>,
+    },
     Initialize,
     Capture {
         profile: NormalizerProfileV1,
@@ -42,4 +45,28 @@ pub enum ReviewCommand {
 pub enum ReactionCommand {
     Reaction(jj_collab::ReactionCommandV1),
     Emoji(jj_collab::CustomEmojiCommandV1),
+}
+
+/// Stable native preparation data. Persist this command with its original
+/// request/publication IDs before retrying a potentially published outcome.
+#[derive(Clone, Debug)]
+pub struct PreparedAgentDelta {
+    pub delta: jj_agent::AgentDeltaV1,
+    pub result: Vec<u8>,
+    pub thread_binding: Option<PreparedThreadBinding>,
+}
+#[derive(Clone, Debug)]
+pub struct PreparedThreadBinding {
+    pub binding: jj_collab::ThreadBindingV1,
+    pub accepted_at_millis: i64,
+}
+
+impl AgentCommand {
+    pub fn has_thread_binding(&self) -> bool {
+        match self {
+            Self::Capture { binding, .. } => binding.is_some(),
+            Self::Prepared { delta } => delta.thread_binding.is_some(),
+            _ => false,
+        }
+    }
 }

@@ -121,3 +121,12 @@ Status/retry recovers that same destination after unknown outcomes; changed
 intent conflicts. Discovery is finalized only after verifying the published
 repository identity. It does not mutate a source repository, project links or
 checkout files.
+
+M32's Git library owns the existing local command projectors and receipt-backed
+publication loops. The application retains folder admission and browser policy.
+Bound capture through injectable interfaces requires both selected
+implementations to share a real runtime publication participant; matching scope
+strings alone cannot authorize a compound publication. Reject unsupported
+composition before actor creation or staging. Existing intent serialization and
+domain receipts are unchanged; provider-neutral envelopes retain each exact
+provider receipt.

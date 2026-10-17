@@ -8,3 +8,9 @@ Cargo installations provide binaries; complete downloadable archives
 additionally provide UI/Help and the separate embedded RustFS helper.
 Installation paths and state paths remain explicit and private. Optional jj-acp
 is separately installed.
+
+M32 persistence extraction preserves JST-CLI-002/JST-CLI-004 command and paired
+executable contracts. CLI and server source-evidence consumers use the shared
+full-reference JJ decoder; structural Git admission alone cannot qualify source
+anchors. Local provenance, review, WorkStore and collaboration command families
+retain their existing request identities, receipts and serialized output.

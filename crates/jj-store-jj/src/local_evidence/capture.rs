@@ -148,7 +148,7 @@ impl MetadataStore {
             return Err(Error::Invalid("capsule source repository"));
         }
         for (id, kind) in value.retention(blob)? {
-            if selected.root.retained.get(&id) != Some(&kind) {
+            if selected.retained().get(&id) != Some(&kind) {
                 return Err(Error::Invalid("incomplete retained capsule closure"));
             }
         }

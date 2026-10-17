@@ -14,7 +14,7 @@ impl MetadataStore {
         path: &str,
     ) -> Result<(m::GitSha1Id, Vec<u8>)> {
         capsule.validate()?;
-        if !crate::agent_workspaces::inspection::safe_path(path) || path.split('/').count() > 64 {
+        if !jj_store_git::metadata::safe_path(path) || path.split('/').count() > 64 {
             return Err(Error::Invalid("retained file path"));
         }
         let saved = capsule.commits.get(&commit).ok_or(Error::Stale)?;

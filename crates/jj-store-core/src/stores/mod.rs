@@ -69,6 +69,8 @@ impl StoreContext {
 }
 #[derive(Clone, Debug)]
 pub struct StoreRequest<C> {
+    /// Preserve an existing native publication identity when adapting a durable request.
+    pub publication_id: Option<jj_store_model::PublicationId>,
     pub request_id: RequestId,
     pub command: C,
 }
@@ -80,6 +82,8 @@ pub struct StoreReceipt<R> {
     pub version: u64,
     /// Exact provider-owned selection; Git and native IDs are never reinterpreted.
     pub selection: Vec<u8>,
+    /// Exact canonical provider receipt, retained for existing service and CLI contracts.
+    pub provider_receipt: Vec<u8>,
     pub result: R,
 }
 #[derive(Clone, Debug)]
@@ -94,4 +98,26 @@ pub struct Pinned<T> {
     pub version: u64,
     pub selection: Vec<u8>,
     pub data: T,
+}
+
+impl<C> StoreRequest<C> {
+    pub fn new(request_id: RequestId, command: C) -> Self {
+        Self {
+            request_id,
+            command,
+            publication_id: None,
+        }
+    }
+    pub fn with_publication_id(mut self, id: jj_store_model::PublicationId) -> Self {
+        self.publication_id = Some(id);
+        self
+    }
+}
+/// Runtime identity for one provider's atomic publication participants.
+#[derive(Debug, Default)]
+pub struct PublicationGroup(());
+impl PublicationGroup {
+    pub fn new() -> Arc<Self> {
+        Arc::new(Self(()))
+    }
 }

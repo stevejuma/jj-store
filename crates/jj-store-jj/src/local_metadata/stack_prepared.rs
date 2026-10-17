@@ -1,8 +1,13 @@
 //! Reserved local code retention, separate from portable companion selection.
 use super::*;
 use crate::local_evidence::{GitEvidenceCapsuleV1, OperationArchiveV1};
+use gix::refs::{
+    Target,
+    transaction::{Change, LogChange, PreviousValue, RefEdit},
+};
 use jj_store_model as m;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 mod objects;
 mod selection;
 
@@ -166,7 +171,7 @@ impl MetadataStore {
             change: Change::Update {
                 log: LogChange::default(),
                 expected: PreviousValue::MustNotExist,
-                new: Target::Object(commit.0),
+                new: Target::Object(commit.as_git()),
             },
         };
         let _outcome = repo.edit_references_as([edit], None);

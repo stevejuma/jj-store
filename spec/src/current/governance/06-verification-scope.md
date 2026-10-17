@@ -1,5 +1,11 @@
 # Verification scope
 
+JST-ARCH-006's library boundaries admit core and Git engines independently of
+native object/WAL and application packages. Verify their dependency closure,
+exact source-identity and receipt regressions, and affected direct consumers.
+Keep incomplete cross-domain substitution and native/external-provider gates in
+M32; passing an extraction family cannot complete those separate gates.
+
 E-CI-BROWSER-001 runs the complete affected UI unit and cold-browser surfaces
 because fixture selection/sharding and shared freshness owners affect
 independent consumers. Every cold shard owns fresh storage/server state; profile
