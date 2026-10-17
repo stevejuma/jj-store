@@ -19,8 +19,12 @@ mean that the named slice has evidence; they do not complete its whole stage.
 - **Completed foundation:** injectable stores, crate READMEs, redaction/source
   acquisition, conversation primitives and SDKs, history libraries and native
   Notes admission/transport.
-- **Active task: NOTES-04A.** Qualify the shared Notes API dependency required
-  by the history view, including the remaining wider checks.
+- **Active task: NOTES-05A.** Repair Design Core's dark unified-diff syntax
+  contrast in its owning source package, then qualify the public artifact.
+- **Waiting on consumer acceptance: NOTES-04A.** The shared Notes API exact
+  regression, ordinary aggregate unit lane, full build, specification lane and
+  all 261 browser cases pass. Final consumer/artifact verification and its
+  source commit follow the Design Core repair.
 - **Waiting: NOTES-04 and NOTES-05.** The history view and review scenarios
   exist in isolated source workspaces; their acceptance and integration depend
   on source qualification and the remaining Design Core contrast repair.
@@ -114,24 +118,34 @@ that every task in it is executing simultaneously.
       focused reader/native-adapter cases and all 191 renderer/governance cases
       pass; type checking has no errors or warnings. The implementation is not
       yet committed or integrated.
-- [ ] **NOTES-04A — Active:** Qualify the owning Notes API attachment fix
-      required by the history view. Exact regression: two pass; complete
-      workspace: 131 pass; complete API: 1,160 pass; root check passes. Wider
-      unit and Storybook failures remain open below; source commit and public
-      artifact provenance must be finalized before integration.
+- [ ] **NOTES-04A — Waiting for consumer acceptance:** Qualify the owning Notes
+      API attachment fix required by the history view. Exact regression: two
+      pass; complete workspace: 131 pass; complete API: 1,160 pass. The ordinary
+      root unit lane passes all 18 tasks, and the full build passes all 10.
+      Eighteen cold editor stories pass after the optimizer fix; the complete
+      browser lane passes 261 cases across 59 files, and source specification
+      checks pass. Final consumer acceptance, commit and artifact provenance
+      must be finalized before integration.
 - [ ] **NOTES-04B:** Prove the visible history/diff flow in a cold actual native
       WebView and complete M13.2's original gate. Hidden native API acceptance
       and fixture stories do not substitute for visible native acceptance.
-- [ ] **NOTES-05 — Waiting for source qualification:** Add production-component
-      review stories for history selection, diff, loading, empty/unavailable,
-      failure and recovery states; run interaction and accessibility checks. The
-      initial nine-scenario family passes desktop-light and narrow-light.
-      Desktop-dark has eight passes and one syntax-token contrast failure;
-      narrow-dark has not run. A stronger operation-switch assertion exposed
-      retained old diff state; its exact unit regression now passes after the
-      fix. A tenth scenario keeps unified diff accessibility under direct test.
-      Final both-theme qualification and visual baseline approval remain
-      separate.
+- [ ] **NOTES-05 — Waiting for NOTES-04A/05A:** Add production-component review
+      stories for history selection, diff, loading, empty/unavailable, failure
+      and recovery states; run interaction and accessibility checks. The initial
+      nine-scenario family passes desktop-light and narrow-light. Desktop-dark
+      has eight passes and one syntax-token contrast failure; narrow-dark has
+      not run. A stronger operation-switch assertion exposed retained old diff
+      state; its exact unit regression now passes after the fix. A tenth
+      scenario keeps unified diff accessibility under direct test. Final
+      both-theme qualification and visual baseline approval remain separate.
+- [ ] **NOTES-05A — Active:** Repair dark syntax-token defaults in Design Core.
+      The dedicated unified-diff story reproduces a 1.85:1 contrast failure for
+      unchanged Markdown headings. Preserve normal syntax highlighting and
+      custom theme overrides; qualify the source and Notes public-package
+      consumer without a consumer CSS workaround. The fix passes both exact
+      source regressions (previously two failures) and all 86 cases across eight
+      affected families. Full Design Core checks are running; packaging and
+      Notes acceptance remain pending.
 - [ ] **NOTES-06:** Implement one native raw-event owner. Sanitize and durably
       capture before display/ACK; drain before releasing vault authority.
 - [ ] **NOTES-07:** Add receipt-aware AgentStore/ThreadStore conversation
@@ -201,12 +215,20 @@ the history UI delivery.
       the aggregate rerun passed that host but stopped at a different API
       declaration-test timeout (1,159 pass, one fail). Earlier standalone API
       qualification passed all 1,160 cases. Aggregate qualification and cause
-      investigation remain open; no timeout has been relaxed.
+      investigation remain open. The latest ordinary aggregate retry passes all
+      18 tasks with unchanged timeouts; the source record retains both earlier
+      failed attempts. Final evidence/commit closure is pending.
 - [ ] **GAP-06:** NOTES-04A's first cold source Storybook shard has 75 pass and
       18 fail; three later shards have not run. A late dependency optimization
       reloaded the frame and 16 failures report inaccessible axe imports. Two
-      editor diagnostic/marker assertions also failed. Verify each cause and
-      rerun without weakening assertions or accessibility checks.
+      editor diagnostic/marker assertions also failed. Pre-bundling the missing
+      recovery icon repairs the cold editor family (18 pass) and complete lane
+      (261 pass, 59 files). Assertions and accessibility checks are unchanged;
+      final evidence/commit closure is pending.
+- [ ] **GAP-07:** The passing source browser lane emits two ResizeObserver loop
+      diagnostics and three CodeMirror invalid-line RangeErrors in AI panel
+      stories. Their cause remains unproven. Keep these separate from expected
+      failure-fixture logs and from interaction/accessibility assertion counts.
 
 ## Keeping this list current
 
