@@ -19,6 +19,8 @@ jj-store-jj = { workspace = true, default-features = false, features = ["local-h
 jj-store-model.workspace = true
 async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+schemars.workspace = true
 tokio = { version = "1", features = ["rt", "sync"] }
 uuid = { version = "1", features = ["v4", "serde"] }
 tauri = { version = "=2.12.4", default-features = false, optional = true }
@@ -27,6 +29,5 @@ tauri = { version = "=2.12.4", default-features = false, optional = true }
 tauri-plugin = { version = "2", features = ["build"], optional = true }
 
 [dev-dependencies]
-serde_json = "1"
 tempfile = "3"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }

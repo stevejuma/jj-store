@@ -63,11 +63,19 @@ generations are renderer inputs. Stored vault/handle strings grant no source
 authority.
 
 The transport accepts `heads`, `open`, `status`, `read` and `close`, each with a
-strict `request` object. `heads` takes `vault`; `open` adds an exact `operation`
-from the admitted heads or retained selection and returns an opaque handle.
-`status` takes `vault` and `handle`, reporting `preparing`, `ready` with the
-exact snapshot, or a retained failure. `read` adds the existing local query
-object. Close releases only the invoking window's exact vault/handle.
+strict inner request object carried as a JSON text `request`. Both directions
+use the versioned envelope `{ "version": 1, "data": ... }`. Tauri transports
+this text without parsing inner integers as JavaScript numbers. A client must
+retain unsafe integer tokens without rounding; ordinary `JSON.parse` is
+insufficient. Unknown envelope versions/fields fail closed. Encoded requests are
+limited to 128 KiB and responses to 16 MiB, in addition to the underlying read
+budgets. The crate's `schema` example exports the complete public inner/envelope
+contract. Direct Rust `History` calls remain typed and do not use this transport
+codec. `heads` takes `vault`; `open` adds an exact `operation` from the admitted
+heads or retained selection and returns an opaque handle. `status` takes `vault`
+and `handle`, reporting `preparing`, `ready` with the exact snapshot, or a
+retained failure. `read` adds the existing local query object. Close releases
+only the invoking window's exact vault/handle.
 
 At most one preparation runs at a time; ordinary reads retain separate worker
 capacity. The service bounds retained handles and window scopes. Cancel/close

@@ -17,6 +17,9 @@ The default feature exposes the independently testable native service. Enable
 Permissions default empty; grant `jj-store:local-history` only to intended
 windows. The transport derives the actual window/URL, never accepts source paths
 or admission generations, and asks your policy to authorize every read.
+Transport requests and successful results are versioned JSON text envelopes;
+clients must preserve full-width integers when decoding. Direct Rust calls stay
+typed. Run `cargo run --example schema` in this crate for the public schema.
 
 See the [local embedding manual](../../docs/site/technical/local.md) for pin,
 cache, authorization and qualification details. Notes integration and native

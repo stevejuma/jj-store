@@ -137,3 +137,9 @@ shared-repository link resolution and explicit symlink rejection. The owned
 result adds the observed Git directory for host binding, with no new source
 authority. Reopening rechecks paths and optional carrier identity. Physical
 vault and source-generation checks remain required for subsequent reads.
+
+Native history transport preserves full-width operation fields through a bounded
+versioned JSON text envelope. JavaScript consumers must retain unsafe integers
+without rounding. This boundary changes no native identities or store encoding;
+existing Rust readers, current physical admission and operation pins remain
+exact.

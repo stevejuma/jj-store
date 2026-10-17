@@ -126,3 +126,10 @@ The CLI and downstream hosts share default-settings resolution of the existing
 workspace, GitBackend and optional companion identity. Discovery neither loads a
 working copy nor reconciles heads or initializes metadata. Native physical vault
 and window admission remain host-owned; discovered paths grant no authority.
+
+The optional native history transport uses a versioned JSON text envelope for
+requests and results. Tauri carries the text without converting integer tokens
+to JavaScript numbers; clients decode unsafe integer values without rounding.
+The inner Rust request types still deny unknown authority fields. Envelope
+version and byte bounds fail closed before admission, and output encoding stays
+bounded. Direct Rust service interfaces and native identities are unchanged.

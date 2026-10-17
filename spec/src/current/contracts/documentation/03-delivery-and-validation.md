@@ -303,3 +303,7 @@ Notes application qualification; publication remains a separate gate.
 The crate README and local manual explain shared read-only workspace discovery,
 existing carrier construction and host-owned physical admission. Observed paths
 and optional identity cannot substitute for a vault/window capability.
+
+Native history documentation distinguishes the typed Rust service from the
+versioned JSON text IPC envelope, its request/output bounds and lossless integer
+requirement. The schema example exports the actual owned contract.

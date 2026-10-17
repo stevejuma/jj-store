@@ -307,3 +307,9 @@ The owned workspace-discovery/default-settings entry points stay within the
 existing JJ crate and introduce no package or dependency edge. Native consumers
 need no upstream settings type. Source, headless and CLI consumer checks remain
 distinct from Notes application and release qualification.
+
+The native history crate exports a contained schema inventory for its versioned
+text-envelope transport. Generated client contracts derive from owned Rust
+frames; no HTTP/server dependency or upstream JJ import is added. Direct Rust
+interfaces and plugin permissions remain unchanged. Source/schema qualification
+is separate from native WebView and artifact acceptance.

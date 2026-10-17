@@ -8961,6 +8961,7 @@ dependencies = [
  "async-trait",
  "jj-store-jj",
  "jj-store-model",
+ "schemars 1.2.2",
  "serde",
  "serde_json",
  "tauri",

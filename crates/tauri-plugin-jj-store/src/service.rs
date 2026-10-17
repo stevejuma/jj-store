@@ -9,10 +9,10 @@ use std::{
 use tokio::sync::{OwnedRwLockReadGuard, RwLock, Semaphore};
 use uuid::Uuid;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(transparent)]
-pub struct Handle(pub(crate) Uuid);
-#[derive(Clone, Serialize)]
+pub struct Handle(#[schemars(with = "String")] pub(crate) Uuid);
+#[derive(Clone, Serialize, schemars::JsonSchema)]
 #[serde(tag = "state", content = "data", rename_all = "snake_case")]
 pub enum Status {
     Preparing,

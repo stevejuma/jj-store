@@ -77,3 +77,9 @@ Standalone workspace discovery is qualified in the companion profile and through
 the original native CLI folder provider. Feature governance keeps its discovery
 test binary available without native storage. Observations grant no physical or
 window authority, and source discovery does not waive application acceptance.
+
+The contained native-history schema is generated from actual owned Rust frames
+and checked for equality in the owning crate. It retains producer formatting by
+exact-path exclusion. Versioned JSON text carries full-width integers through
+Tauri without JavaScript rounding; no native caller or cache grant enters a
+frame.

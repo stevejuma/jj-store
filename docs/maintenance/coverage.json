@@ -255,8 +255,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed host-admitted read-only history service, opaque strict transport frames, empty permission defaults, blocking cache admission, exact window/vault/generation pins and cancellation with native scope draining. Native WebView and Notes integration remain separately unqualified.",
-      "fingerprint": "d96af7a73206559343b14c597f520b3fe786f57d54b0b23c1922712bb715db38"
+      "reason": "Reviewed strict public inner frames, bounded version-one JSON text request/result envelopes, full-width integer preservation, generated Rust schema equality and unchanged typed service admission, permissions, source pins and lifecycle.",
+      "fingerprint": "3e83c93ebab6140758a2532797218e4596393081f596572f960294cae20b1ead"
     }
   }
 ]
