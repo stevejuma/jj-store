@@ -29,3 +29,8 @@ The packaged hook applies this boundary before capture-state creation. It writes
 only a validated sanitized payload or fixed `{"status":"omitted"}` object into
 the durable spool. Publication recovery remains required before M9.2 capture
 support can be claimed.
+
+M33 extracts this exact native policy into the Agent Redaction Rust crate. The
+JJ adapter retains bounded domain payload construction and host cache-path
+admission. Original sanitized bytes, policies and publication formats are
+unchanged; the portable TypeScript complete-block policy is separate.

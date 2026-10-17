@@ -10,8 +10,12 @@ export function dependencyErrors(packages) {
       if (
         /^lapis-(?:ai-|acp|agent|compute)/.test(dependency.name) &&
         !(
-          pkg.name === "jj-store-server" &&
-          ["lapis-ai-runtime", "lapis-ai-config"].includes(dependency.name)
+          (pkg.name === "jj-store-server" &&
+            ["lapis-ai-runtime", "lapis-ai-config"].includes(
+              dependency.name,
+            )) ||
+          (pkg.name === "jj-store-capture" &&
+            dependency.name === "lapis-agent-redaction")
         )
       )
         errors.push(`${pkg.name} cannot depend on ${dependency.name}`);

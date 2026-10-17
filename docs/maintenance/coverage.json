@@ -37,11 +37,15 @@
   },
   {
     "id": "capture",
-    "sources": ["crates/jj-store-capture/src"],
+    "sources": [
+      "crates/jj-store-capture/src",
+      "scripts/ci-redaction-source.mjs",
+      "scripts/agent-redaction-source.json"
+    ],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Reviewed released Kingfisher scanner 1.4.0, rules 1.2.1 and core 1.0.3. Updated capture documentation for versioned policy/cache namespaces; privacy failure still withholds publication.",
-      "fingerprint": "8424db9ee354d907033154dc32e960e6bb422bacfd98d624030bc7e1fff95355"
+      "reason": "Reviewed native privacy delegation with preserved CaptureResult cache-warming API, exact canonical domain bytes and policy IDs; source leases, prepared spools and original receipts are unchanged.",
+      "fingerprint": "49bb6a2cf5c18217bb702a05e46e24c04f7f162521bd1d82c3509ee677ae8c62"
     }
   },
   {
@@ -167,7 +171,8 @@
       "scripts/agent-runtime-resources.mjs",
       "scripts/desktop-resources.mjs",
       "scripts/ci-lapis-source.mjs",
-      "scripts/lapis-ai-source.json"
+      "scripts/lapis-ai-source.json",
+      "scripts/ci-pinned-source.mjs"
     ],
     "pages": [
       "docs/local-compute.md",
@@ -175,8 +180,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed local Lapis AI path consumption, four-helper bundle preparation and final staging path, V3-only execution, preserved compute caches, identity and original receipts.",
-      "fingerprint": "95ebc9159207a32e8bddf7b1147da8ba33a33fc1c4106759955f39ff42bfdf91"
+      "reason": "Reviewed shared pinned-source materialization for Lapis AI and native privacy; local development prerequisites are documented, with existing helper launch, resources, credentials and compute behavior retained.",
+      "fingerprint": "747b5dc88827e31b6868591d9ae86eed2e897eeaaee0c3d4fa4b1c8d44ab0263"
     }
   },
   {

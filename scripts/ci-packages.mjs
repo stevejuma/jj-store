@@ -49,7 +49,12 @@ export function packageGraph(data, root = process.cwd()) {
           ["lapis-ai-runtime", "lapis-ai-config"].includes(dep.name) &&
           p.name === "jj-store-server" &&
           resolve(dep.path) === resolve(root, `../lapis-ai/crates/${dep.name}`);
-        if (sharedAi) continue;
+        const sharedPrivacy =
+          p.name === "jj-store-capture" &&
+          dep.name === "lapis-agent-redaction" &&
+          resolve(dep.path) ===
+            resolve(root, "../agent-redaction/crates/lapis-agent-redaction");
+        if (sharedAi || sharedPrivacy) continue;
         throw Error(`Unmodelled path dependency: ${p.name} -> ${dep.path}`);
       }
       reverse.get(target.name).add(p.name);

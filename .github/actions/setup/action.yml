@@ -21,8 +21,10 @@ runs:
       with:
         node-version: 22
         cache: pnpm
-    - name: Materialize pinned Lapis AI into the sibling Cargo path
-      run: node scripts/ci-lapis-source.mjs
+    - name: Materialize pinned shared Rust sources into sibling Cargo paths
+      run: |
+        node scripts/ci-lapis-source.mjs
+        node scripts/ci-redaction-source.mjs
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}

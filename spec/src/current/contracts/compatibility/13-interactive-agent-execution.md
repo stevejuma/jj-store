@@ -79,3 +79,8 @@ code-binding status, derived from the existing retained proof. Legacy journals
 remain readable. JST-COMPAT-001/003/005 native identities, source selections and
 publication formats are unchanged. New physical hints use the existing event
 envelope; read caches are session-only and require no migration.
+
+M33 native privacy extraction retains the existing Kingfisher hook/transcript
+policy IDs, canonical Agent payload bytes, public capture adapter signatures and
+Control V3 interpretation. Existing source identities, spool requests and
+publication receipts are not upgraded or rewritten by the new library boundary.

@@ -102,3 +102,9 @@ metadata configuration. It distinguishes source/fixture acceptance from live
 subscription and signed desktop gates, and explains local sign-out with
 unconfirmed remote revocation. It does not instruct users to copy Codex tokens,
 provide browser credentials, or configure a paid API fallback.
+
+M33 documents the independent native Agent Redaction Rust library and the exact
+shared-source prerequisites. The capture and local-compute manuals retain
+source-specific qualification, original policy identities and recovery limits;
+the capture crate README links the full guides. Generic conversation/UI and
+Notes/Tauri delivery remain planned in M33 until their own evidence qualifies.

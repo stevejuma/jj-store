@@ -23,3 +23,10 @@ including focused source regressions and cold application lifecycle evidence.
 M23's historical evidence is retained, while M24/M25 adapter and packaged
 platform qualification remain independently gated. Local source consumption is
 temporary; publication and a future crates.io switch require separate work.
+
+M33 additionally admits only capture-to-`lapis-agent-redaction` at its exact
+versioned sibling path. CI materializes its immutable source pin independently
+of Lapis AI. Core/model/WAL gain no privacy/runtime edge. The shared source
+materializer retains bounded archive requests, package-version checks, atomic
+installation and refusal to replace existing checkouts. This is temporary
+source-library consumption, not publication.

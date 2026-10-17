@@ -78,6 +78,12 @@ current source and stages a verified local bundle. Both Rust workspaces use
 versioned Cargo path dependencies on that checkout. A future release can replace
 the path selectors with crates.io dependencies; no library code is copied here.
 
+Native privacy also consumes the sibling `agent-redaction` Rust crate. Keep that
+checkout available during source development. CI materializes independently
+pinned Lapis AI and Agent Redaction sources before Cargo resolution; it refuses
+to replace an existing checkout. This changes no runtime launch or credential
+policy and performs no package publication.
+
 `pnpm desktop:prepare` builds the app and stages `lapis-acp`, `lapis-agent`,
 `lapis-agent-tools` and `lapis-compute` with licenses and the upstream TOML
 manifest. Pass `--ai-bundle /absolute/path/to/bundle` to select an already built

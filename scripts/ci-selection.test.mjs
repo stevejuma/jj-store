@@ -284,3 +284,20 @@ test("only the server may consume the explicitly named sibling AI client crates"
   };
   assert.throws(() => packageGraph(data, root), /Unmodelled/);
 });
+
+test("only capture may consume the exact standalone native redaction source", () => {
+  const data = metadata(["jj-store-capture"]);
+  data.packages[0].dependencies = [
+    {
+      name: "lapis-agent-redaction",
+      path: "/agent-redaction/crates/lapis-agent-redaction",
+    },
+  ];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  data.packages[0].dependencies[0].path = "/untrusted/lapis-agent-redaction";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  data.packages[0].dependencies[0].path =
+    "/agent-redaction/crates/lapis-agent-redaction";
+  data.packages[0].name = "jj-store-model";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+});

@@ -242,3 +242,9 @@ M32 includes jj-store-native in the coordinated library inventory with a concise
 crate README and portable path-plus-version dependencies. Its minor Changeset
 adds named native factories without publishing packages or changing existing
 manifest/WAL/receipt formats. JST-ARCH-005 release gates remain unchanged.
+
+M33 native privacy source consumption retains immutable sibling-source pins. CI
+materializes Agent Redaction separately from Lapis AI, verifies the declared
+package version and refuses replacement of an existing source checkout. Only the
+exact capture-to-redaction path is admitted. These source-library changes do not
+publish either repository or weaken artifact/qualification gates.

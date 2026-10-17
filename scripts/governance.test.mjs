@@ -397,6 +397,32 @@ test("capture_runtime_consumes_owned_interfaces_without_reverse_dependencies", (
   assert.equal(rejected.length, 8);
 });
 
+test("native privacy stays outside core authority and is admitted only for capture", () => {
+  assert.deepEqual(
+    dependencyErrors([
+      {
+        name: "jj-store-capture",
+        dependencies: [{ name: "lapis-agent-redaction" }],
+      },
+    ]),
+    [],
+  );
+  for (const name of [
+    "jj-agent",
+    "jj-store-core",
+    "jj-store-model",
+    "jj-store-wal",
+    "jj-store-server",
+  ]) {
+    assert.equal(
+      dependencyErrors([
+        { name, dependencies: [{ name: "lapis-agent-redaction" }] },
+      ]).length,
+      1,
+    );
+  }
+});
+
 test("http_consumes_owned_service_contracts_without_storage_or_upstream", () => {
   assert.equal(
     dependencyErrors([

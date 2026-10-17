@@ -12,3 +12,8 @@ original request identities across retries; host policy owns source admission.
 See the [capture guide](../../docs/site/guides/capture.md),
 [capture pipeline](../../docs/site/technical/capture.md) and
 [preview runbook](../../docs/capture-preview.md).
+
+Native privacy is delegated to the independently owned `lapis-agent-redaction`
+crate. This crate retains JJ payload bounds, source normalization and
+publication recovery. The two native policy IDs and existing sanitized record
+formats remain unchanged.

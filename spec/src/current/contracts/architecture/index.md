@@ -32,3 +32,4 @@ Read the owning topic and requirement before implementation.
 - [Public distribution and release orchestration](23-public-distribution.md)
 - [Forge-agnostic stack submission](24-forge-stacks.md)
 - [Injectable collaboration stores](25-injectable-collaboration-stores.md)
+- [Reusable agent workflows](26-reusable-agent-workflows.md)
