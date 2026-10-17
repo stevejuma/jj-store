@@ -1,10 +1,14 @@
 # jj-store-wal
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Native repository publication, verified dependency inventories, immutable
+catalogs, durable receipts and recovery. A manifest CAS selects the exact
+published transaction and its domain roots.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Construct `publication::Coordinator` with an `ObjectStore`, a qualified
+`DependencySource`, a `PublicationGuard` and explicit limits. Use its typed
+publication and status methods with stable request/publication identities.
+Readers follow captured manifest selections; checkpoints preserve original
+history and receipts.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [publication and recovery](../../docs/site/technical/publication.md) and
+[object storage](../../docs/site/technical/storage.md).

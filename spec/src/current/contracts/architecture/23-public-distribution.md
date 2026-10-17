@@ -10,6 +10,11 @@ excludes native object/WAL and application transports. The focused JJ companion
 feature adds qualified source evidence without those native/application modules.
 This source-library qualification does not publish any package or native bundle.
 
+Crate-root READMEs introduce each package's role, actual usage entry points and
+dependency context, with links to detailed documentation under `docs`. Separate
+maintained helper workspaces have the same overview. Documentation coverage and
+package containment do not expand their platform or release qualification.
+
 JST-ARCH-005 governs the coordinated public source, Cargo, native archive and
 container distribution. Changesets owns the release version and notes through
 the private npm workspace package; npm publication is disabled. The version PR

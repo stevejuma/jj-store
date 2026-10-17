@@ -1,5 +1,9 @@
 # Publication and recovery
 
+The WAL overview introduces Coordinator with qualified source, guard and limits.
+E-CRATE-READMES-001 preserves JST-PUB-001/004/005 manifest selection, native
+publication and original-request recovery; no staging step becomes publication.
+
 The WAL facade exposes a pure normalized tool-alias lookup for timing reads from
 selected sanitized observations. It reuses the owning AgentStore normalizer and
 returns a native ID only for one unambiguous matching tool target. The lookup

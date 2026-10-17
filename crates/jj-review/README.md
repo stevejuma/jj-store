@@ -1,10 +1,13 @@
 # jj-review
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Repository-owned review anchors, comments, thread state and immutable review
+objects. Anchors identify exact code or agent artifacts, with portable source
+evidence where the selected repository profile supports it.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Construct and validate an `ArtifactAnchorV1` and a `ReviewCommandV1`, then
+submit them through a ReviewStore provider. The exported codecs and resolver
+contracts support canonical records and source validation; providers own
+persistence, authorization and receipt replay.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See the [review guide](../../docs/site/guides/reviews.md) and
+[publication model](../../docs/site/technical/publication.md).

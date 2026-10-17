@@ -1,5 +1,9 @@
 # Typed mutations
 
+The service overview explains NativeSession and admitted LocalRepository
+composition. E-CRATE-READMES-001 preserves JST-MUT-001 intent, permission,
+precondition and durable receipt semantics; runtime implementation is unchanged.
+
 Blame reuses read-only operation-pinned stores. Its separate file-byte admission
 and data-only continuation cache grant no mutation authority, source writes,
 working-copy snapshot or publication. Existing predicate comparison limits and

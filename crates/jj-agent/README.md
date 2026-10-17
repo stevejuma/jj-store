@@ -1,10 +1,13 @@
 # jj-agent
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Repository-owned agent activity models: sanitized observations, normalizer
+profiles, sessions, transcripts, tools, checkpoints and provenance. Canonical
+object codecs keep immutable references stable across storage providers.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Start with `SanitizedObservationBatchV1` and a supported `NormalizerProfileV1`.
+Use `AgentObjectV1`, `AgentRootV1` and their codecs to exchange validated
+records; use an AgentStore provider to persist and publish them. Agent execution
+belongs to the host.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See the [capture pipeline](../../docs/site/technical/capture.md) and
+[collaboration concepts](../../docs/site/concepts/collaboration.md).

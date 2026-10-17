@@ -1,10 +1,14 @@
 # jj-store-http
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+HTTP/SSE application API and browser asset delivery. It exposes shared service
+contracts, operation-pinned reads, typed mutations, live events and bounded Help
+assets through the application's request-admission policy.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Compose `HttpApi` with its `Config`, access mode and admitted service resources,
+then mount it in the HTTP host. Browser Origin, authentication and repository
+permissions remain part of that composition. The contract module owns the
+OpenAPI description used by generated clients.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See the [API reference](../../docs/site/reference/http-api.md),
+[transport semantics](../../docs/site/reference/transport.md) and
+[access policy](../../docs/site/reference/security.md).

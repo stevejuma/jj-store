@@ -1,5 +1,9 @@
 # Read APIs and browser
 
+E-CRATE-READMES-001 documents HttpApi composition and links the detailed API
+manual. JST-API-001/002 DTO, admission, snapshot, cursor and event contracts are
+unchanged; the README adds no endpoint or browser behavior.
+
 E-CI-BROWSER-001 confirms JST-API-001/004 read admission, operation pinning,
 mutation receipts and native formats remain unchanged. Browser qualification
 follows the advertised application feed, waits for the final CLI operation after

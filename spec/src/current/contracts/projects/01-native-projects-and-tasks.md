@@ -1,5 +1,9 @@
 # Native projects and tasks
 
+The jj-work overview identifies storage-independent commands and pure state
+application. E-CRATE-READMES-001 preserves JST-WORK-001/004/005 identities,
+versioned metadata, selected roots and original receipt behavior.
+
 WorkStore is a repository-owned application domain alongside AgentStore and
 ReviewStore. One project home owns metadata, tasks and discussion history. A
 home may contain several projects and may also contain ordinary code.

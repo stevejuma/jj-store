@@ -1,5 +1,9 @@
 # CLI and server commands
 
+The CLI and server overviews name the existing binaries and composition modules,
+linking their detailed manuals. E-CRATE-READMES-001 preserves
+JST-CLI-001/002/004 registered commands, output and process lifetime contracts.
+
 E-CI-BROWSER-001 confirms JST-CLI-002/004 command and process contracts remain
 unchanged. The Git-cycle browser child still runs through the same real-RustFS
 acceptance parent; an explicit test-only browser root allows isolated current

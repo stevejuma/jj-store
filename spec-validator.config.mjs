@@ -111,6 +111,13 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^docs/desktop-development\\.md$",
+          chapterPatterns: [
+            "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+            "^spec/src/current/contracts/desktop/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
+        {
           pattern: "^docs/agent-execution\\.md$",
           chapterPatterns: [
             "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",

@@ -1,5 +1,12 @@
 # Application documentation
 
+Each maintained Cargo crate has a root README with its role, usage entry points
+and context. These are concise introductions; detailed integration, operation
+and development guidance stays under `docs` and is linked from the overview.
+Separate helper workspaces follow the same convention. Upstream vendored source
+keeps its original documentation and attribution. README coverage does not
+qualify a runtime, platform, provider or release.
+
 E-CI-BROWSER-001 reviews the current browser Settings/freshness sources under
 JST-DOC-001/002 and refreshes their explicit source fingerprint. The manual now
 states that opening Reload saved settings observes the latest revision without

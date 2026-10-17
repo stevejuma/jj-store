@@ -1,10 +1,14 @@
 # jj-store-service
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Shared authorization, operation-pinned reads and typed application services for
+native repositories and registered local JJ folders. HTTP, RPC and in-process
+callers consume the same owned contracts and semantic policy.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Compose a `native::NativeSession` with the installation's access policy, storage
+and limits, or use `local_repository::LocalRepository` with an admitted local
+metadata capability. Use the domain services for commands and receipt lookup;
+retain explicit historical read selections across later publications.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [architecture](../../docs/site/technical/architecture.md),
+[read semantics](../../docs/site/technical/reads.md) and
+[transport semantics](../../docs/site/reference/transport.md).

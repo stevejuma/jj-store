@@ -11,6 +11,10 @@
 The enclosing Jujutsu change is the revision. M9, M11, M13 and M15 retain their
 existing status and qualification gaps. This milestone does not qualify new
 storage profiles, publish packages or enable distributed publication.
+
+E-CRATE-READMES-001 records the requested crate overview and usage
+documentation. M32 remains In progress for provider composition, native adapters
+and independent consumer qualification.
 <!-- generated-navigation -->
 
 ## Pages

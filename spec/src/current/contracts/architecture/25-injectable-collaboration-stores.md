@@ -1,5 +1,9 @@
 # Injectable collaboration stores
 
+E-CRATE-READMES-001 explains the current core and focused JJ entry points and
+links detailed documentation. JST-ARCH-006 store construction and publication
+contracts are unchanged; the overview does not complete pending M32 gates.
+
 JST-ARCH-006 introduces library-owned AgentStore, WorkStore, ReviewStore,
 ThreadStore and ReactionStore interfaces beside stock jj-lib. Each store has its
 own named factory registration and may be disabled independently. The host

@@ -1,12 +1,15 @@
 # jj-store
 
-Server administration and the collision-safe `jj-store-jj` native client.
+Command-line entry points for the jj-store application. The `jj-store` binary
+owns installation and server administration; `jj-store-jj` is the collision-safe
+custom JJ client with application command families. The Rust library target is
+named `jj_store_cli`.
 
-Install with `cargo install jj-store --locked`. Complete native bundles also
-include the browser, Help and embedded storage helper.
+Start with `jj-store --help` or `jj-store-jj --help`. Commands choose native
+service or local Git companion behavior according to the repository context.
+Complete native bundles also include browser Help and the embedded storage
+helper; an existing upstream `jj` installation is preserved.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
-
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [installation](../../docs/site/getting-started/install.md),
+[repository contexts](../../docs/site/getting-started/contexts.md) and the
+[CLI reference](../../docs/site/cli/index.md).

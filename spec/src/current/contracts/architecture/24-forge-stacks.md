@@ -1,5 +1,9 @@
 # Forge-agnostic stack submission
 
+The jj-forge overview introduces its client, planner, engine and journal
+modules. E-CRATE-READMES-001 preserves JST-FORGE-001/003/007 provider gates,
+original external-effect recovery and device-local credential custody.
+
 ## Requirements
 
 | ID            | Requirement                                                                                                                                                                                                                                                                                                                                 |

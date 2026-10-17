@@ -1,5 +1,10 @@
 # Object storage
 
+The object-storage overview describes ObjectStore, staging, bounded conditions
+and explicit unknown outcomes. E-CRATE-READMES-001 preserves JST-OBJ-001/005
+conditional-write and managed-runtime authority; no storage profile is
+qualified.
+
 E-INJECTABLE-STORES-001 confirms JST-OBJ-001 is unchanged by collapsing the
 existing S3 unknown-outcome repository guard into one equivalent conditional.
 Unknown writes retain the same uncertainty fence and original request identity.

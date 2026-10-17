@@ -1,21 +1,17 @@
 # jj-store-jj
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Integration with the pinned stock `jj-lib`: native object/backend adapters,
+operation and view codecs, operation-pinned reads, local Git repository access
+and qualified source evidence. Upstream JJ types stay at this boundary.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+The default `native` feature provides the full adapter. For a Git-only
+embedding, select `default-features = false` and `features = ["companion"]` in
+the Cargo dependency. `local_repository::metadata_store` resolves the existing
+GitBackend without reconciling heads; `MetadataStore::carrier()` includes the
+qualified `local_evidence::JjEvidenceValidator` for `jj-store-git`.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
-
-## Focused companion integration
-
-Use `default-features = false, features = ["companion"]` to embed the standalone
-Git collaboration provider beside stock jj-lib without native object storage,
-WAL, service or application modules. `local_repository::metadata_store` resolves
-an ordinary JJ GitBackend without loading or reconciling operation heads. Its
-`MetadataStore::carrier()` supplies the generic Git carrier with the qualified
-`local_evidence::JjEvidenceValidator` already installed. Capture exact source
-capsules with `local_evidence::inspect` and pass their bytes through the typed
-store commands. The default `native` feature retains the existing full adapter.
+Use `local_evidence::inspect` to capture exact source capsules for typed store
+commands. See
+[local repository integration](../../docs/site/technical/local.md),
+[read semantics](../../docs/site/technical/reads.md) and
+[codec coverage](../../docs/codec-coverage.md).

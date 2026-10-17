@@ -1,10 +1,14 @@
 # jj-store-capture
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Private agent capture, sanitization, source discovery and durable spool recovery
+for supported harness profiles. Captured observations become repository-owned
+AgentStore records only through an admitted publisher.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Start with a supported `profile` and `agent_sanitization`, retain batches in
+`agent_capture::AgentCaptureSpool`, then use `agent_publication` or
+`local_agent_publication` for the selected provider. Preserve prepared data and
+original request identities across retries; host policy owns source admission.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See the [capture guide](../../docs/site/guides/capture.md),
+[capture pipeline](../../docs/site/technical/capture.md) and
+[preview runbook](../../docs/capture-preview.md).

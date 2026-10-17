@@ -1,5 +1,9 @@
 # Agent activity, repository reviews, Threads and Reactions
 
+The Agent, Review, collaboration and capture crate overviews describe their
+model, codec, transition and spool roles. E-CRATE-READMES-001 preserves
+JST-COLLAB-001/002/003 exact sources, authorization and publication semantics.
+
 Thread directory and selected conversation reads start concurrently through the
 repository/session/profile query cache. Navigation cancels obsolete reads;
 confirmed reactions invalidate and reload only their exact target, retaining
