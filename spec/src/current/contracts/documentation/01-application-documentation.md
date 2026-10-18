@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-027 records the repository-view parity review, source/data
+boundaries and ordered NOTES-05I slices. The initial canvas/header port and its
+passing stories do not qualify missing source behavior. The checklist moves the
+single Active marker to NOTES-05I; NOTES-07 waits with qualified native slices
+retained and its managed conversation/restart gate open.
+
 E-REUSABLE-PROGRESS-026 records NOTES-07J retained native transcript reads.
 Opaque read/stream handles, immutable range selection, exact sequence text and
 explicit close stay distinct from renderer projection and managed dispatch.

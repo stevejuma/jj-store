@@ -249,3 +249,10 @@ bounded page rechecks current native admission and original provider proof; only
 issued exact decimal sequence positions continue. Hosts cap open reads, retire
 handles on closure/reattachment and retain no idle counted writer call. Renderer
 projection and authoring/execution retain separate integration gates.
+
+The Notes repository-view port remains incomplete until its source/browser
+parity matrix is satisfied. Matching the canvas/header and passing existing
+interactions cannot prove missing native search, highlighted query completion,
+metadata-rich comparison pickers, stacked operation/diff cards or exact file
+statistics. The host reuses existing pinned query/detail APIs where available;
+unknown statistics stay explicit until their bounded data producer is qualified.

@@ -2,10 +2,11 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-Execution now: **one Active task, NOTES-07** for native conversation
-integration. NOTES-05H header alignment and NOTES-07I native conversation reads
-are qualified. NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07** managed
-integration; started stages retain their open gates.
+Execution now: **one Active task, NOTES-05I** for complete repository-view
+parity after the source/browser gap review. The header alignment is complete;
+search, rich comparison pickers, Op Log composition and statistics remain open.
+NOTES-07 waits during this UI work; NOTES-07J native continuation is qualified.
+NOTES-06C and NOTES-06C4 still await NOTES-07 managed integration.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -23,10 +24,15 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-07.** Continue native renderer projection,
-  executable/credential admission, ordinary runtime dispatch and per-vault
-  renderer persistence. NOTES-07G/H/I qualify conversation preparation, the real
-  selected-store factory and confirmed native reads; managed chat remains open.
+- **Active task: NOTES-05I.** Close the source-confirmed repository-view gaps:
+  highlighted native search, rich Command View parent/revision pickers, stacked
+  Op Log detail/diff cards, exact statistics and remaining row/state parity. The
+  [parity review](repository-view-parity-review.md) owns the explicit gap matrix
+  and ordered slices. Review is complete; implementation remains open.
+- **Waiting: NOTES-07.** Resume renderer projection, executable/credential
+  admission, ordinary runtime dispatch and per-vault persistence after this
+  requested UI alignment. Native preparation/factory/read/continuation slices
+  remain qualified; managed chat/restart remains open.
 - **Completed: NOTES-07J.** Notes `d00a69b3` / E-AI-038 qualifies retained
   native transcript continuation with opaque read/stream handles, original
   immutable selection, exact issued sequence positions and fresh receipt checks.
@@ -121,7 +127,7 @@ whole stage.
 
 These are acceptance summaries, not a work queue. **Started; gate open**
 corresponds to the canonical ledger's **In progress**: some work is delivered,
-but acceptance is incomplete. Only NOTES-07 is currently active. The stages
+but acceptance is incomplete. Only NOTES-05I is currently active. The stages
 below are not being worked on simultaneously.
 
 | Stage                                       | Status             | Delivered so far                                                                  | Remaining gate                                                        |
@@ -421,8 +427,9 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-NOTES-07 is the sole Active implementation task. NOTES-05F/05G/05H UI slices are
-complete; capture still waits for managed backend integration.
+NOTES-05I is the sole Active implementation task. NOTES-05F/05G/05H complete the
+initial canvas/header port, not full source-view parity. NOTES-07 waits for this
+UI alignment; capture still awaits managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -444,18 +451,22 @@ complete; capture still waits for managed backend integration.
 - [x] **NOTES-07I — Complete:** Notes `d1c27e17` / E-AI-037 qualifies bounded
       confirmed native conversation reads and cold exact-read restart. This
       supplies no managed-chat or complete continuation acceptance.
-- [ ] **NOTES-07 — Active:** Add receipt-aware AgentStore/ThreadStore
-      conversation adapters and explicit per-vault backend selection, retaining
-      legacy file conversations. The reusable adapter is complete in NOTES-07B;
-      NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
-      and owner service; NOTES-07E connects native host/IPC and closure.
-      NOTES-07G completes native conversation preparation and original-receipt
-      recovery. NOTES-07H completes real selected-store processor construction.
-      NOTES-07I/J qualify bounded confirmed reads and retained continuation.
-      Next add renderer projection, executable/credential admission, ordinary
-      runtime dispatch and per-vault renderer persistence. NOTES-07F1/F2
-      complete shared and Notes retained-authority prerequisites; no managed
-      conversation gate is closed.
+- [ ] **NOTES-05I — Active:** Complete the source/browser-confirmed parity gaps
+      in [the review](repository-view-parity-review.md). Query controls, rich
+      comparison cards, Op Log composition, statistics and whole-view acceptance
+      run as ordered slices; only the umbrella task is Active.
+- [ ] **NOTES-07 — Waiting for NOTES-05I:** Add receipt-aware
+      AgentStore/ThreadStore conversation adapters and explicit per-vault
+      backend selection, retaining legacy file conversations. The reusable
+      adapter is complete in NOTES-07B; NOTES-07C supplies Notes' journal and
+      NOTES-07D its native backend profile and owner service; NOTES-07E connects
+      native host/IPC and closure. NOTES-07G completes native conversation
+      preparation and original-receipt recovery. NOTES-07H completes real
+      selected-store processor construction. NOTES-07I/J qualify bounded
+      confirmed reads and retained continuation. Next add renderer projection,
+      executable/credential admission, ordinary runtime dispatch and per-vault
+      renderer persistence. NOTES-07F1/F2 complete shared and Notes
+      retained-authority prerequisites; no managed conversation gate is closed.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
