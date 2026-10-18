@@ -1,5 +1,13 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-033 records the user's standing approval (2026-10-18) and
+qualified NOTES-08B adoption in Notes E-AI-041. The shared transcript preserves
+vault-owned Document/Classic and chat actions; 164 affected UI checks, normal
+native build and cold native review pass. NOTES-07K is the sole Active child for
+native JJ browsing; capture/restart and later slices follow. Capability, native
+qualification and visual baselines remain distinct under JST-DOC-001. No
+ordinary development data is reset.
+
 E-REUSABLE-PROGRESS-032 records the approved visible AI sequence under
 JST-DOC-001: NOTES-08A reviews shared Document/Classic presentation, exact
 comments and code/table context before ordinary plugin adoption. The Design Core

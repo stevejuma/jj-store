@@ -1,22 +1,21 @@
 # Reusable agent workflows: delivery checklist
 
-Last reviewed: 2026-10-18. Overall: **In progress**.
+Last reviewed: 2026-10-19. Overall: **In progress**.
 
 **Current direction: visible AI delivery.** The user approved a staged
-implementation: document/classic Storybook review, visual confirmation, live
-adoption, native JJ conversation browsing, real lapis-agent chat and cold
-restart. Focused checks accompany each slice; broad provider/platform/release
-and visual baseline qualification remain deferred.
+implementation: document/classic Storybook review, live adoption, native JJ
+conversation browsing, real lapis-agent chat and cold restart. The user gave
+standing implementation approval on 2026-10-18. Focused checks accompany each
+slice; broad provider/platform/release and visual baseline qualification remain
+deferred.
 
-**Review gate: NOTES-08A awaits visual confirmation.** The opt-in Design Core
-Transcript, MarkdownComposer and TranscriptFooter composition uses Document as
-default and Classic as its alternative. Footer corrections retain a compact
-single row and rightward formatting expansion; no task is Active while awaiting
-review. The ordinary plugin retains its current UI until visual confirmation.
-NOTES-05I's remaining native repository capabilities wait; reviewed
-history/blame presentation is adopted through Notes E-REPO-023/024. Anchored
-comments are part of this first AI slice, including comments-only requests.
-Native comment publication and restart remain later gates.
+**Active: NOTES-07K — Native JJ conversation browsing.** NOTES-08B is qualified
+in Notes E-AI-041: ordinary shared transcript, Document default and saved
+per-vault Classic, retained chat controls and compact same-row footer. The
+rebuilt native review app was cold-launched without resetting its vault. Connect
+explicit backend selection, confirmed listing/creation and pinned reads next.
+Only this child is Active; native capture/restart and original later slices
+follow under standing approval. Visual baseline approval stays distinct.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -34,19 +33,23 @@ whole stage.
 
 ## Current checkpoint
 
-- **Waiting for visual confirmation: NOTES-08A — Document/classic AI review.**
+- **Completed review implementation: NOTES-08A — Document/classic AI review.**
   Production-owned AI components use the retained controller and catalog-only
   fake clients. Separate Design Core reference stories run inside the same
   AppShell (both docks collapsed) and standalone. Fenced code reuses captured
   code/patch readers with inline comments and line folds. Mira supplies
   immutable tables; table comments split after their source row and retain full
-  row context with the selected text highlighted. Visual confirmation precedes
-  live adoption. Native JJ chat and restart are still pending; source component
-  fixes stay in Design Core. E-AI-040 corrects footer height and same-row
-  formatting in both Notes and reference; 36 source and 60 consumer
+  row context with the selected text highlighted. The user has authorized the
+  remaining implementation. Native JJ chat and restart are still pending; source
+  component fixes stay in Design Core. E-AI-040 corrects footer height and
+  same-row formatting in both Notes and reference; 36 source and 60 consumer
   interaction/accessibility cases pass.
-- **Next: NOTES-08B** promotes the approved UI and retains the per-vault view
-  preference. **NOTES-07K** connects native listing/creation/reads;
+- **Completed: NOTES-08B** adopts the ordinary shared UI and retains the
+  per-vault view preference. E-AI-041 records 42 unit tests, 164 interaction/axe
+  cases across both widths/themes, clean types/ownership, renderer/native build
+  and cold native review; 110 source/Git/JJ files remain unchanged. Design Core
+  `6b5654e0` retains readable disabled drafts/avatars after 47 affected source
+  stories. **Active: NOTES-07K** connects native listing/creation/pinned reads;
   **NOTES-07L** admits bundled lapis-agent using explicit Lapis AI configuration
   and native secret references. The first live scope is chat/file
   context/cancel, followed by **NOTES-09** cold restart and uncertain-outcome
@@ -509,10 +512,10 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-NOTES-08A awaits visual confirmation; no implementation task is Active.
+NOTES-07K is the sole Active child task under standing implementation approval.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
-parity. NOTES-07 waits for the first AI review; capture still awaits managed
-backend integration.
+parity. The shared AI UI is adopted; capture still awaits managed backend
+integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -565,7 +568,7 @@ backend integration.
       in [the review](repository-view-parity-review.md). Native query/evolution,
       write capabilities, exact statistics and remaining state/whole-view
       acceptance run as ordered slices; only the umbrella task is Active.
-- [ ] **NOTES-07 — Waiting for NOTES-08A:** Add receipt-aware
+- [ ] **NOTES-07 — Waiting for NOTES-07K/L:** Add receipt-aware
       AgentStore/ThreadStore conversation adapters and explicit per-vault
       backend selection, retaining legacy file conversations. The reusable
       adapter is complete in NOTES-07B; NOTES-07C supplies Notes' journal and
@@ -577,12 +580,13 @@ backend integration.
       executable/credential admission, ordinary runtime dispatch and per-vault
       renderer persistence. NOTES-07F1/F2 complete shared and Notes
       retained-authority prerequisites; no managed conversation gate is closed.
-- [ ] **NOTES-08A — Waiting for visual confirmation:** Review document/classic
-      presentation in Storybook; wait for user confirmation before ordinary
-      plugin adoption.
-- [ ] **NOTES-08B:** Promote the approved UI and retain its per-vault
-      preference.
-- [ ] **NOTES-07K:** Connect native JJ conversation listing, creation and reads.
+- [x] **NOTES-08A — Complete (review implementation):** Document/classic shared
+      transcript and focused checks; baseline approval remains separate.
+- [x] **NOTES-08B — Complete:** Notes E-AI-041 adopts the ordinary shared UI,
+      retains per-vault preference and chat actions, and qualifies all 164
+      affected UI checks plus cold rebuilt-native review.
+- [ ] **NOTES-07K — Active:** Connect native JJ conversation listing, creation
+      and retained reads. No managed-provider completion is implied.
 - [ ] **NOTES-07L:** Run bundled lapis-agent with native capture and explicit
       configured provider/model; first scope is chat, file context and cancel.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters

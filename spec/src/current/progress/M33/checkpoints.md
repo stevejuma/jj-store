@@ -266,3 +266,12 @@ E-FILE-BLAME-001 qualifies native retained-handle attribution and the typed
 client. Notes E-REPO-018 owns copied blame presentation, sidebar cleanup, Empty
 states and representative loading. M33/M33.4 gates/statuses remain unchanged;
 managed conversation/restart, provider/platform and visual acceptance stay open.
+
+E-REUSABLE-PROGRESS-033 qualifies NOTES-08B in Notes E-AI-041: shared ordinary
+Document/Classic transcript, retained per-vault choice and chat controls. Source
+Design Core 47 cases and Notes 164 affected UI cases pass; types/ownership,
+renderer/normal native bundle and cold review pass without altering 110 source,
+Git or JJ files. NOTES-07K is sole Active; native listing/creation/pinned reads,
+NOTES-07L capture and NOTES-09 restart follow. Later
+participant/discussion/import/capture slices stay in scope. Original M33
+statuses and completion gates are unchanged.
