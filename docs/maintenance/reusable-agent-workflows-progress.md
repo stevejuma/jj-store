@@ -18,19 +18,18 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-06C.** Connect Notes-owned privacy and durable capture
-  through the qualified native factory. Retain one raw owner, native scope,
-  capture before display/acknowledgement and drained vault closure. The shared
-  receipt-fenced capture port is qualified in NOTES-06C1. NOTES-06C2 now
-  qualifies complete native batches and the Notes adapter with synthetic
-  privacy/storage. Production renderer consumption and transcript provenance are
-  qualified in NOTES-06C3. Actual native privacy/backend binding remains
-  pending.
+- **Active task: NOTES-07.** Add receipt-aware AgentStore/ThreadStore adapters
+  and explicit per-vault backend selection. This supplies the real JJ sink
+  required to finish NOTES-06C/D. Work advances one task at a time.
+- **Waiting: NOTES-06C/06C4.** Shared capture, complete batches, production
+  transcript provenance and the real native privacy prerequisite are qualified.
+  Actual backend ownership, publication and drained closure await NOTES-07.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
   records six cold default ACP compatibility passes with foreground assistance.
-  Notes privacy and durable backend adoption remain pending.
+  Notes privacy is qualified separately in NOTES-06C4B; the durable backend
+  remains pending.
 - **Completed: NOTES-06A.** Lapis AI `6ce65ebb` adds an injected Rust processor
   before startup facts and event publication. Nine focused cases, all 995 Rust
   tests (two inherited ignored), 45 governance and 27 renderer cases, strict
@@ -56,10 +55,14 @@ whole stage.
   complete check/test/build/specification lanes and 261 source stories pass.
   Design Core passes 821 units, 834 stories and 172 browser cases, one existing
   skip. Package provenance and earlier failures remain in owning evidence.
-- **Next within NOTES-06C:** NOTES-06C4, admitted native privacy and exact
-  backend ownership/drain. Its durable JJ sink depends on the NOTES-07
-  AgentStore/ThreadStore adapters. NOTES-06D and NOTES-08/09 retain complete
-  managed conversation and restart acceptance.
+- **Completed: NOTES-06C4B.** Notes selects the real shared privacy policy in
+  cold native acceptance and refuses stale admission or missing ordinary backend
+  selection. Both Rust profiles pass 112 tests (two inherited ignored each); all
+  eight cold ACP cases pass with foreground assistance. The fixture sink remains
+  synthetic. Desktop `51bed526`; evidence: E-AI-030/E-REUSABLE-PROGRESS-014.
+- **Next acceptance:** Finish NOTES-06C4 and NOTES-06D once NOTES-07 supplies
+  the real backend. NOTES-08/09 retain application adoption and one recoverable
+  JJ-backed conversation with cold restart proof.
 - **After that:** addressed agents/discussions, imports, opt-in capture,
   portable package intake and independent downstream qualification. Visual
   comparison/approval remains separate and pending.
@@ -68,7 +71,7 @@ whole stage.
 
 These are acceptance summaries, not a work queue. **Started; gate open**
 corresponds to the canonical ledger's **In progress**: some work is delivered,
-but acceptance is incomplete. Only NOTES-06C is currently active. The stages
+but acceptance is incomplete. Only NOTES-07 is currently active. The stages
 below are not being worked on simultaneously.
 
 | Stage                                       | Status             | Delivered so far                                                                  | Remaining gate                                                        |
@@ -184,8 +187,9 @@ below are not being worked on simultaneously.
       batches. Retain deferred prefix frames and scan final projections before
       persistence. Ten focused cases and all 20 crate cases pass, including the
       ordered-JSON feature profile. Evidence: E-REUSABLE-AGENTS-013. This is the
-      shared library prerequisite; NOTES-06C stays Active until Notes connects
-      its actual native privacy/backend and complete batch delivery.
+      shared library prerequisite; NOTES-06C stays incomplete until Notes
+      connects its actual durable backend. Batch delivery and the real-policy
+      prerequisite are qualified in the slices below.
 
 - [x] **NOTES-06C2** Preserve deferred text in atomic acknowledged native
       batches, add the Notes-owned capture adapter and qualify actual Tauri
@@ -206,8 +210,9 @@ below are not being worked on simultaneously.
       policy and all 696 current-app interaction/accessibility checks pass. All
       seven cold ACP cases pass together with foreground assistance. Strict
       lint, 111 native service tests (two inherited ignored), renderer/native
-      builds and specification checks pass. Production native privacy and JJ
-      durability remain pending. Delivery evidence: E-REUSABLE-PROGRESS-013.
+      builds and specification checks pass. Actual JJ durability and ordinary
+      target admission remain pending; the real-policy profile is qualified in
+      NOTES-06C4B. Delivery evidence: E-REUSABLE-PROGRESS-013.
 
 - [x] **NOTES-06C4A** Add the opt-in native privacy bridge to the conversation
       library, selecting the existing Agent Redaction transcript policy. Five
@@ -215,8 +220,18 @@ below are not being worked on simultaneously.
       and unknown receipts. The default profile passes 20 tests without the
       scanner; the opt-in ordered-JSON profile passes 25. Governance, CI graph
       and manual checks retain their boundaries. Evidence:
-      E-REUSABLE-AGENTS-014. Notes adoption, exact native scope and its actual
-      durable backend remain pending within NOTES-06C4.
+      E-REUSABLE-AGENTS-014. Notes adoption is qualified in NOTES-06C4B; its
+      actual durable backend remains pending within NOTES-06C4.
+
+- [x] **NOTES-06C4B** Adopt the real shared privacy policy in the Notes native
+      capture adapter, with native-owned paths and a disposable scanner cache.
+      Ordinary policy refuses stale admission and missing backend selection.
+      Both native Rust profiles pass 112 tests, two inherited ignored each;
+      strict lint and both builds pass. All eight cold ACP cases pass with
+      foreground assistance, including split paths/credentials before storage
+      and renderer delivery. Desktop `51bed526`; evidence:
+      E-AI-030/E-REUSABLE-PROGRESS-014. The synthetic sink does not qualify JJ
+      publication or restart recovery.
 
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
@@ -234,22 +249,20 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-Only its current child below is Active.
+NOTES-07 is the sole Active implementation task; capture waits for its backend.
 
-- [ ] **NOTES-06C — Active:** Connect Notes-owned privacy and durable capture
-      through the native factory. Cover bootstrap activity/facts and ordinary
-      frames; retain a single raw owner and drain capture before releasing the
-      vault.
-- [ ] **NOTES-06C4 — Next within NOTES-06C:** Inject admitted native privacy and
-      exact vault/window/backend ownership through the capture factory; retain
-      receipt fencing and drained closure. Actual JJ sink selection depends on
-      the NOTES-07 AgentStore/ThreadStore adapters.
+- [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
+      through the native factory, retaining the qualified privacy/batch owner
+      and draining capture before vault release.
+- [ ] **NOTES-06C4 — Waiting for NOTES-07:** Its shared native privacy bridge
+      and Notes adoption are complete in NOTES-06C4A/B. Exact backend ownership,
+      real JJ receipts and drained closure still require the store adapters.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
-- [ ] **NOTES-07:** Add receipt-aware AgentStore/ThreadStore conversation
-      adapters and explicit per-vault backend selection, retaining legacy file
-      conversations.
+- [ ] **NOTES-07 — Active:** Add receipt-aware AgentStore/ThreadStore
+      conversation adapters and explicit per-vault backend selection, retaining
+      legacy file conversations.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
