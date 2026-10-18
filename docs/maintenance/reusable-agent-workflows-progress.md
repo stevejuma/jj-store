@@ -2,10 +2,10 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-Execution now: **one Active task, NOTES-07** for real conversation/session
-preparation, store/processor construction and renderer persistence. NOTES-05F is
-complete. NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started
-stages retain their open gates; these entries are not concurrent work streams.
+Execution now: **one Active task, NOTES-07** for native session/capture
+construction, agent admission and renderer persistence. NOTES-05F is complete.
+NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started stages retain
+their open gates; these entries are not concurrent work streams.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -23,8 +23,9 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-07.** Resume real conversation/session preparation,
-  selected-store/processor construction and per-vault renderer persistence.
+- **Active task: NOTES-07.** Continue native session/capture construction, agent
+  admission and per-vault renderer persistence. NOTES-07G completes ordinary
+  native conversation preparation and original-receipt recovery.
 - **Completed: NOTES-05F.** Notes `fb80f410` / E-REPO-007 ports both repository
   views into public AppShell/Column Canvas, with split IDs, expanded file modes
   and matching diffs. All 768 full catalog cases, 212 renderer/governance cases,
@@ -39,12 +40,15 @@ whole stage.
   adapter and private journal port; NOTES-07C qualifies Notes' private native
   journal and real JJ store composition. NOTES-07D qualifies the native backend
   profile/owner service. NOTES-07E connects the ordinary native host/IPC and
-  admission/closure lifetime. Renderer persistence, conversation/session
-  preparation and the actual capture processor remain pending within NOTES-07.
-  NOTES-07F1 qualifies the shared retained-processing authority needed for
-  capture through renderer reload. NOTES-07F2 qualifies Notes retained native
-  authority, exact counted permits and physical/backend fences across reload.
-  Actual processor construction and managed conversation/restart remain pending.
+  admission/closure lifetime. Renderer persistence, native session preparation
+  and the actual capture processor remain pending within NOTES-07; conversation
+  preparation is qualified in NOTES-07G. NOTES-07F1 qualifies the shared
+  retained-processing authority needed for capture through renderer reload.
+  NOTES-07F2 qualifies Notes retained native authority, exact counted permits
+  and physical/backend fences across reload. NOTES-07G now qualifies ordinary
+  native conversation preparation/status, real selected Git participants and
+  exact receipt recovery across cold app restart. Actual processor construction
+  and managed conversation/restart remain pending.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -107,6 +111,17 @@ below are not being worked on simultaneously.
 | 8. Standalone qualification (M33.8)         | Pending            | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
 
 ## Completed slices
+
+- [x] **NOTES-07G — Ordinary native conversation preparation.** Notes `4e628fb2`
+      (E-AI-035) prepares a ThreadStore conversation through the current
+      explicitly selected JJ owner. Native identities, private actor and exact
+      intent precede publication; retries recover original Git receipts without
+      executing again. Twenty backend cases, both 153-case native profiles (two
+      inherited ignored each), strict Clippy, 389 AI policy and 212
+      renderer/governance cases pass. Four cold hidden API cases include exact
+      receipt recovery after app restart and unchanged dirty notes/JJ operation.
+      Actual managed capture, agent admission, renderer persistence and
+      chat/restart remain pending.
 
 - [x] **NOTES-05F — Repository history and Op Log column canvases.** Notes
       `fb80f410` (E-REPO-007) reuses public AppShell, Column Canvas, FileListing
@@ -376,11 +391,12 @@ slice is complete; capture still waits for real backend integration.
       conversation adapters and explicit per-vault backend selection, retaining
       legacy file conversations. The reusable adapter is complete in NOTES-07B;
       NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
-      and owner service; NOTES-07E connects native host/IPC and closure. Next
-      add conversation/session preparation, real store/processor construction
-      and per-vault renderer persistence. NOTES-07F1/F2 complete shared and
-      Notes retained-authority prerequisites; no managed conversation gate is
-      closed.
+      and owner service; NOTES-07E connects native host/IPC and closure.
+      NOTES-07G completes native conversation preparation and original-receipt
+      recovery. Next add actual session/store/processor construction, native
+      agent admission and per-vault renderer persistence. NOTES-07F1/F2 complete
+      shared and Notes retained-authority prerequisites; no managed conversation
+      gate is closed.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.

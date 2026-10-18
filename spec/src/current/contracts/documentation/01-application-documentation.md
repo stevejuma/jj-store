@@ -1,15 +1,14 @@
 # Application documentation
 
-E-REUSABLE-AGENTS-017 documents basic pinned operation graphs/parent deltas from
-the reusable history bridge and exact native status tags in its client. The
-Notes checklist includes the requested split IDs, expanded file browser, diff
-controls and shared AppShell body under its single Active NOTES-05F.
+E-REUSABLE-PROGRESS-021 records Notes' ordinary native conversation preparation
+and original-receipt recovery separately from actual managed capture and chat
+restart. NOTES-07 remains the sole Active task; NOTES-06C/06C4 wait for it.
 
-E-REUSABLE-PROGRESS-019 records Notes retained native capture authority and
-compatibility qualification separately from actual managed conversations. The
-user-requested Column Canvas commit-log and independent Op Log presentation is
-NOTES-05F, now the only Active task. NOTES-07 waits during this UI slice; its
-store/processor, renderer and restart gates remain unchanged.
+E-REUSABLE-PROGRESS-020 completes NOTES-05F: both repository views use the
+public AppShell body and Column Canvas, with split IDs, expanded files and
+matching diffs. E-REUSABLE-AGENTS-017 retains its separately qualified history
+bridge and client prerequisite; E-REUSABLE-PROGRESS-019 retains native lifetime
+evidence. Visual approval and managed conversation gates remain separate.
 
 E-REUSABLE-PROGRESS-018 records the shared retained native processing hook in
 Lapis AI separately from Notes adoption. Five focused cases and full source

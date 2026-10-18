@@ -211,3 +211,11 @@ Column Canvas, owned graph/identifier ports and released Diff/FileListing
 contracts. Its independent Op Log retains native pins and explicit parent and
 revision comparisons. UI qualification is separate from the native event owner,
 selected AgentStore/ThreadStore processor and managed conversation/restart gate.
+
+Embedding hosts retain exact conversation preparation before explicit
+publication. For the fixed Git-backed Notes profile, recovery verifies the
+original canonical provider receipt against its private actor, command intent,
+repository and thread result. Bare ThreadStore status and current snapshots
+cannot establish that intent. Preparation/receipt recovery does not qualify
+native managed capture or renderer conversation adoption; those retain their
+original M33 gates.
