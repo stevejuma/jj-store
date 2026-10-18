@@ -5,3 +5,4 @@ Browse the child pages below.
 ## Pages
 
 - [E-REUSABLE-PROGRESS-005](E-REUSABLE-PROGRESS-005/index.md)
+- [E-REUSABLE-PROGRESS-006](E-REUSABLE-PROGRESS-006/index.md)
