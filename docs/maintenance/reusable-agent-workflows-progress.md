@@ -16,17 +16,19 @@ mean that the named slice has evidence; they do not complete its whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-05E.** Qualify the pane-relative history layout. The
-  exact geometry regression and all 72 history checks pass, alongside types, 191
-  renderer tests and both builds. The renewed complete catalog is running.
-- **Waiting: NOTES-04B.** The isolated app builds and harness CLI/selector
-  errors are corrected. Strict native focus remains unresolved: the window is
-  visible but is not the keyboard window. No native gate is claimed.
+- **Active task: NOTES-04B.** Qualify cold visible native history and restored
+  pins. Rebuild the isolated acceptance app with the accepted pane layout, then
+  resolve foreground activation without weakening the native focus assertion. No
+  native gate is claimed.
+- **Completed: NOTES-05E.** Pane-relative history layout is committed as
+  `3aa56eff` in the isolated desktop workspace. The exact geometry regression,
+  all 72 history checks, all 696 catalog checks, types, 191 renderer/governance
+  cases and both UI builds pass. Evidence: E-REPO-005.
 - **Completed current package/UI slice:** Notes API `a91d5e2e`, Design Core
   `a57a38e2` and desktop history `2209736a` are committed independently in the
   isolated qualified workspaces. They preserve unrelated default-checkout work.
-- **Last accepted app (`2209736a`):** 68 history checks, 128 affected checks and
-  all 692 complete catalog checks pass. Types have no errors/warnings; all 191
+- **Last accepted app (`3aa56eff`):** 72 history checks and all 696 complete
+  catalog checks pass. Types have no errors/warnings; all 191
   renderer/governance cases and renderer/static catalog builds pass.
 - **Verified producers:** Notes API exact regressions, all 1,160 API cases,
   complete check/test/build/specification lanes and 261 source stories pass.
@@ -122,6 +124,11 @@ mean that the named slice has evidence; they do not complete its whole stage.
       interaction/accessibility and static builds. Desktop commit `2209736a`,
       evidence E-REPO-003. These are fixture/public-package results; visual
       approval and native history/conversation gates remain separate.
+- [x] **NOTES-05E** Make history respond to its pane width within a wide shell;
+      retain readable revision/file controls and diff content. Add the exact
+      bounds/stacking regression and qualify all 18 history cases (72 checks)
+      plus the complete 696-check catalog. Desktop commit `3aa56eff`, evidence
+      E-REPO-005. Types, 191 renderer/governance tests and both UI builds pass.
 
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
@@ -137,20 +144,17 @@ that every task in it is executing simultaneously.
 
 **Parent acceptance: NOTES-04 remains incomplete.** The visible history/diff
 renderer is implemented and committed in the isolated desktop history workspace.
-NOTES-05E qualifies its pane layout and NOTES-04B supplies its original cold
-visible native gate. This parent is not an additional execution item.
+NOTES-05E completed pane layout qualification; NOTES-04B supplies the original
+cold visible native gate. This parent is not an additional execution item.
 
-- [ ] **NOTES-04B — Waiting for native focus:** Exercise the actual native
-      WebView ribbon, unified/split diffs, external-head refresh, retained
-      historical pins, cold close/reopen and plain-folder refusal. Verify actual
-      source bytes and JJ/Git metadata remain unchanged. Hidden API tests and
-      fixtures do not substitute for this gate. The separate acceptance bundle
-      builds; its new test is being qualified.
-- [ ] **NOTES-05E — Active:** Make the history renderer respond to its pane
-      width, including a narrow body pane in a wide browser. Preserve readable
-      revision/file controls and diff content; test actual bounds and stacking,
-      then repeat the affected family and required consumer lane. Exact and all
-      72 history checks pass; the renewed complete catalog is running.
+- [ ] **NOTES-04B — Active:** Exercise the actual native WebView ribbon,
+      unified/split diffs, external-head refresh, retained historical pins, cold
+      close/reopen and plain-folder refusal. Verify actual source bytes and
+      JJ/Git metadata remain unchanged. Hidden API tests and fixtures do not
+      substitute for this gate. The separate acceptance bundle builds; its new
+      test is being qualified. A real pointer-focus diagnostic observes both
+      document focus and the native keyboard window. Automated foreground
+      qualification and the actual history/restart gate remain open.
 - [ ] **NOTES-06:** Implement one native raw-event owner. Sanitize and durably
       capture before display/ACK; drain before releasing vault authority.
 - [ ] **NOTES-07:** Add receipt-aware AgentStore/ThreadStore conversation
@@ -193,7 +197,7 @@ are available while the local preview servers remain running.
 - [Design Core split diff](http://127.0.0.1:9210/?path=/story/diff-file-diff--renders-a-split-file-diff)
 
 The new isolated Notes catalog on port 7490 renders the qualified production
-history components with fixture readers. All 17 history scenarios pass their
+history components with fixture readers. All 18 history scenarios pass their
 interaction/accessibility checks. Actual cold native history remains NOTES-04B.
 There is no persisted-chat story yet.
 
