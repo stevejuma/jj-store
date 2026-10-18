@@ -5,21 +5,27 @@ Last reviewed: 2026-10-18. Overall: **In progress**.
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
 is still pending. Notes' native repository admission and history transport are
-verified. The history/diff renderer is qualified; cold visible native acceptance
-and durable conversation capture remain pending.
+verified. The history/diff renderer and cold visible native acceptance are
+qualified on macOS ARM64 with physical foreground assistance. Durable
+conversation capture remains pending.
 
 This is the delivery checklist for the approved eight-stage plan. The
 [M33 milestone ledger](../../spec/src/current/progress/M33/index.md) owns formal
 status and gate selections. Notes' consumer gates live in the sibling
-`lapis-desktop/spec/src/current/progress/milestones.md` under M13. Checked items
-mean that the named slice has evidence; they do not complete its whole stage.
+`lapis-desktop-history/spec/src/current/progress/milestones.md` under M13.
+Checked items mean that the named slice has evidence; they do not complete its
+whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-04B.** Qualify cold visible native history and restored
-  pins. Rebuild the isolated acceptance app with the accepted pane layout, then
-  resolve foreground activation without weakening the native focus assertion. No
-  native gate is claimed.
+- **Active task: NOTES-06.** Establish one native raw-event owner that sanitizes
+  and durably captures before display/ACK, then drains before vault release.
+  Review the shared runtime journal and existing Notes AI lifecycle before
+  changing their injected boundary.
+- **Completed: NOTES-04/04B.** Cold actual-window history, exact restored pins,
+  source preservation and plain-folder refusal pass in desktop `fb238ae2`.
+  Strict native keyboard-window assertions pass. Both launches received physical
+  foreground clicks; unattended activation remains GAP-10. Evidence: E-REPO-006.
 - **Completed: NOTES-05E.** Pane-relative history layout is committed as
   `3aa56eff` in the isolated desktop workspace. The exact geometry regression,
   all 72 history checks, all 696 catalog checks, types, 191 renderer/governance
@@ -34,27 +40,24 @@ mean that the named slice has evidence; they do not complete its whole stage.
   complete check/test/build/specification lanes and 261 source stories pass.
   Design Core passes 821 units, 834 stories and 172 browser cases, one existing
   skip. Package provenance and earlier failures remain in owning evidence.
-- **Parent gate: NOTES-04.** Its renderer is committed. This groups the history
-  work and is not a separate active task; its remaining native/restoration
-  acceptance is NOTES-04B.
-- **Next:** NOTES-06 through NOTES-09, native raw-event ownership, durable
-  AgentStore/ThreadStore persistence and conversation restart recovery.
+- **Next:** NOTES-07 through NOTES-09, durable AgentStore/ThreadStore
+  persistence and conversation restart recovery.
 - **After that:** addressed agents/discussions, imports, opt-in capture,
   portable package intake and independent downstream qualification. Visual
   comparison/approval remains separate and pending.
 
 ## Stage overview
 
-| Stage                                       | Status      | Delivered so far                                              | Remaining gate                                                                    |
-| ------------------------------------------- | ----------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| 1. Contracts and compatibility (M33.1)      | In progress | Ownership, preserved formats and injectable boundaries        | Finish shared workflow contract review and compatibility coverage                 |
-| 2. Privacy and source acquisition (M33.2)   | In progress | Native redaction, source readers and headless capture         | Remaining source portability/lifecycle qualification                              |
-| 3. Conversation engine and client (M33.3)   | In progress | Stream processing, injected prompt coordination and typed SDK | Store/workspace/context adapters, application adoption and shared UI              |
-| 4. Local history and Tauri (M33.4)          | In progress | Headless history, lossless client and Notes admission/drain   | Native event ownership and downstream visible history integration                 |
-| 5. First usable Notes milestone (M33.5)     | Pending     | Existing Notes AI shell and injection seams                   | Visible history/diff UI plus one durable JJ-backed conversation and restart proof |
-| 6. Addressed agents and discussions (M33.6) | Pending     | Existing jj-store behavior available as the source reference  | Shared addressing, queues, anchors and recovery in downstream clients             |
-| 7. Imports and opt-in capture (M33.7)       | Pending     | Reusable acquisition prerequisites                            | Explicit deduplicated import and opt-in automatic local capture                   |
-| 8. Standalone qualification (M33.8)         | Pending     | Some independent Rust/package consumers pass                  | Complete downstream, packaging, documentation and qualification gates             |
+| Stage                                       | Status      | Delivered so far                                                                  | Remaining gate                                                        |
+| ------------------------------------------- | ----------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| 1. Contracts and compatibility (M33.1)      | In progress | Ownership, preserved formats and injectable boundaries                            | Finish shared workflow contract review and compatibility coverage     |
+| 2. Privacy and source acquisition (M33.2)   | In progress | Native redaction, source readers and headless capture                             | Remaining source portability/lifecycle qualification                  |
+| 3. Conversation engine and client (M33.3)   | In progress | Stream processing, injected prompt coordination and typed SDK                     | Store/workspace/context adapters, application adoption and shared UI  |
+| 4. Local history and Tauri (M33.4)          | In progress | Headless history, lossless client, Notes admission/drain and cold visible history | Native event ownership                                                |
+| 5. First usable Notes milestone (M33.5)     | Pending     | Qualified history prerequisites, existing Notes AI shell and injection seams      | One durable JJ-backed conversation and restart proof                  |
+| 6. Addressed agents and discussions (M33.6) | Pending     | Existing jj-store behavior available as the source reference                      | Shared addressing, queues, anchors and recovery in downstream clients |
+| 7. Imports and opt-in capture (M33.7)       | Pending     | Reusable acquisition prerequisites                                                | Explicit deduplicated import and opt-in automatic local capture       |
+| 8. Standalone qualification (M33.8)         | Pending     | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
 
 ## Completed slices
 
@@ -129,10 +132,20 @@ mean that the named slice has evidence; they do not complete its whole stage.
       bounds/stacking regression and qualify all 18 history cases (72 checks)
       plus the complete 696-check catalog. Desktop commit `3aa56eff`, evidence
       E-REPO-005. Types, 191 renderer/governance tests and both UI builds pass.
+- [x] **NOTES-04B** Qualify actual native ribbon/diffs, exact operation pins,
+      external-head refresh, dirty source and JJ/Git metadata preservation, cold
+      restored pins, changed-operation diff clearing and ordinary-folder
+      refusal. Desktop `fb238ae2`, evidence E-REPO-006: one full strict native
+      pass and 47 governance passes. Two physical foreground clicks were needed;
+      the native focus/visibility assertions are unchanged or strengthened.
+- [x] **NOTES-04** Complete the history parent gate with production renderer,
+      pane layout and cold visible native evidence. This completes history
+      integration in its qualified profile; durable conversations remain below.
 
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
-Desktop evidence lives under the sibling `lapis-desktop/spec/src/history`.
+Desktop evidence lives in the isolated qualified sibling
+`lapis-desktop-history/spec/src/history`; default checkouts remain independent.
 
 ## Current work and next tasks
 
@@ -142,21 +155,9 @@ is pending. One agent works through these tasks, with checks sometimes running
 in the background. Stage-level **In progress** means the stage has started, not
 that every task in it is executing simultaneously.
 
-**Parent acceptance: NOTES-04 remains incomplete.** The visible history/diff
-renderer is implemented and committed in the isolated desktop history workspace.
-NOTES-05E completed pane layout qualification; NOTES-04B supplies the original
-cold visible native gate. This parent is not an additional execution item.
-
-- [ ] **NOTES-04B — Active:** Exercise the actual native WebView ribbon,
-      unified/split diffs, external-head refresh, retained historical pins, cold
-      close/reopen and plain-folder refusal. Verify actual source bytes and
-      JJ/Git metadata remain unchanged. Hidden API tests and fixtures do not
-      substitute for this gate. The separate acceptance bundle builds; its new
-      test is being qualified. A real pointer-focus diagnostic observes both
-      document focus and the native keyboard window. Automated foreground
-      qualification and the actual history/restart gate remain open.
-- [ ] **NOTES-06:** Implement one native raw-event owner. Sanitize and durably
-      capture before display/ACK; drain before releasing vault authority.
+- [ ] **NOTES-06 — Active:** Implement one native raw-event owner. Sanitize and
+      durably capture before display/ACK; drain before releasing vault
+      authority.
 - [ ] **NOTES-07:** Add receipt-aware AgentStore/ThreadStore conversation
       adapters and explicit per-vault backend selection, retaining legacy file
       conversations.
@@ -198,8 +199,9 @@ are available while the local preview servers remain running.
 
 The new isolated Notes catalog on port 7490 renders the qualified production
 history components with fixture readers. All 18 history scenarios pass their
-interaction/accessibility checks. Actual cold native history remains NOTES-04B.
-There is no persisted-chat story yet.
+interaction/accessibility checks. Actual cold native history also passes in
+NOTES-04B with physical foreground assistance. There is no persisted-chat story
+yet.
 
 ## Open qualification gaps
 
@@ -239,6 +241,11 @@ There is no persisted-chat story yet.
       Docker static build (exit 137), then refuses a changed source-record
       artifact. No rendered comparison or baseline update occurred. Source
       functional/consumer gates remain passed; visual review stays pending.
+- [ ] **GAP-10:** Unattended macOS foreground activation is unqualified. The
+      complete cold native history test passes with two physical foreground
+      clicks and strict document/native keyboard-window assertions. The driver
+      alone cannot reliably activate a cold app. Preserve this automation gap
+      separately from the actual native history result.
 
 ## Keeping this list current
 
