@@ -2,17 +2,17 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-Execution now: **one Active task, NOTES-07** for native session/capture
-construction, agent admission and renderer persistence. NOTES-05F/05G are
-complete. NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started
-stages retain their open gates; these entries are not concurrent work streams.
+Execution now: **one Active task, NOTES-07** for native agent/execution
+admission and renderer persistence. Native capture construction is qualified in
+NOTES-07H. NOTES-05F/05G are complete. NOTES-06C and NOTES-06C4 remain **Waiting
+for NOTES-07** managed integration; started stages retain their open gates.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
 is still pending. Notes' native repository admission and history transport are
 verified. The history/diff renderer and cold visible native acceptance are
-qualified on macOS ARM64 with physical foreground assistance. Durable
-conversation capture remains pending.
+qualified on macOS ARM64 with physical foreground assistance. The real native
+factory is qualified; managed conversation capture and restart remain pending.
 
 This is the delivery checklist for the approved eight-stage plan. The
 [M33 milestone ledger](../../spec/src/current/progress/M33/index.md) owns formal
@@ -23,9 +23,16 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-07.** Continue native session/capture construction, agent
-  admission and per-vault renderer persistence. NOTES-07G completes ordinary
-  native conversation preparation and original-receipt recovery.
+- **Active task: NOTES-07.** Continue native executable/credential admission,
+  ordinary runtime dispatch and per-vault renderer persistence. NOTES-07G/H
+  qualify conversation preparation and the real selected-store capture factory.
+- **Completed: NOTES-07H.** Notes `cd5b5a1e` / E-AI-036 constructs the ordinary
+  native processor from a confirmed conversation with real privacy, private
+  journal and Agent/Thread participants. Thirty backend cases, both 163-case
+  native profiles (two inherited ignored each), strict lint, 389 AI policy and
+  212 renderer/governance cases pass. Four cold hidden API cases qualify exact
+  capture preparation and original-conversation recovery after restart. Actual
+  managed dispatch, renderer adoption and chat/restart remain open.
 - **Completed: NOTES-05G.** Notes `c28fc92a` / E-REPO-008 corrects the primary
   history preview: its disposable sidebars close to show log/diff together, and
   both repository views retain public AppShell surface tokens. All 144 affected
@@ -36,23 +43,16 @@ whole stage.
   strict checks/builds and three cold native read cases pass. Source producer
   `8118da89` and Design Core `aae7dc35` are independently qualified. Visual
   approval and actual managed conversation/restart remain separate.
-- **Waiting: NOTES-06C/06C4.** Shared capture, complete batches, production
-  transcript provenance and the real native privacy prerequisite are qualified.
-  Managed callback ownership, publication and drained closure await NOTES-07.
-- **NOTES-07 checkpoint:** The native batch domain/normalization prerequisite is
-  qualified in NOTES-07A below. NOTES-07B adds the optional receipt-aware store
-  adapter and private journal port; NOTES-07C qualifies Notes' private native
-  journal and real JJ store composition. NOTES-07D qualifies the native backend
-  profile/owner service. NOTES-07E connects the ordinary native host/IPC and
-  admission/closure lifetime. Renderer persistence, native session preparation
-  and the actual capture processor remain pending within NOTES-07; conversation
-  preparation is qualified in NOTES-07G. NOTES-07F1 qualifies the shared
-  retained-processing authority needed for capture through renderer reload.
-  NOTES-07F2 qualifies Notes retained native authority, exact counted permits
-  and physical/backend fences across reload. NOTES-07G now qualifies ordinary
-  native conversation preparation/status, real selected Git participants and
-  exact receipt recovery across cold app restart. Actual processor construction
-  and managed conversation/restart remain pending.
+- **Waiting: NOTES-06C/06C4.** Real privacy and selected-store factory callbacks
+  are qualified in NOTES-07H. Supervised ordinary worker dispatch,
+  acknowledgement and full managed publication/drained closure still await
+  executable admission and renderer adoption in NOTES-07.
+- **NOTES-07 checkpoint:** 07A qualifies batch normalization; 07B/C supply the
+  store adapter and private journal; 07D/E own native backend profiles and IPC;
+  07F1/F2 retain exact processing authority; 07G prepares and recovers the
+  original conversation; 07H constructs and tests the real selected-store
+  processor. Native executable/credential admission, ordinary runtime dispatch,
+  renderer persistence and managed conversation/restart remain pending.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -115,6 +115,19 @@ below are not being worked on simultaneously.
 | 8. Standalone qualification (M33.8)         | Pending            | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
 
 ## Completed slices
+
+- [x] **NOTES-07H — Ordinary native capture construction.** Notes `cd5b5a1e`
+      (E-AI-036) prepares bounded opaque targets for exact confirmed
+      conversations and constructs native privacy, selected Agent/Thread stores
+      and the private journal. Content-level proof checks split path redaction,
+      detected secrets, persisted transcript content, primary thread assignment
+      and original receipt recovery without publication. Nine guard/lifetime
+      cases and all 30 backend tests pass; both complete native profiles pass
+      163 cases with two inherited ignored helpers each, strict Clippy, 389 AI
+      policy and 212 renderer/governance cases pass. Four cold command cases
+      include exact capture preparation/recovery with preserved source state.
+      Targets remain empty; managed execution, renderer writer and chat/restart
+      retain their separate gates.
 
 - [x] **NOTES-05G — Review preview and shell styling.** Notes `c28fc92a`
       (E-REPO-008) closes only the primary story's disposable Files/Outline
@@ -395,8 +408,9 @@ complete; capture still waits for real backend integration.
       and draining capture before vault release.
 - [ ] **NOTES-06C4 — Waiting for NOTES-07:** Its shared native privacy bridge
       and Notes adoption are complete in NOTES-06C4A/B. Native callback
-      ownership, real app JJ receipts and drained closure still require ordinary
-      backend wiring.
+      callbacks and real receipts are qualified in NOTES-07H. Supervised managed
+      dispatch, acknowledgement and drained closure still require ordinary
+      execution/renderer integration.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
@@ -406,10 +420,11 @@ complete; capture still waits for real backend integration.
       NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
       and owner service; NOTES-07E connects native host/IPC and closure.
       NOTES-07G completes native conversation preparation and original-receipt
-      recovery. Next add actual session/store/processor construction, native
-      agent admission and per-vault renderer persistence. NOTES-07F1/F2 complete
-      shared and Notes retained-authority prerequisites; no managed conversation
-      gate is closed.
+      recovery. NOTES-07H completes real selected-store processor construction.
+      Next add native executable/credential admission, ordinary runtime dispatch
+      and per-vault renderer persistence. NOTES-07F1/F2 complete shared and
+      Notes retained-authority prerequisites; no managed conversation gate is
+      closed.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.

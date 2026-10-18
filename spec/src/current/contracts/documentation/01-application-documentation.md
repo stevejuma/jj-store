@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-023 records NOTES-07H real selected-store capture factory
+and its native privacy/journal/callback ownership. Native command/cold receipt
+proof stays distinct from ordinary agent dispatch, renderer adoption and managed
+chat/restart. The checklist retains only NOTES-07 as Active.
+
 E-REUSABLE-PROGRESS-022 records the Notes preview correction separately from
 native capture: primary desktop review shows both columns and retains public
 AppShell surface tokens; narrow-pane and visual-approval gates stay explicit.

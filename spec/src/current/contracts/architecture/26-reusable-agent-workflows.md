@@ -224,3 +224,12 @@ repository and thread result. Bare ThreadStore status and current snapshots
 cannot establish that intent. Preparation/receipt recovery does not qualify
 native managed capture or renderer conversation adoption; those retain their
 original M33 gates.
+
+The Notes ordinary native factory may bind a bounded opaque capture target to an
+exact confirmed conversation, then compose real native privacy, selected
+Agent/Thread participants and the private receipt journal. Plans retain no idle
+counted calls. A processor retains its exact native binding through verified
+renderer suspension; new factories require reattachment and closure drains the
+retained authority. Preparation grants no executable, credential or prompt.
+Ordinary runtime dispatch, renderer adoption and managed chat/restart remain
+separate from this real-factory prerequisite.
