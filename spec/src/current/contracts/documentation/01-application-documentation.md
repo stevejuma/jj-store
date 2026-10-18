@@ -1,5 +1,9 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-022 records the Notes preview correction separately from
+native capture: primary desktop review shows both columns and retains public
+AppShell surface tokens; narrow-pane and visual-approval gates stay explicit.
+
 E-REUSABLE-PROGRESS-021 records Notes' ordinary native conversation preparation
 and original-receipt recovery separately from actual managed capture and chat
 restart. NOTES-07 remains the sole Active task; NOTES-06C/06C4 wait for it.

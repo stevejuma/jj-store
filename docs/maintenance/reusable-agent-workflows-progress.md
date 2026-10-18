@@ -3,9 +3,9 @@
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
 Execution now: **one Active task, NOTES-07** for native session/capture
-construction, agent admission and renderer persistence. NOTES-05F is complete.
-NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started stages retain
-their open gates; these entries are not concurrent work streams.
+construction, agent admission and renderer persistence. NOTES-05F/05G are
+complete. NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started
+stages retain their open gates; these entries are not concurrent work streams.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -26,6 +26,10 @@ whole stage.
 - **Active task: NOTES-07.** Continue native session/capture construction, agent
   admission and per-vault renderer persistence. NOTES-07G completes ordinary
   native conversation preparation and original-receipt recovery.
+- **Completed: NOTES-05G.** Notes `c28fc92a` / E-REPO-008 corrects the primary
+  history preview: its disposable sidebars close to show log/diff together, and
+  both repository views retain public AppShell surface tokens. All 144 affected
+  and 768 full catalog checks pass; visual approval stays pending.
 - **Completed: NOTES-05F.** Notes `fb80f410` / E-REPO-007 ports both repository
   views into public AppShell/Column Canvas, with split IDs, expanded file modes
   and matching diffs. All 768 full catalog cases, 212 renderer/governance cases,
@@ -111,6 +115,15 @@ below are not being worked on simultaneously.
 | 8. Standalone qualification (M33.8)         | Pending            | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
 
 ## Completed slices
+
+- [x] **NOTES-05G — Review preview and shell styling.** Notes `c28fc92a`
+      (E-REPO-008) closes only the primary story's disposable Files/Outline
+      sidebars and retains public AppShell inset, border, radius and shadow.
+      Dedicated compact-pane coverage remains. The exact regression, 144
+      affected and 768 full catalog interaction/axe checks, 212
+      renderer/governance cases, strict types/ownership audits and both UI
+      builds pass. Native capture and visual approval retain their separate
+      gates.
 
 - [x] **NOTES-07G — Ordinary native conversation preparation.** Notes `4e628fb2`
       (E-AI-035) prepares a ThreadStore conversation through the current
@@ -374,8 +387,8 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-NOTES-07 is the sole Active implementation task. The requested NOTES-05F UI
-slice is complete; capture still waits for real backend integration.
+NOTES-07 is the sole Active implementation task. NOTES-05F/05G UI slices are
+complete; capture still waits for real backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner

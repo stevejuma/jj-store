@@ -212,6 +212,11 @@ contracts. Its independent Op Log retains native pins and explicit parent and
 revision comparisons. UI qualification is separate from the native event owner,
 selected AgentStore/ThreadStore processor and managed conversation/restart gate.
 
+Notes' primary history review makes room for adjacent log/diff columns through
+its disposable sidebar controls, while dedicated narrow-pane coverage retains
+compact navigation. The embedded shell retains its public surface tokens. These
+presentation choices change no storage, admission or capture interface.
+
 Embedding hosts retain exact conversation preparation before explicit
 publication. For the fixed Git-backed Notes profile, recovery verifies the
 original canonical provider receipt against its private actor, command intent,
