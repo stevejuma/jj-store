@@ -23,8 +23,9 @@ whole stage.
   capture before display/acknowledgement and drained vault closure. The shared
   receipt-fenced capture port is qualified in NOTES-06C1. NOTES-06C2 now
   qualifies complete native batches and the Notes adapter with synthetic
-  privacy/storage. Production renderer consumption and actual Notes
-  privacy/backend binding remain pending.
+  privacy/storage. Production renderer consumption and transcript provenance are
+  qualified in NOTES-06C3. Actual native privacy/backend binding remains
+  pending.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -55,10 +56,10 @@ whole stage.
   complete check/test/build/specification lanes and 261 source stories pass.
   Design Core passes 821 units, 834 stories and 172 browser cases, one existing
   skip. Package provenance and earlier failures remain in owning evidence.
-- **Next within NOTES-06C:** NOTES-06C3, production consumption of every batch
-  frame with collision-free transcript provenance. Then connect actual Notes
-  privacy/backend ownership before NOTES-06D and NOTES-07 through NOTES-09
-  qualify durable JJ persistence and restart recovery.
+- **Next within NOTES-06C:** NOTES-06C4, admitted native privacy and exact
+  backend ownership/drain. Its durable JJ sink depends on the NOTES-07
+  AgentStore/ThreadStore adapters. NOTES-06D and NOTES-08/09 retain complete
+  managed conversation and restart acceptance.
 - **After that:** addressed agents/discussions, imports, opt-in capture,
   portable package intake and independent downstream qualification. Visual
   comparison/approval remains separate and pending.
@@ -197,6 +198,17 @@ below are not being worked on simultaneously.
       fencing; production privacy, JJ publication and restart recovery remain
       pending. Delivery evidence: E-REUSABLE-PROGRESS-012.
 
+- [x] **NOTES-06C3** Consume complete native groups in production ACP and
+      preserve optional per-frame transcript provenance in both legacy stores.
+      Exact replay deduplication retains distinct frames at a shared cursor;
+      absent indexes preserve historical record hashes. Desktop `6e8ebd17`,
+      E-AI-029: eleven focused/hash checks, 198 renderer/governance, 389 AI
+      policy and all 696 current-app interaction/accessibility checks pass. All
+      seven cold ACP cases pass together with foreground assistance. Strict
+      lint, 111 native service tests (two inherited ignored), renderer/native
+      builds and specification checks pass. Production native privacy and JJ
+      durability remain pending. Delivery evidence: E-REUSABLE-PROGRESS-013.
+
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
 Desktop evidence lives in the isolated qualified sibling
@@ -219,10 +231,10 @@ Only its current child below is Active.
       through the native factory. Cover bootstrap activity/facts and ordinary
       frames; retain a single raw owner and drain capture before releasing the
       vault.
-- [ ] **NOTES-06C3 — Next within NOTES-06C:** Consume every batch frame in
-      production ACP sessions. Add frame-index-aware transcript provenance and
-      deduplication while retaining legacy identities when the index is absent.
-      NOTES-06C also retains actual native privacy/backend binding and drain.
+- [ ] **NOTES-06C4 — Next within NOTES-06C:** Inject admitted native privacy and
+      exact vault/window/backend ownership through the capture factory; retain
+      receipt fencing and drained closure. Actual JJ sink selection depends on
+      the NOTES-07 AgentStore/ThreadStore adapters.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
