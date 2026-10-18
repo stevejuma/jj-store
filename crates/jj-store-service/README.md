@@ -12,6 +12,12 @@ facades expose `collaboration_stores()` through the shared factory interfaces;
 independent hosts can use `jj-store-core`, `jj-store-git` and `jj-store-native`
 directly.
 
+For an admitted physical JJ checkout, `working_tree::Observer` can observe
+unsnapshotted files or read complete working-copy status against its recorded
+parent. The trusted host supplies the root/access owner and drains canceled
+scans before releasing it; unsupported/bounded reads never return partial
+totals.
+
 See [architecture](../../docs/site/technical/architecture.md),
 [read semantics](../../docs/site/technical/reads.md) and
 [transport semantics](../../docs/site/reference/transport.md).

@@ -1,12 +1,14 @@
 //! Private operation-pinned WC baseline; neither a disk snapshot nor a wire query.
 pub(crate) mod current;
 mod ignores;
+mod status;
 use super::*;
 pub use current::{Checkout, CurrentState, MAX_CHECKOUT_BYTES};
 use futures::AsyncReadExt as _;
 pub use ignores::{IgnoreFile, IgnoreRules, SparseRules};
 use jj_lib::matchers::EverythingMatcher;
 use sha2::{Digest as _, Sha256};
+pub use status::{LineCounts, Status};
 
 pub const MAX_ENTRIES: usize = 4096;
 pub const MAX_BYTES: usize = 8 * 1024 * 1024;
@@ -23,6 +25,9 @@ pub struct Entry {
     pub kind: Kind,
     pub bytes: u64,
     pub content: m::RecordDigest,
+    /// Bounded private bytes; never included in serialized baseline frames.
+    #[serde(skip)]
+    pub data: Vec<u8>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct Baseline {
@@ -85,6 +90,15 @@ async fn read(context: &Context, operation: m::OperationId, workspace: String) -
     let view_id = context.operation(operation).await?.view_id;
     let view = context.view(view_id).await?;
     let commit_id = *view.wc_commit_ids.get(&workspace).ok_or(Error::NotFound)?;
+    read_commit(context, operation, view_id, workspace, commit_id).await
+}
+pub(super) async fn read_commit(
+    context: &Context,
+    operation: m::OperationId,
+    view_id: m::ViewId,
+    workspace: String,
+    commit_id: m::GitSha1Id,
+) -> Result<Baseline> {
     let commit = context.commit(&context.store, commit_id).await?;
     let mut entries = Vec::new();
     let mut bytes = 0usize;
@@ -121,6 +135,7 @@ async fn read(context: &Context, operation: m::OperationId, workspace: String) -
             kind,
             bytes: data.len() as u64,
             content: content_digest(&data),
+            data,
         };
         context.budget.output(&entry)?;
         entries.push(entry);

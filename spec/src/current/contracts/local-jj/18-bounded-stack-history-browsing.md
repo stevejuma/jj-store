@@ -92,3 +92,13 @@ Target selection remains explicit; this read does not assume `main`, initialize
 a combination, fetch refs, snapshot physical edits or enable code mutations. Net
 stack changed files continue to use exact base/head tree comparisons under the
 existing diff query, including revert-to-base.
+
+Trusted status composition MAY retain bounded raw bytes privately to compare the
+complete observed tree directly with the recorded working-copy parent. It MUST
+apply the qualified ignore/sparse projection, count each changed path once, and
+revalidate the complete observation after counting. Recorded and unsnapshotted
+deltas MUST NOT be summed: edits can cancel. Text counts use the bounded JJ line
+diff; binary, structural or complexity refusals retain a file count with absent
+line totals. Merged parents and conflicted baselines remain explicitly
+unsupported until qualified. Private bytes MUST NOT enter observation/baseline
+wire frames.

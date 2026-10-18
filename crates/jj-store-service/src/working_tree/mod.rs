@@ -4,6 +4,7 @@ mod guard;
 mod inventory;
 mod observer;
 mod projection;
+mod status;
 mod walk;
 use crate::stack_workspace::PhysicalWorkspaceId;
 pub use contracts::{
@@ -78,6 +79,8 @@ pub struct Entry {
     pub bytes: u64,
     /// Raw bytes (or link target), independent of timestamps and physical identity.
     pub content: RecordDigest,
+    /// Private bounded bytes retained only for a complete status comparison.
+    pub data: Vec<u8>,
     /// Exact physical identity, mode, timestamps and bytes.
     pub fingerprint: RecordDigest,
     /// Captured regular `.gitignore` bytes, covered by the content fingerprint.

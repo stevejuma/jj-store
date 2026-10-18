@@ -30,3 +30,10 @@ operation and commit, with native-owned handle scope for continuations. Author,
 origin commit and one-based source ranges retain their actual JJ attribution.
 Read admission, source binding, revocation and drained closure remain mandatory;
 no renderer-provided path is physical-source authority.
+
+Trusted working-copy status composes the qualified physical observation with a
+sole-parent pinned read. Private bounded bytes support direct final-tree line
+counts and never enter baseline/observation frames. Ignore/sparse projection and
+complete post-count revalidation remain mandatory. This adds no source-index
+repair, snapshot, reconciliation, publication or command execution authority
+(JST-JJ-003/005, JST-LOCAL-004/005; E-WORKING-COPY-STATUS-001).

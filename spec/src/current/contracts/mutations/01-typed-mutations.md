@@ -315,3 +315,8 @@ administration under the API/security/object-storage contracts. It adds no typed
 native mutation, head transition, object-store deletion port or manifest
 publication bypass. The installation durably fences and erases one complete
 namespace, including its manifest, rather than publishing replacement history.
+
+Working-copy status is a read-only private composition. Its physical fingerprint
+and complete path/line totals grant no mutation, checkout, receipt,
+content-token or publication authority. Existing typed mutation requirements
+remain unchanged (JST-MUT-001; E-WORKING-COPY-STATUS-001).
