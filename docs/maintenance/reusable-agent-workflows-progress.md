@@ -2,22 +2,21 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-**Current direction: functional production plugin.** The user lifted the
-Storybook-only freeze and test deferral, authorized live adoption and focused
-tests, and prioritizes a usable plugin. Release, platform/provider,
-whole-catalog and visual-baseline qualification stay deferred. Earlier
-E-REPO-012/013/014 describe historical preview work; they are not current
-freezes.
+**Current direction: visible AI delivery.** The user approved a staged
+implementation: document/classic Storybook review, visual confirmation, live
+adoption, native JJ conversation browsing, real lapis-agent chat and cold
+restart. Focused checks accompany each slice; broad provider/platform/release
+and visual baseline qualification remain deferred.
 
-**One Active task: NOTES-05I.** The reviewed author/profile, tags, compact
-pickers, Markdown bodies, operation titles/args, action strips, file headers and
-diff presentation now live in Notes production components. Review compositions
-import those components. Native workspace links, revision cards and conflict
-inspection use the retained reader; local conflict drafts/staging/preview do not
-publish. Native Evo Log, highlighted search, Revert and conflict Apply remain
-separate capability slices. No synthetic catalog data enters production. Notes
-E-REPO-015 owns focused adoption evidence; Design Core owns the rich Command
-View role-forwarding repair. NOTES-07 waits during this UI slice.
+**Review gate: NOTES-08A awaits visual confirmation.** The opt-in Design Core
+Transcript, MarkdownComposer and TranscriptFooter composition uses Document as
+default and Classic as its alternative. Footer corrections retain a compact
+single row and rightward formatting expansion; no task is Active while awaiting
+review. The ordinary plugin retains its current UI until visual confirmation.
+NOTES-05I's remaining native repository capabilities wait; reviewed
+history/blame presentation is adopted through Notes E-REPO-023/024. Anchored
+comments are part of this first AI slice, including comments-only requests.
+Native comment publication and restart remain later gates.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -34,6 +33,25 @@ Checked items mean that the named slice has evidence; they do not complete its
 whole stage.
 
 ## Current checkpoint
+
+- **Waiting for visual confirmation: NOTES-08A — Document/classic AI review.**
+  Production-owned AI components use the retained controller and catalog-only
+  fake clients. Separate Design Core reference stories run inside the same
+  AppShell (both docks collapsed) and standalone. Fenced code reuses captured
+  code/patch readers with inline comments and line folds. Mira supplies
+  immutable tables; table comments split after their source row and retain full
+  row context with the selected text highlighted. Visual confirmation precedes
+  live adoption. Native JJ chat and restart are still pending; source component
+  fixes stay in Design Core. E-AI-040 corrects footer height and same-row
+  formatting in both Notes and reference; 36 source and 60 consumer
+  interaction/accessibility cases pass.
+- **Next: NOTES-08B** promotes the approved UI and retains the per-vault view
+  preference. **NOTES-07K** connects native listing/creation/reads;
+  **NOTES-07L** admits bundled lapis-agent using explicit Lapis AI configuration
+  and native secret references. The first live scope is chat/file
+  context/cancel, followed by **NOTES-09** cold restart and uncertain-outcome
+  recovery. Native application tools, addressed agents, queues and imports
+  remain later slices.
 
 - **Completed: NOTES-05I7 file history and row actions.** Whole-row pointer
   selection preserves copy/author actions; History and Op Log use the requested
@@ -53,7 +71,7 @@ whole stage.
   conversation/restart remain separate slices within the same NOTES-05I
   umbrella.
 
-- **Active task: NOTES-05I.** Close the source-confirmed repository-view gaps:
+- **Waiting task: NOTES-05I.** Close the source-confirmed repository-view gaps:
   highlighted native search, rich Command View parent/revision pickers, stacked
   Op Log detail/diff cards, exact statistics and remaining row/state parity. The
   [parity review](repository-view-parity-review.md) owns the explicit gap matrix
@@ -92,10 +110,11 @@ whole stage.
   eight controller/215 renderer-governance cases, strict checks and builds.
   Design Core `b9477996` owns the accessibility/readiness prerequisite. This
   qualifies composition and a review preview, not whole-view parity.
-- **Waiting: NOTES-07.** Resume renderer projection, executable/credential
-  admission, ordinary runtime dispatch and per-vault persistence after this
-  requested UI alignment. Native preparation/factory/read/continuation slices
-  remain qualified; managed chat/restart remains open.
+- **Waiting: NOTES-07.** After the first AI review, resume renderer projection,
+  executable/credential admission, ordinary runtime dispatch and per-vault
+  persistence after this requested UI alignment. Native
+  preparation/factory/read/continuation slices remain qualified; managed
+  chat/restart remains open.
 - **Completed: NOTES-07J.** Notes `d00a69b3` / E-AI-038 qualifies retained
   native transcript continuation with opaque read/stream handles, original
   immutable selection, exact issued sequence positions and fresh receipt checks.
@@ -190,8 +209,8 @@ whole stage.
 
 These are acceptance summaries, not a work queue. **Started; gate open**
 corresponds to the canonical ledger's **In progress**: some work is delivered,
-but acceptance is incomplete. Only NOTES-05I is currently active. The stages
-below are not being worked on simultaneously.
+but acceptance is incomplete. NOTES-08A awaits visual confirmation; no task is
+Active. The stages below are not being worked on simultaneously.
 
 | Stage                                       | Status             | Delivered so far                                                                  | Remaining gate                                                        |
 | ------------------------------------------- | ------------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -490,9 +509,10 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-NOTES-05I is the sole Active implementation task. NOTES-05F/05G/05H complete the
-initial canvas/header port, not full source-view parity. NOTES-07 waits for this
-UI alignment; capture still awaits managed backend integration.
+NOTES-08A awaits visual confirmation; no implementation task is Active.
+NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
+parity. NOTES-07 waits for the first AI review; capture still awaits managed
+backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -541,11 +561,11 @@ UI alignment; capture still awaits managed backend integration.
       revision and conflict inspection use retained native reads. Storybook
       imports the same components. E-REPO-015 records focused functional/axe,
       source/build checks and precise native capability limits.
-- [ ] **NOTES-05I — Active:** Complete the source/browser-confirmed parity gaps
+- [ ] **NOTES-05I — Waiting:** Complete the source/browser-confirmed parity gaps
       in [the review](repository-view-parity-review.md). Native query/evolution,
       write capabilities, exact statistics and remaining state/whole-view
       acceptance run as ordered slices; only the umbrella task is Active.
-- [ ] **NOTES-07 — Waiting for NOTES-05I:** Add receipt-aware
+- [ ] **NOTES-07 — Waiting for NOTES-08A:** Add receipt-aware
       AgentStore/ThreadStore conversation adapters and explicit per-vault
       backend selection, retaining legacy file conversations. The reusable
       adapter is complete in NOTES-07B; NOTES-07C supplies Notes' journal and
@@ -557,6 +577,14 @@ UI alignment; capture still awaits managed backend integration.
       executable/credential admission, ordinary runtime dispatch and per-vault
       renderer persistence. NOTES-07F1/F2 complete shared and Notes
       retained-authority prerequisites; no managed conversation gate is closed.
+- [ ] **NOTES-08A — Waiting for visual confirmation:** Review document/classic
+      presentation in Storybook; wait for user confirmation before ordinary
+      plugin adoption.
+- [ ] **NOTES-08B:** Promote the approved UI and retain its per-vault
+      preference.
+- [ ] **NOTES-07K:** Connect native JJ conversation listing, creation and reads.
+- [ ] **NOTES-07L:** Run bundled lapis-agent with native capture and explicit
+      configured provider/model; first scope is chat, file context and cancel.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
@@ -582,6 +610,14 @@ UI alignment; capture still awaits managed backend integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [AI document conversation](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--document-conversation&viewMode=story)
+- [AI comments as context](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--comments-as-context&viewMode=story)
+
+These opt-in stories mount production AI components with a disposable memory
+session host. Document/classic share the controller, drafts and anchored
+comments. Source-owned fixes center avatars, render tables and fenced code, and
+remove embedded Markdown whitespace. They do not qualify native JJ chat.
 
 - [JJ Log and Op Log in separate workspace tabs](http://127.0.0.1:7490/iframe.html?id=desktop-repository-comparison--jj-log-and-op-log-tabs&viewMode=story)
 - [New Notes repository history and diff review](http://127.0.0.1:7490/?path=/story/desktop-repository-history--pinned-history-and-diff)

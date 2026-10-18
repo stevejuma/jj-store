@@ -241,7 +241,16 @@ new production adoption until visual confirmation. The labelled muted action
 strip, single-line copy menu, compact JJ parent trigger, source-coloured IDs,
 closed-sidebar startup and revision Command View remain catalog-only proposals.
 Prior focused evidence is retained; final qualification, original gates and sole
-Active NOTES-05I are unchanged.
+Active NOTES-05I are unchanged. E-REUSABLE-PROGRESS-032 records NOTES-08A in
+Notes E-AI-039/040: opt-in shared Document/Classic AI review, comments-only
+context and retained requests/drafts, with compact same-row footer formatting.
+Mira owns immutable annotated tables; Design Core owns exact selections,
+between-row comments and captured row context. Ordinary plugin adoption waits
+for user visual confirmation (NOTES-08B), followed by native JJ browsing
+(NOTES-07K), admitted lapis-agent capture (NOTES-07L) and cold restart
+(NOTES-09). No child task remains Active at the review gate. M33 and M33.1-.4
+retain In progress; M33.5-.8 retain Planned and their original completion gates.
+
 <!-- generated-navigation -->
 
 ## Pages
