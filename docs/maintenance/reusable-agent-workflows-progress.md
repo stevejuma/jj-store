@@ -18,16 +18,21 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-06B.** Inject a native processor factory through the
-  reusable Tauri host. Keep window/admission, request, target and worker
-  identities native-owned; preserve startup revocation and drained closure.
+- **Active task: NOTES-06C.** Connect Notes-owned privacy and durable capture
+  through the qualified native factory. Retain one raw owner, native scope,
+  capture before display/acknowledgement and drained vault closure.
+- **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
+  processor factory: nine focused cases, all 27 host cases and full source
+  qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
+  records six cold default ACP compatibility passes with foreground assistance.
+  Notes privacy and durable backend adoption remain pending.
 - **Completed: NOTES-06A.** Lapis AI `6ce65ebb` adds an injected Rust processor
   before startup facts and event publication. Nine focused cases, all 995 Rust
   tests (two inherited ignored), 45 governance and 27 renderer cases, strict
   checks, builds, packages and specification lanes pass. Desktop `242e1fe5`
   records six cold ACP compatibility passes with foreground assistance.
-- **Parent gate: NOTES-06.** Waiting for NOTES-06B/C/D. The shared hook alone
-  does not establish Notes sanitation, durable capture or backend selection.
+- **Parent gate: NOTES-06.** Waiting for NOTES-06C/D. The shared hook alone does
+  not establish Notes sanitation, durable capture or backend selection.
 - **Completed: NOTES-04/04B.** Cold actual-window history, exact restored pins,
   source preservation and plain-folder refusal pass in desktop `fb238ae2`.
   Strict native keyboard-window assertions pass. Both launches received physical
@@ -152,7 +157,15 @@ whole stage.
       identities/options, bounded output, unknown requests and supervised
       cancellation/drain. Source `6ce65ebb` qualifies all nine focused cases and
       full Lapis AI lanes. Consumer `242e1fe5`, E-AI-026, refreshes the six cold
-      default ACP cases. Tauri factory and Notes managed capture remain pending.
+      default ACP cases. Notes managed capture remains pending.
+- [x] **NOTES-06B** Inject the scoped native processor factory with exact
+      worker/open-request/target/window/admission identities, current admission
+      fences and supervised cleanup. Rejected processing never falls back to raw
+      execution. Source `87958267` passes nine focused cases, all 27 host cases,
+      1,004 Rust cases (two inherited ignored), 45 governance and 27 renderer
+      cases, strict checks/builds/packages and all specification lanes. Desktop
+      `0535bb1e`, E-AI-027, passes six cold default ACP cases with foreground
+      assistance. Managed Notes capture remains a separate gate.
 
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
@@ -168,17 +181,14 @@ in the background. Stage-level **In progress** means the stage has started, not
 that every task in it is executing simultaneously.
 
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
-shared runtime hook. NOTES-06B/C/D must connect the native host and Notes
-capture owner, then qualify the complete path. Only its current child below is
-Active.
+shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
+NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
+Only its current child below is Active.
 
-- [ ] **NOTES-06B — Active:** Inject a scoped processor factory through the
-      Tauri host, preserving native identities, empty defaults, startup
-      revocation, current admission and owned cleanup. Failed processing must
-      never select an unprocessed fallback.
-- [ ] **NOTES-06C:** Connect Notes-owned privacy and durable capture through the
-      native factory. Cover bootstrap activity/facts and ordinary frames; retain
-      a single raw owner and drain capture before releasing the vault.
+- [ ] **NOTES-06C — Active:** Connect Notes-owned privacy and durable capture
+      through the native factory. Cover bootstrap activity/facts and ordinary
+      frames; retain a single raw owner and drain capture before releasing the
+      vault.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
