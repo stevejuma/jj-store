@@ -230,8 +230,8 @@
     "sources": ["crates/jj-store-conversations/src"],
     "pages": ["docs/site/technical/conversations.md"],
     "review": {
-      "reason": "Reviewed native capture binding, canonical bounded batches, injected privacy and exact durable receipt fences, stopped uncertain owners and complete ordered batch delivery; Notes native storage and transport adoption remain separately qualified.",
-      "fingerprint": "77ec3824bf250960e0b225988964159c332cc7383dacd34e59fa7844fb2a17b0"
+      "reason": "Reviewed the optional native privacy bridge, exact policy selection, default dependency isolation, admitted cache/root/secret ownership, receipt fencing and unchanged Notes/JJ publication gates against the source and real-scanner tests.",
+      "fingerprint": "994c09e24f28175c6765d710175b133e0260d6466d5263f76f381032ce2e1f2b"
     }
   },
   {

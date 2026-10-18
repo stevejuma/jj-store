@@ -140,3 +140,21 @@ not resolve a member key, executable or execution grant. Delivery projections
 retain full-width host sequences; the existing UI adapter preserves its prior
 display-only number conversion. The generic client imports no generated
 application schema: hosts use their canonical generated wire types directly.
+
+## Existing native privacy policy
+
+Enable `jj-store-conversations`' `native-privacy` feature to reuse Agent
+Redaction's transcript sanitizer directly. Construct the re-exported
+`native_privacy::TranscriptSanitizer` using host-admitted workspace, home,
+temporary and private cache paths, and add all device-resolved exact credentials
+before processing starts. Keep those values private and retain current admission
+around construction and each callback.
+
+Pass the admitted sanitizer as an `Arc` and the owned durable sink to
+`NativeCapture::with_native_privacy`. It selects the original transcript policy
+identity, scans nested values and keys, retains undecided stream prefixes in
+memory and rescans assembled projections before durability. Scanner refusal or
+invalid sanitized output stops that capture owner before a write or display.
+Unknown receipts keep the existing no-replay fence. The optional feature does
+not choose paths, credentials, targets or persistence, initialize a repository,
+or qualify a Notes/JJ backend. Default builds remain independent of the scanner.

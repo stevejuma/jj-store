@@ -90,3 +90,11 @@ generated contract rule. Authored client modules retain ordinary size checks.
 Normal governance qualifies built archive imports, independent type consumption,
 full-width integer handling and strict bounded frames. Its source selects web
 checks; native schema equality remains the Rust producer's separate gate.
+
+The explicit conversation `native-privacy` feature also admits an optional edge
+to `lapis-agent-redaction` at the same exact versioned sibling path and
+immutable source pin. The default conversation dependency closure excludes the
+scanner; the opt-in closure retains no execution, Tauri or repository-storage
+edge. Boundary and CI graph checks reject a mandatory conversation edge, any
+other owner and any unapproved source path. This does not broaden core/model/WAL
+privacy dependencies or publication authority.

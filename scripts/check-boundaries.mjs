@@ -14,6 +14,9 @@ export function dependencyErrors(packages) {
             ["lapis-ai-runtime", "lapis-ai-config"].includes(
               dependency.name,
             )) ||
+          (pkg.name === "jj-store-conversations" &&
+            dependency.name === "lapis-agent-redaction" &&
+            dependency.optional === true) ||
           (pkg.name === "jj-store-capture" &&
             ["lapis-agent-redaction", "lapis-ai-capture"].includes(
               dependency.name,

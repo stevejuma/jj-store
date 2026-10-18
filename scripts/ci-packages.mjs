@@ -50,7 +50,8 @@ export function packageGraph(data, root = process.cwd()) {
           p.name === "jj-store-server" &&
           resolve(dep.path) === resolve(root, `../lapis-ai/crates/${dep.name}`);
         const sharedPrivacy =
-          p.name === "jj-store-capture" &&
+          (p.name === "jj-store-capture" ||
+            (p.name === "jj-store-conversations" && dep.optional === true)) &&
           dep.name === "lapis-agent-redaction" &&
           resolve(dep.path) ===
             resolve(root, "../agent-redaction/crates/lapis-agent-redaction");

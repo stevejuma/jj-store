@@ -2,8 +2,8 @@
 
 Headless conversation coordination shared by JJ applications. The library
 provides durable prompt coordination, Control V3 stream privacy and bounded
-assistant/tool projections, with host-injected capabilities. It has no server,
-transport, Tauri, runtime or repository storage dependency.
+assistant/tool projections, with host-injected capabilities. Default builds have
+no server, transport, Tauri, runtime or repository storage dependency.
 
 Implement `privacy::Sanitizer` with the host's admitted privacy policy, then
 pass raw frames through `privacy::StreamPrivacy` or the per-participant
@@ -30,3 +30,11 @@ returns only after the sink confirms the exact batch identity. Deliver every
 returned frame in order: a boundary may flush a private prefix before its
 terminal frame. The host owns durable storage, receipt recovery and callback
 drain; errors never select another writer or unprocessed output.
+
+Enable the optional `native-privacy` feature to use the qualified Agent
+Redaction transcript policy with `NativeCapture::with_native_privacy`. Supply an
+`Arc<native_privacy::TranscriptSanitizer>` whose roots, cache and exact secrets
+have already been admitted by the host, plus your durable sink. The constructor
+selects the existing transcript policy ID. Default builds retain the injected
+privacy port without linking the scanner. Full integration and admission details
+remain in the conversation embedding guide.

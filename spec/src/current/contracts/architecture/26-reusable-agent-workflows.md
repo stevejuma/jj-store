@@ -155,3 +155,12 @@ cannot replay the write or select an unprocessed fallback. Private prefixes
 remain memory-only. Hosts still own current admission, actual durable receipts,
 native callback drain and ordered delivery of every returned frame. This port
 alone neither implements a Notes backend nor qualifies JJ publication.
+
+The conversation crate's explicit `native-privacy` feature adapts the existing
+Agent Redaction transcript sanitizer to native receipt-fenced capture and
+selects its exact policy identity. Defaults retain the independent coordination
+and stream ports with no scanner dependency. Hosts still admit cache locations,
+physical roots, exact credentials and current scope before construction; this
+feature neither discovers those values nor supplies a backend or execution
+grant. Scanner refusal remains a fixed privacy failure before any durable sink
+or output, and uncertain receipts retain the stopped-owner fence.

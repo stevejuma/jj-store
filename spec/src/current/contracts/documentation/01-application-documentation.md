@@ -188,3 +188,9 @@ Published specification and manual use /jj-store/ and /jj-store/manual/. CI can
 render acknowledged checked-in references without invoking Rust; separate
 exact-source live reference comparison remains a required release lane.
 Package-owned CLI help is checked against maintained docs/cli inputs.
+
+The conversation embedding guide and crate README describe the optional native
+privacy bridge, its scanner-free default and exact existing policy selection.
+The manual's conversation source review includes that adapter. Hosts still own
+admitted paths, cache, exact credentials and durable sinks; this documentation
+does not qualify Notes native capture, JJ publication or restart recovery.

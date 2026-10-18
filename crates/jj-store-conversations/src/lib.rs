@@ -3,6 +3,8 @@
 pub mod capture;
 pub mod control_v3;
 pub mod coordination;
+#[cfg(feature = "native-privacy")]
+pub mod native_privacy;
 pub mod privacy;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]

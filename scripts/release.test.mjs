@@ -64,6 +64,7 @@ test("all public package versions have an acyclic coordinated graph", () => {
   );
   const external = {
     "jj-store-capture": ["lapis-agent-redaction", "lapis-ai-capture"],
+    "jj-store-conversations": ["lapis-agent-redaction"],
     "jj-store-server": ["lapis-ai-runtime", "lapis-ai-config"],
   };
   for (const pkg of data.packages)

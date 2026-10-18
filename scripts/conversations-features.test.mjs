@@ -25,7 +25,7 @@ test("conversation primitives have no application runtime or storage dependency"
     tree
       .split("\n")
       .filter((line) =>
-        /^(?:jj-store-(?:service|rpc|wal|object|native|jj|capture)|jj-lib|jj-cli|lapis-ai-runtime|tauri|tokio) v/.test(
+        /^(?:jj-store-(?:service|rpc|wal|object|native|jj|capture)|jj-lib|jj-cli|lapis-ai-runtime|lapis-agent-redaction|kingfisher-scanner|tauri|tokio) v/.test(
           line,
         ),
       ),
@@ -48,4 +48,49 @@ test("conversation primitives have no application runtime or storage dependency"
       1,
     );
   }
+});
+
+test("only optional conversation privacy may consume the native redaction library", () => {
+  const dependency = { name: "lapis-agent-redaction", optional: true };
+  const owner = { name: "jj-store-conversations", dependencies: [dependency] };
+  assert.deepEqual(dependencyErrors([owner]), []);
+  dependency.optional = false;
+  assert.equal(dependencyErrors([owner]).length, 1);
+  owner.name = "jj-store-core";
+  dependency.optional = true;
+  assert.equal(dependencyErrors([owner]).length, 1);
+});
+
+test("opt-in native privacy retains the scanner without application authority", () => {
+  const tree = execFileSync(
+    "cargo",
+    [
+      "tree",
+      "--locked",
+      "--offline",
+      "-p",
+      "jj-store-conversations",
+      "--features",
+      "native-privacy",
+      "--edges",
+      "normal",
+      "--prefix",
+      "none",
+      "--format",
+      "{p}",
+    ],
+    { encoding: "utf8" },
+  );
+  assert.match(tree, /^lapis-agent-redaction v/m);
+  assert.match(tree, /^kingfisher-scanner v/m);
+  assert.deepEqual(
+    tree
+      .split("\n")
+      .filter((line) =>
+        /^(?:jj-store-(?:service|rpc|wal|object|native|jj|capture)|jj-lib|jj-cli|lapis-ai-runtime|tauri) v/.test(
+          line,
+        ),
+      ),
+    [],
+  );
 });

@@ -329,3 +329,19 @@ test("only capture may consume the exact standalone acquisition source", () => {
     assert.throws(() => packageGraph(data, root), /Unmodelled/);
   }
 });
+
+test("conversation native privacy admits only an optional exact sibling source", () => {
+  const data = metadata(["jj-store-conversations"]);
+  const dependency = {
+    name: "lapis-agent-redaction",
+    path: "/agent-redaction/crates/lapis-agent-redaction",
+    optional: true,
+  };
+  data.packages[0].dependencies = [dependency];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  dependency.optional = false;
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  dependency.optional = true;
+  dependency.path = "/untrusted/lapis-agent-redaction";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+});

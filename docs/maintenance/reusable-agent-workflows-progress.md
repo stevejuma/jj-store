@@ -209,6 +209,15 @@ below are not being worked on simultaneously.
       builds and specification checks pass. Production native privacy and JJ
       durability remain pending. Delivery evidence: E-REUSABLE-PROGRESS-013.
 
+- [x] **NOTES-06C4A** Add the opt-in native privacy bridge to the conversation
+      library, selecting the existing Agent Redaction transcript policy. Five
+      real-scanner cases cover nested content, UTF-8 chunk boundaries, refusal
+      and unknown receipts. The default profile passes 20 tests without the
+      scanner; the opt-in ordered-JSON profile passes 25. Governance, CI graph
+      and manual checks retain their boundaries. Evidence:
+      E-REUSABLE-AGENTS-014. Notes adoption, exact native scope and its actual
+      durable backend remain pending within NOTES-06C4.
+
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
 Desktop evidence lives in the isolated qualified sibling
@@ -259,7 +268,8 @@ Only its current child below is Active.
       progress, acknowledgement and privacy qualification.
 - [ ] **QUAL-01:** Complete remaining contract/compatibility and source
       portability gates, independent Rust/Tauri consumers and public package
-      archive acceptance.
+      archive acceptance. Wire the optional native-privacy test profile into its
+      owning CI qualification lane.
 - [ ] **QUAL-02:** Finish usage documentation/README coverage and required
       native, browser, interaction and accessibility checks across affected
       downstream clients.
