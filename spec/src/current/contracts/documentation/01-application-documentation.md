@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-017 records Notes' ordinary native backend ownership/IPC,
+exact local command grant and cold hidden-WebView acceptance. It keeps renderer
+persistence, actual managed capture and conversation/restart qualification
+separate. NOTES-07 remains the only Active task; NOTES-06C/06C4 remain Waiting.
+
 E-REUSABLE-PROGRESS-016 records Notes' native backend profiles and exclusive
 owner service separately from ordinary host/renderer wiring and managed chat.
 The checklist and ledger name only NOTES-07 as Active, with NOTES-06C/06C4

@@ -16,6 +16,7 @@ not a completion gate selection.
 | [E-REUSABLE-PROGRESS-014](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-014/index.md) | 2026-10-18 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-015](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-015/index.md) | 2026-10-18 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-016](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-016/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-017](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-017/index.md) | 2026-10-18 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 

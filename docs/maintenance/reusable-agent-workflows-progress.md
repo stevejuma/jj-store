@@ -33,8 +33,9 @@ whole stage.
   qualified in NOTES-07A below. NOTES-07B adds the optional receipt-aware store
   adapter and private journal port; NOTES-07C qualifies Notes' private native
   journal and real JJ store composition. NOTES-07D qualifies the native backend
-  profile/owner service. Ordinary host/IPC, renderer selection and native
-  callback lifetime integration remain pending within NOTES-07.
+  profile/owner service. NOTES-07E connects the ordinary native host/IPC and
+  admission/closure lifetime. Renderer persistence, conversation/session
+  preparation and the actual capture processor remain pending within NOTES-07.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -287,6 +288,19 @@ below are not being worked on simultaneously.
       app IPC, backend selection UI or managed capture yet. Notes `a48fce96`;
       evidence: E-AI-032/E-REUSABLE-PROGRESS-016.
 
+- [x] **NOTES-07E** Consume those profiles in the ordinary native host with a
+      bounded versioned text command and exact local main-window grant.
+      Admission, backend operations and closure share native serialization;
+      cancelled IO retains it, reload reattaches with a fresh handle and stale
+      closes cannot revoke the new owner. Window destruction fences delayed
+      admission. All nine backend/16 AI-host checks, both 136-case native
+      profiles (two inherited ignored each), strict lint/builds, types and 198
+      renderer/governance cases pass. Three cold hidden-WebView cases prove
+      actual IPC, real JJ source preservation, saved-choice/receipt reopening
+      and existing admission/history compatibility. This is not renderer
+      persistence or managed chat/capture/restart qualification. Notes
+      `81765a34`; evidence: E-AI-033/E-REUSABLE-PROGRESS-017.
+
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
 Desktop evidence lives in the isolated qualified sibling
@@ -319,8 +333,9 @@ NOTES-07 is the sole Active implementation task; capture waits for its backend.
       conversation adapters and explicit per-vault backend selection, retaining
       legacy file conversations. The reusable adapter is complete in NOTES-07B;
       NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
-      and owner service. Next connect ordinary host/IPC, per-vault application
-      selection and native callback ownership.
+      and owner service; NOTES-07E connects native host/IPC and closure. Next
+      add native conversation/session preparation, real store/processor
+      construction and per-vault renderer persistence.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
