@@ -11,6 +11,14 @@ budgets and public paths remain unchanged. Source review retains the separate
 companion-only metadata profile, native-only working-copy capabilities and the
 remaining Tauri qualification gate.
 
+Native capture documentation MUST distinguish an expected content digest from
+the injected backend's actual durability confirmation. Describe exact native
+bindings/progress, bounded canonical batches, rescanning after projection and
+the stopped-owner rule after uncertainty or cancellation. Every returned safe
+frame, including a deferred prefix, requires ordered delivery. Shared library
+tests do not qualify a Notes journal, native batching adapter, JJ publication or
+conversation restart recovery; those retain separate milestone evidence.
+
 E-UI-CI-001 moves existing Chromium and WebKit Help acceptance into affected
 standard PR checks. JST-DOC-002/003 source-review, generated-reference and
 bundled-manual requirements remain unchanged. Browsing guidance records retained

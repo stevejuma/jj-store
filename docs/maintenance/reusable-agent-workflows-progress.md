@@ -20,7 +20,9 @@ whole stage.
 
 - **Active task: NOTES-06C.** Connect Notes-owned privacy and durable capture
   through the qualified native factory. Retain one raw owner, native scope,
-  capture before display/acknowledgement and drained vault closure.
+  capture before display/acknowledgement and drained vault closure. The shared
+  receipt-fenced capture port is qualified in NOTES-06C1; Notes sink, batching
+  transport and native adoption remain to be connected.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -166,6 +168,14 @@ whole stage.
       cases, strict checks/builds/packages and all specification lanes. Desktop
       `0535bb1e`, E-AI-027, passes six cold default ACP cases with foreground
       assistance. Managed Notes capture remains a separate gate.
+
+- [x] **NOTES-06C1** Add shared receipt-fenced native capture with injected
+      privacy and durable sink, exact binding/progress and bounded canonical
+      batches. Retain deferred prefix frames and scan final projections before
+      persistence. Ten focused cases and all 20 crate cases pass, including the
+      ordered-JSON feature profile. Evidence: E-REUSABLE-AGENTS-013. This is the
+      shared library prerequisite; NOTES-06C stays Active until Notes connects
+      its actual native privacy/backend and complete batch delivery.
 
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).

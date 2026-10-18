@@ -142,3 +142,16 @@ unsafe JavaScript number inputs and malformed or oversized frames fail before
 transport. Responses retain their operation and handle identities. The caller
 owns handle closure and scope lifetime; the client adds no retry, polling,
 filesystem access, generation, cache or execution authority.
+
+Native capture accepts an exact host-owned scope/window/admission and
+worker/open-request/target binding. Its serialized owner checks contiguous
+processing ordinals and native event cursors, applies injected stream privacy,
+accumulates safe projections and scans the complete output again. Deferred
+prefix frames and their triggering frame form one bounded capture batch with a
+domain-separated content identity. An injected durable sink must confirm that
+exact identity before any safe output returns. Refusal, uncertain persistence,
+receipt mismatch or an abandoned capture wait permanently fences that owner; it
+cannot replay the write or select an unprocessed fallback. Private prefixes
+remain memory-only. Hosts still own current admission, actual durable receipts,
+native callback drain and ordered delivery of every returned frame. This port
+alone neither implements a Notes backend nor qualifies JJ publication.

@@ -230,8 +230,8 @@
     "sources": ["crates/jj-store-conversations/src"],
     "pages": ["docs/site/technical/conversations.md"],
     "review": {
-      "reason": "Reviewed the final scoped generic prompt ports, durable receipt ordering and no-replay outcomes; native adapter binds immutable command digests and borrows its owning supervisor lease.",
-      "fingerprint": "8a6b4a4d9bcb54064c3877aa687ca732879e054a707cc08da624d7f927f77d50"
+      "reason": "Reviewed native capture binding, canonical bounded batches, injected privacy and exact durable receipt fences, stopped uncertain owners and complete ordered batch delivery; Notes native storage and transport adoption remain separately qualified.",
+      "fingerprint": "77ec3824bf250960e0b225988964159c332cc7383dacd34e59fa7844fb2a17b0"
     }
   },
   {

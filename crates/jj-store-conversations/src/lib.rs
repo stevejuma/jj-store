@@ -1,5 +1,6 @@
 //! Headless conversation coordination; hosts own admission, privacy and durability.
 #![forbid(unsafe_code)]
+pub mod capture;
 pub mod control_v3;
 pub mod coordination;
 pub mod privacy;

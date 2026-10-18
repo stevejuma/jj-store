@@ -19,7 +19,7 @@ frames to accumulate assistant text and merge tool snapshots. Preserve frame
 ordering when a boundary emits a buffered prefix before a terminal frame.
 
 Durably journal sanitized frames and their exact progress before displaying them
-or acknowledging the runtime. The stream library supplies neither a durable
+or acknowledging the runtime. The stream primitives supply neither a durable
 receipt nor an acknowledgement owner. A renderer subscription must not consume
 raw runtime events. Undecidable prefix buffers stay memory-only and have no
 serialization or debug representation. Close and disable must drain the owning
@@ -31,6 +31,44 @@ executable or restore a provider session. Repository stores remain selected
 through the [injectable store interfaces](architecture.md). Broader
 workspace/store adapters and Notes integration are tracked by the staged M33
 specification.
+
+## Native capture before delivery
+
+`capture::NativeCapture` combines the shared stream pipeline with an injected
+`DurableCapture` sink. Construct one owner per native worker. Its `Binding`
+retains opaque host scope, window, admission generation, original open request,
+target and worker identities. These values grant no authority and must contain
+no device paths or credentials. Hosts recheck current admission around the
+native callback and drain admitted callbacks before releasing its backend.
+
+Each `Input` includes the exact native worker, contiguous processing ordinal,
+facts/event publication and validated frame. Facts consume an ordinal without
+advancing the native event cursor. The pipeline applies injected stream privacy,
+accumulates assistant/tool projections, then scans complete projected frames
+again. Deferred prefix frames precede their triggering frame in one batch. Raw
+prefixes remain only in memory. Input and canonical output are bounded to 2 MiB;
+serialization stops at the byte limit.
+
+The batch's schema-1 JSON sorts all object keys recursively, independent of
+downstream `serde_json/preserve_order` feature unification. Its domain-separated
+SHA-256 receipt binds sanitized frames, policy, native scope and exact progress.
+The expected digest alone proves no durability. `persist` must retain exact
+bytes/progress and return that identity only after its actual durability fence.
+The host sink owns deduplication, durable request/publication receipts and
+unknown-write recovery across owners and restarts.
+
+No output returns before the matching receipt. Refusal, uncertainty, receipt
+mismatch, invalid progress, privacy failure or a dropped admitted capture wait
+fences the owner permanently. It never retries that write or changes writers. A
+replacement owner cannot turn an unknown write into permission to retry; the
+sink must recover its retained outcome. Runtime supervision still belongs to the
+native host: this headless library cannot keep a cancelled future alive.
+
+Deliver **all** returned frames in order, including a flushed prefix before a
+terminal record. Native transport integration must preserve that batch; choosing
+only the final frame would lose captured text. This shared port alone supplies
+no filesystem journal, Notes runtime adapter, AgentStore/ThreadStore publication
+or native downstream acceptance. Those remain separately qualified M33 tasks.
 
 ## Durable explicit turns
 
