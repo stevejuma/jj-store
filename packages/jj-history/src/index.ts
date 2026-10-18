@@ -7,13 +7,15 @@ export {
   MAX_RESPONSE_BYTES,
 } from "./wire.js";
 export type * from "./generated.js";
-export type Command = "heads" | "open" | "status" | "read" | "close";
+export type Command = "heads" | "open" | "status" | "read" | "blame" | "close";
 export interface HistoryTransport {
   invoke(command: Command, request: string): Promise<string>;
 }
 type Data<K extends keyof Contract> = Contract[K]["data"];
 export type Handle = Data<"open_response">;
 export type Query = Data<"read_request">["query"];
+export type BlameQuery = Data<"blame_request">["query"];
+export type BlamePage = Data<"blame_response">;
 export class HistoryClient {
   readonly #vault: string;
   readonly #transport: HistoryTransport;
@@ -69,5 +71,17 @@ export class HistoryClient {
         encode("selection_request", { vault: this.#vault, handle }),
       ),
     );
+  }
+  async blame(handle: Handle, query: BlameQuery): Promise<BlamePage> {
+    const result = decode(
+      "blame_response",
+      await this.#transport.invoke(
+        "blame",
+        encode("blame_request", { vault: this.#vault, handle, query }),
+      ),
+    );
+    if (result.commit !== query.commit || result.path !== query.path)
+      throw new HistoryProtocolError();
+    return result;
   }
 }

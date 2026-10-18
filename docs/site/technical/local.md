@@ -62,20 +62,20 @@ a private absolute cache directory and trusted `Config`; neither roots nor
 generations are renderer inputs. Stored vault/handle strings grant no source
 authority.
 
-The transport accepts `heads`, `open`, `status`, `read` and `close`, each with a
-strict inner request object carried as a JSON text `request`. Both directions
-use the versioned envelope `{ "version": 1, "data": ... }`. Tauri transports
-this text without parsing inner integers as JavaScript numbers. A client must
-retain unsafe integer tokens without rounding; ordinary `JSON.parse` is
-insufficient. Unknown envelope versions/fields fail closed. Encoded requests are
-limited to 128 KiB and responses to 16 MiB, in addition to the underlying read
-budgets. The crate's `schema` example exports the complete public inner/envelope
-contract. Direct Rust `History` calls remain typed and do not use this transport
-codec. `heads` takes `vault`; `open` adds an exact `operation` from the admitted
-heads or retained selection and returns an opaque handle. `status` takes `vault`
-and `handle`, reporting `preparing`, `ready` with the exact snapshot, or a
-retained failure. `read` adds the existing local query object. Close releases
-only the invoking window's exact vault/handle.
+The transport accepts `heads`, `open`, `status`, `read`, `blame` and `close`,
+with a strict inner request object carried as a JSON text `request`. Both
+directions use the versioned envelope `{ "version": 1, "data": ... }`. Tauri
+transports this text without parsing inner integers as JavaScript numbers. A
+client must retain unsafe integer tokens without rounding; ordinary `JSON.parse`
+is insufficient. Unknown envelope versions/fields fail closed. Encoded requests
+are limited to 128 KiB and responses to 16 MiB, in addition to the underlying
+read budgets. The crate's `schema` example exports the complete public
+inner/envelope contract. Direct Rust `History` calls remain typed and do not use
+this transport codec. `heads` takes `vault`; `open` adds an exact `operation`
+from the admitted heads or retained selection and returns an opaque handle.
+`status` takes `vault` and `handle`, reporting `preparing`, `ready` with the
+exact snapshot, or a retained failure. `read` adds the existing local query
+object. Close releases only the invoking window's exact vault/handle.
 
 Ready handles support commit history/diffs, unfiltered operation graphs and
 operation-parent deltas. Op Log requests use `graph: "operations"` and
@@ -96,6 +96,14 @@ Current admission, cancellation and generation remain checked throughout. Source
 files, source indexes, heads and refs are preserved. Hosts should expose
 progress for the whole read, including preparation, and retain the selected
 operation. File-content and cross-operation predicates remain unqualified.
+
+`blame` accepts the same vault/handle plus a query containing an exact commit,
+literal path and optional continuation. It reuses the existing native annotation
+algorithm and bounded progress cache; cursor scope is native-owned by the
+retained handle. Every page rechecks window/vault authorization and generation,
+and stays on the blocking worker through completion. Display the returned
+attribution with recorded text from `file_at`, using its native file ID as the
+membership proof. Neither annotation nor text reads snapshot dirty editor bytes.
 
 At most one preparation runs at a time; ordinary reads retain separate worker
 capacity. The service bounds retained handles and window scopes. Cancel/close
@@ -121,6 +129,11 @@ pending and calls `read(handle, query)` when ready. Call `close(handle)` when
 finished and retain a failed close for explicit recovery. Transport failures
 propagate; there are no implicit retries or polls. Vault teardown still requires
 the native drain described above.
+
+For attribution, call `blame(handle, { commit, path, continuation: null })` on a
+ready handle. Display partial ranges while `complete` is false and pass its
+opaque continuation to the next call. Keep the operation, commit and path fixed
+through the sequence; no implicit polling or retry is supplied by the client.
 
 Safe integer tokens decode as JavaScript numbers; full-width values decode as
 `bigint`. Large inputs must be supplied as `bigint`; already rounded numbers are

@@ -42,9 +42,16 @@ whole stage.
   stock JJ for merges, conflicts, deletion and multiple index batches; focused
   Notes tests and cold native consumer review pass (E-REPO-017). Delayed
   selection after view replacement is fenced; the ordinary demo remains open.
-- **Next: NOTES-05I8 file blame.** Copy/adapt jj-store's blame presentation, add
-  the File history toolbar action and qualify the retained native reader. This
-  is the next slice within NOTES-05I, not a second Active umbrella.
+- **Completed: NOTES-05I8 file blame and sidebar states.** Copied jj-store's
+  virtual source/attribution presentation opens from File history at the
+  recorded commit and operation. Native stock-JJ attribution, authorization and
+  close-drain tests pass; cold Notes review preserves dirty source bytes. The
+  sidebar omits ordinary operation/author metadata, aligns its header with the
+  main pane and uses shadcn Empty with an icon. Repository loading views use
+  representative skeletons with App-owned status progress (E-FILE-BLAME-001;
+  Notes E-REPO-018). Native search/evolution, write actions and managed
+  conversation/restart remain separate slices within the same NOTES-05I
+  umbrella.
 
 - **Active task: NOTES-05I.** Close the source-confirmed repository-view gaps:
   highlighted native search, rich Command View parent/revision pickers, stacked

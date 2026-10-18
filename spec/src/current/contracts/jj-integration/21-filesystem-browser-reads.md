@@ -24,3 +24,9 @@ file-body and cross-operation predicates stay disabled. Tauri performs that
 preparation on existing workers with current scope/cancellation and cache
 admission. This enables exact file revision history without modifying source
 files or source indexes (JST-JJ-003/005, JST-LOCAL-004).
+
+Tauri annotation uses the same bounded native blame implementation at a retained
+operation and commit, with native-owned handle scope for continuations. Author,
+origin commit and one-based source ranges retain their actual JJ attribution.
+Read admission, source binding, revocation and drained closure remain mandatory;
+no renderer-provided path is physical-source authority.

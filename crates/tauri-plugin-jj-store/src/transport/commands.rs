@@ -60,6 +60,23 @@ pub async fn read<R: Runtime>(
     )
 }
 #[tauri::command]
+pub async fn blame<R: Runtime>(
+    window: WebviewWindow<R>,
+    host: State<'_, Arc<History>>,
+    request: String,
+) -> Result<String> {
+    let request: frames::Blame = wire::decode(&request)?;
+    wire::encode(
+        host.blame(
+            &caller(&window)?,
+            &request.vault,
+            request.handle,
+            request.query,
+        )
+        .await?,
+    )
+}
+#[tauri::command]
 pub async fn close<R: Runtime>(
     window: WebviewWindow<R>,
     host: State<'_, Arc<History>>,

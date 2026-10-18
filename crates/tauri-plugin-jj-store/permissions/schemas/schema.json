@@ -295,6 +295,18 @@
       "type": "string",
       "oneOf": [
         {
+          "description": "Enables the blame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-blame",
+          "markdownDescription": "Enables the blame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the blame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-blame",
+          "markdownDescription": "Denies the blame command without any pre-configured scope."
+        },
+        {
           "description": "Enables the close command without any pre-configured scope.",
           "type": "string",
           "const": "allow-close",
@@ -361,10 +373,10 @@
           "markdownDescription": "No history access by default. Hosts explicitly grant admitted local history."
         },
         {
-          "description": "Read-only local JJ history scoped to the invoking window and native vault admission.\n#### This permission set includes:\n\n- `allow-heads`\n- `allow-open`\n- `allow-status`\n- `allow-read`\n- `allow-close`",
+          "description": "Read-only local JJ history scoped to the invoking window and native vault admission.\n#### This permission set includes:\n\n- `allow-heads`\n- `allow-open`\n- `allow-status`\n- `allow-read`\n- `allow-blame`\n- `allow-close`",
           "type": "string",
           "const": "local-history",
-          "markdownDescription": "Read-only local JJ history scoped to the invoking window and native vault admission.\n#### This permission set includes:\n\n- `allow-heads`\n- `allow-open`\n- `allow-status`\n- `allow-read`\n- `allow-close`"
+          "markdownDescription": "Read-only local JJ history scoped to the invoking window and native vault admission.\n#### This permission set includes:\n\n- `allow-heads`\n- `allow-open`\n- `allow-status`\n- `allow-read`\n- `allow-blame`\n- `allow-close`"
         }
       ]
     }

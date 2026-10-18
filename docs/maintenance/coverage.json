@@ -255,8 +255,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed typed path-index-required read retry through private admitted changed-path batches at the original handle. Existing window/vault authorization, cancellation, generation, preparation timeout, schemas and empty default permissions remain intact.",
-      "fingerprint": "c5e48b0ff0a1068fe55b75c5650f8bbaeb9b2e03cbcedb56bf7161ae3e193f1b"
+      "reason": "Reviewed additive blame through the retained native handle, bounded native annotation cache, current window and vault admission, generation checks and drained blocking work. Version-one frames and generated permissions include only the explicit local-history grant; defaults remain empty.",
+      "fingerprint": "91581c24cc00169e8aa3f79841124d230fcb92f0284da4bdc2e9657d5940adc7"
     }
   },
   {
@@ -269,8 +269,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed unchanged parent/current history-client source fingerprint fd34e912f7b445c7efa525836b5310f715b6ab65d352aedea62af5ffe52b9787 against existing typed-client manual. Constraint-preserving decoding, bounded exact integers, immutable scope and explicit handle closure remain documented; file predicates add no client schema or API.",
-      "fingerprint": "fd34e912f7b445c7efa525836b5310f715b6ab65d352aedea62af5ffe52b9787"
+      "reason": "Reviewed the typed blame method, exact scoped request and selected commit/path receipt checks, generated native schema, full-width integer decoding and unchanged injected transport/close ownership. Local manual and package README describe progressive continuation without implicit polling.",
+      "fingerprint": "4b51f84d3fb09ed978125bb76260ef78b6238d4c5a5fef80907bf227ae5868a3"
     }
   }
 ]

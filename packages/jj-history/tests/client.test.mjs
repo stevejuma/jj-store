@@ -373,3 +373,52 @@ test("operation differences retain the native status tag beside a referenced pay
     HistoryProtocolError,
   );
 });
+
+test("blame keeps the exact handle and file selection and rejects substituted replies", async () => {
+  const commit = "11".repeat(20),
+    file_id = "22".repeat(20),
+    calls = [];
+  const page = {
+    version: 1,
+    repository,
+    operation,
+    commit,
+    path: "a.md",
+    file_id,
+    line_count: 1,
+    ranges: [],
+    commits: {},
+    complete: true,
+    continuation: null,
+    history_commits: 18446744073709551615n,
+    stats: {
+      metadata_nodes: 0,
+      predicate_file_bytes: 0,
+      predicate_lines: 0,
+      object_reads: 0,
+      object_bytes: 0,
+      work: 0,
+    },
+  };
+  const client = new HistoryClient("scoped", {
+    invoke: async (command, request) => {
+      calls.push([command, JSON.parse(request)]);
+      return frame(page);
+    },
+  });
+  const query = { commit, path: "a.md", continuation: null };
+  assert.equal(
+    (await client.blame(handle, query)).history_commits,
+    18446744073709551615n,
+  );
+  assert.deepEqual(calls[0], [
+    "blame",
+    { version: 1, data: { vault: "scoped", handle, query } },
+  ]);
+  page.path = "outside.md";
+  await assert.rejects(client.blame(handle, query), HistoryProtocolError);
+  await assert.rejects(
+    client.blame(handle, { ...query, root: "outside" }),
+    HistoryProtocolError,
+  );
+});

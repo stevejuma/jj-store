@@ -45,3 +45,15 @@ if (operationDelta.status === "difference") {
   const exactParent: string = operationDelta.parent;
   void exactParent;
 }
+
+void client.blame("h", {
+  commit: "11".repeat(20),
+  path: "note.md",
+  continuation: null,
+});
+// @ts-expect-error Blame cannot override the native operation or physical root.
+void client.blame("h", {
+  commit: "11".repeat(20),
+  path: "note.md",
+  root: "outside",
+});

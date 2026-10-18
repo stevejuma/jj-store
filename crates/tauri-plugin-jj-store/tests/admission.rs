@@ -397,5 +397,6 @@ async fn revocation_preserves_other_windows_and_failed_preparation_is_observable
     host.shutdown().await.unwrap();
 }
 
+mod blame;
 mod file_history;
 mod operations;

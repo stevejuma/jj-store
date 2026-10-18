@@ -11,6 +11,10 @@ private changed-path index preparation from source mutation, and native oracle
 results from consumer UI acceptance. JST-DOC-002/003 source review and
 qualification gates are unchanged.
 
+E-FILE-BLAME-001 documents the additive scoped annotation command and Notes'
+copied blame presentation. README usage remains concise; the manual owns cursor,
+file/line bounds, pinned source and qualification details under JST-DOC-002/003.
+
 M33's crate README and local manual describe independent local-history
 construction, private cache admission and retained read pins. Original query
 budgets and public paths remain unchanged. Source review retains the separate

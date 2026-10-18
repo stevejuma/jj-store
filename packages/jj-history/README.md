@@ -28,6 +28,10 @@ other text transports. Neither entry imports Tauri or chooses native policy.
 Errors propagate without retries; applications own cancellation and closure.
 Retain failed close handles until the native host confirms their release.
 
+Call `history.blame(handle, { commit, path, continuation: null })` for recorded
+line attribution. Retain returned progress and its opaque continuation until
+`complete`; every page uses the handle's original operation and admission.
+
 Types and runtime validation derive from the native Rust schema. Integer values
 within JavaScript's safe range decode as numbers; larger values decode as
 `bigint`. Supply large input integers as `bigint`, never rounded numbers.

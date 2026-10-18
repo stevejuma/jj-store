@@ -24,7 +24,15 @@ fn renderer_frames_cannot_supply_native_authority() {
             "{field}"
         );
         selected["query"] = serde_json::json!({"kind":"query_info"});
-        assert!(serde_json::from_value::<Read>(selected).is_err(), "{field}");
+        assert!(
+            serde_json::from_value::<Read>(selected.clone()).is_err(),
+            "{field}"
+        );
+        selected["query"] = serde_json::json!({"commit":"00".repeat(20), "path":"note.md"});
+        assert!(
+            serde_json::from_value::<Blame>(selected).is_err(),
+            "{field}"
+        );
     }
     assert!(serde_json::from_value::<Vault>(serde_json::json!({"vault":"token"})).is_ok());
 }

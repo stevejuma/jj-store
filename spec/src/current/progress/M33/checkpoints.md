@@ -252,3 +252,8 @@ E-FILE-HISTORY-001 qualifies the existing pinned log request with native file
 predicates after complete changed-path admission. Notes E-REPO-017 consumes it
 for an editor-following right sidebar and shared row hit areas. M33/M33.4 retain
 In progress; provider, managed conversation/restart and visual gates stay open.
+
+E-FILE-BLAME-001 qualifies native retained-handle attribution and the typed
+client. Notes E-REPO-018 owns copied blame presentation, sidebar cleanup, Empty
+states and representative loading. M33/M33.4 gates/statuses remain unchanged;
+managed conversation/restart, provider/platform and visual acceptance stay open.

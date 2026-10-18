@@ -1,5 +1,6 @@
 //! Host-admitted immutable local history. No renderer-supplied source authority.
 #![forbid(unsafe_code)]
+mod annotations;
 mod file_history;
 pub mod frames;
 mod jobs;
@@ -11,7 +12,7 @@ mod transport;
 pub mod wire;
 
 pub use jj_store_jj::local_browser as local;
-pub use jj_store_jj::query::{Cancellation, cache};
+pub use jj_store_jj::query::{Cancellation, blame, cache};
 pub use jj_store_model::OperationId;
 pub use policy::{Admission, Config, Context};
 pub use service::{Handle, History, Status};

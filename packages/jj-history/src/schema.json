@@ -8,21 +8,25 @@
     "open_request": { "$ref": "#/$defs/Frame2" },
     "selection_request": { "$ref": "#/$defs/Frame3" },
     "read_request": { "$ref": "#/$defs/Frame4" },
-    "heads_response": { "$ref": "#/$defs/Frame5" },
-    "open_response": { "$ref": "#/$defs/Frame6" },
-    "status_response": { "$ref": "#/$defs/Frame7" },
-    "read_response": { "$ref": "#/$defs/Frame8" },
-    "close_response": { "$ref": "#/$defs/Frame9" }
+    "blame_request": { "$ref": "#/$defs/Frame5" },
+    "heads_response": { "$ref": "#/$defs/Frame6" },
+    "open_response": { "$ref": "#/$defs/Frame7" },
+    "status_response": { "$ref": "#/$defs/Frame8" },
+    "read_response": { "$ref": "#/$defs/Frame9" },
+    "blame_response": { "$ref": "#/$defs/Frame10" },
+    "close_response": { "$ref": "#/$defs/Frame11" }
   },
   "required": [
     "heads_request",
     "open_request",
     "selection_request",
     "read_request",
+    "blame_request",
     "heads_response",
     "open_response",
     "status_response",
     "read_response",
+    "blame_response",
     "close_response"
   ],
   "$defs": {
@@ -551,6 +555,40 @@
           "minimum": 1,
           "maximum": 1
         },
+        "data": { "$ref": "#/$defs/Blame" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Blame": {
+      "type": "object",
+      "properties": {
+        "vault": { "type": "string" },
+        "handle": { "$ref": "#/$defs/Handle" },
+        "query": { "$ref": "#/$defs/BlameQuery" }
+      },
+      "additionalProperties": false,
+      "required": ["vault", "handle", "query"]
+    },
+    "BlameQuery": {
+      "type": "object",
+      "properties": {
+        "commit": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "continuation": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false,
+      "required": ["commit", "path"]
+    },
+    "Frame6": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
         "data": { "$ref": "#/$defs/LocalCodeHeads" }
       },
       "additionalProperties": false,
@@ -573,7 +611,7 @@
       "minLength": 32,
       "maxLength": 32
     },
-    "Frame6": {
+    "Frame7": {
       "type": "object",
       "properties": {
         "version": {
@@ -587,7 +625,7 @@
       "additionalProperties": false,
       "required": ["version", "data"]
     },
-    "Frame7": {
+    "Frame8": {
       "type": "object",
       "properties": {
         "version": {
@@ -682,7 +720,7 @@
       },
       "required": ["kind", "message"]
     },
-    "Frame8": {
+    "Frame9": {
       "type": "object",
       "properties": {
         "version": {
@@ -2139,7 +2177,131 @@
         "invalid_path"
       ]
     },
-    "Frame9": {
+    "Frame10": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/BlamePage" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "BlamePage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "repository": { "$ref": "#/$defs/RepositoryId" },
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "commit": { "type": "string" },
+        "path": { "type": "string" },
+        "file_id": { "type": "string" },
+        "line_count": { "type": "integer", "format": "uint", "minimum": 0 },
+        "ranges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BlameRange" }
+        },
+        "commits": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/BlameCommit" }
+        },
+        "complete": { "type": "boolean" },
+        "continuation": { "type": ["string", "null"] },
+        "history_commits": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "stats": { "$ref": "#/$defs/GraphStats" }
+      },
+      "required": [
+        "version",
+        "repository",
+        "operation",
+        "commit",
+        "path",
+        "file_id",
+        "line_count",
+        "ranges",
+        "commits",
+        "complete",
+        "history_commits",
+        "stats"
+      ]
+    },
+    "BlameRange": {
+      "type": "object",
+      "properties": {
+        "start": { "type": "integer", "format": "uint", "minimum": 0 },
+        "end": { "type": "integer", "format": "uint", "minimum": 0 },
+        "commit_id": { "type": "string" }
+      },
+      "required": ["start", "end", "commit_id"]
+    },
+    "BlameCommit": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "change_id": { "type": "string" },
+        "description": { "type": "string" },
+        "author": { "$ref": "#/$defs/GraphSignature" },
+        "committer": { "$ref": "#/$defs/GraphSignature" }
+      },
+      "required": ["id", "change_id", "description", "author", "committer"]
+    },
+    "GraphSignature": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "timestamp": { "$ref": "#/$defs/GraphTimestamp" }
+      },
+      "required": ["name", "email", "timestamp"]
+    },
+    "GraphTimestamp": {
+      "type": "object",
+      "properties": {
+        "millis": { "type": "integer", "format": "int64" },
+        "offset_minutes": { "type": "integer", "format": "int32" }
+      },
+      "required": ["millis", "offset_minutes"]
+    },
+    "GraphStats": {
+      "type": "object",
+      "properties": {
+        "metadata_nodes": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "predicate_file_bytes": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "predicate_lines": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "object_reads": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "object_bytes": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "work": { "type": "integer", "format": "uint64", "minimum": 0 }
+      },
+      "required": [
+        "metadata_nodes",
+        "predicate_file_bytes",
+        "predicate_lines",
+        "object_reads",
+        "object_bytes",
+        "work"
+      ]
+    },
+    "Frame11": {
       "type": "object",
       "properties": {
         "version": {

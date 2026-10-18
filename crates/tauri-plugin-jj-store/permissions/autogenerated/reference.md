@@ -14,6 +14,32 @@ No history access by default. Hosts explicitly grant admitted local history.
 <tr>
 <td>
 
+`jj-store:allow-blame`
+
+</td>
+<td>
+
+Enables the blame command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`jj-store:deny-blame`
+
+</td>
+<td>
+
+Denies the blame command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `jj-store:allow-close`
 
 </td>

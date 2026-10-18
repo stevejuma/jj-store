@@ -306,3 +306,12 @@ deletion semantics, current authorization, cancellation and drained closure.
 Status progress spans index preparation and querying. Unqualified file-body and
 cross-operation predicates remain unavailable; schemas and grants are unchanged
 (JST-ARCH-007, JST-LOCAL-004).
+
+The admitted history bridge MAY expose the existing native blame reader through
+a bounded version-one text command. Its exact commit/path and opaque
+continuation remain bound to the retained handle's native operation, repository,
+window/vault and generation. Renderer fields cannot override that authority.
+Blame runs on existing query workers; closure/revocation drains the same read
+lifetime. Default permissions remain empty. Notes copies the maintained blame
+presentation and owns main-panel navigation, file scope and status/toast
+lifetime.

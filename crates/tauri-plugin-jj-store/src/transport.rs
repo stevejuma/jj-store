@@ -17,6 +17,7 @@ impl Builder {
                 commands::open,
                 commands::status,
                 commands::read,
+                commands::blame,
                 commands::close
             ])
             .setup(move |app, _| {

@@ -108,7 +108,14 @@ export type LocalDiffSummaryRequest = {
   direction: Direction;
 };
 export type LocalConflictRequest = { commit: GitSha1Id; path: string };
-export type Frame5 = { version: number; data: LocalCodeHeads };
+export type Frame5 = { version: number; data: Blame };
+export type Blame = { vault: string; handle: Handle; query: BlameQuery };
+export type BlameQuery = {
+  commit: GitSha1Id;
+  path: string;
+  continuation?: string | null;
+};
+export type Frame6 = { version: number; data: LocalCodeHeads };
 export type LocalCodeHeads = {
   version: number;
   profile: string;
@@ -117,8 +124,8 @@ export type LocalCodeHeads = {
   heads: Array<OperationId>;
 };
 export type RepositoryId = string;
-export type Frame6 = { version: number; data: Handle };
-export type Frame7 = { version: number; data: Status };
+export type Frame7 = { version: number; data: Handle };
+export type Frame8 = { version: number; data: Status };
 export type Status =
   | { state: "preparing" }
   | { state: "ready"; data: LocalCodeSnapshot }
@@ -151,7 +158,7 @@ export type GraphError =
     )
   | { invalid_query: Diagnostic };
 export type Diagnostic = { kind: string; message: string };
-export type Frame8 = { version: number; data: LocalCodeResponse };
+export type Frame9 = { version: number; data: LocalCodeResponse };
 export type LocalCodeResponse =
   | { kind: "graph"; data: LocalGraphPage }
   | { kind: "stack_history"; data: LocalStackHistoryPage }
@@ -595,15 +602,62 @@ export type LocalConflictUnsupported =
   | "binary"
   | "too_large"
   | "invalid_path";
-export type Frame9 = { version: number; data: null };
+export type Frame10 = { version: number; data: BlamePage };
+export type BlamePage = {
+  version: number;
+  repository: RepositoryId;
+  operation: OperationId;
+  commit: string;
+  path: string;
+  file_id: string;
+  line_count: number | bigint;
+  ranges: Array<BlameRange>;
+  commits: Record<string, BlameCommit>;
+  complete: boolean;
+  continuation?: string | null;
+  history_commits: number | bigint;
+  stats: GraphStats;
+};
+export type BlameRange = {
+  start: number | bigint;
+  end: number | bigint;
+  commit_id: string;
+};
+export type BlameCommit = {
+  id: string;
+  change_id: string;
+  description: string;
+  author: GraphSignature;
+  committer: GraphSignature;
+};
+export type GraphSignature = {
+  name: string;
+  email: string;
+  timestamp: GraphTimestamp;
+};
+export type GraphTimestamp = {
+  millis: number | bigint;
+  offset_minutes: number;
+};
+export type GraphStats = {
+  metadata_nodes: number | bigint;
+  predicate_file_bytes: number | bigint;
+  predicate_lines: number | bigint;
+  object_reads: number | bigint;
+  object_bytes: number | bigint;
+  work: number | bigint;
+};
+export type Frame11 = { version: number; data: null };
 export type Contract = {
   heads_request: Frame;
   open_request: Frame2;
   selection_request: Frame3;
   read_request: Frame4;
-  heads_response: Frame5;
-  open_response: Frame6;
-  status_response: Frame7;
-  read_response: Frame8;
-  close_response: Frame9;
+  blame_request: Frame5;
+  heads_response: Frame6;
+  open_response: Frame7;
+  status_response: Frame8;
+  read_response: Frame9;
+  blame_response: Frame10;
+  close_response: Frame11;
 };

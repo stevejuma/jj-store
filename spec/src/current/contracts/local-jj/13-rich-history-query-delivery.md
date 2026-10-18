@@ -57,6 +57,14 @@ revocation and generation checks cover preparation and the repeated read; source
 files, source indexes, heads and refs remain untouched (JST-LOCAL-004,
 JST-JJ-003/005). Status progress spans this derived preparation.
 
+The optional Tauri blame command MUST reuse the qualified native annotation
+algorithm, file/line limits and opaque progress cursors at the original admitted
+handle. The host supplies cursor scope; copied renderer identities cannot grant
+another window, vault, generation or operation. Every page reauthorizes and
+retains worker/cancellation ownership through completion. Reads preserve dirty
+files and source metadata; annotation is distinct from operation history and
+grants no mutation (JST-LOCAL-004, JST-JJ-003/005).
+
 Registered-folder query metadata MAY default author email from host JJ
 configuration (JJ_EMAIL and normal JJ user paths), then the registered
 repository's JJ configuration, then Git configuration. JJ 0.45 secure repository
