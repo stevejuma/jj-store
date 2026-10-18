@@ -27,6 +27,7 @@
 - [Retained tree-file progress](26-retained-tree-file-progress.md)
 - [Initial combination setup candidate](27-initial-combination-setup-candidate.md)
 - [Ordinary local Stacks engine](28-ordinary-local-stacks-engine.md)
+- [External vault working copies](28-vault-working-copy.md)
 - [Correct ordinary workspace composition and topology](29-correct-ordinary-workspace-composition-and-topology.md)
 - [Local Stacks operation descriptions](30-local-stacks-operation-descriptions.md)
 - [Direct local Stacks CLI](31-direct-local-stacks-cli.md)

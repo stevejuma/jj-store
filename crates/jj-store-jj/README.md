@@ -40,3 +40,9 @@ commands. See
 
 See the [embedding guide](../../docs/injectable-stores.md) and its independent
 consumer example for complete construction, extension and recovery details.
+
+For host-admitted automatic vault checkpoints, enable `vault-backup` and use
+`vault_workspace::{Binding, Session}`. Bind canonical native paths and a durable
+vault identity; call `capture` on a bounded worker. External state needs no JJ
+entry in the vault. Completed checkpoints retain ordinary Git ancestry, while
+immutable history reads remain separate. `jj-vault` provides reusable scheduling.

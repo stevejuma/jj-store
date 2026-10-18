@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Local Git-backed JJ collaboration](01-local-git-backed-jj-collaboration.md)
@@ -36,3 +35,4 @@ Read the owning topic and requirement before implementation.
 - [Original command and combination completion join](29-original-command-and-combination-completion-join.md)
 - [Explicit initial stack workspace setup](30-explicit-initial-stack-workspace-setup.md)
 - [Complete native stack discovery and boundaries](31-complete-native-stack-discovery-and-boundaries.md)
+- [Automatic vault backup](32-automatic-vault-backup.md)

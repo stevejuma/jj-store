@@ -14,6 +14,7 @@
 - [ID verification](id.md)
 - [JJ verification](jj.md)
 - [LOCAL verification (continued 2)](local-02.md)
+- [LOCAL verification (continued 3)](local-03.md)
 - [LOCAL verification](local.md)
 - [MUT verification](mut.md)
 - [OBJ verification](obj.md)

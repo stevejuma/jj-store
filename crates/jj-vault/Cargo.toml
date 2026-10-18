@@ -1,0 +1,16 @@
+[package]
+name = "jj-vault"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Reusable automatic local vault checkpoint coordinator"
+readme = "README.md"
+
+[dependencies]
+jj-store-jj = { workspace = true, features = ["vault-backup"] }
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["rt", "sync", "time"] }
+
+[dev-dependencies]
+tempfile = "3"

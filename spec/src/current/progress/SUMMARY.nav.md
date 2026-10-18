@@ -71,3 +71,5 @@
   {{#include M32/SUMMARY.nav.md}}
 - [M33 reusable agent workflows and Notes integration](M33/index.md)
   {{#include M33/SUMMARY.nav.md}}
+- [M34 automatic vault history and backup](M34/index.md)
+  {{#include M34/SUMMARY.nav.md}}
