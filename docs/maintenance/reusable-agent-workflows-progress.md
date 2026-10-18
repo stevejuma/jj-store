@@ -18,10 +18,16 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-06.** Establish one native raw-event owner that sanitizes
-  and durably captures before display/ACK, then drains before vault release.
-  Review the shared runtime journal and existing Notes AI lifecycle before
-  changing their injected boundary.
+- **Active task: NOTES-06B.** Inject a native processor factory through the
+  reusable Tauri host. Keep window/admission, request, target and worker
+  identities native-owned; preserve startup revocation and drained closure.
+- **Completed: NOTES-06A.** Lapis AI `6ce65ebb` adds an injected Rust processor
+  before startup facts and event publication. Nine focused cases, all 995 Rust
+  tests (two inherited ignored), 45 governance and 27 renderer cases, strict
+  checks, builds, packages and specification lanes pass. Desktop `242e1fe5`
+  records six cold ACP compatibility passes with foreground assistance.
+- **Parent gate: NOTES-06.** Waiting for NOTES-06B/C/D. The shared hook alone
+  does not establish Notes sanitation, durable capture or backend selection.
 - **Completed: NOTES-04/04B.** Cold actual-window history, exact restored pins,
   source preservation and plain-folder refusal pass in desktop `fb238ae2`.
   Strict native keyboard-window assertions pass. Both launches received physical
@@ -33,7 +39,7 @@ whole stage.
 - **Completed current package/UI slice:** Notes API `a91d5e2e`, Design Core
   `a57a38e2` and desktop history `2209736a` are committed independently in the
   isolated qualified workspaces. They preserve unrelated default-checkout work.
-- **Last accepted app (`3aa56eff`):** 72 history checks and all 696 complete
+- **Accepted history UI (`3aa56eff`):** 72 history checks and all 696 complete
   catalog checks pass. Types have no errors/warnings; all 191
   renderer/governance cases and renderer/static catalog builds pass.
 - **Verified producers:** Notes API exact regressions, all 1,160 API cases,
@@ -141,6 +147,12 @@ whole stage.
 - [x] **NOTES-04** Complete the history parent gate with production renderer,
       pane layout and cold visible native evidence. This completes history
       integration in its qualified profile; durable conversations remain below.
+- [x] **NOTES-06A** Add the library-owned `SessionProcessor` hook for startup
+      activity/facts and actor events before exposure or ACK. Retain exact
+      identities/options, bounded output, unknown requests and supervised
+      cancellation/drain. Source `6ce65ebb` qualifies all nine focused cases and
+      full Lapis AI lanes. Consumer `242e1fe5`, E-AI-026, refreshes the six cold
+      default ACP cases. Tauri factory and Notes managed capture remain pending.
 
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
@@ -155,9 +167,21 @@ is pending. One agent works through these tasks, with checks sometimes running
 in the background. Stage-level **In progress** means the stage has started, not
 that every task in it is executing simultaneously.
 
-- [ ] **NOTES-06 — Active:** Implement one native raw-event owner. Sanitize and
-      durably capture before display/ACK; drain before releasing vault
-      authority.
+**Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
+shared runtime hook. NOTES-06B/C/D must connect the native host and Notes
+capture owner, then qualify the complete path. Only its current child below is
+Active.
+
+- [ ] **NOTES-06B — Active:** Inject a scoped processor factory through the
+      Tauri host, preserving native identities, empty defaults, startup
+      revocation, current admission and owned cleanup. Failed processing must
+      never select an unprocessed fallback.
+- [ ] **NOTES-06C:** Connect Notes-owned privacy and durable capture through the
+      native factory. Cover bootstrap activity/facts and ordinary frames; retain
+      a single raw owner and drain capture before releasing the vault.
+- [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
+      failed capture, exact scopes, unknown outcomes, acknowledgement and close.
+      Coordinate its concrete backend acceptance with NOTES-07.
 - [ ] **NOTES-07:** Add receipt-aware AgentStore/ThreadStore conversation
       adapters and explicit per-vault backend selection, retaining legacy file
       conversations.
