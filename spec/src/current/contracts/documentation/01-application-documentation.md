@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-019 records Notes retained native capture authority and
+compatibility qualification separately from actual managed conversations. The
+user-requested Column Canvas commit-log and independent Op Log presentation is
+NOTES-05F, now the only Active task. NOTES-07 waits during this UI slice; its
+store/processor, renderer and restart gates remain unchanged.
+
 E-REUSABLE-PROGRESS-018 records the shared retained native processing hook in
 Lapis AI separately from Notes adoption. Five focused cases and full source
 qualification do not complete native durable capture or conversation restart.

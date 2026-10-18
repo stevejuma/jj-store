@@ -2,10 +2,10 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-Execution now: **one Active task, NOTES-07**. NOTES-06C and NOTES-06C4 are
-**Waiting for NOTES-07**. These three unfinished entries are not three
-concurrent work streams. Parent milestones and started stages retain their open
-gates.
+Execution now: **one Active task, NOTES-05F** for the requested desktop commit
+and operation-log views. NOTES-07 is **Waiting during the requested UI slice**;
+NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started stages retain
+their open gates; these entries are not concurrent work streams.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -23,9 +23,11 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-07.** Add receipt-aware AgentStore/ThreadStore adapters
-  and explicit per-vault backend selection. This supplies the real JJ sink
-  required to finish NOTES-06C/D. Work advances one task at a time.
+- **Active task: NOTES-05F.** Adapt jj-store commit-log presentation to the
+  desktop Repository History plugin using Design Core Column Canvas; add a
+  separate operation-log view and production review stories.
+- **Waiting: NOTES-07.** Resume real store/processor and renderer persistence
+  after the requested history UI slice. Work advances one task at a time.
 - **Waiting: NOTES-06C/06C4.** Shared capture, complete batches, production
   transcript provenance and the real native privacy prerequisite are qualified.
   Managed callback ownership, publication and drained closure await NOTES-07.
@@ -37,7 +39,9 @@ whole stage.
   admission/closure lifetime. Renderer persistence, conversation/session
   preparation and the actual capture processor remain pending within NOTES-07.
   NOTES-07F1 qualifies the shared retained-processing authority needed for
-  capture through renderer reload; Notes adoption is still pending.
+  capture through renderer reload. NOTES-07F2 qualifies Notes retained native
+  authority, exact counted permits and physical/backend fences across reload.
+  Actual processor construction and managed conversation/restart remain pending.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -85,7 +89,7 @@ whole stage.
 
 These are acceptance summaries, not a work queue. **Started; gate open**
 corresponds to the canonical ledger's **In progress**: some work is delivered,
-but acceptance is incomplete. Only NOTES-07 is currently active. The stages
+but acceptance is incomplete. Only NOTES-05F is currently active. The stages
 below are not being worked on simultaneously.
 
 | Stage                                       | Status             | Delivered so far                                                                  | Remaining gate                                                        |
@@ -313,6 +317,16 @@ below are not being worked on simultaneously.
       retained owner adoption and actual store/processor construction remain
       pending.
 
+- [x] **NOTES-07F2** Retain exact native capture authority through renderer
+      reload and old-token closure with physical/JJ witnesses, counted backend
+      permits and fenced drain. Logical backend/journal lease release is
+      independent of incidental duplicated kernel descriptors. Both native
+      profiles pass 147 cases (two inherited ignored each), strict lint/builds,
+      198 renderer/governance cases, types, all four specification lanes and
+      three cold hidden native API compatibility cases pass. Notes change
+      `pquxnosp`; evidence: E-AI-034/E-REUSABLE-PROGRESS-019. This qualifies a
+      lifetime prerequisite; actual managed capture/chat/restart remain open.
+
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
 Desktop evidence lives in the isolated qualified sibling
@@ -329,7 +343,8 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-NOTES-07 is the sole Active implementation task; capture waits for its backend.
+NOTES-05F is the sole Active implementation task. NOTES-07 waits during this
+requested UI slice; capture still waits for its real backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -341,14 +356,20 @@ NOTES-07 is the sole Active implementation task; capture waits for its backend.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
-- [ ] **NOTES-07 — Active:** Add receipt-aware AgentStore/ThreadStore
-      conversation adapters and explicit per-vault backend selection, retaining
-      legacy file conversations. The reusable adapter is complete in NOTES-07B;
-      NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
-      and owner service; NOTES-07E connects native host/IPC and closure. Next
-      adopt the retained native capture grant, then add conversation/session
-      preparation, real store/processor construction and per-vault renderer
-      persistence. NOTES-07F1 completes its shared-library prerequisite only.
+- [ ] **NOTES-05F — Active:** Borrow jj-store commit-log columns, graph lanes
+      and row presentation through public Design Core Column Canvas. Add an
+      independent operation-log workspace view, exact pinned reads, detail
+      inspection and production stories. Preserve history pins, unavailable
+      states, notifications and drained closure.
+- [ ] **NOTES-07 — Waiting during NOTES-05F:** Add receipt-aware
+      AgentStore/ThreadStore conversation adapters and explicit per-vault
+      backend selection, retaining legacy file conversations. The reusable
+      adapter is complete in NOTES-07B; NOTES-07C supplies Notes' journal and
+      NOTES-07D its native backend profile and owner service; NOTES-07E connects
+      native host/IPC and closure. Next add conversation/session preparation,
+      real store/processor construction and per-vault renderer persistence.
+      NOTES-07F1/F2 complete shared and Notes retained-authority prerequisites;
+      no managed conversation gate is closed.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
