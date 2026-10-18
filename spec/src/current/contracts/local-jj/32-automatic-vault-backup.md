@@ -26,6 +26,9 @@ Pending work and unknown command outcomes survive restart without duplicate
 checkpoints or blind replay. All active work reports through host progress.
 
 Explicit restore preserves a safety checkpoint and uses guarded file writes.
+File restore previews pin retained checkpoint bytes and current disk hashes.
+Durable request receipts recover lost outcomes without overwriting later edits.
+Symlink restoration fails explicitly until its guarded profile is qualified.
 Automatic remote sync fetches and merges before pushing the selected branch,
 preserves published ancestry, and retains conflicts without overwriting current
 files. Ordinary Git restores files and checkpoint versions on a fresh device;

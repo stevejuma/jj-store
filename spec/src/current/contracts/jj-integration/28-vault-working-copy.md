@@ -8,3 +8,7 @@ stay in `jj-store-jj`; `jj-vault` owns scheduling through owned interfaces.
 Read-only source admission and ordinary immutable history queries remain
 separate from this explicitly enabled writer. Existing Stacks/manifest behavior
 does not change. M34 records focused proof and any user-deferred qualification.
+
+File restore resolves retained native checkpoint bytes, captures a safety commit
+and persists a request receipt around guarded replacement. Upstream native
+identities/codecs and immutable read behavior remain unchanged (JST-JJ-003/005).

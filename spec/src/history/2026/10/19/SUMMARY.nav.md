@@ -1,2 +1,5 @@
 - [E-VAULT-BACKUP-001](E-VAULT-BACKUP-001/index.md)
   {{#include E-VAULT-BACKUP-001/SUMMARY.nav.md}}
+
+- [E-VAULT-BACKUP-002](E-VAULT-BACKUP-002/index.md)
+  {{#include E-VAULT-BACKUP-002/SUMMARY.nav.md}}

@@ -1,8 +1,11 @@
 //! Automatic checkpoint ownership, independent of any desktop, watcher or UI.
 #![forbid(unsafe_code)]
 mod native;
+mod restore;
 mod schedule;
-pub use jj_store_jj::vault_workspace::{Binding, Capture, Checkpoint};
+pub use jj_store_jj::vault_workspace::{
+    Binding, Capture, Checkpoint, RestorePreview, RestoreRequest,
+};
 pub use native::NativeRepository;
 pub use schedule::Timing;
 use serde::{Deserialize, Serialize};
@@ -20,6 +23,16 @@ use tokio::sync::{oneshot, watch};
 /// Runs only on the owned backup worker. No caller UI thread performs native IO.
 pub trait Repository: Send + 'static {
     fn capture(&mut self) -> Result<Capture, String>;
+    fn preview_restore(
+        &mut self,
+        _checkpoint: &str,
+        _path: &str,
+    ) -> Result<RestorePreview, String> {
+        Err("Restore is unavailable for this provider".into())
+    }
+    fn restore(&mut self, _request: &RestoreRequest) -> Result<Capture, String> {
+        Err("Restore is unavailable for this provider".into())
+    }
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -38,6 +51,12 @@ pub struct Status {
 enum Command {
     Wake,
     Capture(oneshot::Sender<Result<Capture, String>>),
+    Preview(
+        String,
+        String,
+        oneshot::Sender<Result<RestorePreview, String>>,
+    ),
+    Restore(RestoreRequest, oneshot::Sender<Result<Capture, String>>),
     Close(oneshot::Sender<Result<(), String>>),
 }
 #[derive(Clone)]
@@ -185,6 +204,33 @@ fn run(
             .min(Duration::from_secs(60));
         match receiver.recv_timeout(timeout) {
             Ok(Command::Wake) => {}
+            Ok(Command::Preview(checkpoint, path, reply)) => {
+                let _ = reply.send(repository.preview_restore(&checkpoint, &path));
+            }
+            Ok(Command::Restore(request, reply)) => {
+                state.send_modify(|s| {
+                    s.phase = Phase::Saving;
+                    s.error = None;
+                });
+                let result = repository.restore(&request);
+                state.send_modify(|s| match &result {
+                    Ok(value) => {
+                        s.phase = Phase::Ready;
+                        s.checkpoint = value.checkpoint.clone();
+                        s.error = None;
+                    }
+                    Err(error) => {
+                        s.phase = Phase::Failed;
+                        s.error = Some(error.clone());
+                    }
+                });
+                if result.is_ok() {
+                    schedule.completed(Instant::now());
+                } else {
+                    schedule.failed(Instant::now());
+                }
+                let _ = reply.send(result);
+            }
             Ok(Command::Capture(reply)) => {
                 let result = capture(repository.as_mut(), &state);
                 if result.is_ok() {

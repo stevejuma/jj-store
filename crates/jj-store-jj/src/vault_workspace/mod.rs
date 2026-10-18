@@ -4,6 +4,8 @@ mod binding;
 mod capture;
 mod content;
 mod initialize;
+mod restore;
+mod restore_io;
 mod scan;
 pub use content::FileContents;
 use jj_lib::{
@@ -15,6 +17,7 @@ use jj_lib::{
     settings::UserSettings,
     workspace::Workspace,
 };
+pub use restore::{RestorePreview, RestoreRequest};
 use serde::{Deserialize, Serialize};
 use std::{
     fs::{self, File, OpenOptions},
