@@ -455,7 +455,7 @@ export type LocalOperationDiffData =
       parents: Array<OperationId>;
       status: "select_parent";
     }
-  | LocalOperationDiffDifference;
+  | (LocalOperationDiffDifference & { status: "difference" });
 export type LocalOperationDiffViewDelta = {
   heads: LocalSetDelta_GitSha1Id;
   local_bookmarks: Array<LocalNamedChange_Array_of_Nullable_GitSha1Id>;

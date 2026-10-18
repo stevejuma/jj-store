@@ -191,3 +191,17 @@ executes or dispatches a prompt. Existing primary sessions cannot be silently
 reassigned to another thread. Versioned bounded journal DTOs are private host
 recovery records, not repository objects or publication authority. Default
 conversation builds retain no domain, store, scanner or runtime dependency.
+
+The admitted Tauri history handle additionally qualifies basic operation-log
+pages and exact operation-parent deltas/grouped revision changes through its
+existing standard-index reader. Requests retain the original pin and use bounded
+metadata parent proofs; they do not select newer heads, load source
+indexes/trees or enable a generic advanced-query fallback. This producer
+capability supports Notes' independent Op Log view without adding transport
+fields or permissions.
+
+The typed history client preserves constraints beside JSON Schema references,
+including native enum discriminants. Generated types intersect the referenced
+payload with its sibling tag, and runtime decoding validates both. Missing or
+unknown operation-difference tags must fail closed; valid wire formats and
+lossless integer behavior remain unchanged.

@@ -77,6 +77,14 @@ and `handle`, reporting `preparing`, `ready` with the exact snapshot, or a
 retained failure. `read` adds the existing local query object. Close releases
 only the invoking window's exact vault/handle.
 
+Ready handles support commit history/diffs, unfiltered operation graphs and
+operation-parent deltas. Op Log requests use `graph: "operations"` and
+`kind: "operation_diff"`; their existing DTOs retain full operation identities.
+Historical detail must be in the original pin's ancestry and an explicit parent
+must be a real edge. The reader uses bounded metadata proof without source-index
+repair, source writes or generic advanced-query fallback. Root/multiple-parent
+outcomes remain explicit; unknown or out-of-scope operations fail closed.
+
 At most one preparation runs at a time; ordinary reads retain separate worker
 capacity. The service bounds retained handles and window scopes. Cancel/close
 waits for actual owned work to exit. Native `revoke(window)` cancels and drains

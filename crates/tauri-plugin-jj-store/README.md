@@ -10,7 +10,9 @@ Return a fresh `local::Access` whose authorization checks remain valid
 throughout each read. Construct `History` with a private native cache root and
 explicit limits. The embedding host supplies an active Tokio runtime. Call
 `heads`, then `open` for a selected operation; poll `status` and use `read` once
-ready. `close`, `revoke` and `shutdown` cancel and await jobs.
+ready. Basic operation-log pages and exact parent deltas/grouped revision
+changes share that original pin; advanced queries retain separate qualification.
+`close`, `revoke` and `shutdown` cancel and await jobs.
 
 The default feature exposes the independently testable native service. Enable
 `tauri` and register `Builder::new(history).build()` for the optional transport.

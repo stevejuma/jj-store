@@ -324,3 +324,52 @@ test("record keys preserve proto spelling and repeated escaped keys reject", () 
   assert.deepEqual(result, source);
   assert.ok(Object.hasOwn(result.data.data.nodes[0].attributes, "__proto__"));
 });
+
+test("operation differences retain the native status tag beside a referenced payload", () => {
+  const data = {
+    status: "difference",
+    operation,
+    parent: "ef".repeat(64),
+    before_view: "12".repeat(64),
+    after_view: "34".repeat(64),
+    view: {
+      heads: { added: [], removed: [] },
+      local_bookmarks: [],
+      local_tags: [],
+      remote_views: [],
+      git_refs: [],
+      git_heads: [],
+      workspaces: [],
+    },
+    visible_commits: { added: [], removed: [] },
+  };
+  const response = (value) =>
+    frame({
+      kind: "operation_diff",
+      data: {
+        version: 1,
+        data: value,
+        stats: {
+          metadata_nodes: 0,
+          predicate_file_bytes: 0,
+          predicate_lines: 0,
+          object_reads: 0,
+          object_bytes: 0,
+          work: 0,
+        },
+      },
+    });
+  assert.equal(
+    decode("read_response", response(data)).data.data.status,
+    "difference",
+  );
+  const { status, ...missing } = data;
+  assert.throws(
+    () => decode("read_response", response(missing)),
+    HistoryProtocolError,
+  );
+  assert.throws(
+    () => decode("read_response", response({ ...data, status: "unknown" })),
+    HistoryProtocolError,
+  );
+});

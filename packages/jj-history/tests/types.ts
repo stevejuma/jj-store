@@ -2,6 +2,7 @@ import {
   HistoryClient,
   type HistoryTransport,
   type LocalGraphTimestamp,
+  type LocalOperationDiffData,
 } from "@lapismd/jj-history";
 import { tauriHistory } from "@lapismd/jj-history/tauri";
 const transport: HistoryTransport = { invoke: async () => "" };
@@ -38,3 +39,9 @@ const invoke = async <T>(
   throw Error("fixture");
 };
 void tauriHistory("v", invoke);
+
+declare const operationDelta: LocalOperationDiffData;
+if (operationDelta.status === "difference") {
+  const exactParent: string = operationDelta.parent;
+  void exactParent;
+}

@@ -38,7 +38,15 @@ function matches(s: Schema, value: unknown, depth: number): boolean {
   if (typeof s === "boolean") return s;
   if (s.$ref) {
     const target = definitions[s.$ref.replace("#/$defs/", "")];
-    return target !== undefined && matches(target, value, depth + 1);
+    const { $ref, ...siblings } = s;
+    return (
+      target !== undefined &&
+      matches(target, value, depth + 1) &&
+      (Object.keys(siblings).every((key) =>
+        ["title", "description", "default"].includes(key),
+      ) ||
+        matches(siblings, value, depth + 1))
+    );
   }
   if ("const" in s) return value === s.const;
   if (s.enum) return s.enum.includes(value);

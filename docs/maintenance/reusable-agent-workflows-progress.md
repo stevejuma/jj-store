@@ -25,7 +25,9 @@ whole stage.
 
 - **Active task: NOTES-05F.** Adapt jj-store commit-log presentation to the
   desktop Repository History plugin using Design Core Column Canvas; add a
-  separate operation-log view and production review stories.
+  separate operation-log view and production review stories. Port the split
+  GIT/JJ ID control, inline expandable changed-file browser and matching diff
+  controls, hosted in the shared AppShell body as in jj-store.
 - **Waiting: NOTES-07.** Resume real store/processor and renderer persistence
   after the requested history UI slice. Work advances one task at a time.
 - **Waiting: NOTES-06C/06C4.** Shared capture, complete batches, production
@@ -358,9 +360,10 @@ requested UI slice; capture still waits for its real backend integration.
       Coordinate its concrete backend acceptance with NOTES-07.
 - [ ] **NOTES-05F — Active:** Borrow jj-store commit-log columns, graph lanes
       and row presentation through public Design Core Column Canvas. Add an
-      independent operation-log workspace view, exact pinned reads, detail
-      inspection and production stories. Preserve history pins, unavailable
-      states, notifications and drained closure.
+      independent operation-log workspace view, exact pinned reads, split GIT/JJ
+      copy buttons, expanded changed-file tree/list/package modes, matching diff
+      controls and AppShell body composition. Add production stories. Preserve
+      history pins, unavailable states, notifications and drained closure.
 - [ ] **NOTES-07 — Waiting during NOTES-05F:** Add receipt-aware
       AgentStore/ThreadStore conversation adapters and explicit per-vault
       backend selection, retaining legacy file conversations. The reusable

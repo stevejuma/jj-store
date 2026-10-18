@@ -143,3 +143,16 @@ versioned JSON text envelope. JavaScript consumers must retain unsafe integers
 without rounding. This boundary changes no native identities or store encoding;
 existing Rust readers, current physical admission and operation pins remain
 exact.
+
+Ready standard-index handles MAY also serve unfiltered operation-graph pages and
+exact operation-parent deltas/grouped revision changes. The original
+operation/view fingerprint, repository, physical metadata binding and generation
+MUST remain checked. A requested historical operation requires a bounded
+parent-edge proof from that original pin; raw object existence, newer heads and
+cache presence grant no membership. Parent comparisons admit only actual
+parents, with explicit root and multi-parent results. Read only bounded
+operation/view and commit-parent metadata needed for the delta, never source
+index loading/repair, tree traversal or a broad fallback. Existing interactive
+budgets, completion authorization and cancellation/drain ownership remain
+mandatory. Other advanced query variants retain their separately qualified
+preparation path.

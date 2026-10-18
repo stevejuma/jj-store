@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-AGENTS-017 documents basic pinned operation graphs/parent deltas from
+the reusable history bridge and exact native status tags in its client. The
+Notes checklist includes the requested split IDs, expanded file browser, diff
+controls and shared AppShell body under its single Active NOTES-05F.
+
 E-REUSABLE-PROGRESS-019 records Notes retained native capture authority and
 compatibility qualification separately from actual managed conversations. The
 user-requested Column Canvas commit-log and independent Op Log presentation is

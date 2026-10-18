@@ -36,7 +36,14 @@ function type(schema) {
   if (schema.$ref) {
     const name = schema.$ref.replace("#/$defs/", "");
     if (!document.$defs[name]) throw Error("Nonlocal schema reference");
-    return name;
+    const siblings = Object.fromEntries(
+      Object.entries(schema).filter(
+        ([key]) => !["$ref", "title", "description", "default"].includes(key),
+      ),
+    );
+    return Object.keys(siblings).length
+      ? `(${name} & ${type(siblings)})`
+      : name;
   }
   if ("const" in schema) return JSON.stringify(schema.const);
   if (schema.enum) return schema.enum.map((v) => JSON.stringify(v)).join(" | ");

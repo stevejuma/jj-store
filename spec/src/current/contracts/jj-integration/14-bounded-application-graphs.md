@@ -153,3 +153,9 @@ are exposed through owned JJ interfaces for native hosts. The CLI consumes the
 same read-only resolver and preserves its existing error categories. No working
 copy, head reconciliation, source initialization or executable configuration is
 loaded. Physical admission remains the caller's responsibility.
+
+Prepared local standard-index handles also admit basic operation graphs, exact
+parent deltas and grouped revision changes. They preserve the original pin and
+prove historical membership through bounded operation parents. Their scoped
+metadata reader never loads or repairs source indexes or traverses trees for
+these queries; other advanced variants retain explicit preparation.

@@ -8,8 +8,8 @@ E-FORGE-BRANCH-STATUS-001 adds owned status UI with released controls.
 E-CUSTOM-INDEX-001's JST-ADAPT-008 index crate allows service-to-read-index;
 native/model/WAL stay independent. New crates need architecture, adapter and M29
 evidence. Index codecs are disposable; native codecs/publication are unchanged.
-M33 governance checks local-history dependency closure and target feature gates,
-preserving native defaults. Tauri/Notes/release gates stay separate.
+M33 checks history reference constraints, dependency closure and feature gates;
+native defaults persist. Tauri/Notes/release gates stay separate.
 
 E-WORKFLOW-GITHUB-001 adds an owned local YAML executor adapter and typed scoped
 reporting. Forgejo Runner v13.2.0 remains an external MIT-licensed executable
