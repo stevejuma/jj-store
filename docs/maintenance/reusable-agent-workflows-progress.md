@@ -21,8 +21,10 @@ whole stage.
 - **Active task: NOTES-06C.** Connect Notes-owned privacy and durable capture
   through the qualified native factory. Retain one raw owner, native scope,
   capture before display/acknowledgement and drained vault closure. The shared
-  receipt-fenced capture port is qualified in NOTES-06C1; Notes sink, batching
-  transport and native adoption remain to be connected.
+  receipt-fenced capture port is qualified in NOTES-06C1. NOTES-06C2 now
+  qualifies complete native batches and the Notes adapter with synthetic
+  privacy/storage. Production renderer consumption and actual Notes
+  privacy/backend binding remain pending.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -53,24 +55,31 @@ whole stage.
   complete check/test/build/specification lanes and 261 source stories pass.
   Design Core passes 821 units, 834 stories and 172 browser cases, one existing
   skip. Package provenance and earlier failures remain in owning evidence.
-- **Next:** NOTES-07 through NOTES-09, durable AgentStore/ThreadStore
-  persistence and conversation restart recovery.
+- **Next within NOTES-06C:** NOTES-06C3, production consumption of every batch
+  frame with collision-free transcript provenance. Then connect actual Notes
+  privacy/backend ownership before NOTES-06D and NOTES-07 through NOTES-09
+  qualify durable JJ persistence and restart recovery.
 - **After that:** addressed agents/discussions, imports, opt-in capture,
   portable package intake and independent downstream qualification. Visual
   comparison/approval remains separate and pending.
 
 ## Stage overview
 
-| Stage                                       | Status      | Delivered so far                                                                  | Remaining gate                                                        |
-| ------------------------------------------- | ----------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| 1. Contracts and compatibility (M33.1)      | In progress | Ownership, preserved formats and injectable boundaries                            | Finish shared workflow contract review and compatibility coverage     |
-| 2. Privacy and source acquisition (M33.2)   | In progress | Native redaction, source readers and headless capture                             | Remaining source portability/lifecycle qualification                  |
-| 3. Conversation engine and client (M33.3)   | In progress | Stream processing, injected prompt coordination and typed SDK                     | Store/workspace/context adapters, application adoption and shared UI  |
-| 4. Local history and Tauri (M33.4)          | In progress | Headless history, lossless client, Notes admission/drain and cold visible history | Native event ownership                                                |
-| 5. First usable Notes milestone (M33.5)     | Pending     | Qualified history prerequisites, existing Notes AI shell and injection seams      | One durable JJ-backed conversation and restart proof                  |
-| 6. Addressed agents and discussions (M33.6) | Pending     | Existing jj-store behavior available as the source reference                      | Shared addressing, queues, anchors and recovery in downstream clients |
-| 7. Imports and opt-in capture (M33.7)       | Pending     | Reusable acquisition prerequisites                                                | Explicit deduplicated import and opt-in automatic local capture       |
-| 8. Standalone qualification (M33.8)         | Pending     | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
+These are acceptance summaries, not a work queue. **Started; gate open**
+corresponds to the canonical ledger's **In progress**: some work is delivered,
+but acceptance is incomplete. Only NOTES-06C is currently active. The stages
+below are not being worked on simultaneously.
+
+| Stage                                       | Status             | Delivered so far                                                                  | Remaining gate                                                        |
+| ------------------------------------------- | ------------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| 1. Contracts and compatibility (M33.1)      | Started; gate open | Ownership, preserved formats and injectable boundaries                            | Finish shared workflow contract review and compatibility coverage     |
+| 2. Privacy and source acquisition (M33.2)   | Started; gate open | Native redaction, source readers and headless capture                             | Remaining source portability/lifecycle qualification                  |
+| 3. Conversation engine and client (M33.3)   | Started; gate open | Stream processing, injected prompt coordination and typed SDK                     | Store/workspace/context adapters, application adoption and shared UI  |
+| 4. Local history and Tauri (M33.4)          | Started; gate open | Headless history, lossless client, Notes admission/drain and cold visible history | Native event ownership                                                |
+| 5. First usable Notes milestone (M33.5)     | Pending            | Qualified history prerequisites, existing Notes AI shell and injection seams      | One durable JJ-backed conversation and restart proof                  |
+| 6. Addressed agents and discussions (M33.6) | Pending            | Existing jj-store behavior available as the source reference                      | Shared addressing, queues, anchors and recovery in downstream clients |
+| 7. Imports and opt-in capture (M33.7)       | Pending            | Reusable acquisition prerequisites                                                | Explicit deduplicated import and opt-in automatic local capture       |
+| 8. Standalone qualification (M33.8)         | Pending            | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
 
 ## Completed slices
 
@@ -177,6 +186,17 @@ whole stage.
       shared library prerequisite; NOTES-06C stays Active until Notes connects
       its actual native privacy/backend and complete batch delivery.
 
+- [x] **NOTES-06C2** Preserve deferred text in atomic acknowledged native
+      batches, add the Notes-owned capture adapter and qualify actual Tauri
+      delivery. Lapis AI `8a8f9149` passes source qualification (1,013 Rust
+      cases, two inherited ignored; 45 governance and 39 renderer). Desktop
+      `2c6cacb3`, E-AI-028, qualifies all seven cold ACP cases with foreground
+      assistance, both Rust profiles (111 pass, two inherited ignored each),
+      strict checks, both native builds and all 191 renderer/governance cases.
+      Synthetic privacy and synced private candidates prove transport/receipt
+      fencing; production privacy, JJ publication and restart recovery remain
+      pending. Delivery evidence: E-REUSABLE-PROGRESS-012.
+
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
 Desktop evidence lives in the isolated qualified sibling
@@ -199,6 +219,10 @@ Only its current child below is Active.
       through the native factory. Cover bootstrap activity/facts and ordinary
       frames; retain a single raw owner and drain capture before releasing the
       vault.
+- [ ] **NOTES-06C3 — Next within NOTES-06C:** Consume every batch frame in
+      production ACP sessions. Add frame-index-aware transcript provenance and
+      deduplication while retaining legacy identities when the index is absent.
+      NOTES-06C also retains actual native privacy/backend binding and drain.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
@@ -298,10 +322,11 @@ evidence/commit, move the current-work marker and review the canonical milestone
 in the same delivery update. Keep unresolved failures and unrun gates explicit.
 If work splits, add a task ID rather than checking off an incomplete parent.
 When switching tasks, move the single Active marker and state why other started
-tasks are Waiting. Do not count a parent and its current child as separate work.
-Current uncommitted counts are progress observations, not accepted evidence or
-milestone completion. Replace them with final evidence/commit links once their
-owning slice passes its required gates.
+tasks are Waiting. A named next step is pending until it starts. Do not count a
+parent and its current child as separate work. Current uncommitted counts are
+progress observations, not accepted evidence or milestone completion. Replace
+them with final evidence/commit links once their owning slice passes its
+required gates.
 
 Do not infer an overall percentage from task counts: the tasks differ in size.
 Only mark a stage complete when its canonical acceptance gate is satisfied.
