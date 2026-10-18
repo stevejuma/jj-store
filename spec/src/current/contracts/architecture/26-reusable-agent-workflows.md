@@ -205,3 +205,9 @@ including native enum discriminants. Generated types intersect the referenced
 payload with its sibling tag, and runtime decoding validates both. Missing or
 unknown operation-difference tags must fail closed; valid wire formats and
 lossless integer behavior remain unchanged.
+
+The Notes history consumer composes its own embedded public AppShell body with
+Column Canvas, owned graph/identifier ports and released Diff/FileListing
+contracts. Its independent Op Log retains native pins and explicit parent and
+revision comparisons. UI qualification is separate from the native event owner,
+selected AgentStore/ThreadStore processor and managed conversation/restart gate.

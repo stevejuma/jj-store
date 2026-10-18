@@ -2,10 +2,10 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-Execution now: **one Active task, NOTES-05F** for the requested desktop commit
-and operation-log views. NOTES-07 is **Waiting during the requested UI slice**;
-NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started stages retain
-their open gates; these entries are not concurrent work streams.
+Execution now: **one Active task, NOTES-07** for real conversation/session
+preparation, store/processor construction and renderer persistence. NOTES-05F is
+complete. NOTES-06C and NOTES-06C4 remain **Waiting for NOTES-07**. Started
+stages retain their open gates; these entries are not concurrent work streams.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -23,13 +23,14 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-05F.** Adapt jj-store commit-log presentation to the
-  desktop Repository History plugin using Design Core Column Canvas; add a
-  separate operation-log view and production review stories. Port the split
-  GIT/JJ ID control, inline expandable changed-file browser and matching diff
-  controls, hosted in the shared AppShell body as in jj-store.
-- **Waiting: NOTES-07.** Resume real store/processor and renderer persistence
-  after the requested history UI slice. Work advances one task at a time.
+- **Active task: NOTES-07.** Resume real conversation/session preparation,
+  selected-store/processor construction and per-vault renderer persistence.
+- **Completed: NOTES-05F.** Notes `fb80f410` / E-REPO-007 ports both repository
+  views into public AppShell/Column Canvas, with split IDs, expanded file modes
+  and matching diffs. All 768 full catalog cases, 212 renderer/governance cases,
+  strict checks/builds and three cold native read cases pass. Source producer
+  `8118da89` and Design Core `aae7dc35` are independently qualified. Visual
+  approval and actual managed conversation/restart remain separate.
 - **Waiting: NOTES-06C/06C4.** Shared capture, complete batches, production
   transcript provenance and the real native privacy prerequisite are qualified.
   Managed callback ownership, publication and drained closure await NOTES-07.
@@ -91,7 +92,7 @@ whole stage.
 
 These are acceptance summaries, not a work queue. **Started; gate open**
 corresponds to the canonical ledger's **In progress**: some work is delivered,
-but acceptance is incomplete. Only NOTES-05F is currently active. The stages
+but acceptance is incomplete. Only NOTES-07 is currently active. The stages
 below are not being worked on simultaneously.
 
 | Stage                                       | Status             | Delivered so far                                                                  | Remaining gate                                                        |
@@ -106,6 +107,19 @@ below are not being worked on simultaneously.
 | 8. Standalone qualification (M33.8)         | Pending            | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
 
 ## Completed slices
+
+- [x] **NOTES-05F — Repository history and Op Log column canvases.** Notes
+      `fb80f410` (E-REPO-007) reuses public AppShell, Column Canvas, FileListing
+      and Diff with attributed jj-store graph/identifier ports. Rows retain file
+      choices in compact panes; metadata opens explicitly. Full native IDs,
+      comparison choices, unavailable states, clipboard toasts, retained pins
+      and reader drain remain qualified. 144 affected and 768 full catalog
+      interaction/axe checks, 212 renderer/governance cases, strict
+      checks/builds and three cold hidden native API cases pass. Root `8118da89`
+      (E-REUSABLE-AGENTS-017) supplies exact prepared operation reads/status
+      tags; Design Core `aae7dc35` supplies accessible file-count labels with
+      independent package qualification. Visual review stays pending; this does
+      not complete durable capture or the first usable milestone.
 
 - [x] **BASE-01** Extract five injectable collaboration stores, named factories,
       shared engines/codecs and Git/native providers; qualify independent
@@ -345,8 +359,8 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-NOTES-05F is the sole Active implementation task. NOTES-07 waits during this
-requested UI slice; capture still waits for its real backend integration.
+NOTES-07 is the sole Active implementation task. The requested NOTES-05F UI
+slice is complete; capture still waits for real backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -358,21 +372,15 @@ requested UI slice; capture still waits for its real backend integration.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
-- [ ] **NOTES-05F — Active:** Borrow jj-store commit-log columns, graph lanes
-      and row presentation through public Design Core Column Canvas. Add an
-      independent operation-log workspace view, exact pinned reads, split GIT/JJ
-      copy buttons, expanded changed-file tree/list/package modes, matching diff
-      controls and AppShell body composition. Add production stories. Preserve
-      history pins, unavailable states, notifications and drained closure.
-- [ ] **NOTES-07 — Waiting during NOTES-05F:** Add receipt-aware
-      AgentStore/ThreadStore conversation adapters and explicit per-vault
-      backend selection, retaining legacy file conversations. The reusable
-      adapter is complete in NOTES-07B; NOTES-07C supplies Notes' journal and
-      NOTES-07D its native backend profile and owner service; NOTES-07E connects
-      native host/IPC and closure. Next add conversation/session preparation,
-      real store/processor construction and per-vault renderer persistence.
-      NOTES-07F1/F2 complete shared and Notes retained-authority prerequisites;
-      no managed conversation gate is closed.
+- [ ] **NOTES-07 — Active:** Add receipt-aware AgentStore/ThreadStore
+      conversation adapters and explicit per-vault backend selection, retaining
+      legacy file conversations. The reusable adapter is complete in NOTES-07B;
+      NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
+      and owner service; NOTES-07E connects native host/IPC and closure. Next
+      add conversation/session preparation, real store/processor construction
+      and per-vault renderer persistence. NOTES-07F1/F2 complete shared and
+      Notes retained-authority prerequisites; no managed conversation gate is
+      closed.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.

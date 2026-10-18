@@ -239,3 +239,8 @@ additive native-capture normalizer and its exact evidence/projection boundary.
 Collaboration source review includes this profile. Generic Git-provider
 publication/reopen evidence remains separate from the Notes backend, native
 writer lifetime and cold conversation acceptance gates.
+
+The delivery checklist and Notes E-REPO-007 distinguish the requested repository
+view port from durable conversation delivery. Borrowed graph/identifier/body
+sources retain attribution; Storybook, source-package and cold native read
+evidence remain separate from visual approval and managed conversation gates.
