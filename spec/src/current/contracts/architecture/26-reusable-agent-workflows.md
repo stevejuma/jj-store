@@ -322,6 +322,7 @@ lifetime. Default permissions remain empty. Notes copies the maintained blame
 presentation and owns main-panel navigation, file scope and status/toast
 lifetime.
 
-Vault restore extends the injected `jj-vault::Repository` interface with preview
-and apply methods. Native JJ imports remain in `jj-store-jj`; host editor
-guards, credentials and admission remain host-owned (JST-ARCH-007 unchanged).
+File and whole-vault restore extend the injected `jj-vault::Repository`
+interface with preview and apply methods. Native JJ imports remain in
+`jj-store-jj`; host editor guards, credentials and admission remain host-owned
+(JST-ARCH-007 unchanged).

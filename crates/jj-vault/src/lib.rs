@@ -4,7 +4,8 @@ mod native;
 mod restore;
 mod schedule;
 pub use jj_store_jj::vault_workspace::{
-    Binding, Capture, Checkpoint, RestorePreview, RestoreRequest,
+    Binding, Capture, Checkpoint, RestorePreview, RestoreRequest, VaultRestorePreview,
+    VaultRestoreRequest,
 };
 pub use native::NativeRepository;
 pub use schedule::Timing;
@@ -33,6 +34,12 @@ pub trait Repository: Send + 'static {
     fn restore(&mut self, _request: &RestoreRequest) -> Result<Capture, String> {
         Err("Restore is unavailable for this provider".into())
     }
+    fn preview_vault_restore(&mut self, _checkpoint: &str) -> Result<VaultRestorePreview, String> {
+        Err("Vault restore is unavailable for this provider".into())
+    }
+    fn restore_vault(&mut self, _request: &VaultRestoreRequest) -> Result<Capture, String> {
+        Err("Vault restore is unavailable for this provider".into())
+    }
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -57,6 +64,11 @@ enum Command {
         oneshot::Sender<Result<RestorePreview, String>>,
     ),
     Restore(RestoreRequest, oneshot::Sender<Result<Capture, String>>),
+    PreviewVault(String, oneshot::Sender<Result<VaultRestorePreview, String>>),
+    RestoreVault(
+        VaultRestoreRequest,
+        oneshot::Sender<Result<Capture, String>>,
+    ),
     Close(oneshot::Sender<Result<(), String>>),
 }
 #[derive(Clone)]
@@ -167,11 +179,17 @@ fn capture(
     repository: &mut dyn Repository,
     state: &watch::Sender<Status>,
 ) -> Result<Capture, String> {
+    mutation(state, || repository.capture())
+}
+fn mutation(
+    state: &watch::Sender<Status>,
+    action: impl FnOnce() -> Result<Capture, String>,
+) -> Result<Capture, String> {
     state.send_modify(|s| {
         s.phase = Phase::Saving;
         s.error = None;
     });
-    let result = repository.capture();
+    let result = action();
     state.send_modify(|s| match &result {
         Ok(value) => {
             s.phase = Phase::Ready;
@@ -208,22 +226,19 @@ fn run(
                 let _ = reply.send(repository.preview_restore(&checkpoint, &path));
             }
             Ok(Command::Restore(request, reply)) => {
-                state.send_modify(|s| {
-                    s.phase = Phase::Saving;
-                    s.error = None;
-                });
-                let result = repository.restore(&request);
-                state.send_modify(|s| match &result {
-                    Ok(value) => {
-                        s.phase = Phase::Ready;
-                        s.checkpoint = value.checkpoint.clone();
-                        s.error = None;
-                    }
-                    Err(error) => {
-                        s.phase = Phase::Failed;
-                        s.error = Some(error.clone());
-                    }
-                });
+                let result = mutation(&state, || repository.restore(&request));
+                if result.is_ok() {
+                    schedule.completed(Instant::now());
+                } else {
+                    schedule.failed(Instant::now());
+                }
+                let _ = reply.send(result);
+            }
+            Ok(Command::PreviewVault(checkpoint, reply)) => {
+                let _ = reply.send(repository.preview_vault_restore(&checkpoint));
+            }
+            Ok(Command::RestoreVault(request, reply)) => {
+                let result = mutation(&state, || repository.restore_vault(&request));
                 if result.is_ok() {
                     schedule.completed(Instant::now());
                 } else {

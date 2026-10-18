@@ -33,7 +33,7 @@ fn the_worker_serializes_restore_with_capture_and_publishes_its_status() {
         let restored = backup
             .restore(RestoreRequest {
                 request_id: "worker-restore-1".into(),
-                checkpoint: first.commit,
+                checkpoint: first.commit.clone(),
                 path: preview.path,
                 expected: preview.expected,
             })
@@ -47,6 +47,36 @@ fn the_worker_serializes_restore_with_capture_and_publishes_its_status() {
         assert_eq!(status.phase, Phase::Ready);
         assert_eq!(
             status.checkpoint.unwrap().commit,
+            restored.checkpoint.unwrap().commit
+        );
+        fs::write(binding.root.join("Note.md"), "third").unwrap();
+        fs::write(binding.root.join("Extra.md"), "not in checkpoint").unwrap();
+        let preview = backup
+            .preview_vault_restore(first.commit.clone())
+            .await
+            .unwrap();
+        assert_eq!((preview.modified, preview.deleted), (1, 1));
+        let restored = backup
+            .restore_vault(jj_vault::VaultRestoreRequest {
+                request_id: "worker-all-1".into(),
+                checkpoint: first.commit,
+                expected: preview.expected,
+            })
+            .await
+            .unwrap();
+        assert_eq!(
+            fs::read_to_string(binding.root.join("Note.md")).unwrap(),
+            "first"
+        );
+        assert!(!binding.root.join("Extra.md").exists());
+        assert_eq!(
+            backup
+                .subscribe()
+                .borrow()
+                .checkpoint
+                .as_ref()
+                .unwrap()
+                .commit,
             restored.checkpoint.unwrap().commit
         );
         backup.close().await.unwrap();

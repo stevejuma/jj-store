@@ -20,7 +20,7 @@ struct Stamp {
     bytes: u64,
     modified: Option<SystemTime>,
 }
-fn excluded(path: &str, exclusions: &[String]) -> bool {
+pub(super) fn excluded(path: &str, exclusions: &[String]) -> bool {
     path.split('/')
         .any(|part| matches!(part, ".git" | ".jj" | ".lapis" | ".DS_Store"))
         || exclusions

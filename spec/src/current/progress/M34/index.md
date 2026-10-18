@@ -6,16 +6,16 @@ lifetime, GitHub followed by Forgejo, and separate backup of existing
 repositories. Heavy qualification may be deferred during implementation but must
 be recorded. M33's conversation gates and unrelated work remain unchanged.
 
-| ID    | Status      | Depends     | Requirements  | Gate                                                                                                     | Next                                      | Evidence                              |
-| ----- | ----------- | ----------- | ------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------- |
-| M34   | In progress | -           | JST-LOCAL-007 | Functional Notes backup, restore, GitHub/Forgejo sync and history search integrated into main workspaces | Complete the staged implementation        | E-VAULT-BACKUP-001                    |
-| M34.1 | Partial     | -           | JST-LOCAL-007 | Stable vault identity, independent external JJ state and retained checkpoint commits                     | Implement and exercise external storage   | E-VAULT-BACKUP-001                    |
-| M34.2 | Partial     | M34.1       | JST-LOCAL-007 | Reusable capture coordinator, watch reconciliation and crash/close recovery                              | Qualify cold native lifecycle later       | E-VAULT-BACKUP-001,E-VAULT-BACKUP-002 |
-| M34.3 | In progress | M34.2       | JST-LOCAL-007 | Usable local timeline, guarded restore and visible background status                                     | Complete guarded vault restore and UI     | E-VAULT-BACKUP-002                    |
-| M34.4 | Planned     | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Reuse forge accounts and public client ID | -                                     |
-| M34.5 | Planned     | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Integrate guarded Git transport           | -                                     |
-| M34.6 | Planned     | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Add rebuildable local projection          | -                                     |
-| M34.7 | Planned     | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Complete providers and storage migration  | -                                     |
+| ID    | Status      | Depends     | Requirements  | Gate                                                                                                     | Next                                       | Evidence                              |
+| ----- | ----------- | ----------- | ------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------- |
+| M34   | In progress | -           | JST-LOCAL-007 | Functional Notes backup, restore, GitHub/Forgejo sync and history search integrated into main workspaces | Complete the staged implementation         | E-VAULT-BACKUP-001                    |
+| M34.1 | Partial     | -           | JST-LOCAL-007 | Stable vault identity, independent external JJ state and retained checkpoint commits                     | Implement and exercise external storage    | E-VAULT-BACKUP-001                    |
+| M34.2 | Partial     | M34.1       | JST-LOCAL-007 | Reusable capture coordinator, watch reconciliation and crash/close recovery                              | Qualify cold native lifecycle later        | E-VAULT-BACKUP-001,E-VAULT-BACKUP-002 |
+| M34.3 | In progress | M34.2       | JST-LOCAL-007 | Usable local timeline, guarded restore and visible background status                                     | Qualify cold app restore, then forge setup | E-VAULT-BACKUP-003                    |
+| M34.4 | Planned     | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Reuse forge accounts and public client ID  | -                                     |
+| M34.5 | Planned     | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Integrate guarded Git transport            | -                                     |
+| M34.6 | Planned     | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Add rebuildable local projection           | -                                     |
+| M34.7 | Planned     | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Complete providers and storage migration   | -                                     |
 
 Only M34.3 is active. M34.2 coordinator/watch/close proofs pass; cold app
 qualification is deferred. M34.1 native capture/relink proofs pass; cold app

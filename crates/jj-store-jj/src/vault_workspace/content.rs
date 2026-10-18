@@ -13,18 +13,8 @@ pub enum FileContents {
     Symlink { target: String },
 }
 impl Session {
-    /// Resolve only a retained checkpoint ancestor, never an arbitrary Git object.
-    pub async fn file_at(&self, checkpoint: &str, path: &str) -> Result<Option<FileContents>> {
+    pub(super) async fn retained_commit(&self, checkpoint: &str) -> Result<jj_lib::commit::Commit> {
         self.binding.verify_saved()?;
-        if path.is_empty()
-            || path.len() > 4096
-            || path.contains('\\')
-            || path
-                .split('/')
-                .any(|p| matches!(p, "" | "." | ".." | ".git" | ".jj"))
-        {
-            return Err(Error::Binding);
-        }
         let selected = CommitId::try_from_hex(checkpoint).ok_or(Error::Binding)?;
         let head = self
             .repo
@@ -40,8 +30,22 @@ impl Session {
         {
             return Err(Error::Binding);
         }
+        self.repo.store().get_commit(&selected).map_err(jj)
+    }
+    /// Resolve only a retained checkpoint ancestor, never an arbitrary Git object.
+    pub async fn file_at(&self, checkpoint: &str, path: &str) -> Result<Option<FileContents>> {
+        self.binding.verify_saved()?;
+        if path.is_empty()
+            || path.len() > 4096
+            || path.contains('\\')
+            || path
+                .split('/')
+                .any(|p| matches!(p, "" | "." | ".." | ".git" | ".jj"))
+        {
+            return Err(Error::Binding);
+        }
+        let commit = self.retained_commit(checkpoint).await?;
         let path = RepoPathBuf::from_internal_string(path.to_owned()).map_err(jj)?;
-        let commit = self.repo.store().get_commit(&selected).map_err(jj)?;
         let value = commit.tree().path_value(&path).await.map_err(jj)?;
         let value = value
             .as_resolved()

@@ -29,6 +29,11 @@ Explicit restore preserves a safety checkpoint and uses guarded file writes.
 File restore previews pin retained checkpoint bytes and current disk hashes.
 Durable request receipts recover lost outcomes without overwriting later edits.
 Symlink restoration fails explicitly until its guarded profile is qualified.
+Whole-vault preview pins the included tree and reports added/changed/deleted
+files. Apply retains one original safety checkpoint and a durable progress
+receipt, guards each replacement and verifies the complete resulting tree.
+Partial work never reports success; a retry keeps the original request and
+refuses to overwrite later edits. Runtime/excluded files remain host-owned.
 Automatic remote sync fetches and merges before pushing the selected branch,
 preserves published ancestry, and retains conflicts without overwriting current
 files. Ordinary Git restores files and checkpoint versions on a fresh device;

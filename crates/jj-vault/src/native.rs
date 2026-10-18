@@ -5,6 +5,30 @@ pub struct NativeRepository {
     pub exclusions: Vec<String>,
 }
 impl Repository for NativeRepository {
+    fn preview_vault_restore(&mut self, checkpoint: &str) -> Result<VaultRestorePreview, String> {
+        runtime()?.block_on(async {
+            let session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session
+                .preview_vault_restore(checkpoint, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())
+        })
+    }
+    fn restore_vault(&mut self, request: &VaultRestoreRequest) -> Result<Capture, String> {
+        runtime()?.block_on(async {
+            let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            let mut result = session
+                .restore_vault(request, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())?;
+            result.checkpoint = session.checkpoint().map_err(|e| e.to_string())?;
+            Ok(result)
+        })
+    }
     fn preview_restore(&mut self, checkpoint: &str, path: &str) -> Result<RestorePreview, String> {
         runtime()?.block_on(async {
             let session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
@@ -25,9 +49,7 @@ impl Repository for NativeRepository {
                 .restore_file(request, &self.exclusions)
                 .await
                 .map_err(|e| e.to_string())?;
-            if result.checkpoint.is_none() {
-                result.checkpoint = session.checkpoint().map_err(|e| e.to_string())?;
-            }
+            result.checkpoint = session.checkpoint().map_err(|e| e.to_string())?;
             Ok(result)
         })
     }

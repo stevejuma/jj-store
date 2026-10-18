@@ -9,6 +9,7 @@ Read-only source admission and ordinary immutable history queries remain
 separate from this explicitly enabled writer. Existing Stacks/manifest behavior
 does not change. M34 records focused proof and any user-deferred qualification.
 
-File restore resolves retained native checkpoint bytes, captures a safety commit
-and persists a request receipt around guarded replacement. Upstream native
-identities/codecs and immutable read behavior remain unchanged (JST-JJ-003/005).
+File and whole-vault restore resolve retained checkpoint bytes, save an original
+safety commit and persist receipts around guarded replacement. Native
+identities, codecs and immutable read behavior remain unchanged
+(JST-JJ-003/005).

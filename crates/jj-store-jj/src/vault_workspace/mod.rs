@@ -1,5 +1,7 @@
 //! Host-owned vault checkpoints with independently located JJ working-copy state.
 //! Call from a bounded native worker. Never invoke through immutable read APIs.
+mod batch_plan;
+mod batch_restore;
 mod binding;
 mod capture;
 mod content;
@@ -7,6 +9,7 @@ mod initialize;
 mod restore;
 mod restore_io;
 mod scan;
+pub use batch_restore::{VaultRestorePreview, VaultRestoreRequest};
 pub use content::FileContents;
 use jj_lib::{
     config::{ConfigLayer, ConfigSource, StackedConfig},
