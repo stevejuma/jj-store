@@ -8,10 +8,10 @@ search, remaining Op Log pickers, row presentation and statistics remain open.
 NOTES-05I3A operation cards and NOTES-05I5A two-tab review are qualified. The JJ
 parent Command View picker (NOTES-05I2A) and owned-runtime preview reload
 (NOTES-05I0A) are qualified in Notes `564e039d` / E-REPO-011. Other Op Log
-revision/parent selectors and preview lifecycle/cache commands remain pending
-before query adoption. NOTES-07 waits during this UI work; NOTES-07J native
-continuation is qualified. NOTES-06C and NOTES-06C4 still await NOTES-07 managed
-integration.
+revision/parent selectors remain pending. Preview lifecycle/cache commands
+(NOTES-05I0B) are qualified in Notes `2a4ed91c` / E-CATALOG-008. NOTES-07 waits
+during this UI work; NOTES-07J native continuation is qualified. NOTES-06C and
+NOTES-06C4 still await NOTES-07 managed integration.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -36,8 +36,14 @@ whole stage.
   and ordered slices. NOTES-05I3A qualifies stacked operation/file cards and
   bounded exact parent navigation; NOTES-05I5A opens both logs in workspace tabs
   for review. NOTES-05I2A JJ parent cards and NOTES-05I0A owned-runtime reload
-  are qualified; other Op Log comparison endpoints and preview maintenance
-  remain pending before native queries. Full view parity stays open.
+  are qualified; preview maintenance is also complete. Other Op Log comparison
+  endpoints remain pending before native queries. Full view parity stays open.
+- **Completed: NOTES-05I0B/05I0.** Notes `2a4ed91c` / E-CATALOG-008 qualifies
+  managed preview start/status/stop/restart and dry-run/apply cache commands on
+  macOS ARM64. Eighteen exact, 242 renderer/governance and all 804 cold catalog
+  interaction/axe checks pass, with strict checks, builds and documents. Exact
+  process ownership, foreign-listener refusal and cache/data boundaries remain
+  explicit. Other Op Log endpoints and native queries are next.
 - **Completed: NOTES-05I2A/05I0A.** Notes `564e039d` / E-REPO-011 qualifies the
   JJ parent picker using jj-store's public Command View/Popover with
   author/time/Git/JJ cards, search, tags, bounded pinned missing-parent reads
@@ -46,7 +52,7 @@ whole stage.
   interaction/axe checks pass, with 224 renderer/governance cases, strict
   types/audits, both builds and document consumers. Actual runtime reload and
   CSS HMR retain their separate live proof. Other comparison selectors and
-  lifecycle/cache maintenance stay open.
+  lifecycle/cache maintenance are qualified separately above.
 - **Completed: NOTES-05I3A/05I5A.** Notes `65404171` / E-REPO-010 ports stacked
   operation/file cards, source author fallback and exact parent navigation
   through the qualified prepared graph profile. Twelve exact layout, 788
@@ -486,10 +492,13 @@ UI alignment; capture still awaits managed backend integration.
       tags and toast recovery. Other Op Log endpoints remain pending.
 - [x] **NOTES-05I0A — Complete:** Owned-runtime preview reconstruction fixes
       stale controller state after source/fixture edits; component/style HMR
-      remains qualified. Lifecycle/cache commands remain NOTES-05I0.
-- [ ] **NOTES-05I0:** Add checkout/port-scoped preview start/stop/restart/status
-      and stopped-cache maintenance commands; retain qualified source/style
-      refresh behavior.
+      remains qualified. Lifecycle/cache commands complete NOTES-05I0 below.
+- [x] **NOTES-05I0B — Complete:** Notes `2a4ed91c` / E-CATALOG-008 qualifies
+      checkout/port-scoped lifecycle and stopped-cache commands, exact
+      process/readiness checks and foreign-listener/data safeguards.
+- [x] **NOTES-05I0 — Complete:** Runtime/style HMR and managed preview
+      maintenance are qualified on macOS ARM64; other platforms remain
+      unqualified.
 - [ ] **NOTES-05I — Active:** Complete the source/browser-confirmed parity gaps
       in [the review](repository-view-parity-review.md). Query controls, rich
       comparison cards, Op Log composition, statistics and whole-view acceptance

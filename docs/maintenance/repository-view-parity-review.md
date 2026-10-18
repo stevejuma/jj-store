@@ -85,16 +85,22 @@ reads, author/time/Git/JJ metadata, native tags, keyboard search and explicit
 toast recovery. Remaining operation parent, changed-revision and ambiguous
 before/after endpoints retain NOTES-05I2. **NOTES-05I0A** adds owned-runtime
 preview reload to prevent stale controller state; scoped lifecycle/cache
-commands remain NOTES-05I0 before native query adoption. All 804 catalog
+commands are qualified separately in NOTES-05I0B below. All 804 catalog
 interaction/axe and 224 renderer/ governance cases pass, with strict checks,
 builds and document consumers. These are ordered slices within the single Active
 task.
 
-0. **NOTES-05I0 — Preview workflow.** Verify Storybook/Vite HMR against the
-   jj-store configuration, add checkout/port-scoped start/stop/restart/status
-   and stopped-cache maintenance commands, and prove source/style edits update
-   the open preview. Keep native processes, fixtures and other checkouts outside
-   the maintenance scope.
+**NOTES-05I0B and NOTES-05I0 are qualified** in Notes `2a4ed91c` / E-CATALOG-008
+on macOS ARM64. The five lifecycle/cache commands retain exact process
+identity/readiness, bounded stop, foreign-listener refusal and cache/data
+boundaries. Eighteen exact, 242 renderer/governance and 804 cold catalog checks
+pass, with strict checks/builds, documents and actual runtime/CSS HMR proof.
+
+0. **NOTES-05I0 — Complete: preview workflow.** Qualified Storybook/Vite HMR
+   against the jj-store configuration, add checkout/port-scoped
+   start/stop/restart/status and stopped-cache maintenance commands, and prove
+   source/style edits update the open preview. Keep native processes, fixtures
+   and other checkouts outside the maintenance scope.
 1. **NOTES-05I1 — Query controls.** Add the exact missing-control regression,
    qualify the required requests in the actual prepared Tauri profile, port
    highlighted search/completion and native query context, then wire pinned

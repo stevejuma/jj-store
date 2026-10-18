@@ -265,12 +265,19 @@ metadata uses the existing qualified pinned operation-graph profile with bounded
 paging, exact IDs, stale-response fences and explicit refusal. No direct
 unsupported operation request, native authority or storage/receipt format is
 added. The review story retains both independently pinned logs in production
-workspace tabs. Rich comparison pickers, preview maintenance, native query
-adoption, statistics and whole-view acceptance retain their ordered open work.
+workspace tabs. Remaining comparison pickers, native query adoption, statistics
+and whole-view acceptance retain their ordered open work.
 
 The JJ Log parent picker port uses public Command View/Popover with bounded
 exact-commit cards, native tags and keyboard search. Missing metadata stays on
 the existing pinned reader; stale or substituted identities cannot replace the
 comparison. The preview reconstructs owned App/controller instances after
 runtime/fixture edits. Ordinary component/style HMR remains available. Other Op
-Log comparison endpoints and lifecycle/cache tooling retain their open slices.
+Log comparison endpoints retain their open slices.
+
+The Notes host owns its optional preview lifecycle/cache tools. Ignored records
+retain no repository authority: process identity, checkout, selected port and
+story-index readiness require current OS/HTTP proof. Unknown exit observations
+retain ownership, and unready processes cannot authorize another start. Cache
+maintenance admits only named dependency caches after live-consumer checks; it
+cannot remove native data, source fixtures or static review artifacts.
