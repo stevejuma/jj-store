@@ -1,12 +1,29 @@
 # Repository view parity review
 
-Reviewed 2026-10-18. Review complete; implementation open as **NOTES-05I**. The
-requested result is jj-store's repository column workflow in Notes, using public
-Design Core presentation and Notes-owned native authority.
+The user authorized production adoption and focused tests on 2026-10-18,
+prioritizing a usable repository plugin. The earlier Storybook-only freeze and
+test deferral are lifted. Broad release/platform/provider/whole-catalog checks
+and visual-baseline approval remain deferred. **NOTES-05I** remains the sole
+Active umbrella; NOTES-07 waits during this slice.
 
-The previous slices ported the canvas foundation, graph geometry, IDs, file
-listing modes and diff renderer. They do not establish complete view parity. The
-primary Storybook and production source both still exhibit the gaps below.
+Notes E-REPO-015 records production promotion of the reviewed graph/cards,
+author/profile/Gravatar, semantic tags, long Markdown View more, compact Command
+View selectors and action strips, inline operation ID copy/recorded arguments,
+file icons and compact full-height diffs. Review compositions import the same
+production leaves. The old Info panel is removed; retry remains reachable. Copy
+jj-store components first and adapt data/actions; recreate only when copying is
+impractical. Source/license attribution remains recorded.
+
+Workspace context uses native links and stays separate from operation pins.
+Operation revision cards load exact IDs through the pinned reader. Live conflict
+inspection uses native descriptors with local draft/stage/preview; Apply remains
+disabled. Revert is disabled. Real evolution and highlighted native search need
+later prepared-reader capability work; synthetic predecessors and inverse
+previews remain catalog-only. No parent is substituted for a rewrite
+predecessor. No native write authority is added by UI adoption.
+
+Earlier E-REPO-012/013/014 remain historical manual-preview evidence. They do
+not qualify native capabilities or approve visual baselines.
 
 ## Reviewed sources
 
@@ -24,19 +41,19 @@ primary Storybook and production source both still exhibit the gaps below.
 
 ## Confirmed gaps
 
-| Area                             | jj-store reference                                                             | Current Notes behavior                                                                                                                       | Required work                                                                                                                                                                                                                                 |
-| -------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Search and highlights            | `StoreHistoryQueryHeader`, `StoreHistoryQuery`, `history-language.ts`          | No search toggle/editor in either log                                                                                                        | Port the header toggle, highlighted native query input, completion, Run/Clear, context and keyboard behavior. Operation fields and JJ revsets are separate languages.                                                                         |
-| Query execution                  | Operation-pinned `historyQuery` controller                                     | History hardcodes `all()`; Op Log always requests unfiltered operations                                                                      | Qualify `query_info` and `operations_filtered` in the actual Tauri prepared profile, then use native graph queries. Retain applied query/context during paging; invalid drafts retain previous results. No filtering of only the loaded page. |
-| Comparison picker                | `StoreComparisonParentPicker`, `StoreMutationCommitPicker`, graph/target cards | JJ parent now uses source-style Command View (NOTES-05I2A, Notes 564e039d / E-REPO-011); Op Log parent/revision endpoints remain raw selects | Compose public Command View/Popover with searchable author/avatar, description, time and exact identifiers. Keep operation IDs, commit IDs and change IDs distinct. Load missing parent metadata by its exact native ID.                      |
-| Parent reachability              | Parent controls remain in the selected-operation surface                       | Explicit merge-parent choice is now reachable in the stacked card, including narrow panes                                                    | Keep explicit merge-parent selection beside the comparison, including narrow panes. No automatic selection of ambiguous endpoints.                                                                                                            |
-| Op Log details and diff          | `CommunityProjectsRepositoryLogDiff`, `CommunityProjectsRepositoryLogRail`     | Qualified stacked operation/file cards in Notes 65404171 / E-REPO-010                                                                        | NOTES-05I3A complete: source card/rail geometry, author fallback, bounded exact parent lookup, close/reopen and compact return. Remaining row/state and whole-view approval work stays open.                                                  |
-| File and comparison statistics   | FileListing/FileChangeStats driven by actual changed content                   | Counts exist only for the selected file after a content read; changed-path summaries have no line counts                                     | Supply bounded exact statistics for visible changed files/comparisons. Represent unknown, unavailable and incomplete totals explicitly. Do not turn missing data into zero.                                                                   |
-| Operation message IDs            | `CommunityProjectsRevisionGraphMessage`, `repository-log-message.ts`           | Whole operation description is plain text                                                                                                    | Port recognition and independent full-ID copying for supported Git/native commit/change IDs, without selecting the operation or nesting buttons.                                                                                              |
-| Author and revision presentation | Git-author avatar, relative time, typed TagList chips                          | Operation card rail now matches source fallback/time; graph rows still have basic initials and absolute times, with flattened tags           | Retain native author data, accessible avatar/fallback and source metadata hierarchy. Use semantic bookmark/workspace/conflict/snapshot chips.                                                                                                 |
-| Graph layout and scrolling       | Per-row occupied-lane inset, both-axis canvas body and virtualized rows        | All rows share the maximum graph inset; default canvas body orientation and a plain bounded list                                             | Match per-row content placement and horizontal overflow. Verify forks, narrow nested panes, selected expanded rows, paging and the deliberate rendering bound.                                                                                |
-| Loading and unavailable states   | Graph/file/diff skeletons and icon Empty compositions                          | Several plain status paragraphs                                                                                                              | Port the appropriate skeleton/Empty presentation while retaining typed unavailable reasons, retry and App toast behavior.                                                                                                                     |
-| Parity coverage                  | Production source composition plus governed visual review                      | Existing stories assert the current simplified controls, including native selects and a separate details column                              | Replace those expectations with explicit parity regressions; passing existing interactions cannot prove the source design was ported.                                                                                                         |
+| Area                             | jj-store reference                                                             | Current Notes behavior                                                                                                                               | Required work                                                                                                                                                                                                                                 |
+| -------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Search and highlights            | `StoreHistoryQueryHeader`, `StoreHistoryQuery`, `history-language.ts`          | No search toggle/editor in either log                                                                                                                | Port the header toggle, highlighted native query input, completion, Run/Clear, context and keyboard behavior. Operation fields and JJ revsets are separate languages.                                                                         |
+| Query execution                  | Operation-pinned `historyQuery` controller                                     | History hardcodes `all()`; Op Log always requests unfiltered operations                                                                              | Qualify `query_info` and `operations_filtered` in the actual Tauri prepared profile, then use native graph queries. Retain applied query/context during paging; invalid drafts retain previous results. No filtering of only the loaded page. |
+| Comparison picker                | `StoreComparisonParentPicker`, `StoreMutationCommitPicker`, graph/target cards | Recorded JJ/operation parents, changed revisions and pin selectors use shared production Command Views (E-REPO-015); ambiguous pairs remain explicit | Compose public Command View/Popover with searchable author/avatar, description, time and exact identifiers. Keep operation IDs, commit IDs and change IDs distinct. Load missing parent metadata by its exact native ID.                      |
+| Parent reachability              | Parent controls remain in the selected-operation surface                       | Explicit merge-parent choice is now reachable in the stacked card, including narrow panes                                                            | Keep explicit merge-parent selection beside the comparison, including narrow panes. No automatic selection of ambiguous endpoints.                                                                                                            |
+| Op Log details and diff          | `CommunityProjectsRepositoryLogDiff`, `CommunityProjectsRepositoryLogRail`     | Qualified stacked operation/file cards in Notes 65404171 / E-REPO-010                                                                                | NOTES-05I3A complete: source card/rail geometry, author fallback, bounded exact parent lookup, close/reopen and compact return. Remaining row/state and whole-view approval work stays open.                                                  |
+| File and comparison statistics   | FileListing/FileChangeStats driven by actual changed content                   | Counts exist only for the selected file after a content read; changed-path summaries have no line counts                                             | Supply bounded exact statistics for visible changed files/comparisons. Represent unknown, unavailable and incomplete totals explicitly. Do not turn missing data into zero.                                                                   |
+| Operation message IDs            | `CommunityProjectsRevisionGraphMessage`, `repository-log-message.ts`           | Production graph/details share abbreviated full-ID copy controls (E-REPO-015)                                                                        | Port recognition and independent full-ID copying for supported Git/native commit/change IDs, without selecting the operation or nesting buttons.                                                                                              |
+| Author and revision presentation | Git-author avatar, relative time, typed TagList chips                          | Production uses public AuthorCard/Avatar, relative time and semantic TagList chips (E-REPO-015)                                                      | Retain native author data, accessible avatar/fallback and source metadata hierarchy. Use semantic bookmark/workspace/conflict/snapshot chips.                                                                                                 |
+| Graph layout and scrolling       | Per-row occupied-lane inset, both-axis canvas body and virtualized rows        | All rows share the maximum graph inset; default canvas body orientation and a plain bounded list                                                     | Match per-row content placement and horizontal overflow. Verify forks, narrow nested panes, selected expanded rows, paging and the deliberate rendering bound.                                                                                |
+| Loading and unavailable states   | Graph/file/diff skeletons and icon Empty compositions                          | Several plain status paragraphs                                                                                                                      | Port the appropriate skeleton/Empty presentation while retaining typed unavailable reasons, retry and App toast behavior.                                                                                                                     |
+| Parity coverage                  | Production source composition plus governed visual review                      | Focused production stories now exercise the reviewed controls; synthetic Evo/revert stay catalog-owned                                               | Replace those expectations with explicit parity regressions; passing existing interactions cannot prove the source design was ported.                                                                                                         |
 
 ## Data already available
 
@@ -95,6 +112,16 @@ on macOS ARM64. The five lifecycle/cache commands retain exact process
 identity/readiness, bounded stop, foreign-listener refusal and cache/data
 boundaries. Eighteen exact, 242 renderer/governance and 804 cold catalog checks
 pass, with strict checks/builds, documents and actual runtime/CSS HMR proof.
+
+**NOTES-05I2B/05I2C, 05I3B and 05I6 are qualified in Notes E-REPO-015.** The
+operation parent/snapshot selectors, full-height split diffs and reviewed
+production UI pass focused repository interaction/axe coverage at both widths
+and themes. Forty-eight Node cases, strict types/ownership and renderer build
+also pass. Native workspace/revision/conflict reads retain exact pin authority.
+Design Core 3ac9e5fe repairs existing role/child forwarding for rich grid rows;
+its verified local archive is recorded in consumer evidence. Broad
+qualification, native query/evolution/write capabilities, managed conversation
+and visual approval remain separate. Only the umbrella stays Active.
 
 0. **NOTES-05I0 — Complete: preview workflow.** Qualified Storybook/Vite HMR
    against the jj-store configuration, add checkout/port-scoped

@@ -1,0 +1,249 @@
+# M33 delivery checkpoints
+
+E-REUSABLE-PROGRESS-006/008 retain source and complete current-app UI evidence;
+E-REUSABLE-PROGRESS-007 clarifies execution status. E-REUSABLE-PROGRESS-009
+records cold native history and restart acceptance in desktop `fb238ae2`, with
+physical foreground assistance. NOTES-04/04B are complete in that profile;
+NOTES-06C is the sole Active task. Unattended activation remains GAP-10. Native
+raw-event ownership, durable conversations and downstream gates retain their
+original requirements and milestone statuses.
+E-REUSABLE-PROGRESS-010,E-REUSABLE-PROGRESS-011 accepts the shared native frame
+processor in Lapis AI `6ce65ebb` and refreshed default ACP compatibility in
+desktop `242e1fe5`. NOTES-06A is complete within that library scope; the
+NOTES-06 parent waits for its native Tauri factory, Notes privacy/durable
+capture and complete managed acceptance. Original conversation, downstream and
+release gates remain open.
+
+E-REUSABLE-PROGRESS-011 qualifies NOTES-06B in Lapis AI `87958267`, with full
+source and six cold default ACP compatibility cases recorded in desktop
+`0535bb1e` (E-AI-027). Its native factory preserves current scope and drained
+processing; it does not supply Notes privacy or durable storage. NOTES-06C is
+Active; NOTES-06D and NOTES-07/08/09 remain pending. M33's original statuses and
+first usable milestone requirements are unchanged.
+
+E-REUSABLE-AGENTS-013 adds a headless native capture port in
+`jj-store-conversations`: injected privacy/durable sink, bounded canonical
+batches, exact receipts and fenced uncertain owners. NOTES-06C1 completes only
+this library prerequisite. NOTES-06C remains the sole Active task; Notes-native
+privacy/storage and ordered transport of all batch frames remain pending.
+
+E-REUSABLE-PROGRESS-012 qualifies NOTES-06C2: atomic native event groups in
+Lapis AI `8a8f9149` and the Notes adapter in desktop `2c6cacb3` (E-AI-028).
+Seven cold ACP cases pass with foreground assistance, including deferred text
+and withheld receipts. Synthetic privacy and private synced candidates do not
+qualify production privacy, JJ publication or restart recovery. NOTES-06C is the
+sole Active task; NOTES-06C3 is its pending production group-consumption step.
+Stage-level In progress means started with an open acceptance gate, not
+simultaneous execution. M32 stays Done; M33/M33.1-M33.4 In progress and
+M33.5-M33.8 Planned. Desktop M13.3 is In progress with its original gate open.
+
+E-REUSABLE-PROGRESS-013 completes NOTES-06C3 in desktop `6e8ebd17` (E-AI-029):
+production complete-group consumption, optional frame provenance and replay
+deduplication in both legacy transcript stores. Eleven focused/hash, 198
+renderer/governance, 389 AI policy, all 696 catalog checks and seven cold ACP
+cases pass. Native tests require foreground assistance; prior setup and
+transient WebView failures remain in consumer evidence. NOTES-06C is the sole
+Active task; NOTES-06C4 is next for admitted privacy and exact backend
+ownership. Actual JJ sink selection depends on NOTES-07. M32 stays Done;
+M33/M33.1-M33.4 In progress and M33.5-M33.8 Planned. No production privacy,
+AgentStore/ThreadStore conversation, restart or release gate is completed.
+E-REUSABLE-AGENTS-014 qualifies the opt-in native privacy bridge in
+`jj-store-conversations`. It selects the existing Agent Redaction policy and
+retains a scanner-free default dependency closure. Five real-scanner cases, 20
+default/25 opt-in crate cases and boundary/CI/manual checks qualify the source
+prerequisite NOTES-06C4A. NOTES-06C is the sole Active task; Notes adoption,
+current native scope, actual durable backend and restart remain pending. The
+optional profile's automatic CI execution remains part of standalone
+qualification. Existing M32/M33 statuses and gates are unchanged.
+E-REUSABLE-PROGRESS-014 completes NOTES-06C4B in Notes `51bed526` (E-AI-030):
+real shared native privacy with native-owned scope/cache and explicit ordinary
+backend refusal. Both native profiles pass 112 tests (two inherited ignored
+each), strict lint and normal/acceptance builds pass; all eight cold ACP cases
+pass with foreground assistance. The candidate sink remains synthetic. NOTES-07
+is now the sole Active task for receipt-aware AgentStore/ThreadStore adapters
+and per-vault selection. NOTES-06C/06C4 wait for that backend; their
+publication/drain and NOTES-06D/08/09 restart gates remain open. M32/M33
+statuses and original gates are unchanged. E-REUSABLE-AGENTS-015 qualifies
+NOTES-07A: an additive native-capture normalizer retains exact sanitized
+envelopes and native progress while reusing existing controller entity
+projection. Five model cases and real Git-provider atomic Agent/Thread
+publication, fresh opening and receipt replay pass; all 70 affected crate tests
+and strict lint pass. NOTES-07 remains the sole Active task for its reusable
+receipt-aware adapter and Notes backend selection. NOTES-06C/06C4 wait for that
+backend. No Notes journal, managed JJ conversation, native writer drain or
+restart gate is completed; M32/M33 statuses are unchanged.
+
+E-REUSABLE-AGENTS-016 qualifies NOTES-07B: optional selected Agent/Thread
+capture retains sanitized candidates and exact preparation before publication
+and confirms original receipts before output. Real Git/provider and fsynced
+test-host journal proofs include lost replies, abandoned waits, stale/foreign
+Threads and reopen without re-execution. Native manifest/WAL preparation and
+receipt recovery use memory object storage, distinct from real RustFS. NOTES-07
+remains the sole Active task for Notes' production journal, explicit per-vault
+backend selection and native lifetime integration. NOTES-06C/06C4 wait for that
+backend. M32 stays Done; M33/M33.1-M33.4 stay In progress and M33.5-M33.8
+Planned with original gates unchanged. No actual Notes JJ conversation, cold
+restart, native drain, UI/visual or release gate is promoted.
+
+E-REUSABLE-PROGRESS-015 completes NOTES-07C in Notes `e88f1487` (E-AI-031): an
+exclusive private journal retains checked atomic synced records and current
+admission. Cold Rust-process lease/reopen and real-JJ native privacy/store
+composition prove source preservation and original-receipt-only recovery. Both
+native Rust profiles pass 120 cases with two inherited ignored each; strict
+Clippy, builds, types and 198 renderer/governance cases pass. M33's statuses and
+original gates remain unchanged. NOTES-07 is the sole Active task for explicit
+per-vault backend selection and native lifetime wiring. NOTES-06C/06C4 wait for
+that integration; actual managed chat, native writer drain, packaged-app cold
+restart and UI/visual/release gates remain open.
+
+E-REUSABLE-PROGRESS-016 completes NOTES-07D in Notes `a48fce96` (E-AI-032):
+native private backend profiles retain exact choices, original receipts and an
+exclusive admitted owner. Preparation precedes selection; missing, malformed or
+uncertain state refuses another writer. Immediate close fences unpolled waits
+and outstanding calls retain the lease. Cold Rust-process ownership and real JJ
+witness/source preservation pass. Both native profiles pass 127 cases with two
+inherited ignored each, strict lint/builds, types and 198 renderer/governance
+cases pass. NOTES-07 remains the sole Active task for ordinary host/IPC,
+renderer backend selection and managed callback ownership. NOTES-06C/06C4 wait
+for that integration. M32/M33 statuses and original gates are unchanged; no
+actual app chat/restart, native runtime drain or release gate is promoted.
+
+E-REUSABLE-PROGRESS-017 completes NOTES-07E in Notes `81765a34` (E-AI-033):
+ordinary native backend ownership and bounded text IPC retain exact choices,
+receipts and scope handles. Admission, backend operations and closure share
+native transitions. Cancellation retains IO ownership; reload refreshes handles
+and delayed old closes cannot revoke a replacement. Destruction fences delayed
+admission. Both Rust profiles pass 136 cases (two inherited ignored each), all
+16 AI-host cases, strict lint/builds, types and 198 renderer/governance cases
+pass. Three cold hidden-WebView cases qualify actual IPC, read-only JJ source
+preservation, saved-choice/receipt reopening and existing admission/history.
+Native API acceptance is separate from visible UI and managed conversation
+restart. NOTES-07 remains the sole Active task for conversation/session
+preparation, store/processor construction and renderer persistence.
+NOTES-06C/06C4 wait for that integration. M32/M33 statuses and original gates
+are unchanged; actual managed capture, app chat/restart, visual/provider and
+release gates remain open.
+
+E-REUSABLE-PROGRESS-018 completes NOTES-07F1 in Lapis AI `e12d303c`: a Rust-only
+retained processing grant keeps exact native capture authority during renderer
+suspension. Commands, factories and startup completion still require current
+admission; native grant and registry ownership fence every callback. Five
+focused cases, all 34 host cases, 1,018 Rust passes (two inherited ignored), 39
+renderer and 45 governance cases, strict checks/builds, package inventories and
+all ten specification lanes pass. Notes adoption, real store/processor
+construction and managed conversation/restart remain pending. NOTES-07 stays the
+sole Active task; NOTES-06C/06C4 stay Waiting. M32/M33 statuses and original
+gates remain unchanged. Authorized maintenance preserves the development fixture
+and restarts the stack; no release, provider or visual gate is promoted.
+E-REUSABLE-PROGRESS-019 qualifies NOTES-07F2 in Notes change `pquxnosp`
+(E-AI-034): exact retained permits, physical source fences and logical lease
+release pass both 147-case native profiles (two inherited ignored each), strict
+lint/builds and three cold hidden WebView compatibility cases. Actual managed
+conversation/processor and restart remain open. The requested desktop Column
+Canvas commit log and separate Op Log view are NOTES-05F, the only Active task.
+NOTES-07 waits during this UI slice; NOTES-06C/06C4 still await its backend.
+M32/M33 statuses and original gates remain unchanged. E-REUSABLE-AGENTS-017
+qualifies basic operation graphs and exact parent deltas from standard prepared
+history handles, plus faithful referenced native status tags in the typed
+client. Real source/index preservation, exact parent ancestry and malformed tag
+regressions precede package/direct-consumer checks. Notes' Column
+Canvas/AppShell body, ID controls, expanded file lists and matching diffs remain
+NOTES-05F, the sole Active task. Managed conversation/restart and M33's original
+gates/statuses are unchanged.
+
+E-REUSABLE-PROGRESS-020 completes NOTES-05F in Notes `fb80f410` (E-REPO-007):
+AppShell/Column Canvas history and independent Op Log, split IDs, inline file
+modes and matching diffs pass all 768 catalog cases, 212 renderer/governance
+cases, strict checks/builds and three cold native read cases. Producer
+`8118da89` and Design Core `aae7dc35` retain their independent source evidence.
+NOTES-07 resumes as the sole Active task; NOTES-06C/06C4 await its backend.
+M33/M33.4 statuses and original gates stay unchanged. Managed conversation,
+restart, provider, distribution and visual approval gates remain open.
+E-REUSABLE-PROGRESS-021 qualifies NOTES-07G in Notes change `zvquslvn`
+(E-AI-035): ordinary native conversation preparation, selected Git Agent/Thread
+participants and exact original-receipt recovery pass both 153-case native
+profiles, strict lint and four cold hidden API cases, including preparation
+recovery after app restart with unchanged dirty notes/JJ operation. NOTES-07
+remains the sole Active task for native capture/session construction, agent
+admission and renderer persistence; NOTES-06C/06C4 wait. M33 and M33.3 retain In
+progress and their original gates. A prepared ThreadStore conversation is
+separate from a managed AgentStore session and chat/restart qualification.
+
+E-REUSABLE-PROGRESS-022 records NOTES-05G (Notes `c28fc92a` / E-REPO-008): the
+primary review story reserves room for adjacent log/diff columns, and both
+repository views retain public AppShell surface tokens. Dedicated compact-pane
+acceptance remains. This presentation correction changes no storage/capture
+interface or M33 gate/status; managed conversation/restart and visual approval
+remain open.
+
+E-REUSABLE-PROGRESS-023 records NOTES-07H (Notes `cd5b5a1e` / E-AI-036): exact
+native capture preparation composes the real selected Agent/Thread stores,
+native privacy and private journal through the ordinary factory. Content
+privacy, original receipts and retained callback/drained-close ownership are
+qualified. This remains distinct from ordinary executable/credential admission,
+runtime dispatch, renderer persistence and managed conversation/restart.
+NOTES-07 stays solely Active; M33 and its original statuses/gates remain
+unchanged. E-REUSABLE-PROGRESS-024 qualifies NOTES-07I confirmed native
+conversation reads in Notes `d1c27e17` / E-AI-037. Eight focused reads, both
+171-case native profiles (two inherited ignored each), strict lint and four cold
+hidden API cases pass, including exact read after restart. Renderer projection,
+continuation transport, execution and managed chat/restart remain open.
+E-REUSABLE-PROGRESS-025 completes NOTES-05H in Notes `792cbfa8` / E-REPO-009:
+compact History/Op Log headers replace duplicate body headings/pin blocks while
+retaining native selection, refresh and full identities. Eight exact header, 152
+repository and 776 full catalog checks pass; strict checks, 212 renderer cases
+and both builds pass. NOTES-07 resumes as the sole Active task. M33's original
+statuses/gates, managed conversation and visual approval remain open.
+E-REUSABLE-PROGRESS-026 qualifies NOTES-07J in Notes `d00a69b3` / E-AI-038.
+Opaque native read/stream handles keep the original selection as capture
+advances. Eleven focused reads, both 174-case native profiles (two inherited
+ignored each), strict lint and four cold hidden API cases pass. Exact issued
+cursor positions, original receipts, bounded handles and idle close/reload are
+qualified; renderer projection, ordinary execution and managed chat/restart
+remain open. NOTES-07 stays solely Active; M33 statuses and original gates are
+unchanged. E-REUSABLE-PROGRESS-027 records the complete source/browser parity
+review. The canvas/header foundation lacks highlighted native search, rich
+comparison pickers, stacked operation/diff cards, full statistics and row/state
+details. Existing catalog passes establish current interactions, not those
+missing requirements. NOTES-05I is now solely Active with ordered slices;
+NOTES-07 waits. Review completion does not complete implementation, visual
+approval or M33's original gates/statuses. E-REUSABLE-PROGRESS-028 qualifies
+NOTES-05I3A stacked operation/file cards and NOTES-05I5A two-tab review in Notes
+`65404171` / E-REPO-010. All 792 catalog/comparison cases, eight controller/215
+renderer-governance cases, strict checks/builds and document consumers pass.
+Design Core `b9477996` qualifies its accessible-name and cold-readiness
+prerequisite. Native metadata parent lookup remains within qualified pinned
+graph paging, with explicit bounds and refusal. NOTES-05I stays solely Active
+for remaining comparison endpoints, preview maintenance/native queries and row,
+statistics and whole-view work. NOTES-07 waits; M33 statuses/original gates,
+managed conversation and visual approval remain unchanged.
+E-REUSABLE-PROGRESS-029 qualifies NOTES-05I2A JJ parent Command View cards and
+NOTES-05I0A runtime preview reconstruction in Notes `564e039d` / E-REPO-011. All
+804 cold catalog checks and 224 renderer/governance cases pass, with strict
+types/audits, builds, documents and actual runtime/CSS HMR proof. Existing
+pinned commit reads retain native authority and exact identities. Other Op Log
+comparison endpoints and lifecycle/cache commands remain pending; NOTES-05I
+stays solely Active and the original M33/Notes native gates remain unchanged.
+E-REUSABLE-PROGRESS-030 qualifies NOTES-05I0B and completes NOTES-05I0 in Notes
+`2a4ed91c` / E-CATALOG-008. Eighteen exact, 242 renderer/governance and 804 cold
+catalog cases pass, with strict checks/builds, documents and macOS
+process/cache/HMR proof. Other Op Log endpoints, native queries, row/statistics
+and whole-view work remain under the sole Active NOTES-05I. NOTES-07 waits;
+original M33/Notes native, managed conversation and visual gates are unchanged.
+NOTES-05I2B/05I2C operation-parent and header Command View pickers are in final
+verification. Header choices retain operation pins, not workspace selection. The
+requested split-diff height correction is NOTES-05I3B; eight focused checks
+passed before deferral using unchanged shared layout contracts. Final combined
+qualification waits for user review. Only NOTES-05I remains Active.
+
+The user now directs Storybook-only parity review and defers further tests and
+new production adoption until visual confirmation. The labelled muted action
+strip, single-line copy menu, compact JJ parent trigger, source-coloured IDs,
+closed-sidebar startup and revision Command View remain catalog-only proposals.
+Prior focused evidence is retained; final qualification, original gates and sole
+Active NOTES-05I are unchanged.
+<!-- generated-navigation -->
+
+## Pages
+
+- [Evidence history](history/index.md)

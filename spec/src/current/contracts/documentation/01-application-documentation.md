@@ -1,5 +1,13 @@
 # Application documentation
 
+The user now requires Storybook-first visual parity confirmation before new
+production adoption and explicitly defers further tests. The checklist must
+distinguish catalog-only proposals from qualified shipping components.
+
+The current picker checkpoint separates operation-parent/header validation from
+the next split-diff height slice. Header choices are operation snapshots, not
+workspaces; NOTES-05I remains the only Active umbrella.
+
 E-REUSABLE-PROGRESS-030 qualifies NOTES-05I0B/05I0 preview maintenance in Notes
 `2a4ed91c` / E-CATALOG-008: 18 exact, 242 renderer/governance and 804 cold
 catalog checks pass, with strict checks/builds and documents. The checklist

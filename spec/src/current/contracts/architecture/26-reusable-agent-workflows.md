@@ -281,3 +281,17 @@ story-index readiness require current OS/HTTP proof. Unknown exit observations
 retain ownership, and unready processes cannot authorize another start. Cache
 maintenance admits only named dependency caches after live-consumer checks; it
 cannot remove native data, source fixtures or static review artifacts.
+
+Operation parent cards retain native user/host/time and exact operation IDs,
+distinct from Git commit and JJ change identities. Header operation selectors
+remain snapshot pins even when their public Command View presentation borrows
+the workspace picker. Search/opening cannot switch repository or workspace
+authority. Split-diff sizing uses owned hosts and public shared layout seams.
+
+The user authorized focused production adoption of the reviewed UI. Shared
+production components own presentation; catalog-only synthetic evolution and
+inverse-operation previews grant no native authority. Workspace links and
+operation revision cards use retained pinned readers. Conflict draft/staging and
+preview cannot publish; native search/evolution and write capabilities keep
+separate acceptance gates. Broad qualification and visual approval remain
+separate from functional plugin adoption.

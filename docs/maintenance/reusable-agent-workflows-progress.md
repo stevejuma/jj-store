@@ -2,16 +2,22 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-Execution now: **one Active task, NOTES-05I** for complete repository-view
-parity after the source/browser gap review. The header alignment is complete;
-search, remaining Op Log pickers, row presentation and statistics remain open.
-NOTES-05I3A operation cards and NOTES-05I5A two-tab review are qualified. The JJ
-parent Command View picker (NOTES-05I2A) and owned-runtime preview reload
-(NOTES-05I0A) are qualified in Notes `564e039d` / E-REPO-011. Other Op Log
-revision/parent selectors remain pending. Preview lifecycle/cache commands
-(NOTES-05I0B) are qualified in Notes `2a4ed91c` / E-CATALOG-008. NOTES-07 waits
-during this UI work; NOTES-07J native continuation is qualified. NOTES-06C and
-NOTES-06C4 still await NOTES-07 managed integration.
+**Current direction: functional production plugin.** The user lifted the
+Storybook-only freeze and test deferral, authorized live adoption and focused
+tests, and prioritizes a usable plugin. Release, platform/provider,
+whole-catalog and visual-baseline qualification stay deferred. Earlier
+E-REPO-012/013/014 describe historical preview work; they are not current
+freezes.
+
+**One Active task: NOTES-05I.** The reviewed author/profile, tags, compact
+pickers, Markdown bodies, operation titles/args, action strips, file headers and
+diff presentation now live in Notes production components. Review compositions
+import those components. Native workspace links, revision cards and conflict
+inspection use the retained reader; local conflict drafts/staging/preview do not
+publish. Native Evo Log, highlighted search, Revert and conflict Apply remain
+separate capability slices. No synthetic catalog data enters production. Notes
+E-REPO-015 owns focused adoption evidence; Design Core owns the rich Command
+View role-forwarding repair. NOTES-07 waits during this UI slice.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -36,8 +42,16 @@ whole stage.
   and ordered slices. NOTES-05I3A qualifies stacked operation/file cards and
   bounded exact parent navigation; NOTES-05I5A opens both logs in workspace tabs
   for review. NOTES-05I2A JJ parent cards and NOTES-05I0A owned-runtime reload
-  are qualified; preview maintenance is also complete. Other Op Log comparison
-  endpoints remain pending before native queries. Full view parity stays open.
+  are qualified; preview maintenance is also complete. Reviewed comparison
+  controls are now production-owned; native queries and full view parity stay
+  open.
+- **Completed: NOTES-05I6 production adoption.** Notes E-REPO-015 promotes
+  reviewed presentation and native-read integrations, with 48 repository Node
+  tests,66 repository stories at both widths/themes, strict types/ownership and
+  renderer build acceptance. Copy/recovery, Markdown/tags, workspace context,
+  revision cards and local conflict preview are covered. Broad qualification
+  remains deferred. Native query/evolution, write actions, exact comparison
+  totals and managed conversations are the next functional slices.
 - **Completed: NOTES-05I0B/05I0.** Notes `2a4ed91c` / E-CATALOG-008 qualifies
   managed preview start/status/stop/restart and dry-run/apply cache commands on
   macOS ARM64. Eighteen exact, 242 renderer/governance and all 804 cold catalog
@@ -499,10 +513,20 @@ UI alignment; capture still awaits managed backend integration.
 - [x] **NOTES-05I0 — Complete:** Runtime/style HMR and managed preview
       maintenance are qualified on macOS ARM64; other platforms remain
       unqualified.
+- [x] **NOTES-05I2B/05I2C — Complete:** Operation parent cards and header
+      operation-snapshot Command View pickers; exact pin semantics retained;
+      focused production acceptance is in E-REPO-015.
+- [x] **NOTES-05I3B — Complete:** Split diff fills its available column/card
+      height using the public shared layout contract, including narrow panes;
+      E-REPO-015 qualifies the affected repository family.
+- [x] **NOTES-05I6 — Complete:** Reviewed UI lives in production; workspace,
+      revision and conflict inspection use retained native reads. Storybook
+      imports the same components. E-REPO-015 records focused functional/axe,
+      source/build checks and precise native capability limits.
 - [ ] **NOTES-05I — Active:** Complete the source/browser-confirmed parity gaps
-      in [the review](repository-view-parity-review.md). Query controls, rich
-      comparison cards, Op Log composition, statistics and whole-view acceptance
-      run as ordered slices; only the umbrella task is Active.
+      in [the review](repository-view-parity-review.md). Native query/evolution,
+      write capabilities, exact statistics and remaining state/whole-view
+      acceptance run as ordered slices; only the umbrella task is Active.
 - [ ] **NOTES-07 — Waiting for NOTES-05I:** Add receipt-aware
       AgentStore/ThreadStore conversation adapters and explicit per-vault
       backend selection, retaining legacy file conversations. The reusable
