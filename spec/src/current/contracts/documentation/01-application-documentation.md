@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-024 records NOTES-07I confirmed native conversation reads
+separately from renderer projection, continuation transport and managed
+execution/restart. Original store, receipt and admission formats remain intact;
+the checklist retains NOTES-07 as the only Active task.
+
 E-REUSABLE-PROGRESS-023 records NOTES-07H real selected-store capture factory
 and its native privacy/journal/callback ownership. Native command/cold receipt
 proof stays distinct from ordinary agent dispatch, renderer adoption and managed

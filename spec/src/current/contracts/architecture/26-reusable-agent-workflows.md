@@ -233,3 +233,10 @@ renderer suspension; new factories require reattachment and closure drains the
 retained authority. Preparation grants no executable, credential or prompt.
 Ordinary runtime dispatch, renderer adoption and managed chat/restart remain
 separate from this real-factory prerequisite.
+
+Notes' confirmed conversation reads verify original provider proof without
+publishing or repairing private records. Agent/Thread data retain matching
+source selections and bounded native JSON text preserves full-width integers.
+Native totals and continuation sequences identify incomplete transcript ranges;
+unfinished activity remains capture evidence. Renderer projection, continuation
+transport and authoring/execution retain their separate integration gates.

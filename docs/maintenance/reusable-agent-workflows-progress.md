@@ -2,10 +2,11 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
-Execution now: **one Active task, NOTES-07** for native agent/execution
-admission and renderer persistence. Native capture construction is qualified in
-NOTES-07H. NOTES-05F/05G are complete. NOTES-06C and NOTES-06C4 remain **Waiting
-for NOTES-07** managed integration; started stages retain their open gates.
+Execution now: **one Active task, NOTES-07** for native conversation reads,
+agent/execution admission and renderer persistence. NOTES-07I is in
+qualification. Native capture construction is qualified in NOTES-07H.
+NOTES-05F/05G are complete. NOTES-06C and NOTES-06C4 remain **Waiting for
+NOTES-07** managed integration; started stages retain their open gates.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -26,6 +27,11 @@ whole stage.
 - **Active task: NOTES-07.** Continue native executable/credential admission,
   ordinary runtime dispatch and per-vault renderer persistence. NOTES-07G/H
   qualify conversation preparation and the real selected-store capture factory.
+- **Current slice: NOTES-07I, in qualification.** Confirmed native conversation
+  views return matching Agent/Thread publication data as lossless JSON text.
+  Eight focused content/receipt/admission/bounded-range cases pass; complete
+  native profiles, lint and cold command/restart acceptance remain pending.
+  Renderer projection and continuation transport are still separate work.
 - **Completed: NOTES-07H.** Notes `cd5b5a1e` / E-AI-036 constructs the ordinary
   native processor from a confirmed conversation with real privacy, private
   journal and Agent/Thread participants. Thirty backend cases, both 163-case
@@ -421,10 +427,11 @@ complete; capture still waits for real backend integration.
       and owner service; NOTES-07E connects native host/IPC and closure.
       NOTES-07G completes native conversation preparation and original-receipt
       recovery. NOTES-07H completes real selected-store processor construction.
-      Next add native executable/credential admission, ordinary runtime dispatch
-      and per-vault renderer persistence. NOTES-07F1/F2 complete shared and
-      Notes retained-authority prerequisites; no managed conversation gate is
-      closed.
+      NOTES-07I is qualifying bounded confirmed conversation reads. Next add
+      continuation/projection, executable/credential admission, ordinary runtime
+      dispatch and per-vault renderer persistence. NOTES-07F1/F2 complete shared
+      and Notes retained-authority prerequisites; no managed conversation gate
+      is closed.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
