@@ -2,6 +2,11 @@
 
 Last reviewed: 2026-10-18. Overall: **In progress**.
 
+Execution now: **one Active task, NOTES-07**. NOTES-06C and NOTES-06C4 are
+**Waiting for NOTES-07**. These three unfinished entries are not three
+concurrent work streams. Parent milestones and started stages retain their open
+gates.
+
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
 is still pending. Notes' native repository admission and history transport are
@@ -23,12 +28,13 @@ whole stage.
   required to finish NOTES-06C/D. Work advances one task at a time.
 - **Waiting: NOTES-06C/06C4.** Shared capture, complete batches, production
   transcript provenance and the real native privacy prerequisite are qualified.
-  Actual backend ownership, publication and drained closure await NOTES-07.
+  Managed callback ownership, publication and drained closure await NOTES-07.
 - **NOTES-07 checkpoint:** The native batch domain/normalization prerequisite is
   qualified in NOTES-07A below. NOTES-07B adds the optional receipt-aware store
   adapter and private journal port; NOTES-07C qualifies Notes' private native
-  journal and real JJ store composition. Explicit per-vault backend selection
-  and native lifetime integration remain pending within NOTES-07.
+  journal and real JJ store composition. NOTES-07D qualifies the native backend
+  profile/owner service. Ordinary host/IPC, renderer selection and native
+  callback lifetime integration remain pending within NOTES-07.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -270,6 +276,17 @@ below are not being worked on simultaneously.
       selection, native callback ownership/drain or packaged-app chat/restart.
       Notes `e88f1487`; evidence: E-AI-031/E-REUSABLE-PROGRESS-015.
 
+- [x] **NOTES-07D** Add native backend profiles with explicit `vault-files`/`jj`
+      choices, retained original receipts, synced preparation/selection records
+      and an exclusive owner lease. Immediate close fences even an unpolled or
+      abandoned wait; outstanding calls retain the lease. Seven backend cases
+      include cold-process ownership, uncertain-write recovery and read-only
+      real JJ witness checks. Both native profiles pass 127 cases with two
+      inherited ignored each; strict lint, both native builds, types and 198
+      renderer/governance cases pass. This service is not connected to ordinary
+      app IPC, backend selection UI or managed capture yet. Notes `a48fce96`;
+      evidence: E-AI-032/E-REUSABLE-PROGRESS-016.
+
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
 Desktop evidence lives in the isolated qualified sibling
@@ -292,16 +309,18 @@ NOTES-07 is the sole Active implementation task; capture waits for its backend.
       through the native factory, retaining the qualified privacy/batch owner
       and draining capture before vault release.
 - [ ] **NOTES-06C4 — Waiting for NOTES-07:** Its shared native privacy bridge
-      and Notes adoption are complete in NOTES-06C4A/B. Exact backend ownership,
-      real JJ receipts and drained closure still require the store adapters.
+      and Notes adoption are complete in NOTES-06C4A/B. Native callback
+      ownership, real app JJ receipts and drained closure still require ordinary
+      backend wiring.
 - [ ] **NOTES-06D:** Qualify the native managed path, including withheld or
       failed capture, exact scopes, unknown outcomes, acknowledgement and close.
       Coordinate its concrete backend acceptance with NOTES-07.
 - [ ] **NOTES-07 — Active:** Add receipt-aware AgentStore/ThreadStore
       conversation adapters and explicit per-vault backend selection, retaining
       legacy file conversations. The reusable adapter is complete in NOTES-07B;
-      NOTES-07C supplies Notes' journal. Next connect admitted per-vault backend
-      selection and native ownership.
+      NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
+      and owner service. Next connect ordinary host/IPC, per-vault application
+      selection and native callback ownership.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.

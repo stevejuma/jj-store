@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-016 records Notes' native backend profiles and exclusive
+owner service separately from ordinary host/renderer wiring and managed chat.
+The checklist and ledger name only NOTES-07 as Active, with NOTES-06C/06C4
+Waiting; started stages and historical checkpoints are not concurrent workers.
+
 E-REUSABLE-PROGRESS-015 records Notes' private native journal and real-JJ
 service composition separately from pending backend selection, native writer
 drain and packaged-app conversation/restart. The delivery checklist and M33
