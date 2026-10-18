@@ -217,6 +217,11 @@ its disposable sidebar controls, while dedicated narrow-pane coverage retains
 compact navigation. The embedded shell retains its public surface tokens. These
 presentation choices change no storage, admission or capture interface.
 
+Both Notes log views start directly with public Column Canvas headers, matching
+jj-store's body-title omission. Compact native pin/refresh controls stay within
+the header; full identities, pinned comparisons and unavailable-state recovery
+remain unchanged. Shared header qualification covers both pane widths/themes.
+
 Embedding hosts retain exact conversation preparation before explicit
 publication. For the fixed Git-backed Notes profile, recovery verifies the
 original canonical provider receipt against its private actor, command intent,

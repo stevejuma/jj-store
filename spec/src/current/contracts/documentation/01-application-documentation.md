@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-025 records NOTES-05H header alignment: both log views begin
+with their compact Column Canvas header, retaining native pin/refresh controls.
+History and Op Log share interaction/width/theme coverage; native conversation
+and visual approval gates remain independent.
+
 E-REUSABLE-PROGRESS-024 records NOTES-07I confirmed native conversation reads
 separately from renderer projection, continuation transport and managed
 execution/restart. Original store, receipt and admission formats remain intact;
