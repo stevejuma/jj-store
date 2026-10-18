@@ -4827,6 +4827,7 @@ dependencies = [
  "jj-agent",
  "jj-collab",
  "jj-review",
+ "jj-store-conversations",
  "jj-store-core",
  "jj-store-model",
  "jj-work",

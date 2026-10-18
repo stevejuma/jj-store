@@ -24,6 +24,9 @@ whole stage.
 - **Waiting: NOTES-06C/06C4.** Shared capture, complete batches, production
   transcript provenance and the real native privacy prerequisite are qualified.
   Actual backend ownership, publication and drained closure await NOTES-07.
+- **NOTES-07 checkpoint:** The native batch domain/normalization prerequisite is
+  qualified in NOTES-07A below. The reusable receipt-aware adapter and Notes
+  backend selection remain pending within NOTES-07.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -232,6 +235,15 @@ below are not being worked on simultaneously.
       and renderer delivery. Desktop `51bed526`; evidence:
       E-AI-030/E-REUSABLE-PROGRESS-014. The synthetic sink does not qualify JJ
       publication or restart recovery.
+
+- [x] **NOTES-07A** Add the versioned native capture envelope and normalization
+      profile without rewriting its binding, ordinal or native cursors. Five
+      model cases and a real Git-provider case qualify exact evidence, one final
+      answer, atomic Agent/Thread roots, pinned reads, fresh opening and
+      original receipts. All 70 affected crate tests and strict lint pass.
+      Evidence: E-REUSABLE-AGENTS-015. The Notes receipt journal, backend
+      adapter and native conversation/restart acceptance remain pending within
+      NOTES-07/09.
 
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).

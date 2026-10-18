@@ -120,3 +120,15 @@ sanitized journaling and publication. A reader acknowledgement follows durable
 acceptance of the exact batch and cursor; it is not a publication receipt.
 Existing application spools require the application feature and keep their
 original schemas, identities, reservations and unknown-outcome behavior.
+
+## Native managed capture evidence
+
+`NormalizerProfileV1::native_capture_v1()` accepts the exact sanitized schema-1
+batch emitted by `jj-store-conversations` as one AgentStore observation.
+`NativeCaptureEnvelopeV1` checks the native binding, policy, processing ordinal
+and bounded complete frame group. The processing ordinal orders observations;
+publication cursors and original frame sequences stay unchanged in the retained
+envelope. Projection reuses controller session/turn/message/tool identities,
+including one final assistant message. Native closure and uncertain errors stay
+distinct. This profile does not provide a durable journal or select a backend;
+hosts must retain exact requests and verify publication receipts separately.

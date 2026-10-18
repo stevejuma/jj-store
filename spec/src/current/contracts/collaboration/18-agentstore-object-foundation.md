@@ -101,3 +101,12 @@ select one source generation from an immutable manifest, verify strictly
 increasing chunk sequences across linked pages and enforce both a record count
 and an eight MiB caller-selected byte ceiling. Session/checkpoint enumeration,
 relation traversal and transcript streaming do not depend on Tantivy.
+
+The versioned native-capture normalizer retains the complete sanitized capture
+envelope as one observation. Processing ordinals order these observations;
+native event cursors and provider frame sequences remain exact evidence, never
+replacement identities. Complete groups project through existing controller
+session/turn/message/tool aliases. Only a bounded deferred text prefix may share
+an ordinal with its triggering frame. Malformed bindings, policy/progress
+mismatches and unsupported group shapes reject before publication. Existing
+controller-v2 observations and all canonical object formats are unchanged.

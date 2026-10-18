@@ -164,3 +164,15 @@ physical roots, exact credentials and current scope before construction; this
 feature neither discovers those values nor supplies a backend or execution
 grant. Scanner refusal remains a fixed privacy failure before any durable sink
 or output, and uncertain receipts retain the stopped-owner fence.
+
+The additive `owned-controller@jj-native-capture-1/v1` profile accepts one exact
+schema-1 native capture envelope as sanitized AgentStore observation evidence.
+Its source order is the processing ordinal; native publication cursors and
+original frame sequences remain separate, unchanged fields in that envelope. The
+bounded group contains one triggering frame and at most one deferred text
+prefix. Projection uses the existing controller entity identities and terminal
+assistant/tool records without rewriting evidence. Unknown lifecycle errors
+project an uncertain session; closure projects an ended session. Policy,
+binding, progress, representation and group mismatches reject before staging.
+This profile supplies the domain prerequisite for NOTES-07's receipt-aware store
+adapter; it supplies no journal, execution grant or Notes backend.

@@ -194,3 +194,9 @@ privacy bridge, its scanner-free default and exact existing policy selection.
 The manual's conversation source review includes that adapter. Hosts still own
 admitted paths, cache, exact credentials and durable sinks; this documentation
 does not qualify Notes native capture, JJ publication or restart recovery.
+
+The capture pipeline, collaboration concepts and `jj-agent` README describe the
+additive native-capture normalizer and its exact evidence/projection boundary.
+Collaboration source review includes this profile. Generic Git-provider
+publication/reopen evidence remains separate from the Notes backend, native
+writer lifetime and cold conversation acceptance gates.

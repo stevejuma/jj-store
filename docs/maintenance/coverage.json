@@ -31,8 +31,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed enum indirection and equivalent validation guards; canonical native object bytes, identities and public serialized fields remain unchanged.",
-      "fingerprint": "597d91f4c819188f6432089c30654ea7c8a12531ce1f3de123b8a1b72fa58707"
+      "reason": "Reviewed native capture envelope validation, exact source ordinals/cursors, final assistant projection and deferred-prefix tool deduplication; existing controller profiles and canonical object formats remain unchanged.",
+      "fingerprint": "c9144fca492f2fb734c09670bdc9ba5c8daaa1f832367953adb4ebdde5b86805"
     }
   },
   {

@@ -124,3 +124,11 @@ E-INJECTABLE-STORES-006 completes M32's source-library embedding qualification
 across plain Git, stock JJ, native without JJ and combined profiles. The
 application and real cold RustFS evidence remain in E005. This completes no
 WorkflowStore, new-platform, topology or package-publication gate.
+
+The additive native-capture normalizer uses existing selected Agent/Thread
+commands and publication participants. Complete sanitized envelopes remain
+AgentStore observation evidence, while transcript projection keeps existing
+domain codecs. Git-provider acceptance covers atomic roots, pinned old reads,
+fresh carrier opening and original receipt replay; changed payloads under an
+existing request remain intent conflicts. This library qualification supplies no
+Notes journal, backend selection or managed-writer lifetime.

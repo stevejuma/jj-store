@@ -78,6 +78,12 @@ committed sanitized observations through its versioned controller projection.
 Multiline tool titles remain evidence while tool snapshot labels are bounded.
 Unknown or unusable turns never project an idle session.
 
+Embedded hosts can retain a complete sanitized native event group as one capture
+observation. The native-capture profile preserves its original cursors and
+projects final messages without treating a deferred text prefix as new tool
+activity. Host admission, backend selection and durable receipt recovery remain
+separate responsibilities.
+
 In the native execution inbox, replies to saved agent and prompt messages use
 ordinary ThreadStore revisions with an exact AgentMessage baseline. Saving them
 is separate from execution. The next explicit Send includes committed visible
