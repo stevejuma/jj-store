@@ -32,8 +32,9 @@ mean that the named slice has evidence; they do not complete its whole stage.
   complete check/test/build/specification lanes and 261 source stories pass.
   Design Core passes 821 units, 834 stories and 172 browser cases, one existing
   skip. Package provenance and earlier failures remain in owning evidence.
-- **Waiting: NOTES-04.** Its renderer is committed, but the original visible
-  native/restoration acceptance gate remains NOTES-04B.
+- **Parent gate: NOTES-04.** Its renderer is committed. This groups the history
+  work and is not a separate active task; its remaining native/restoration
+  acceptance is NOTES-04B.
 - **Next:** NOTES-06 through NOTES-09, native raw-event ownership, durable
   AgentStore/ThreadStore persistence and conversation restart recovery.
 - **After that:** addressed agents/discussions, imports, opt-in capture,
@@ -134,10 +135,11 @@ is pending. One agent works through these tasks, with checks sometimes running
 in the background. Stage-level **In progress** means the stage has started, not
 that every task in it is executing simultaneously.
 
-- [ ] **NOTES-04 — Waiting for NOTES-04B/05E:** The visible history/diff
-      renderer is implemented and committed in the isolated desktop history
-      workspace. Complete its original cold visible native gate before calling
-      the history integration delivered.
+**Parent acceptance: NOTES-04 remains incomplete.** The visible history/diff
+renderer is implemented and committed in the isolated desktop history workspace.
+NOTES-05E qualifies its pane layout and NOTES-04B supplies its original cold
+visible native gate. This parent is not an additional execution item.
+
 - [ ] **NOTES-04B — Waiting for native focus:** Exercise the actual native
       WebView ribbon, unified/split diffs, external-head refresh, retained
       historical pins, cold close/reopen and plain-folder refusal. Verify actual
