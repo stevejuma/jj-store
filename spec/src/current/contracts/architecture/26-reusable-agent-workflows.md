@@ -256,3 +256,14 @@ interactions cannot prove missing native search, highlighted query completion,
 metadata-rich comparison pickers, stacked operation/diff cards or exact file
 statistics. The host reuses existing pinned query/detail APIs where available;
 unknown statistics stay explicit until their bounded data producer is qualified.
+
+E-REUSABLE-PROGRESS-028 records the Notes operation-card port and two-tab
+review. Operation metadata and the selected-file diff share one Column Canvas
+column. Application-owned source cards/rail/avatar fallbacks are attributed;
+public Design Core primitives retain their package ownership. Unloaded parent
+metadata uses the existing qualified pinned operation-graph profile with bounded
+paging, exact IDs, stale-response fences and explicit refusal. No direct
+unsupported operation request, native authority or storage/receipt format is
+added. The review story retains both independently pinned logs in production
+workspace tabs. Rich comparison pickers, preview maintenance, native query
+adoption, statistics and whole-view acceptance retain their ordered open work.

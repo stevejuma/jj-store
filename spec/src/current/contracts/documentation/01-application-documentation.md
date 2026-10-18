@@ -1,5 +1,12 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-028 qualifies operation-card composition and the opened JJ
+Log/Op Log two-tab review in Notes E-REPO-010, with attributed source ports and
+independent Design Core accessibility/readiness evidence. The checklist retains
+one Active umbrella, prioritizes the requested parent Command View picker
+correction and keeps preview maintenance/native query adoption pending.
+Whole-view parity, visual approval and managed conversation gates remain open.
+
 E-REUSABLE-PROGRESS-027 records the repository-view parity review, source/data
 boundaries and ordered NOTES-05I slices. The initial canvas/header port and its
 passing stories do not qualify missing source behavior. The checklist moves the

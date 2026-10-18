@@ -4,9 +4,12 @@ Last reviewed: 2026-10-18. Overall: **In progress**.
 
 Execution now: **one Active task, NOTES-05I** for complete repository-view
 parity after the source/browser gap review. The header alignment is complete;
-search, rich comparison pickers, Op Log composition and statistics remain open.
-NOTES-07 waits during this UI work; NOTES-07J native continuation is qualified.
-NOTES-06C and NOTES-06C4 still await NOTES-07 managed integration.
+search, rich comparison pickers, row presentation and statistics remain open.
+NOTES-05I3A operation cards and NOTES-05I5A two-tab review are qualified. The
+latest correction prioritizes NOTES-05I2 parent Command View pickers; preview
+maintenance (NOTES-05I0) remains queued before query adoption. NOTES-07 waits
+during this UI work; NOTES-07J native continuation is qualified. NOTES-06C and
+NOTES-06C4 still await NOTES-07 managed integration.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -28,7 +31,18 @@ whole stage.
   highlighted native search, rich Command View parent/revision pickers, stacked
   Op Log detail/diff cards, exact statistics and remaining row/state parity. The
   [parity review](repository-view-parity-review.md) owns the explicit gap matrix
-  and ordered slices. Review is complete; implementation remains open.
+  and ordered slices. NOTES-05I3A qualifies stacked operation/file cards and
+  bounded exact parent navigation; NOTES-05I5A opens both logs in workspace tabs
+  for review. NOTES-05I2 parent Command View pickers are next under the latest
+  correction, with NOTES-05I0 preview maintenance queued before native queries.
+  Full view parity remains open.
+- **Completed: NOTES-05I3A/05I5A.** Notes `65404171` / E-REPO-010 ports stacked
+  operation/file cards, source author fallback and exact parent navigation
+  through the qualified prepared graph profile. Twelve exact layout, 788
+  complete existing catalog and four new two-tab review cases pass, along with
+  eight controller/215 renderer-governance cases, strict checks and builds.
+  Design Core `b9477996` owns the accessibility/readiness prerequisite. This
+  qualifies composition and a review preview, not whole-view parity.
 - **Waiting: NOTES-07.** Resume renderer projection, executable/credential
   admission, ordinary runtime dispatch and per-vault persistence after this
   requested UI alignment. Native preparation/factory/read/continuation slices
@@ -451,6 +465,15 @@ UI alignment; capture still awaits managed backend integration.
 - [x] **NOTES-07I — Complete:** Notes `d1c27e17` / E-AI-037 qualifies bounded
       confirmed native conversation reads and cold exact-read restart. This
       supplies no managed-chat or complete continuation acceptance.
+- [x] **NOTES-05I3A — Complete:** E-REPO-010 / Notes `65404171` qualifies
+      stacked operation/file cards and bounded pinned parent lookup.
+- [x] **NOTES-05I5A — Complete:** The two-tab comparison story uses both
+      production log views and retains file/diff selections. It is open for
+      review; whole-view acceptance and visual approval remain separate.
+- [ ] **NOTES-05I0:** Qualify live reload and add checkout/port-scoped preview
+      start/stop/restart/status and stopped-cache maintenance commands. Existing
+      Vite HMR receives source/story updates; lifecycle tooling is still
+      pending.
 - [ ] **NOTES-05I — Active:** Complete the source/browser-confirmed parity gaps
       in [the review](repository-view-parity-review.md). Query controls, rich
       comparison cards, Op Log composition, statistics and whole-view acceptance
@@ -493,6 +516,7 @@ UI alignment; capture still awaits managed backend integration.
 
 ## What can be viewed now
 
+- [JJ Log and Op Log in separate workspace tabs](http://127.0.0.1:7490/iframe.html?id=desktop-repository-comparison--jj-log-and-op-log-tabs&viewMode=story)
 - [New Notes repository history and diff review](http://127.0.0.1:7490/?path=/story/desktop-repository-history--pinned-history-and-diff)
 - [Restored historical operation](http://127.0.0.1:7490/?path=/story/desktop-repository-history--restores-historical-operation)
 
