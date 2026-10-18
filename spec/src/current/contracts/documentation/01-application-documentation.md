@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-015 records Notes' private native journal and real-JJ
+service composition separately from pending backend selection, native writer
+drain and packaged-app conversation/restart. The delivery checklist and M33
+review retain the original gates and one Active task.
+
 The conversation embedding guide and concise crate README describe optional
 selected-store capture, bounded private recovery DTOs and host-owned durable
 journals. Documentation distinguishes real Git publication, memory-backed
