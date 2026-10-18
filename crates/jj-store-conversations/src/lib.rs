@@ -6,6 +6,8 @@ pub mod coordination;
 #[cfg(feature = "native-privacy")]
 pub mod native_privacy;
 pub mod privacy;
+#[cfg(feature = "store-capture")]
+pub mod store_capture;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum Error {

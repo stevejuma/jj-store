@@ -1,3 +1,5 @@
+#[path = "factories/store_capture.rs"]
+mod store_capture;
 mod support;
 use jj_store_core::*;
 use std::{collections::BTreeSet, sync::atomic::Ordering};

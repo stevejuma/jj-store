@@ -31,8 +31,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed native capture envelope validation, exact source ordinals/cursors, final assistant projection and deferred-prefix tool deduplication; existing controller profiles and canonical object formats remain unchanged.",
-      "fingerprint": "c9144fca492f2fb734c09670bdc9ba5c8daaa1f832367953adb4ebdde5b86805"
+      "reason": "Reviewed public opaque-binding validation and unchanged canonical domain/provider formats. The optional conversation adapter consumes existing native capture normalization and selected participants without changing AgentStore encodings.",
+      "fingerprint": "d1deb49c4580a5e27e9b48295342a24f7fd82f837db9318a7080ea888f0f764c"
     }
   },
   {
@@ -230,8 +230,8 @@
     "sources": ["crates/jj-store-conversations/src"],
     "pages": ["docs/site/technical/conversations.md"],
     "review": {
-      "reason": "Reviewed the optional native privacy bridge, exact policy selection, default dependency isolation, admitted cache/root/secret ownership, receipt fencing and unchanged Notes/JJ publication gates against the source and real-scanner tests.",
-      "fingerprint": "994c09e24f28175c6765d710175b133e0260d6466d5263f76f381032ce2e1f2b"
+      "reason": "Reviewed optional selected Agent/Thread capture, journal-before-IO ordering, retained native preparation, request-aware read-only recovery, exact receipt comparison and host ownership against Git and native-provider fixtures.",
+      "fingerprint": "f976bab65db2953857af4998ddcc6dfa60350db0d42af55f56c2646dc551fa0b"
     }
   },
   {

@@ -158,3 +158,56 @@ invalid sanitized output stops that capture owner before a write or display.
 Unknown receipts keep the existing no-replay fence. The optional feature does
 not choose paths, credentials, targets or persistence, initialize a repository,
 or qualify a Notes/JJ backend. Default builds remain independent of the scanner.
+
+## Selected AgentStore and ThreadStore capture
+
+The optional `store-capture` feature supplies `store_capture::StoreCapture`, a
+`DurableCapture` implementation using the selected owned store interfaces. It
+does not link a concrete provider. Combine it with `native-privacy` when the
+host uses the shared transcript policy; either feature may be selected
+independently.
+
+Open and explicitly bind your chosen stores to the admitted repository first.
+Create the conversation Thread through its own authorized request. Construct
+`ContextV1` with that repository, Thread, original native binding and exact
+privacy policy ID, then pass the stores and your durable `Journal` to
+`StoreCapture::new`. Supply the sink to `NativeCapture`. Construction requires
+both stores to share their actual atomic publication capability and explicit
+repository binding. It neither initializes a repository nor chooses a backend.
+
+The sink derives a stable source identity from the repository and native
+binding, and one request per processing ordinal. Policy, Thread and payload
+changes do not rename that request. The host journal must reject changed intent
+under the same key. Capture evidence retains the exact sanitized schema-1
+envelope and native cursors; its AgentStore observation is ordered by ordinal.
+The adapter rejects a session already assigned primarily to another Thread.
+
+Implement the journal under an exclusive host-owned lease for one selected
+backend/scope. `begin` must atomically retain the sanitized candidate before
+provider reads or preparation and return `New` only to its exclusive claimant.
+`prepared` must durably retain the exact returned request, publication identity,
+native delta and accepted Thread binding before execute. `confirm` must retain
+the original receipt before display or ACK. Use `EntryV1::encode` and `decode`
+for checked schema-1 records bounded to 8 MiB, including JSON byte-array
+expansion. These are private host recovery DTOs; never publish them as native
+repository objects or treat them as repository authority. Retain only sanitized
+capture; undecided prefixes and credentials stay outside the journal.
+
+Every existing claim, including an incomplete one, takes the read-only recovery
+path. `recover(ordinal)` reconstructs only the retained exact request and
+invokes the provider's request-aware receipt replay. It never calls prepare or
+execute. Missing preparation, not-known status, unavailable original receipts or
+a provider without replay remain unknown. A journal confirmation alone cannot
+authorize output: recovery must reauthorize through the provider and compare the
+original selection, root, version, actor and provider receipt. Repeated exact
+capture may return output only after that proof and durable confirmation.
+
+Hosts still own current physical-vault/window admission, the journal's atomic
+replacement/fsync and lease, native callback drain, backend configuration and
+safe ordered delivery. Journal methods must not spawn detached writes. An
+abandoned wait stops its `NativeCapture` owner even if publication committed.
+The next owner may recover status, but cannot silently resubmit a write or
+restart a prompt. The provider tests cover real Git-ref publication and native
+manifest/WAL behavior with memory object storage. Notes' actual per-vault
+backend, cold JJ conversation/restart, real RustFS and UI qualification retain
+their separate gates.

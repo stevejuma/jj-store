@@ -1,5 +1,10 @@
 # AgentStore object foundation
 
+The native-capture binding's public shape validator is shared by optional host
+adapters. It validates bounded opaque identities only; repository admission and
+execution authority remain host-owned. Existing envelope, observation and
+canonical AgentStore object bytes are unchanged.
+
 `jj-agent` owns distinct fixed-width stable IDs for sessions, attempts, turns,
 messages, blocks, tool calls, terminals, checkpoints, associations,
 observations, events, devices and capture sources. Content-addressed

@@ -8,6 +8,17 @@ export function dependencyErrors(packages) {
   for (const pkg of packages)
     for (const dependency of pkg.dependencies ?? []) {
       if (
+        pkg.name === "jj-store-conversations" &&
+        ["jj-store-core", "jj-store-model", "jj-agent", "jj-collab"].includes(
+          dependency.name,
+        ) &&
+        dependency.kind !== "dev" &&
+        dependency.optional !== true
+      )
+        errors.push(
+          `${pkg.name}: store capture interfaces must remain optional`,
+        );
+      if (
         /^lapis-(?:ai-|acp|agent|compute)/.test(dependency.name) &&
         !(
           (pkg.name === "jj-store-server" &&
@@ -102,7 +113,12 @@ export function dependencyErrors(packages) {
       "jj-store-wal",
     ],
     "jj-store-rpc": ["jj-store-model", "jj-store-object", "jj-store-service"],
-    "jj-store-conversations": [],
+    "jj-store-conversations": [
+      "jj-store-core",
+      "jj-store-model",
+      "jj-agent",
+      "jj-collab",
+    ],
     "tauri-plugin-jj-store": ["jj-store-jj", "jj-store-model"],
     "jj-store-capture": [
       "jj-agent",

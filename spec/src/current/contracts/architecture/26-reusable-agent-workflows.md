@@ -176,3 +176,18 @@ project an uncertain session; closure projects an ended session. Policy,
 binding, progress, representation and group mismatches reject before staging.
 This profile supplies the domain prerequisite for NOTES-07's receipt-aware store
 adapter; it supplies no journal, execution grant or Notes backend.
+
+The conversation crate's optional `store-capture` adapter consumes only owned
+Agent/Thread domain and core interfaces. Hosts supply already-selected atomic
+participants, an explicit repository/thread/native binding and an exclusively
+owned durable private journal. A sanitized candidate is retained before any
+provider read or preparation; exact provider preparation is retained before the
+single publication attempt. Matching original receipts are retained before safe
+output or ACK. Existing or interrupted entries use request-aware receipt replay
+only. Missing preparation, unavailable receipts and unsupported replay remain
+unknown; neither a journal confirmation nor a current snapshot proves the
+original intent. Recovery reauthorizes through the provider and never prepares,
+executes or dispatches a prompt. Existing primary sessions cannot be silently
+reassigned to another thread. Versioned bounded journal DTOs are private host
+recovery records, not repository objects or publication authority. Default
+conversation builds retain no domain, store, scanner or runtime dependency.

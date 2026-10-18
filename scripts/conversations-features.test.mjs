@@ -25,7 +25,7 @@ test("conversation primitives have no application runtime or storage dependency"
     tree
       .split("\n")
       .filter((line) =>
-        /^(?:jj-store-(?:service|rpc|wal|object|native|jj|capture)|jj-lib|jj-cli|lapis-ai-runtime|lapis-agent-redaction|kingfisher-scanner|tauri|tokio) v/.test(
+        /^(?:jj-(?:agent|collab|review|work)|jj-store-(?:core|model|service|rpc|wal|object|native|jj|capture)|jj-lib|jj-cli|lapis-ai-runtime|lapis-agent-redaction|kingfisher-scanner|tauri|tokio) v/.test(
           line,
         ),
       ),
@@ -59,6 +59,59 @@ test("only optional conversation privacy may consume the native redaction librar
   owner.name = "jj-store-core";
   dependency.optional = true;
   assert.equal(dependencyErrors([owner]).length, 1);
+});
+
+test("conversation store capture admits only optional domain interfaces", () => {
+  for (const name of [
+    "jj-store-core",
+    "jj-store-model",
+    "jj-agent",
+    "jj-collab",
+  ]) {
+    const dependency = { name, optional: true };
+    const owner = {
+      name: "jj-store-conversations",
+      dependencies: [dependency],
+    };
+    assert.deepEqual(dependencyErrors([owner]), []);
+    dependency.optional = false;
+    assert.equal(dependencyErrors([owner]).length, 1);
+  }
+});
+
+test("store capture links owned interfaces without a concrete provider or runtime", () => {
+  const tree = execFileSync(
+    "cargo",
+    [
+      "tree",
+      "--locked",
+      "--offline",
+      "-p",
+      "jj-store-conversations",
+      "--features",
+      "store-capture",
+      "--edges",
+      "normal",
+      "--prefix",
+      "none",
+      "--format",
+      "{p}",
+    ],
+    { encoding: "utf8" },
+  );
+  assert.match(tree, /^jj-store-core v/m);
+  assert.match(tree, /^jj-agent v/m);
+  assert.match(tree, /^jj-collab v/m);
+  assert.deepEqual(
+    tree
+      .split("\n")
+      .filter((line) =>
+        /^(?:jj-store-(?:service|rpc|wal|object|native|git|jj|capture)|jj-lib|jj-cli|lapis-ai-runtime|lapis-agent-redaction|kingfisher-scanner|tauri|tokio) v/.test(
+          line,
+        ),
+      ),
+    [],
+  );
 });
 
 test("opt-in native privacy retains the scanner without application authority", () => {

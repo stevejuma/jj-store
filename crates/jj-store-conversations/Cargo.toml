@@ -12,9 +12,21 @@ description = "Host-injected conversation coordination and private agent stream 
 [features]
 default = []
 native-privacy = ["dep:lapis-agent-redaction"]
+store-capture = [
+    "dep:jj-agent",
+    "dep:jj-collab",
+    "dep:jj-store-core",
+    "dep:jj-store-model",
+    "dep:serde",
+]
 
 [dependencies]
 lapis-agent-redaction = { workspace = true, optional = true }
+jj-agent = { workspace = true, optional = true }
+jj-collab = { workspace = true, optional = true }
+jj-store-core = { workspace = true, optional = true }
+jj-store-model = { workspace = true, optional = true }
+serde = { version = "1", features = ["derive"], optional = true }
 async-trait = "0.1"
 serde_json = "1"
 sha2 = "0.10"
@@ -27,3 +39,7 @@ tempfile = "3"
 [[test]]
 name = "native_privacy"
 required-features = ["native-privacy"]
+
+[[test]]
+name = "store_capture"
+required-features = ["store-capture"]

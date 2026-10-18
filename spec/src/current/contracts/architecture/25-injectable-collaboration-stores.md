@@ -1,5 +1,11 @@
 # Injectable collaboration stores
 
+M33's optional conversation capture adapter consumes the existing selected
+Agent/Thread participants and exact native preparation/replay contracts. It
+introduces no factory, publication, receipt, repository-object or provider
+format change. Its host-private journal cannot publish or prove an original
+intent without provider-authorized request-aware replay.
+
 E-CRATE-READMES-001 explains the current core and focused JJ entry points and
 links detailed documentation. JST-ARCH-006 store construction and publication
 contracts are unchanged; provider qualification is recorded separately by M32.

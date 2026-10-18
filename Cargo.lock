@@ -4791,7 +4791,12 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "futures 0.3.34",
+ "jj-agent",
+ "jj-collab",
+ "jj-store-core",
+ "jj-store-model",
  "lapis-agent-redaction",
+ "serde",
  "serde_json",
  "sha2 0.10.9",
  "tempfile",
@@ -4928,12 +4933,14 @@ dependencies = [
  "jj-agent",
  "jj-collab",
  "jj-review",
+ "jj-store-conversations",
  "jj-store-core",
  "jj-store-model",
  "jj-store-object",
  "jj-store-wal",
  "jj-work",
  "serde_json",
+ "tempfile",
  "tokio",
 ]
 

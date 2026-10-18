@@ -1,5 +1,11 @@
 # Application documentation
 
+The conversation embedding guide and concise crate README describe optional
+selected-store capture, bounded private recovery DTOs and host-owned durable
+journals. Documentation distinguishes real Git publication, memory-backed
+native-provider proof and the pending Notes backend/restart gates. Existing
+repository formats, commands and bundled Help reference schemas are unchanged.
+
 E-LAPIS-AI-001 updates the agent and compute guides for locally linked Lapis AI
 clients and helpers using Control V3. Crate-root READMEs retain brief
 orientation and usage; the manual owns detailed configuration, lifecycle and

@@ -14,7 +14,8 @@ pub struct NativeCaptureBindingV1 {
     pub admission: String,
 }
 impl NativeCaptureBindingV1 {
-    fn validate(&self) -> Result<()> {
+    /// Validate opaque identity shape; these fields never grant host authority.
+    pub fn validate(&self) -> Result<()> {
         if [
             &self.scope,
             &self.worker,

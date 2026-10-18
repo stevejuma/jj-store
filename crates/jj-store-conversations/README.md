@@ -38,3 +38,12 @@ have already been admitted by the host, plus your durable sink. The constructor
 selects the existing transcript policy ID. Default builds retain the injected
 privacy port without linking the scanner. Full integration and admission details
 remain in the conversation embedding guide.
+
+Enable `store-capture` to use `store_capture::StoreCapture` as the native
+capture sink. Supply explicitly selected, repository-bound Agent/Thread stores,
+`ContextV1` and an implementation of the private durable `Journal` port.
+Candidate and exact provider preparation are retained before publication;
+`recover(ordinal)` checks the original receipt without executing again. The
+feature adds only owned domain/core interfaces. Hosts still own backend
+selection, the journal's exclusive lease and fsync, admission and callback
+drain.

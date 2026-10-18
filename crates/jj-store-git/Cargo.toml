@@ -27,6 +27,6 @@ async-trait = "0.1"
 base64 = "0.22"
 
 [dev-dependencies]
-jj-store-conversations.workspace = true
+jj-store-conversations = { workspace = true, features = ["store-capture"] }
 tokio = { version = "1", features = ["rt", "macros"] }
 tempfile = "3"
