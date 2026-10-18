@@ -296,7 +296,10 @@ pub(super) async fn run(
             )?;
             let parsed = revset::parse(&mut Default::default(), &expression, &context)
                 .map_err(|error| crate::query::language::invalid("syntax", error.to_string()))?;
-            super::native::admit_revset(&parsed, budget)?;
+            let files = super::native::admit_revset(&parsed, budget, access.code_index.is_some())?;
+            if files {
+                super::file_predicates::require_coverage(repo, access, budget).await?;
+            }
             let resolved = parsed
                 .resolve_user_expression(
                     repo,

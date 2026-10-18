@@ -1,7 +1,7 @@
 use super::*;
 use jj_store_model::OperationId;
 use std::{collections::BTreeMap, fs};
-fn source_bytes(path: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
+pub(super) fn source_bytes(path: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
     fn visit(root: &Path, path: &Path, values: &mut BTreeMap<PathBuf, Vec<u8>>) {
         for entry in fs::read_dir(path).unwrap() {
             let entry = entry.unwrap();

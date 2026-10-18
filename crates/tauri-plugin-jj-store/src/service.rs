@@ -153,10 +153,18 @@ impl History {
                 Output::Failed(error) => return Err(error.clone()),
             }
         };
-        // No broad fallback: advanced queries need their own explicit qualification.
-        self.executor
-            .read_code_index(selection.access.clone(), prepared, request)
-            .await
+        tokio::time::timeout(self.config.preparation.timeout, async {
+            let mut prepared = prepared;
+            loop {
+                let result = self.executor
+                    .read_code_index(selection.access.clone(), prepared.clone(), request.clone())
+                    .await;
+                if !matches!(&result, Err(Error::InvalidQuery(diagnostic)) if diagnostic.kind == "path_index_required") {
+                    return result;
+                }
+                prepared = self.prepare_file_history(&selection, handle, prepared).await?;
+            }
+        }).await.map_err(|_| Error::Limit)?
     }
 }
 

@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed reuse of default-settings read-only JJ workspace discovery and metadata-carrier construction in the library and CLI, including shared repository links, optional identity and explicit host-owned physical authority; no working-copy load, source initialization or head reconciliation.",
-      "fingerprint": "e929368ca2f219264cfd8da40b2f0c9289482170641a9a515b38ec24a8e65615"
+      "reason": "Reviewed exact native file predicates under complete upstream changed-path coverage, bounded preflight and retained operation pins. Local manual documents derived preparation without source files, source index, heads or refs mutation.",
+      "fingerprint": "41f25784221959714f4f079a0b654a19bad40b4c36bb74d2b28592570a882c34"
     }
   },
   {
@@ -255,8 +255,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed strict public inner frames, bounded version-one JSON text request/result envelopes, full-width integer preservation, generated Rust schema equality and unchanged typed service admission, permissions, source pins and lifecycle.",
-      "fingerprint": "3e83c93ebab6140758a2532797218e4596393081f596572f960294cae20b1ead"
+      "reason": "Reviewed typed path-index-required read retry through private admitted changed-path batches at the original handle. Existing window/vault authorization, cancellation, generation, preparation timeout, schemas and empty default permissions remain intact.",
+      "fingerprint": "c5e48b0ff0a1068fe55b75c5650f8bbaeb9b2e03cbcedb56bf7161ae3e193f1b"
     }
   },
   {
@@ -269,8 +269,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed generated native-schema types and runtime validation, bounded integer-only decoding, arbitrary record keys, immutable vault scope, explicit closure, transport errors and independent archive/type acceptance without Tauri or source aliases.",
-      "fingerprint": "84fb12642152d6e854b473de34618dfa02830144aef3d90fe7dd381aa283664f"
+      "reason": "Reviewed unchanged parent/current history-client source fingerprint fd34e912f7b445c7efa525836b5310f715b6ab65d352aedea62af5ffe52b9787 against existing typed-client manual. Constraint-preserving decoding, bounded exact integers, immutable scope and explicit handle closure remain documented; file predicates add no client schema or API.",
+      "fingerprint": "fd34e912f7b445c7efa525836b5310f715b6ab65d352aedea62af5ffe52b9787"
     }
   }
 ]

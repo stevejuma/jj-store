@@ -5,6 +5,12 @@ current work, previews and remaining gates. Update its stable task IDs after
 verified implementation slices; canonical milestone ledgers retain status
 authority and evidence keeps original qualification failures visible.
 
+E-FILE-HISTORY-001 records exact native file predicates and Notes'
+editor-following sidebar in that checklist. The local manual distinguishes
+private changed-path index preparation from source mutation, and native oracle
+results from consumer UI acceptance. JST-DOC-002/003 source review and
+qualification gates are unchanged.
+
 M33's crate README and local manual describe independent local-history
 construction, private cache admission and retained read pins. Original query
 budgets and public paths remain unchanged. Source review retains the separate

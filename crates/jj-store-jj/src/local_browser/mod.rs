@@ -8,6 +8,7 @@ mod diff_copies;
 pub mod diff_summary;
 mod dispatch;
 pub mod dto;
+mod file_predicates;
 pub(crate) mod git_read;
 mod graph_types;
 mod graphs;

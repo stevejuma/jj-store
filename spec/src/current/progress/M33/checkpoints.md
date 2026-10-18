@@ -247,3 +247,8 @@ Active NOTES-05I are unchanged.
 ## Pages
 
 - [Evidence history](history/index.md)
+
+E-FILE-HISTORY-001 qualifies the existing pinned log request with native file
+predicates after complete changed-path admission. Notes E-REPO-017 consumes it
+for an editor-following right sidebar and shared row hit areas. M33/M33.4 retain
+In progress; provider, managed conversation/restart and visual gates stay open.

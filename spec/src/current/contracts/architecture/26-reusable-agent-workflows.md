@@ -295,3 +295,14 @@ operation revision cards use retained pinned readers. Conflict draft/staging and
 preview cannot publish; native search/evolution and write capabilities keep
 separate acceptance gates. Broad qualification and visual approval remain
 separate from functional plugin adoption.
+
+The Notes File history sidebar consumes the existing pinned log request with a
+literal `files(root-file:"path")` predicate, matching stock JJ rather than
+approximating history in the renderer. Prepared readers admit it only after
+complete upstream changed-path coverage and bounded path-scan preflight. Tauri
+may progressively extend the private index at the original handle under owned
+preparation/cache admission. File history retains native graph order, merge and
+deletion semantics, current authorization, cancellation and drained closure.
+Status progress spans index preparation and querying. Unqualified file-body and
+cross-operation predicates remain unavailable; schemas and grants are unchanged
+(JST-ARCH-007, JST-LOCAL-004).

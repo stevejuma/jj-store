@@ -1,5 +1,6 @@
 //! Host-admitted immutable local history. No renderer-supplied source authority.
 #![forbid(unsafe_code)]
+mod file_history;
 pub mod frames;
 mod jobs;
 mod policy;

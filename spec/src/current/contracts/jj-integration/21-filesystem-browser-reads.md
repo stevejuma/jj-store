@@ -15,3 +15,12 @@ or checkout snapshots.
 The local query transport serializes the same owned request variants and output
 records used by the qualified reader. Server composition shares query workers
 with native reads; transport continuations cannot supply unchecked raw anchors.
+
+Prepared core-index reads admit native file-path predicates only when every
+retained commit has upstream changed-path metadata. A work/byte/memory-bounded
+preflight prevents a fallback to native content/recursive merge evaluation.
+Missing coverage requests private derived preparation at the original pin;
+file-body and cross-operation predicates stay disabled. Tauri performs that
+preparation on existing workers with current scope/cancellation and cache
+admission. This enables exact file revision history without modifying source
+files or source indexes (JST-JJ-003/005, JST-LOCAL-004).

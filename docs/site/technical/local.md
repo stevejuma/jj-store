@@ -85,6 +85,18 @@ must be a real edge. The reader uses bounded metadata proof without source-index
 repair, source writes or generic advanced-query fallback. Root/multiple-parent
 outcomes remain explicit; unknown or out-of-scope operations fail closed.
 
+File revision history uses the existing log query with a literal fileset, for
+example `all() & files(root-file:"Note.md")`, equivalent to JJ's positional file
+filter. JJ owns ordering, merge, conflict and deletion semantics. Prepared reads
+require complete upstream changed-path metadata under the original work, byte,
+memory and time limits; missing coverage requests private derived preparation
+instead of falling back to file bodies. The Tauri service extends that index in
+bounded batches at the same handle and retries only this typed read condition.
+Current admission, cancellation and generation remain checked throughout. Source
+files, source indexes, heads and refs are preserved. Hosts should expose
+progress for the whole read, including preparation, and retain the selected
+operation. File-content and cross-operation predicates remain unqualified.
+
 At most one preparation runs at a time; ordinary reads retain separate worker
 capacity. The service bounds retained handles and window scopes. Cancel/close
 waits for actual owned work to exit. Native `revoke(window)` cancels and drains

@@ -35,6 +35,17 @@ whole stage.
 
 ## Current checkpoint
 
+- **Completed: NOTES-05I7 file history and row actions.** Whole-row pointer
+  selection preserves copy/author actions; History and Op Log use the requested
+  branch/pull-request icons. The default right sidebar follows editor file
+  revision history using native JJ file predicates. Exact native tests match
+  stock JJ for merges, conflicts, deletion and multiple index batches; focused
+  Notes tests and cold native consumer review pass (E-REPO-017). Delayed
+  selection after view replacement is fenced; the ordinary demo remains open.
+- **Next: NOTES-05I8 file blame.** Copy/adapt jj-store's blame presentation, add
+  the File history toolbar action and qualify the retained native reader. This
+  is the next slice within NOTES-05I, not a second Active umbrella.
+
 - **Active task: NOTES-05I.** Close the source-confirmed repository-view gaps:
   highlighted native search, rich Command View parent/revision pickers, stacked
   Op Log detail/diff cards, exact statistics and remaining row/state parity. The

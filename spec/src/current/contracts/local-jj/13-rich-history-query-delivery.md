@@ -44,6 +44,19 @@ preserve operation-head files, physical dirty files and companion selections.
 Custom aliases and local content/cross-operation predicate qualification remain
 deferred.
 
+Prepared core-index readers MAY evaluate native `files()` predicates only after
+complete changed-path coverage for the retained index is proven. Preflight
+charges every indexed path and its later predicate scan under ordinary work,
+byte, memory, cancellation and deadline admission. Missing coverage returns a
+typed preparation requirement; no native tree/content predicate fallback or
+partial history is permitted. `diff_lines()` and cross-operation predicates
+remain disabled. Pinned JJ owns ordering, graph edges, merges and file matching.
+The Tauri host MAY extend the existing private changed-path index on that exact
+handle, under its preparation permit and admitted cache namespace. Closure,
+revocation and generation checks cover preparation and the repeated read; source
+files, source indexes, heads and refs remain untouched (JST-LOCAL-004,
+JST-JJ-003/005). Status progress spans this derived preparation.
+
 Registered-folder query metadata MAY default author email from host JJ
 configuration (JJ_EMAIL and normal JJ user paths), then the registered
 repository's JJ configuration, then Git configuration. JJ 0.45 secure repository
