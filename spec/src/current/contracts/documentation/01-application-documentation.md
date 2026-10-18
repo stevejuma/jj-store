@@ -1,5 +1,10 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-035 records Notes E-AI-043 local turn recovery: durable
+authored prompts, unknown outcomes, read-only restore and explicit continuation.
+Real Codex crash/cold recovery and focused UI checks qualify the local profile;
+JST-DOC-001/M33 original JJ/managed/provider/platform/release gates stay open.
+
 E-REUSABLE-PROGRESS-034 records the 2026-10-19 user priority: functional Codex
 with local transcript files; JJ-library persistence is deferred. NOTES-07L-FILES
 is complete for chat/context/cancel and local saving; NOTES-09-FILES-A qualifies

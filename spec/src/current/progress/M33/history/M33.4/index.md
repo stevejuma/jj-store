@@ -52,6 +52,10 @@ not a completion gate selection.
 [E-REUSABLE-PROGRESS-034](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-034/index.md)
 | 2026-10-19 | pass | Original outcome |
 
+|
+[E-REUSABLE-PROGRESS-035](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-035/index.md)
+| 2026-10-19 | pending | Original outcome |
+
 <!-- generated-navigation -->
 
 ## Pages

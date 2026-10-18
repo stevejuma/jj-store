@@ -9,14 +9,15 @@ standing implementation approval on 2026-10-18. Focused checks accompany each
 slice; broad provider/platform/release and visual baseline qualification remain
 deferred.
 
-**Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A.** Notes
+**Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A/B.** Notes
 E-AI-042 qualifies real installed Codex chat, bounded file context,
-cancellation, local saving and cold History reopen without journal changes or
-prompt replay. The review app is running with its saved conversation open. No
-child is Active. Fault-injected unknown-provider recovery remains deferred. The
-unqualified JJ client draft remains in Notes change `lqqoypxx` (`567e9e95`),
-outside the active application. NOTES-07K and JJ capture/restart stay deferred
-until requested.
+cancellation, local saving and cold History reopen. E-AI-043 adds pre-dispatch
+authored-message and intent durability, conservative unknown recovery and
+explicit new-message continuation. Its isolated real Codex test kills the app
+after streamed output, reopens the unchanged journal cold and completes one new
+message without replay. No child is Active. The unqualified JJ client draft
+remains in Notes change `lqqoypxx` (`567e9e95`), outside the active application.
+NOTES-07K and JJ capture/restart stay deferred until requested.
 
 The delivered focused profile is **Notes AI chat with local file transcripts and
 cold saved-history reopen**. The original M33.5 target of pinned history/diffs
@@ -515,7 +516,7 @@ that every task in it is executing simultaneously.
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
 NOTES-07L-FILES and NOTES-09-FILES-A are complete under the revised local-file
-priority. No child task is Active while the working review app is available.
+priority. NOTES-09-FILES-B completes durable local recovery; no child is Active.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
 parity. The shared AI UI and local-file chat are working; JJ capture awaits its
 deferred managed backend integration.
@@ -596,9 +597,14 @@ deferred managed backend integration.
       authored prompt/answer, all ten transcript/binding journals and all 110
       source/Git/JJ files. No prompt replay or repository publication occurs;
       E-AI-042 records the native review.
-- [ ] **NOTES-09-FILES — Waiting:** Inject an actual unknown-provider outcome
-      and qualify its cold recovery. Deterministic unknown-submission fencing
-      passes; this wider native fault check is deferred.
+- [x] **NOTES-09-FILES-B — Complete:** E-AI-043 saves the exact authored prompt
+      and intent before provider dispatch; read-only cold recovery shows an
+      unknown outcome without Retry. Real Codex crash/reopen preserves the
+      journal and a new explicit message completes without replaying the old
+      one. Focused service/controller/browser/native checks pass.
+- [x] **NOTES-09-FILES — Complete for the local Codex profile:** E-AI-042/043
+      qualify normal saving, cancellation and cold saved/unknown recovery. Wider
+      provider/platform/distribution gates remain separate.
 - [ ] **NOTES-07K — Deferred by user:** Native JJ listing/creation/pinned reads;
       preserve the client draft for later, without enabling it now.
 - [ ] **NOTES-07L — Deferred JJ capture:** Run bundled lapis-agent with native
