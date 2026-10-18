@@ -4,12 +4,14 @@ Last reviewed: 2026-10-18. Overall: **In progress**.
 
 Execution now: **one Active task, NOTES-05I** for complete repository-view
 parity after the source/browser gap review. The header alignment is complete;
-search, rich comparison pickers, row presentation and statistics remain open.
-NOTES-05I3A operation cards and NOTES-05I5A two-tab review are qualified. The
-latest correction prioritizes NOTES-05I2 parent Command View pickers; preview
-maintenance (NOTES-05I0) remains queued before query adoption. NOTES-07 waits
-during this UI work; NOTES-07J native continuation is qualified. NOTES-06C and
-NOTES-06C4 still await NOTES-07 managed integration.
+search, remaining Op Log pickers, row presentation and statistics remain open.
+NOTES-05I3A operation cards and NOTES-05I5A two-tab review are qualified. The JJ
+parent Command View picker (NOTES-05I2A) and owned-runtime preview reload
+(NOTES-05I0A) are qualified in Notes `564e039d` / E-REPO-011. Other Op Log
+revision/parent selectors and preview lifecycle/cache commands remain pending
+before query adoption. NOTES-07 waits during this UI work; NOTES-07J native
+continuation is qualified. NOTES-06C and NOTES-06C4 still await NOTES-07 managed
+integration.
 
 The first usable milestone is **Notes showing pinned JJ history/diffs and one
 recoverable AI conversation persisted through AgentStore and ThreadStore**. It
@@ -33,9 +35,18 @@ whole stage.
   [parity review](repository-view-parity-review.md) owns the explicit gap matrix
   and ordered slices. NOTES-05I3A qualifies stacked operation/file cards and
   bounded exact parent navigation; NOTES-05I5A opens both logs in workspace tabs
-  for review. NOTES-05I2 parent Command View pickers are next under the latest
-  correction, with NOTES-05I0 preview maintenance queued before native queries.
-  Full view parity remains open.
+  for review. NOTES-05I2A JJ parent cards and NOTES-05I0A owned-runtime reload
+  are qualified; other Op Log comparison endpoints and preview maintenance
+  remain pending before native queries. Full view parity stays open.
+- **Completed: NOTES-05I2A/05I0A.** Notes `564e039d` / E-REPO-011 qualifies the
+  JJ parent picker using jj-store's public Command View/Popover with
+  author/time/Git/JJ cards, search, tags, bounded pinned missing-parent reads
+  and explicit toast recovery. Runtime scripts/fixtures reconstruct the preview
+  App; components/styles keep HMR. Sixteen exact and 804 complete catalog
+  interaction/axe checks pass, with 224 renderer/governance cases, strict
+  types/audits, both builds and document consumers. Actual runtime reload and
+  CSS HMR retain their separate live proof. Other comparison selectors and
+  lifecycle/cache maintenance stay open.
 - **Completed: NOTES-05I3A/05I5A.** Notes `65404171` / E-REPO-010 ports stacked
   operation/file cards, source author fallback and exact parent navigation
   through the qualified prepared graph profile. Twelve exact layout, 788
@@ -470,10 +481,15 @@ UI alignment; capture still awaits managed backend integration.
 - [x] **NOTES-05I5A — Complete:** The two-tab comparison story uses both
       production log views and retains file/diff selections. It is open for
       review; whole-view acceptance and visual approval remain separate.
-- [ ] **NOTES-05I0:** Qualify live reload and add checkout/port-scoped preview
-      start/stop/restart/status and stopped-cache maintenance commands. Existing
-      Vite HMR receives source/story updates; lifecycle tooling is still
-      pending.
+- [x] **NOTES-05I2A — Complete:** Notes `564e039d` / E-REPO-011 qualifies JJ
+      parent Command View cards, exact pinned metadata, search/keyboard, native
+      tags and toast recovery. Other Op Log endpoints remain pending.
+- [x] **NOTES-05I0A — Complete:** Owned-runtime preview reconstruction fixes
+      stale controller state after source/fixture edits; component/style HMR
+      remains qualified. Lifecycle/cache commands remain NOTES-05I0.
+- [ ] **NOTES-05I0:** Add checkout/port-scoped preview start/stop/restart/status
+      and stopped-cache maintenance commands; retain qualified source/style
+      refresh behavior.
 - [ ] **NOTES-05I — Active:** Complete the source/browser-confirmed parity gaps
       in [the review](repository-view-parity-review.md). Query controls, rich
       comparison cards, Op Log composition, statistics and whole-view acceptance

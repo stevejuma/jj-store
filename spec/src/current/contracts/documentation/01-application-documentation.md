@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-029 qualifies the JJ parent Command View and owned-runtime
+preview reload in Notes `564e039d` / E-REPO-011. The checklist records 804 cold
+catalog checks, 224 renderer/governance cases, strict checks/builds and live
+reload/CSS HMR proof. Other Op Log endpoints, preview lifecycle/cache commands,
+full view parity, visual approval and managed conversation gates stay open.
+
 E-REUSABLE-PROGRESS-028 qualifies operation-card composition and the opened JJ
 Log/Op Log two-tab review in Notes E-REPO-010, with attributed source ports and
 independent Design Core accessibility/readiness evidence. The checklist retains
