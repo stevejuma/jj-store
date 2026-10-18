@@ -36,6 +36,8 @@ whole stage.
   profile/owner service. NOTES-07E connects the ordinary native host/IPC and
   admission/closure lifetime. Renderer persistence, conversation/session
   preparation and the actual capture processor remain pending within NOTES-07.
+  NOTES-07F1 qualifies the shared retained-processing authority needed for
+  capture through renderer reload; Notes adoption is still pending.
 - **Completed: NOTES-06B.** Lapis AI `87958267` qualifies the scoped Tauri
   processor factory: nine focused cases, all 27 host cases and full source
   qualification (1,004 Rust passes, two inherited ignored). Desktop `0535bb1e`
@@ -301,6 +303,16 @@ below are not being worked on simultaneously.
       persistence or managed chat/capture/restart qualification. Notes
       `81765a34`; evidence: E-AI-033/E-REUSABLE-PROGRESS-017.
 
+- [x] **NOTES-07F1** Add the shared native processing authorization hook for
+      exact retained worker bindings during renderer suspension. Renderer
+      commands, factory construction and startup completion still require
+      current admission. Five focused cases, all 34 host cases, 1,018 Rust
+      passes (two inherited ignored), 39 renderer and 45 governance cases,
+      strict checks, builds, package inventories and all ten specification lanes
+      pass. Lapis AI `e12d303c`; evidence: E-REUSABLE-PROGRESS-018. Notes
+      retained owner adoption and actual store/processor construction remain
+      pending.
+
 Root evidence and its original outcomes are linked from the
 [M33 evidence history](../../spec/src/current/progress/M33/history/index.md).
 Desktop evidence lives in the isolated qualified sibling
@@ -334,8 +346,9 @@ NOTES-07 is the sole Active implementation task; capture waits for its backend.
       legacy file conversations. The reusable adapter is complete in NOTES-07B;
       NOTES-07C supplies Notes' journal and NOTES-07D its native backend profile
       and owner service; NOTES-07E connects native host/IPC and closure. Next
-      add native conversation/session preparation, real store/processor
-      construction and per-vault renderer persistence.
+      adopt the retained native capture grant, then add conversation/session
+      preparation, real store/processor construction and per-vault renderer
+      persistence. NOTES-07F1 completes its shared-library prerequisite only.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.

@@ -1,5 +1,12 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-018 records the shared retained native processing hook in
+Lapis AI separately from Notes adoption. Five focused cases and full source
+qualification do not complete native durable capture or conversation restart.
+The delivery checklist keeps NOTES-07 solely Active and NOTES-06C/06C4 Waiting.
+The development stack restarts against its preserved fixture after authorized
+idle build-output cleanup; that maintenance is not product qualification.
+
 E-REUSABLE-PROGRESS-017 records Notes' ordinary native backend ownership/IPC,
 exact local command grant and cold hidden-WebView acceptance. It keeps renderer
 persistence, actual managed capture and conversation/restart qualification
