@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-026 records NOTES-07J retained native transcript reads.
+Opaque read/stream handles, immutable range selection, exact sequence text and
+explicit close stay distinct from renderer projection and managed dispatch.
+Native range evidence and cold empty-conversation handle evidence have separate
+scopes; the first usable conversation/restart gate remains open.
+
 E-REUSABLE-PROGRESS-025 records NOTES-05H header alignment: both log views begin
 with their compact Column Canvas header, retaining native pin/refresh controls.
 History and Op Log share interaction/width/theme coverage; native conversation

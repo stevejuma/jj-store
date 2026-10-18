@@ -243,5 +243,9 @@ Notes' confirmed conversation reads verify original provider proof without
 publishing or repairing private records. Agent/Thread data retain matching
 source selections and bounded native JSON text preserves full-width integers.
 Native totals and continuation sequences identify incomplete transcript ranges;
-unfinished activity remains capture evidence. Renderer projection, continuation
-transport and authoring/execution retain their separate integration gates.
+unfinished activity remains capture evidence. Retained opaque read/stream
+handles pin that original immutable selection while later capture advances. Each
+bounded page rechecks current native admission and original provider proof; only
+issued exact decimal sequence positions continue. Hosts cap open reads, retire
+handles on closure/reattachment and retain no idle counted writer call. Renderer
+projection and authoring/execution retain separate integration gates.

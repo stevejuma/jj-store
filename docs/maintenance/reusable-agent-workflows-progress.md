@@ -23,10 +23,17 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active task: NOTES-07.** Continue native read continuation/projection,
+- **Active task: NOTES-07.** Continue native renderer projection,
   executable/credential admission, ordinary runtime dispatch and per-vault
   renderer persistence. NOTES-07G/H/I qualify conversation preparation, the real
   selected-store factory and confirmed native reads; managed chat remains open.
+- **Completed: NOTES-07J.** Notes `d00a69b3` / E-AI-038 qualifies retained
+  native transcript continuation with opaque read/stream handles, original
+  immutable selection, exact issued sequence positions and fresh receipt checks.
+  Eleven focused reads, both complete 174-case native profiles (two inherited
+  ignored each), strict lint and four cold hidden API cases pass. Idle reads
+  retain no counted writer calls. Renderer projection and managed dispatch stay
+  open.
 - **Completed: NOTES-05H.** Notes `792cbfa8` / E-REPO-009 aligns History and Op
   Log with jj-store: Column Canvas begins directly with compact pin/refresh
   controls, without duplicate body headings/pin blocks. Eight exact header, 152
@@ -431,6 +438,9 @@ complete; capture still waits for managed backend integration.
 - [x] **NOTES-05H — Complete:** Notes `792cbfa8` / E-REPO-009 aligns History and
       Op Log headers with jj-store; both widths/themes and existing pin/recovery
       flows pass all 776 full catalog checks.
+- [x] **NOTES-07J — Complete:** Notes `d00a69b3` / E-AI-038 qualifies retained
+      native transcript continuation, bounded opaque handles and close/reload
+      ownership. Renderer projection and managed chat remain open.
 - [x] **NOTES-07I — Complete:** Notes `d1c27e17` / E-AI-037 qualifies bounded
       confirmed native conversation reads and cold exact-read restart. This
       supplies no managed-chat or complete continuation acceptance.
@@ -441,11 +451,11 @@ complete; capture still waits for managed backend integration.
       and owner service; NOTES-07E connects native host/IPC and closure.
       NOTES-07G completes native conversation preparation and original-receipt
       recovery. NOTES-07H completes real selected-store processor construction.
-      NOTES-07I qualifies bounded confirmed conversation reads. Next add
-      continuation/projection, executable/credential admission, ordinary runtime
-      dispatch and per-vault renderer persistence. NOTES-07F1/F2 complete shared
-      and Notes retained-authority prerequisites; no managed conversation gate
-      is closed.
+      NOTES-07I/J qualify bounded confirmed reads and retained continuation.
+      Next add renderer projection, executable/credential admission, ordinary
+      runtime dispatch and per-vault renderer persistence. NOTES-07F1/F2
+      complete shared and Notes retained-authority prerequisites; no managed
+      conversation gate is closed.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
