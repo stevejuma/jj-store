@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-034 records the 2026-10-19 user priority: functional Codex
+with local transcript files; JJ-library persistence is deferred. NOTES-07L-FILES
+is complete for chat/context/cancel and local saving; NOTES-09-FILES-A qualifies
+cold History reopen with unchanged journals/source. No child is Active. Original
+JST-DOC-001/M33 gates and deferred native fault qualification stay open.
+
 E-REUSABLE-PROGRESS-033 records the user's standing approval (2026-10-18) and
 qualified NOTES-08B adoption in Notes E-AI-041. The shared transcript preserves
 vault-owned Document/Classic and chat actions; 164 affected UI checks, normal

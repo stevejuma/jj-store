@@ -34,3 +34,5 @@
   {{#include 17/SUMMARY.nav.md}}
 - [2026-10-18](18/index.md)
   {{#include 18/SUMMARY.nav.md}}
+- [2026-10-19](19/index.md)
+  {{#include 19/SUMMARY.nav.md}}

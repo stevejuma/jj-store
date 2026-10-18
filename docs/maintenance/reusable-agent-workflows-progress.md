@@ -9,20 +9,22 @@ standing implementation approval on 2026-10-18. Focused checks accompany each
 slice; broad provider/platform/release and visual baseline qualification remain
 deferred.
 
-**Active: NOTES-07K — Native JJ conversation browsing.** NOTES-08B is qualified
-in Notes E-AI-041: ordinary shared transcript, Document default and saved
-per-vault Classic, retained chat controls and compact same-row footer. The
-rebuilt native review app was cold-launched without resetting its vault. Connect
-explicit backend selection, confirmed listing/creation and pinned reads next.
-Only this child is Active; native capture/restart and original later slices
-follow under standing approval. Visual baseline approval stays distinct.
+**Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A.** Notes
+E-AI-042 qualifies real installed Codex chat, bounded file context,
+cancellation, local saving and cold History reopen without journal changes or
+prompt replay. The review app is running with its saved conversation open. No
+child is Active. Fault-injected unknown-provider recovery remains deferred. The
+unqualified JJ client draft remains in Notes change `lqqoypxx` (`567e9e95`),
+outside the active application. NOTES-07K and JJ capture/restart stay deferred
+until requested.
 
-The first usable milestone is **Notes showing pinned JJ history/diffs and one
-recoverable AI conversation persisted through AgentStore and ThreadStore**. It
-is still pending. Notes' native repository admission and history transport are
-verified. The history/diff renderer and cold visible native acceptance are
-qualified on macOS ARM64 with physical foreground assistance. The real native
-factory is qualified; managed conversation capture and restart remain pending.
+The delivered focused profile is **Notes AI chat with local file transcripts and
+cold saved-history reopen**. The original M33.5 target of pinned history/diffs
+and one conversation in AgentStore/ThreadStore remains pending and deferred.
+Notes' native repository admission and history transport are verified. The
+history/diff renderer and cold visible native acceptance are qualified on macOS
+ARM64 with physical foreground assistance. The real native factory is qualified;
+managed conversation capture and restart remain pending.
 
 This is the delivery checklist for the approved eight-stage plan. The
 [M33 milestone ledger](../../spec/src/current/progress/M33/index.md) owns formal
@@ -49,9 +51,9 @@ whole stage.
   cases across both widths/themes, clean types/ownership, renderer/native build
   and cold native review; 110 source/Git/JJ files remain unchanged. Design Core
   `6b5654e0` retains readable disabled drafts/avatars after 47 affected source
-  stories. **Active: NOTES-07K** connects native listing/creation/pinned reads;
-  **NOTES-07L** admits bundled lapis-agent using explicit Lapis AI configuration
-  and native secret references. The first live scope is chat/file
+  stories. **Deferred: NOTES-07K** connects native listing/creation/pinned
+  reads; **NOTES-07L** admits bundled lapis-agent using explicit Lapis AI
+  configuration and native secret references. The first live scope is chat/file
   context/cancel, followed by **NOTES-09** cold restart and uncertain-outcome
   recovery. Native application tools, addressed agents, queues and imports
   remain later slices.
@@ -512,10 +514,11 @@ that every task in it is executing simultaneously.
 **Parent acceptance: NOTES-06 remains incomplete.** NOTES-06A supplies the
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
-NOTES-07K is the sole Active child task under standing implementation approval.
+NOTES-07L-FILES and NOTES-09-FILES-A are complete under the revised local-file
+priority. No child task is Active while the working review app is available.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
-parity. The shared AI UI is adopted; capture still awaits managed backend
-integration.
+parity. The shared AI UI and local-file chat are working; JJ capture awaits its
+deferred managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -567,7 +570,7 @@ integration.
 - [ ] **NOTES-05I — Waiting:** Complete the source/browser-confirmed parity gaps
       in [the review](repository-view-parity-review.md). Native query/evolution,
       write capabilities, exact statistics and remaining state/whole-view
-      acceptance run as ordered slices; only the umbrella task is Active.
+      acceptance run as ordered slices; remaining qualification is deferred.
 - [ ] **NOTES-07 — Waiting for NOTES-07K/L:** Add receipt-aware
       AgentStore/ThreadStore conversation adapters and explicit per-vault
       backend selection, retaining legacy file conversations. The reusable
@@ -585,10 +588,22 @@ integration.
 - [x] **NOTES-08B — Complete:** Notes E-AI-041 adopts the ordinary shared UI,
       retains per-vault preference and chat actions, and qualifies all 164
       affected UI checks plus cold rebuilt-native review.
-- [ ] **NOTES-07K — Active:** Connect native JJ conversation listing, creation
-      and retained reads. No managed-provider completion is implied.
-- [ ] **NOTES-07L:** Run bundled lapis-agent with native capture and explicit
-      configured provider/model; first scope is chat, file context and cancel.
+- [x] **NOTES-07L-FILES — Complete:** Notes E-AI-042 qualifies actual installed
+      Codex chat, bounded file context, cancellation and local transcript
+      saving. Lapis AI `25f488e8` supplies the private Codex compatibility
+      profile. No JJ conversation persistence is enabled.
+- [x] **NOTES-09-FILES-A — Complete:** Cold History reopen retains the exact
+      authored prompt/answer, all ten transcript/binding journals and all 110
+      source/Git/JJ files. No prompt replay or repository publication occurs;
+      E-AI-042 records the native review.
+- [ ] **NOTES-09-FILES — Waiting:** Inject an actual unknown-provider outcome
+      and qualify its cold recovery. Deterministic unknown-submission fencing
+      passes; this wider native fault check is deferred.
+- [ ] **NOTES-07K — Deferred by user:** Native JJ listing/creation/pinned reads;
+      preserve the client draft for later, without enabling it now.
+- [ ] **NOTES-07L — Deferred JJ capture:** Run bundled lapis-agent with native
+      capture and explicit configured provider/model; first scope is chat, file
+      context and cancel.
 - [ ] **NOTES-08:** Connect shared conversation store/workspace/context adapters
       to the existing Notes AI plugin and reusable Design Core Chat
       presentation.
@@ -617,6 +632,10 @@ integration.
 
 - [AI document conversation](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--document-conversation&viewMode=story)
 - [AI comments as context](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--comments-as-context&viewMode=story)
+
+The rebuilt native review app also runs real Codex with local files; its
+file-context conversation is open in the main panel after cold History reopen.
+It uses the documented device configuration in Notes `docs/local-ai.md`.
 
 These opt-in stories mount production AI components with a disposable memory
 session host. Document/classic share the controller, drafts and anchored
