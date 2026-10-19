@@ -352,3 +352,8 @@ initialization or a capture writer lease. The disposable projection/cache has no
 restore authority. Hosts own admitted identity, private cache placement, worker
 bounds and presentation; upstream JJ imports stay in the native package
 (JST-ARCH-007).
+
+M34 native hosts may reuse the explicit Forgejo account helper and generic Git
+basic-auth login constructor. Public account records and injected secret custody
+remain separate from vault history, object authority and UI. Upstream JJ imports
+and default GitHub commands remain unchanged (JST-ARCH-007).

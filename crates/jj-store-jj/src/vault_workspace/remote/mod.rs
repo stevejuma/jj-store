@@ -54,10 +54,22 @@ fn checked_branch(branch: &str) -> Result<()> {
 pub struct GitCredentials(Zeroizing<String>);
 impl GitCredentials {
     pub fn token(token: &str) -> Result<Self> {
+        Self::basic("x-access-token", token)
+    }
+    /// Native-selected provider login; credentials remain memory-only.
+    pub fn basic(username: &str, token: &str) -> Result<Self> {
+        if username.is_empty()
+            || username.len() > 128
+            || !username
+                .bytes()
+                .all(|b| b.is_ascii_alphanumeric() || b"-_.".contains(&b))
+        {
+            return Err(Error::Binding);
+        }
         if token.is_empty() || token.len() > 4096 || token.chars().any(char::is_control) {
             return Err(Error::Binding);
         }
-        let plain = Zeroizing::new(format!("x-access-token:{token}"));
+        let plain = Zeroizing::new(format!("{username}:{token}"));
         Ok(Self(Zeroizing::new(format!(
             "Authorization: Basic {}",
             STANDARD.encode(plain.as_bytes())
@@ -185,4 +197,32 @@ fn oid(value: &str) -> bool {
         && value
             .bytes()
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+}
+
+#[cfg(test)]
+mod credentials_tests {
+    use super::*;
+    #[test]
+    fn basic_credentials_keep_the_native_selected_login_and_reject_header_injection() {
+        let value = GitCredentials::basic("forge-user", "synthetic").unwrap();
+        assert_eq!(
+            value.0.as_str(),
+            format!(
+                "Authorization: Basic {}",
+                STANDARD.encode("forge-user:synthetic")
+            )
+        );
+        let github = GitCredentials::token("synthetic").unwrap();
+        assert_eq!(
+            github.0.as_str(),
+            format!(
+                "Authorization: Basic {}",
+                STANDARD.encode("x-access-token:synthetic")
+            )
+        );
+        for login in ["", "name:password", "name\nheader", "../private"] {
+            assert!(GitCredentials::basic(login, "synthetic").is_err());
+        }
+        assert!(GitCredentials::basic("forge-user", "synthetic\nHeader: injected").is_err());
+    }
 }

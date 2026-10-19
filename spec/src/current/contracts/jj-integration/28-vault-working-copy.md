@@ -44,3 +44,8 @@ Historical revision and changed-file paging walks retained native ancestry at an
 explicit checkpoint anchor. Concurrent capture cannot shift that anchor; query
 pages retain full native IDs. Read queries neither snapshot saved disk files nor
 create operations (JST-JJ-003/005).
+
+Native Git credential construction accepts an explicitly selected provider login
+for Forgejo. GitHub retains its existing username; header injection fails before
+transfer. Native JJ identities, immutable reads, operation codecs and
+publication/receipt semantics are unchanged (JST-JJ-003/005).

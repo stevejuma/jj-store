@@ -100,3 +100,10 @@ Projection loss or malformed cache rebuilds from immutable native objects.
 Selection revalidates the exact native revision/path before preview or restore.
 Search never snapshots disk, merges heads, transfers or publishes. Immutable
 search takes no working-copy writer lease; pausing capture retains read access.
+
+Forgejo setup is explicit and initially uses personal tokens against an admitted
+HTTPS `/api/v1` instance root. Native custody, token headers and Git basic-auth
+login follow the selected provider. Git clone endpoints must remain on that
+account's origin/project. GitHub device OAuth and endpoint admission do not
+change; Forgejo OAuth, HTTP endpoints and hosted subpath profiles remain outside
+this initial provider profile.

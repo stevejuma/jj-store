@@ -14,10 +14,11 @@ be recorded. M33's conversation gates and unrelated work remain unchanged.
 | M34.3 | Partial     | M34.2       | JST-LOCAL-007 | Usable local timeline, guarded restore and visible background status                                     | Qualify cold app restore, then forge setup    | E-VAULT-BACKUP-003                                                          |
 | M34.4 | Partial     | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Qualify cold app/provider flow later          | E-VAULT-BACKUP-004,E-VAULT-BACKUP-005,E-VAULT-BACKUP-006,E-VAULT-BACKUP-007 |
 | M34.5 | Partial     | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Qualify cold app/provider gates later         | E-VAULT-BACKUP-008,E-VAULT-BACKUP-009                                       |
-| M34.6 | In progress | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Complete desktop proof then storage/providers | E-VAULT-BACKUP-010                                                          |
-| M34.7 | Planned     | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Complete providers and storage migration      | -                                                                           |
+| M34.6 | Partial     | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Complete desktop proof then storage/providers | E-VAULT-BACKUP-010                                                          |
+| M34.7 | In progress | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Complete providers and storage migration      | E-VAULT-BACKUP-011                                                          |
 
-Only M34.6 is active. M34.5 source/desktop recovery proofs pass; cold
+Only M34.7 is active. M34.6 focused source/desktop search proofs pass; cold app
+qualification remains deferred. M34.5 source/desktop recovery proofs pass; cold
 app/provider qualification is deferred. M34.4 setup/restore focused proofs pass;
 cold app/provider qualification is deferred. M34.3 local restore proofs pass;
 cold app qualification is deferred. M34.2 coordinator/watch/close proofs pass;

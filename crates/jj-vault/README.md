@@ -55,3 +55,8 @@ Custom readers implement `search::Source` and can use `search::Index` with a
 host-owned cache directory and a namespace that includes their exclusion policy.
 A result is a selection hint: revalidate its exact native checkpoint and path
 through restore preview before applying anything.
+
+For Forgejo, the native host supplies `GitCredentials::basic` with the approved
+account login and PAT. GitHub retains `GitCredentials::token`. Neither type is
+printable or serializable; selected endpoint/branch guards and original push
+recovery are unchanged.

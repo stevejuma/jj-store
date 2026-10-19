@@ -4,6 +4,12 @@ The jj-forge overview introduces its client, planner, engine and journal
 modules. E-CRATE-READMES-001 preserves JST-FORGE-001/003/007 provider gates,
 original external-effect recovery and device-local credential custody.
 
+M34 adds an explicit native-host Forgejo personal-token helper on the same
+injected account manager and OS secret custody. It validates an HTTPS instance
+root at `/api/v1`, retains only public identity and uses Forgejo token headers.
+GitHub OAuth, Enterprise endpoint admission and default server commands stay
+unchanged. Hosts own its explicit caller admission (JST-FORGE-007).
+
 ## Requirements
 
 | ID            | Requirement                                                                                                                                                                                                                                                                                                                                 |
