@@ -26,3 +26,10 @@ Hosts perform remote transfer separately, then pass its opaque fetched head to
 status path while preserving imported ancestry. A network outage cannot hold the
 capture worker. Remote setup, automatic synchronization and historical search
 remain tracked delivery stages; policy and UI belong to the host.
+
+Automatic sync hosts fetch/import first, then call `prepare_sync` to retain an
+upstream-native merge proposal. Conflict inspection/resolution writes immutable
+candidates. `preview_sync` and `apply_sync` materialize only a current clean
+proposal through guarded safety/receipt semantics. Keep the editor writer guard
+across preview/apply and preserve the original request during recovery. Transfer
+and credentials stay host-owned, outside this serialized worker.

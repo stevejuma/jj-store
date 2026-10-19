@@ -333,3 +333,8 @@ The injected vault provider accepts an opaque fetched-head proof for serialized
 native import and a guarded remote restore command on the same worker. Imported
 restore publishes the resulting local checkpoint through existing status;
 network outages cannot block that worker's final saved-file capture.
+
+The injected vault repository and worker expose sync proposal, preview/apply and
+conflict inspection/resolution. Hosts retain transfer, credential and editor
+writer authority. Native merge identity and conflict terms remain upstream-owned;
+`jj-vault` schedules owned DTOs without importing `jj-lib` (JST-ARCH-007).

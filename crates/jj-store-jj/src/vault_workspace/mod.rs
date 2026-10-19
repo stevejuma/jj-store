@@ -10,6 +10,7 @@ mod remote;
 mod restore;
 mod restore_io;
 mod scan;
+mod sync;
 pub use batch_restore::{VaultRestorePreview, VaultRestoreRequest};
 pub use content::FileContents;
 use jj_lib::{
@@ -31,6 +32,7 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
+pub use sync::{SyncConflict, SyncProposal, SyncResolution, SyncTerm};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

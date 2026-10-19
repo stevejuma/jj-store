@@ -18,3 +18,6 @@
 
 - [E-VAULT-BACKUP-007](E-VAULT-BACKUP-007/index.md)
   {{#include E-VAULT-BACKUP-007/SUMMARY.nav.md}}
+
+- [E-VAULT-BACKUP-008](E-VAULT-BACKUP-008/index.md)
+  {{#include E-VAULT-BACKUP-008/SUMMARY.nav.md}}

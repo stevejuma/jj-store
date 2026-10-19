@@ -4,10 +4,11 @@ mod native;
 mod remote;
 mod restore;
 mod schedule;
+mod sync;
 pub use jj_store_jj::vault_workspace::{
     Binding, Capture, Checkpoint, FetchedHead, GitCredentials, PushIntent, PushOutcome,
-    RemoteTarget, RemoteTransfer, RestorePreview, RestoreRequest, VaultRestorePreview,
-    VaultRestoreRequest,
+    RemoteTarget, RemoteTransfer, RestorePreview, RestoreRequest, SyncConflict, SyncProposal,
+    SyncResolution, SyncTerm, VaultRestorePreview, VaultRestoreRequest,
 };
 pub use native::NativeRepository;
 pub use schedule::Timing;
@@ -26,6 +27,26 @@ use tokio::sync::{oneshot, watch};
 /// Runs only on the owned backup worker. No caller UI thread performs native IO.
 pub trait Repository: Send + 'static {
     fn capture(&mut self) -> Result<Capture, String>;
+    fn prepare_sync(&mut self, _incoming: &str) -> Result<SyncProposal, String> {
+        Err("Synchronization is unavailable".into())
+    }
+    fn preview_sync(&mut self, _candidate: &str) -> Result<VaultRestorePreview, String> {
+        Err("Synchronization is unavailable".into())
+    }
+    fn apply_sync(&mut self, _request: &VaultRestoreRequest) -> Result<Capture, String> {
+        Err("Synchronization is unavailable".into())
+    }
+    fn sync_conflict(&mut self, _candidate: &str, _path: &str) -> Result<SyncConflict, String> {
+        Err("Synchronization is unavailable".into())
+    }
+    fn resolve_sync(
+        &mut self,
+        _candidate: &str,
+        _path: &str,
+        _resolution: SyncResolution,
+    ) -> Result<Checkpoint, String> {
+        Err("Synchronization is unavailable".into())
+    }
     fn preview_restore(
         &mut self,
         _checkpoint: &str,
@@ -78,6 +99,7 @@ enum Command {
         oneshot::Sender<Result<Capture, String>>,
     ),
     Remote(remote::Request),
+    Sync(sync::Request),
     Close(oneshot::Sender<Result<(), String>>),
 }
 #[derive(Clone)]
@@ -235,6 +257,9 @@ fn run(
             .min(Duration::from_secs(60));
         match receiver.recv_timeout(timeout) {
             Ok(Command::Wake) => {}
+            Ok(Command::Sync(request)) => {
+                sync::run(request, repository.as_mut(), &state, &mut schedule)
+            }
             Ok(Command::Remote(request)) => {
                 remote::run(request, repository.as_mut(), &state, &mut schedule)
             }

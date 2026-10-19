@@ -24,3 +24,9 @@ readers never transfer, merge, snapshot or publish.
 Guarded restoration opens parent directories with no-follow capability APIs,
 component by component. It rechecks this on apply rather than trusting preview
 paths. Symlink aliases cannot reach private metadata or bypass backup exclusions.
+
+Synchronization uses upstream native recursive commit-tree merge and an owned
+`lapis-sync` bookmark. Conflict resolution writes immutable candidate trees;
+materialization retains the existing safety-checkpoint/receipt path and checks
+both the selected local checkpoint and saved-file tree before writing. Native
+identity and immutable-reader behavior stay unchanged (JST-JJ-003/005).

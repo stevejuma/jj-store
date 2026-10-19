@@ -40,12 +40,27 @@ impl Session {
         request: &VaultRestoreRequest,
         exclusions: &[String],
     ) -> Result<Capture> {
+        self.restore_anchored(
+            request,
+            exclusions,
+            "lapis-incoming",
+            "remote-restore-receipts",
+        )
+        .await
+    }
+    pub(in crate::vault_workspace) async fn restore_anchored(
+        &mut self,
+        request: &VaultRestoreRequest,
+        exclusions: &[String],
+        anchor: &str,
+        directory: &str,
+    ) -> Result<Capture> {
         self.binding.verify_saved()?;
         publication::request_id(&request.request_id)?;
         let path = self
             .binding
             .state
-            .join("remote-restore-receipts")
+            .join(directory)
             .join(format!("{}.json", request.request_id));
         let mut receipt: ImportReceipt = if path.exists() {
             let receipt: ImportReceipt = publication::read(&path)?;
@@ -54,10 +69,7 @@ impl Session {
             }
             receipt
         } else {
-            let target = self
-                .repo
-                .view()
-                .get_local_bookmark(RefName::new("lapis-incoming"));
+            let target = self.repo.view().get_local_bookmark(RefName::new(anchor));
             if target.as_normal().map(|id| id.hex()).as_deref() != Some(&request.checkpoint) {
                 return Err(Error::Binding);
             }
@@ -95,13 +107,20 @@ impl Session {
             } else {
                 vec![base.clone(), incoming]
             };
-            let combined = tx
-                .repo_mut()
-                .new_commit(parents, before.tree())
-                .set_description("Restore remote backup")
-                .write()
-                .await
-                .map_err(jj)?;
+            let combined = if anchor == "lapis-sync" {
+                let target = self.retained_commit(&request.checkpoint).await?;
+                if target.tree().tree_ids_and_labels() != before.tree().tree_ids_and_labels() {
+                    return Err(Error::Binding);
+                }
+                target
+            } else {
+                tx.repo_mut()
+                    .new_commit(parents, before.tree())
+                    .set_description("Restore remote backup")
+                    .write()
+                    .await
+                    .map_err(jj)?
+            };
             receipt.base = Some(base.hex());
             receipt.candidate = Some(combined.id().hex());
             // The immutable candidate is retained before publishing its view.

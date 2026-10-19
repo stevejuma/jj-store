@@ -1,7 +1,7 @@
 //! Native-approved Git transfer. Network calls never hold the capture lease.
 mod import;
 mod process;
-mod publication;
+pub(super) mod publication;
 use super::*;
 use base64::{Engine as _, engine::general_purpose::STANDARD};
 use jj_lib::git;

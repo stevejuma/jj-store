@@ -27,7 +27,7 @@ struct Receipt {
     intent: PushIntent,
     outcome: PushOutcome,
 }
-pub(super) fn request_id(id: &str) -> Result<()> {
+pub(in crate::vault_workspace) fn request_id(id: &str) -> Result<()> {
     if id.is_empty()
         || id.len() > 128
         || !id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-')
@@ -36,7 +36,7 @@ pub(super) fn request_id(id: &str) -> Result<()> {
     }
     Ok(())
 }
-pub(super) fn save<T: Serialize>(path: &Path, value: &T) -> Result<()> {
+pub(in crate::vault_workspace) fn save<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     let data = serde_json::to_vec(value).map_err(jj)?;
     if data.len() > 512 * 1024 {
         return Err(Error::Binding);
@@ -50,7 +50,7 @@ pub(super) fn save<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     File::open(parent)?.sync_all()?;
     Ok(())
 }
-pub(super) fn read<T: serde::de::DeserializeOwned>(path: &Path) -> Result<T> {
+pub(in crate::vault_workspace) fn read<T: serde::de::DeserializeOwned>(path: &Path) -> Result<T> {
     let metadata = fs::symlink_metadata(path)?;
     if !metadata.is_file() || metadata.is_symlink() || metadata.len() > 512 * 1024 {
         return Err(Error::Binding);
@@ -113,6 +113,73 @@ impl Session {
     }
 }
 impl RemoteTransfer {
+    async fn observes_publication(&self, target: &str) -> Result<bool> {
+        let Some(fetched) = self.fetch().await? else {
+            return Ok(false);
+        };
+        if fetched.commit == target {
+            return Ok(true);
+        }
+        // Read ancestry in the fetched Git object database without a capture
+        // lease or JJ mutation. A later remote descendant also proves acceptance.
+        let (status, _) = self
+            .run(&["merge-base", "--is-ancestor", target, &fetched.commit])
+            .await?;
+        match status {
+            Some(0) => Ok(true),
+            Some(1) => Ok(false),
+            _ => Err(Error::Jj(
+                "Unable to observe the original backup push".into(),
+            )),
+        }
+    }
+    /// Reserve the exact device-local intent before releasing configuration
+    /// serialization. No child or network work occurs here.
+    pub fn reserve(&self, intent: &PushIntent) -> Result<()> {
+        self.binding.verify_saved()?;
+        request_id(&intent.request_id)?;
+        if intent.binding != self.binding
+            || intent.endpoint != self.endpoint
+            || intent.branch != self.branch
+        {
+            return Err(Error::Binding);
+        }
+        let directory = self.binding.state.join("remote-push-receipts");
+        fs::create_dir_all(&directory)?;
+        let lock = OpenOptions::new()
+            .create(true)
+            .truncate(false)
+            .write(true)
+            .open(directory.join("publication.lock"))?;
+        lock.try_lock().map_err(|_| Error::Busy)?;
+        let active = directory.join("active.json");
+        if active.exists() {
+            let original: PushIntent = read(&active)?;
+            if original != *intent {
+                return Err(Error::Busy);
+            }
+        }
+        let path = directory.join(format!("{}.json", intent.request_id));
+        if path.exists() {
+            let receipt: Receipt = read(&path)?;
+            if receipt.version != 1 || receipt.intent != *intent {
+                return Err(Error::Binding);
+            }
+            if matches!(receipt.outcome, PushOutcome::Complete | PushOutcome::Stale) {
+                return Ok(());
+            }
+        } else {
+            save(
+                &path,
+                &Receipt {
+                    version: 1,
+                    intent: intent.clone(),
+                    outcome: PushOutcome::Prepared,
+                },
+            )?;
+        }
+        save(&active, intent)
+    }
     pub fn pending_push(&self) -> Result<Option<PushIntent>> {
         self.binding.verify_saved()?;
         let path = self.binding.state.join("remote-push-receipts/active.json");
@@ -185,7 +252,7 @@ impl RemoteTransfer {
                     ));
                 }
                 if prior.outcome != PushOutcome::Complete {
-                    if self.observe().await?.as_deref() != Some(&original.after) {
+                    if !self.observes_publication(&original.after).await? {
                         return Ok(PushOutcome::Unknown);
                     }
                     prior.outcome = PushOutcome::Complete;
@@ -220,7 +287,10 @@ impl RemoteTransfer {
         if observed.as_deref() == Some(&intent.after) {
             receipt.outcome = PushOutcome::Complete;
         } else if receipt.outcome == PushOutcome::Unknown {
-            return Ok(PushOutcome::Unknown);
+            if !self.observes_publication(&intent.after).await? {
+                return Ok(PushOutcome::Unknown);
+            }
+            receipt.outcome = PushOutcome::Complete;
         } else if observed != intent.before {
             receipt.outcome = PushOutcome::Stale;
         } else {

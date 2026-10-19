@@ -17,3 +17,5 @@ Browse the child pages below.
 - [E-VAULT-BACKUP-006](E-VAULT-BACKUP-006/index.md)
 
 - [E-VAULT-BACKUP-007](E-VAULT-BACKUP-007/index.md)
+
+- [E-VAULT-BACKUP-008](E-VAULT-BACKUP-008/index.md)

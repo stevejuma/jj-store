@@ -41,7 +41,7 @@ fn native_remote_import_and_restore_share_the_serialized_backup_worker() {
         let transfer = RemoteTransfer::connect_local(source.clone(), &origin, "main")
             .await
             .unwrap();
-        let session = jj_store_jj::vault_workspace::Session::open(source)
+        let session = jj_store_jj::vault_workspace::Session::open(source.clone())
             .await
             .unwrap();
         let intent = session.prepare_push(&transfer, "seed", None).await.unwrap();
@@ -99,6 +99,46 @@ fn native_remote_import_and_restore_share_the_serialized_backup_worker() {
         assert_eq!(
             fs::read_to_string(target.root.join("Note.md")).unwrap(),
             "later local edit"
+        );
+        fs::write(source.root.join("Remote.md"), "saved on the other device").unwrap();
+        let remote_source = RemoteTransfer::connect_local(source.clone(), &origin, "main")
+            .await
+            .unwrap();
+        let before = remote_source.observe().await.unwrap();
+        let mut session = jj_store_jj::vault_workspace::Session::open(source)
+            .await
+            .unwrap();
+        session.capture(&[], "Remote update").await.unwrap();
+        let intent = session
+            .prepare_push(&remote_source, "remote-update", before)
+            .await
+            .unwrap();
+        drop(session);
+        assert_eq!(
+            remote_source.publish(&intent).await.unwrap(),
+            PushOutcome::Complete
+        );
+        let fetched = transfer.fetch().await.unwrap().unwrap();
+        let imported = backup.import_remote(fetched).await.unwrap();
+        let proposal = backup.prepare_sync(imported.commit).await.unwrap();
+        assert!(proposal.conflicts.is_empty());
+        let candidate = proposal.candidate.unwrap();
+        let preview = backup.preview_sync(candidate.commit.clone()).await.unwrap();
+        backup
+            .apply_sync(VaultRestoreRequest {
+                request_id: "worker-sync".into(),
+                checkpoint: candidate.commit,
+                expected: preview.expected,
+            })
+            .await
+            .unwrap();
+        assert_eq!(
+            fs::read_to_string(target.root.join("Note.md")).unwrap(),
+            "later local edit"
+        );
+        assert_eq!(
+            fs::read_to_string(target.root.join("Remote.md")).unwrap(),
+            "saved on the other device"
         );
         backup.close().await.unwrap();
     });

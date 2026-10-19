@@ -16,7 +16,7 @@ impl Session {
     pub(super) async fn retained_commit(&self, checkpoint: &str) -> Result<jj_lib::commit::Commit> {
         self.binding.verify_saved()?;
         let selected = CommitId::try_from_hex(checkpoint).ok_or(Error::Binding)?;
-        for name in ["lapis-backup", "lapis-incoming"] {
+        for name in ["lapis-backup", "lapis-incoming", "lapis-sync"] {
             let head = self.repo.view().get_local_bookmark(RefName::new(name));
             if let Some(head) = head.as_normal()
                 && self

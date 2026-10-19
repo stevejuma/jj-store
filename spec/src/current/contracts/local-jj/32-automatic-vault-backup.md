@@ -75,3 +75,11 @@ Restoration MUST reject symbolic links in every directory ancestor, including
 when an alias targets otherwise excluded runtime state inside the vault.
 Preview and apply both enforce this boundary; a previously valid preview cannot
 authorize a later alias replacement.
+
+Automatic synchronization captures saved local files before constructing a
+retained native merge proposal against the exact imported remote head. A clean
+proposal is applied only while its local checkpoint and complete disk-tree
+preview remain current. Conflicted proposals never overwrite current files;
+explicit per-path term/text/delete resolution creates retained native commits.
+Proposal IDs and guarded apply receipts survive restart. Unresolved conflicts
+cannot be published. Native JJ merge ancestry and conflict terms are preserved.

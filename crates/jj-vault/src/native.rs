@@ -5,6 +5,68 @@ pub struct NativeRepository {
     pub exclusions: Vec<String>,
 }
 impl Repository for NativeRepository {
+    fn prepare_sync(&mut self, incoming: &str) -> Result<SyncProposal, String> {
+        runtime()?.block_on(async {
+            let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session
+                .prepare_sync(incoming, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())
+        })
+    }
+    fn preview_sync(&mut self, candidate: &str) -> Result<VaultRestorePreview, String> {
+        runtime()?.block_on(async {
+            let session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session
+                .preview_sync(candidate, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())
+        })
+    }
+    fn apply_sync(&mut self, request: &VaultRestoreRequest) -> Result<Capture, String> {
+        runtime()?.block_on(async {
+            let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            let mut result = session
+                .apply_sync(request, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())?;
+            result.checkpoint = session.checkpoint().map_err(|e| e.to_string())?;
+            Ok(result)
+        })
+    }
+    fn sync_conflict(&mut self, candidate: &str, path: &str) -> Result<SyncConflict, String> {
+        runtime()?.block_on(async {
+            let session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session
+                .sync_conflict(candidate, path)
+                .await
+                .map_err(|e| e.to_string())
+        })
+    }
+    fn resolve_sync(
+        &mut self,
+        candidate: &str,
+        path: &str,
+        resolution: SyncResolution,
+    ) -> Result<Checkpoint, String> {
+        runtime()?.block_on(async {
+            let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session
+                .resolve_sync(candidate, path, resolution, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())
+        })
+    }
     fn import_remote(&mut self, head: &FetchedHead) -> Result<Checkpoint, String> {
         runtime()?.block_on(async {
             let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
