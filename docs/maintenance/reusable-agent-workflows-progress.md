@@ -522,10 +522,11 @@ NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
 NOTES-07L-FILES and NOTES-09-FILES-A are complete under the revised local-file
 priority. NOTES-09-FILES-B completes durable local recovery; NOTES-09-FILES-C
 completes bounded native Codex streaming. D1/D2 complete stable local anchors
-and acknowledged durable comment context. No child is currently Active.
-NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
-parity. The shared AI UI and local-file chat are working; JJ capture awaits its
-deferred managed backend integration.
+and acknowledged durable comment context. TOOLS-01A completes the reusable MCP
+transport prerequisite. No child is currently Active; native authentication and
+Notes wiring are next. NOTES-05F/05G/05H complete the initial canvas/header
+port, not full source-view parity. The shared AI UI and local-file chat are
+working; JJ capture awaits its deferred managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -640,6 +641,18 @@ deferred managed backend integration.
       uncertain-write recovery and cold restart without replaying an unknown
       prompt. This, together with visible history/diffs, qualifies the first
       usable milestone.
+- [x] **TOOLS-01A — Complete:** Lapis AI `e3bfffde` supplies the independent
+      `lapis-ai-app-tools` crate, with an injected immutable tool list and async
+      handler. All 15 byte-stream, identity, bounds, cancellation/deadline,
+      unknown-effect and EOF/drop cases pass, including blocked output. Its
+      verified Cargo archive, crate README and full embedding guide are
+      available. This enables no native tool access by itself; the Notes runtime
+      retains its disabled MCP capability.
+- [ ] **TOOLS-01B:** Add authenticated native IPC and owned bridge lifetime,
+      reusing the existing AppToolHost, registry, scope and approvals.
+- [ ] **TOOLS-01C:** Wire Codex to the admitted bridge and qualify actual reads,
+      guarded edits, cancellation, unknown outcomes and cold cleanup while
+      retaining local transcript files. Original M10.3 gates remain separate.
 - [ ] **AGENT-01:** Extract/adopt participant addressing, persisted agent tags,
       multiple recipients and queued delivery with exact identity/authority
       separation.

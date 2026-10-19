@@ -332,3 +332,7 @@ evidence remain separate from visual approval and managed conversation gates.
 E-REUSABLE-PROGRESS-037 records stable live/durable local comment anchors and
 acknowledged comments-only Codex delivery. The checklist distinguishes native
 file recovery from JJ store publication and retained wider gates.
+
+E-REUSABLE-PROGRESS-038 records the independent MCP tool-engine prerequisite,
+its crate README/full embedding guide and exact source acceptance. Native
+authentication, host policy/approvals and actual Codex tools remain separate.
