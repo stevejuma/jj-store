@@ -11,3 +11,14 @@ outcomes. Saved account credentials use native credential storage.
 
 See the [Git and forge guide](../../docs/site/guides/git.md) and
 [transport semantics](../../docs/site/reference/transport.md).
+
+For another native host, inject `accounts::Manager::new` with its private
+account root and `accounts::store::ScopedNativeSecrets::new` using the host
+application namespace. The default `NativeSecrets` namespace remains jj-store.
+Only the public OAuth client ID may be reused; account secrets remain separate.
+
+Native hosts may call `accounts::Manager::add_forgejo_token` with an explicitly
+selected HTTPS `/api/v1` instance and an owned PAT. The shared injected secret
+store retains credentials; inventory returns public identity only. The built-in
+HTTP adapter uses provider token headers. This does not extend the default
+GitHub OAuth/Enterprise commands; hosts own caller admission and setup UI.

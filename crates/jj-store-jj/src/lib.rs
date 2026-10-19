@@ -41,6 +41,8 @@ mod read_support;
 pub mod replication;
 #[cfg(feature = "native")]
 pub mod roots;
+#[cfg(feature = "vault-backup")]
+pub mod vault_workspace;
 
 #[cfg(feature = "native")]
 mod runtime;

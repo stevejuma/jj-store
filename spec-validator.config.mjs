@@ -209,6 +209,12 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^crates/jj-vault/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/local-jj/32-automatic-vault-backup\\.md$",
+          ],
+        },
+        {
           pattern: "^crates/jj-forge/",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/24-forge-stacks\\.md$",

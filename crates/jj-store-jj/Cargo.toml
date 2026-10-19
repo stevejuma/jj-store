@@ -13,10 +13,14 @@ readme = "README.md"
 default = ["native"]
 companion = ["tokio/time"]
 local-history = ["companion", "tokio/macros", "dep:prost", "tokio/fs", "tokio/io-util", "tokio/sync", "tokio/rt", "dep:async-trait", "dep:futures", "dep:tempfile", "dep:tokio-util", "dep:redb", "dep:etcetera", "dep:whoami", "dep:blake2", "dep:chrono"]
+vault-backup = ["dep:cap-fs-ext", "dep:rustix", "dep:cap-tempfile", "local-history", "dep:cap-std", "tokio/process", "dep:base64", "dep:zeroize", "dep:url"]
 native = ["local-history", "gix/default", "companion", "tokio/fs", "tokio/io-util", "tokio/sync", "tokio/rt", "tokio/process", "dep:jj-store-object", "dep:jj-store-wal", "dep:jj-forge", "dep:redb", "dep:prost", "dep:prost-build", "dep:tonic-prost-build", "dep:protoc-bin-vendored", "dep:base64", "dep:zeroize", "dep:url", "dep:async-trait", "dep:toml", "dep:blake2", "dep:chrono", "dep:tempfile", "dep:futures", "dep:etcetera", "dep:whoami", "dep:tokio-util", "dep:rustix"]
 
 [dependencies]
 jj-store-git.workspace = true
+cap-tempfile = { version = "4", optional = true }
+cap-fs-ext = { version = "=4.0.3", optional = true }
+cap-std = { version = "=4.0.3", optional = true }
 base64 = { version = "0.22", optional = true }
 zeroize = { version = "1", optional = true }
 url = { version = "2", optional = true }
@@ -164,3 +168,4 @@ required-features = ["native"]
 [[example]]
 name = "query_qualification"
 required-features = ["native"]
+

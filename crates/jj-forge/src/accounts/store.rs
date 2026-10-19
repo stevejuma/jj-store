@@ -14,15 +14,35 @@ pub trait SecretStore: Send + Sync {
     fn remove(&self, id: &str) -> Result<()>;
 }
 pub struct NativeSecrets;
-#[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
-fn entry(id: &str) -> Result<keyring::Entry> {
-    keyring::Entry::new("md.lapis.jj-store.forge.v1", id).map_err(|_| Error::State)
+/// Host-owned namespace keeps independently installed applications separate.
+pub struct ScopedNativeSecrets {
+    service: &'static str,
+}
+impl ScopedNativeSecrets {
+    pub const fn new(service: &'static str) -> Self {
+        Self { service }
+    }
 }
 impl SecretStore for NativeSecrets {
     fn get(&self, id: &str) -> Result<Option<String>> {
+        ScopedNativeSecrets::new("md.lapis.jj-store.forge.v1").get(id)
+    }
+    fn set(&self, id: &str, value: &str) -> Result<()> {
+        ScopedNativeSecrets::new("md.lapis.jj-store.forge.v1").set(id, value)
+    }
+    fn remove(&self, id: &str) -> Result<()> {
+        ScopedNativeSecrets::new("md.lapis.jj-store.forge.v1").remove(id)
+    }
+}
+#[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
+fn entry(service: &str, id: &str) -> Result<keyring::Entry> {
+    keyring::Entry::new(service, id).map_err(|_| Error::State)
+}
+impl SecretStore for ScopedNativeSecrets {
+    fn get(&self, id: &str) -> Result<Option<String>> {
         #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
         {
-            match entry(id)?.get_password() {
+            match entry(self.service, id)?.get_password() {
                 Ok(v) => Ok(Some(v)),
                 Err(keyring::Error::NoEntry) => Ok(None),
                 _ => Err(Error::State),
@@ -37,7 +57,9 @@ impl SecretStore for NativeSecrets {
     fn set(&self, id: &str, value: &str) -> Result<()> {
         #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
         {
-            entry(id)?.set_password(value).map_err(|_| Error::State)
+            entry(self.service, id)?
+                .set_password(value)
+                .map_err(|_| Error::State)
         }
         #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
         {
@@ -48,7 +70,7 @@ impl SecretStore for NativeSecrets {
     fn remove(&self, id: &str) -> Result<()> {
         #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
         {
-            match entry(id)?.delete_credential() {
+            match entry(self.service, id)?.delete_credential() {
                 Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
                 _ => Err(Error::State),
             }

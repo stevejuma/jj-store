@@ -40,3 +40,31 @@ commands. See
 
 See the [embedding guide](../../docs/injectable-stores.md) and its independent
 consumer example for complete construction, extension and recovery details.
+
+For host-admitted automatic vault checkpoints, enable `vault-backup` and use
+`vault_workspace::{Binding, Session}`. Bind canonical native paths and a durable
+vault identity; call `capture` on a bounded worker. External state needs no JJ
+entry in the vault. Completed checkpoints retain ordinary Git ancestry, while
+immutable history reads remain separate. `jj-vault` provides reusable
+scheduling.
+
+`vault_workspace::RemoteTransfer` adds explicit native-approved Git backup.
+Compose it with the host's in-memory credentials, transfer on a bounded worker,
+then use `Session` to import and preview/restore the selected checkpoint.
+`prepare_push` and `publish` retain exact-head guards and a durable publication
+intent; resume its original pending identity after an unknown outcome. Network
+work holds no capture lease. Forge account selection and automatic sync policy
+belong to the embedding host.
+
+With `vault-backup`, `vault_workspace::HistoryReader` reads an already admitted
+backup's immutable checkpoint ancestry and changed-file text pages without
+initializing or snapshotting it. This reader takes no working-copy lease.
+`jj-vault::search` adds the reusable rebuildable projection and filters;
+detailed authority and limits remain in the automatic-vault-backup
+specification.
+
+Existing vault repositories can remain independent read sources. Use
+`Binding::existing_history()` to pin their recorded state, then explicitly call
+`Session::adopt_history` to retain Git ancestry in managed backup without
+replacing current files. Preserve the original request for recovery; source JJ
+operations and evolution metadata remain in the original repository.

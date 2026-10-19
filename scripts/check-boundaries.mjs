@@ -40,6 +40,7 @@ export function dependencyErrors(packages) {
   const native = new Set(["jj-store-jj", "jj-store"]);
   const layers = {
     "jj-forge": [],
+    "jj-vault": ["jj-store-jj"],
     "jj-store-read-index": [],
     "jj-store-model": [],
     "jj-store-core": [

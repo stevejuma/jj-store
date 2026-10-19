@@ -1,5 +1,12 @@
 # Reusable agent workflows
 
+M34 adds the independent `jj-vault` backup coordinator. It depends on the owned
+`jj-store-jj` vault interface, exposes injectable repository/progress
+boundaries, and owns no UI, server, credential store or upstream JJ types.
+JST-ARCH-007 ownership stays unchanged; native backup is governed by
+JST-LOCAL-007. E-VAULT-BACKUP-007 retains this ownership while using native
+no-follow capabilities for guarded restore ancestors.
+
 The staged M33 extraction builds on M32's independently selected collaboration
 stores. Lapis AI owns execution and source acquisition, Agent Redaction owns
 native privacy, and JJ libraries own publication and conversation coordination.
@@ -315,3 +322,38 @@ Blame runs on existing query workers; closure/revocation drains the same read
 lifetime. Default permissions remain empty. Notes copies the maintained blame
 presentation and owns main-panel navigation, file scope and status/toast
 lifetime.
+
+File and whole-vault restore extend the injected `jj-vault::Repository`
+interface with preview and apply methods. Native JJ imports remain in
+`jj-store-jj`; host editor guards, credentials and admission remain host-owned
+(JST-ARCH-007 unchanged).
+
+Remote transfer remains host-owned and separate from the capture command lease.
+The injected vault provider accepts an opaque fetched-head proof for serialized
+native import and a guarded remote restore command on the same worker. Imported
+restore publishes the resulting local checkpoint through existing status;
+network outages cannot block that worker's final saved-file capture.
+
+The injected vault repository and worker expose sync proposal, preview/apply and
+conflict inspection/resolution. Hosts retain transfer, credential and editor
+writer authority. Native merge identity and conflict terms remain
+upstream-owned; `jj-vault` schedules owned DTOs without importing `jj-lib`
+(JST-ARCH-007).
+
+Publication recovery re-exports owned PendingPublication and terminal stopped
+DTOs. Native Binding/RemoteTransfer own receipt validation, publication locking
+and observe-only network behavior. Host account/editor authority, injected
+worker interfaces and the no-upstream-import boundary remain unchanged
+(JST-ARCH-007).
+
+Historical search uses an injected `jj-vault::search::Source`; its native
+provider reads upstream objects through `jj-store-jj::HistoryReader` without
+initialization or a capture writer lease. The disposable projection/cache has no
+restore authority. Hosts own admitted identity, private cache placement, worker
+bounds and presentation; upstream JJ imports stay in the native package
+(JST-ARCH-007).
+
+M34 native hosts may reuse the explicit Forgejo account helper and generic Git
+basic-auth login constructor. Public account records and injected secret custody
+remain separate from vault history, object authority and UI. Upstream JJ imports
+and default GitHub commands remain unchanged (JST-ARCH-007).
