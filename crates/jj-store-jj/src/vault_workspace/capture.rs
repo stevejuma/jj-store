@@ -21,10 +21,9 @@ impl Session {
             .view()
             .get_local_bookmark(RefName::new("lapis-backup"))
             .as_normal()
+            && current.parent_ids() != [parent.clone()]
         {
-            if current.parent_ids() != [parent.clone()] {
-                return Err(Error::Binding);
-            }
+            return Err(Error::Binding);
         }
         let mut locked = self
             .workspace

@@ -45,4 +45,13 @@ For host-admitted automatic vault checkpoints, enable `vault-backup` and use
 `vault_workspace::{Binding, Session}`. Bind canonical native paths and a durable
 vault identity; call `capture` on a bounded worker. External state needs no JJ
 entry in the vault. Completed checkpoints retain ordinary Git ancestry, while
-immutable history reads remain separate. `jj-vault` provides reusable scheduling.
+immutable history reads remain separate. `jj-vault` provides reusable
+scheduling.
+
+`vault_workspace::RemoteTransfer` adds explicit native-approved Git backup.
+Compose it with the host's in-memory credentials, transfer on a bounded worker,
+then use `Session` to import and preview/restore the selected checkpoint.
+`prepare_push` and `publish` retain exact-head guards and a durable publication
+intent; resume its original pending identity after an unknown outcome. Network
+work holds no capture lease. Forge account selection and automatic sync policy
+belong to the embedding host.

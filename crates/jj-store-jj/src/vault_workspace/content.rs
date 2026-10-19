@@ -16,23 +16,22 @@ impl Session {
     pub(super) async fn retained_commit(&self, checkpoint: &str) -> Result<jj_lib::commit::Commit> {
         self.binding.verify_saved()?;
         let selected = CommitId::try_from_hex(checkpoint).ok_or(Error::Binding)?;
-        let head = self
-            .repo
-            .view()
-            .get_local_bookmark(RefName::new("lapis-backup"));
-        let head = head.as_normal().ok_or(Error::Binding)?;
-        if !self
-            .repo
-            .index()
-            .is_ancestor(&selected, head)
-            .await
-            .map_err(jj)?
-        {
-            return Err(Error::Binding);
+        for name in ["lapis-backup", "lapis-incoming"] {
+            let head = self.repo.view().get_local_bookmark(RefName::new(name));
+            if let Some(head) = head.as_normal()
+                && self
+                    .repo
+                    .index()
+                    .is_ancestor(&selected, head)
+                    .await
+                    .map_err(jj)?
+            {
+                return self.repo.store().get_commit(&selected).map_err(jj);
+            }
         }
-        self.repo.store().get_commit(&selected).map_err(jj)
+        Err(Error::Binding)
     }
-    /// Resolve only a retained checkpoint ancestor, never an arbitrary Git object.
+    /// Resolve only retained checkpoint/imported-head ancestors, never arbitrary objects.
     pub async fn file_at(&self, checkpoint: &str, path: &str) -> Result<Option<FileContents>> {
         self.binding.verify_saved()?;
         if path.is_empty()

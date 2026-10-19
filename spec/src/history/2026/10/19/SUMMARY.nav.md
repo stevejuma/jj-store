@@ -9,3 +9,6 @@
 
 - [E-VAULT-BACKUP-004](E-VAULT-BACKUP-004/index.md)
   {{#include E-VAULT-BACKUP-004/SUMMARY.nav.md}}
+
+- [E-VAULT-BACKUP-005](E-VAULT-BACKUP-005/index.md)
+  {{#include E-VAULT-BACKUP-005/SUMMARY.nav.md}}

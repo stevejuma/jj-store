@@ -6,6 +6,7 @@ mod binding;
 mod capture;
 mod content;
 mod initialize;
+mod remote;
 mod restore;
 mod restore_io;
 mod scan;
@@ -19,6 +20,9 @@ use jj_lib::{
     repo::{ReadonlyRepo, Repo as _, RepoLoader},
     settings::UserSettings,
     workspace::Workspace,
+};
+pub use remote::{
+    FetchedHead, GitCredentials, PushIntent, PushOutcome, RemoteTarget, RemoteTransfer,
 };
 pub use restore::{RestorePreview, RestoreRequest};
 use serde::{Deserialize, Serialize};

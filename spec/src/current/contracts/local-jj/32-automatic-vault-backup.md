@@ -56,3 +56,13 @@ reuse jj-store's configured public GitHub OAuth client ID. Device codes and
 tokens never enter renderer persistence. Account work is bounded and runs off
 the UI thread; cancellation can revoke an in-flight authorization before it
 persists.
+
+Remote transfer uses a native-approved HTTPS endpoint and selected branch.
+Credentials stay in process memory and per-child environment; neither Git config
+nor receipts store them. Network transfer runs without the capture command
+lease. Fetched Git heads are imported through the native backend and pinned
+explicitly before any guarded restore. A fresh-device restore retains imported
+ancestry. Publication records its exact expected remote head and immutable
+target before network IO. An unknown push is observed before any further
+publication; automatic replay cannot create another intent. Exact-head guards
+reject remote drift.

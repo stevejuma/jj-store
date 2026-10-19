@@ -13,3 +13,10 @@ File and whole-vault restore resolve retained checkpoint bytes, save an original
 safety commit and persist receipts around guarded replacement. Native
 identities, codecs and immutable read behavior remain unchanged
 (JST-JJ-003/005).
+
+Native remote transfer is separate from capture and holds no workspace lease
+during network IO. Imported Git commits keep upstream native identities and are
+explicitly pinned in the managed view. Fresh-device restoration uses the
+existing guarded safety-checkpoint/receipt path and retains both local and
+imported ancestry. Push intent and observed outcomes are device-local; immutable
+readers never transfer, merge, snapshot or publish.
