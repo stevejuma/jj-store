@@ -24,12 +24,15 @@ Codex turns. The unqualified JJ client draft remains in Notes change `lqqoypxx`
 stay deferred until requested.
 
 The delivered focused profile is **Notes AI chat with local file transcripts and
-cold saved-history reopen**. The original M33.5 target of pinned history/diffs
-and one conversation in AgentStore/ThreadStore remains pending and deferred.
-Notes' native repository admission and history transport are verified. The
-history/diff renderer and cold visible native acceptance are qualified on macOS
-ARM64 with physical foreground assistance. The real native factory is qualified;
-managed conversation capture and restart remain pending.
+cold saved-history reopen**. Notes `e322e36e` / E-AI-047 also qualifies real
+Codex application-tool reads, explicitly approved edits, cancellation of an
+unapproved edit and cold History without replay. The review app is refreshed;
+all 131 existing vault files remain byte-identical. The original M33.5 target of
+pinned history/diffs and one conversation in AgentStore/ThreadStore remains
+pending and deferred. Notes' native repository admission and history transport
+are verified. The history/diff renderer and cold visible native acceptance are
+qualified on macOS ARM64 with physical foreground assistance. The real native
+factory is qualified; managed conversation capture and restart remain pending.
 
 This is the delivery checklist for the approved eight-stage plan. The
 [M33 milestone ledger](../../spec/src/current/progress/M33/index.md) owns formal
@@ -60,8 +63,8 @@ whole stage.
   reads; **NOTES-07L** admits bundled lapis-agent using explicit Lapis AI
   configuration and native secret references. The first live scope is chat/file
   context/cancel, followed by **NOTES-09** cold restart and uncertain-outcome
-  recovery. Native application tools, addressed agents, queues and imports
-  remain later slices.
+  recovery. Native application tools now have the E-AI-047 local-file profile;
+  addressed agents, queues and imports remain later slices.
 
 - **Completed: NOTES-05I7 file history and row actions.** Whole-row pointer
   selection preserves copy/author actions; History and Op Log use the requested
@@ -523,10 +526,13 @@ NOTES-07L-FILES and NOTES-09-FILES-A are complete under the revised local-file
 priority. NOTES-09-FILES-B completes durable local recovery; NOTES-09-FILES-C
 completes bounded native Codex streaming. D1/D2 complete stable local anchors
 and acknowledged durable comment context. TOOLS-01A completes the reusable MCP
-transport prerequisite. TOOLS-01B is the sole Active child for authenticated
-native IPC and owned binding lifetime. NOTES-05F/05G/05H complete the initial
-canvas/header port, not full source-view parity. The shared AI UI and local-file
-chat are working; JJ capture awaits its deferred managed backend integration.
+transport prerequisite. TOOLS-01B is complete for authenticated native IPC,
+owned coordinator/launch lifetime and durable turn gates. TOOLS-01C1 qualifies
+the real Codex local-file workflow; wider effect-fault qualification waits. No
+implementation child is Active at this verified checkpoint. NOTES-05F/05G/05H
+complete the initial canvas/header port, not full source-view parity. The shared
+AI UI and local-file chat are working; JJ capture awaits its deferred managed
+backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -646,10 +652,10 @@ chat are working; JJ capture awaits its deferred managed backend integration.
       handler. All 15 byte-stream, identity, bounds, cancellation/deadline,
       unknown-effect and EOF/drop cases pass, including blocked output. Its
       verified Cargo archive, crate README and full embedding guide are
-      available. This enables no native tool access by itself; the Notes runtime
-      retains its disabled MCP capability.
-- [ ] **TOOLS-01B — Active:** Add authenticated native IPC and owned bridge
-      lifetime, reusing the existing AppToolHost, registry, scope and approvals.
+      available. The engine grants no native tool access by itself; Notes owns
+      runtime admission and application policy separately.
+- [x] **TOOLS-01B — Complete:** Authenticated native IPC and owned bridge
+      lifetime reuse the existing AppToolHost, registry, scope and approvals.
 - [x] **TOOLS-01B1 — Complete:** Notes `34ae452a` / E-AI-046 supplies a
       native-only authenticated socket and bundled stdio role, strict opaque IPC
       and exact original-owner cleanup. Cold helper tests pass without Tauri
@@ -657,15 +663,29 @@ chat are working; JJ capture awaits its deferred managed backend integration.
       dispatch remain unknown. Current policy is rechecked after
       approval/capture waits. Lapis AI `96ced413` validates snapshots before
       allocation and redacts MCP environment diagnostics. The runtime capability
-      remains disabled.
-- [ ] **TOOLS-01B2:** Adapt the existing conversation coordinator, approval/tool
-      events and status publication to this native bridge. Connect native Codex
-      launch admission and arm only after durable turn preparation; gate
-      completion on actual callback drain. This is the remaining work in the
-      active TOOLS-01B task.
-- [ ] **TOOLS-01C:** Wire Codex to the admitted bridge and qualify actual reads,
+      remained disabled until the B2/C1 acceptance below.
+- [x] **TOOLS-01B2 — Complete:** Notes `e322e36e` / E-AI-047 adapts the existing
+      coordinator, approvals, local event saving and App status API. Native
+      Codex aliases admit exactly one worker under the original vault, window
+      and generation. Tools arm after durable turn preparation; completion waits
+      for callback/publication drain. Lost acknowledgements reconcile the
+      original reply without executing again. Owner decisions retain separate
+      journal identities and error notices retain their parent.
+- [ ] **TOOLS-01C — Waiting for wider qualification:** Qualify actual reads,
       guarded edits, cancellation, unknown outcomes and cold cleanup while
       retaining local transcript files. Original M10.3 gates remain separate.
+- [x] **TOOLS-01C1 — Complete for installed Codex/local files:** E-AI-047 passes
+      real read → approved edit → cancel → cold History. The note stays
+      unchanged before explicit App approval; cancellation prevents the second
+      unapproved edit and retains an honest unknown outcome. Cold reopening
+      neither replays callbacks nor changes journal/note bytes or creates `.jj`.
+      All 462 AI policy tests, 29 adapter cases, 14 native service/helper cases,
+      the exact native launch case, normal/e2e strict Rust checks and both
+      application builds pass. The ordinary review app preserves all 131 files.
+- [ ] **TOOLS-01C2 — Deferred qualification:** Inject mounted post-dispatch
+      failures, delayed actual effects, lost replies and process teardown across
+      the remaining provider/platform profiles. Source fixtures and one real
+      pending-edit cancellation do not complete this original qualification.
 - [ ] **AGENT-01:** Extract/adopt participant addressing, persisted agent tags,
       multiple recipients and queued delivery with exact identity/authority
       separation.

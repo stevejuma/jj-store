@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-040 records Notes E-AI-047: native coordinator/launch wiring
+and real Codex read, approved edit, pending-edit cancellation and cold local
+History. The refreshed review app preserves all 131 vault files. No child is
+Active at this checkpoint; wider effect-fault, JJ, original M33 and release
+gates remain open under JST-DOC-001. This is a local-file functional profile.
+
 E-REUSABLE-PROGRESS-039 records TOOLS-01B1: authenticated native MCP transport,
 strict main-window IPC, cold helper startup and actual callback drain. Policy
 changes after snapshot/approval refuse dispatch; uncertain effects retain their
