@@ -1,6 +1,7 @@
 //! Automatic checkpoint ownership, independent of any desktop, watcher or UI.
 #![forbid(unsafe_code)]
 mod adoption;
+mod lifetime;
 mod native;
 mod remote;
 mod restore;
@@ -110,7 +111,10 @@ enum Command {
     Remote(remote::Request),
     Sync(sync::Request),
     Adoption(adoption::Request),
-    Close(oneshot::Sender<Result<(), String>>),
+    Close {
+        reply: oneshot::Sender<Result<(), String>>,
+        retryable: bool,
+    },
 }
 #[derive(Clone)]
 pub struct Changes {
@@ -128,6 +132,7 @@ pub struct Backup {
     changed: Arc<AtomicBool>,
     state: watch::Receiver<Status>,
     worker: Option<thread::JoinHandle<()>>,
+    abandoned: Arc<AtomicBool>,
 }
 impl Backup {
     pub fn start(repository: impl Repository, timing: Timing) -> Result<Self, String> {
@@ -155,6 +160,8 @@ impl Backup {
         });
         let changed = Arc::new(AtomicBool::new(false));
         let dirty = changed.clone();
+        let abandoned = Arc::new(AtomicBool::new(false));
+        let stopped = abandoned.clone();
         let worker = thread::Builder::new()
             .name("vault-backup".into())
             .spawn(move || {
@@ -164,6 +171,7 @@ impl Backup {
                     dirty,
                     state_sender,
                     schedule,
+                    stopped,
                 );
             })
             .map_err(|e| e.to_string())?;
@@ -172,6 +180,7 @@ impl Backup {
             changed,
             state,
             worker: Some(worker),
+            abandoned,
         })
     }
     /// Overflow only coalesces wakeups; the dirty flag cannot be dropped.
@@ -195,29 +204,6 @@ impl Backup {
         receiver
             .await
             .map_err(|_| "Vault backup stopped".to_string())?
-    }
-    pub async fn close(mut self) -> Result<(), String> {
-        let (sender, receiver) = oneshot::channel();
-        // A close barrier must not be dropped if the bounded command queue is full.
-        let commands = self.commands.clone();
-        tokio::task::spawn_blocking(move || {
-            commands
-                .send(Command::Close(sender))
-                .map_err(|_| "Vault backup worker is closed".to_owned())
-        })
-        .await
-        .map_err(|e| e.to_string())?
-        .map_err(|e| e.to_string())?;
-        let result = receiver
-            .await
-            .map_err(|_| "Vault backup stopped".to_string())?;
-        if let Some(worker) = self.worker.take() {
-            tokio::task::spawn_blocking(move || worker.join())
-                .await
-                .map_err(|e| e.to_string())?
-                .map_err(|_| "Vault backup worker failed".to_string())?;
-        }
-        result
     }
 }
 fn capture(
@@ -256,8 +242,9 @@ fn run(
     dirty: Arc<AtomicBool>,
     state: watch::Sender<Status>,
     mut schedule: schedule::Schedule,
+    abandoned: Arc<AtomicBool>,
 ) {
-    loop {
+    while !abandoned.load(Ordering::Acquire) {
         if dirty.swap(false, Ordering::AcqRel) {
             schedule.changed(Instant::now());
         }
@@ -309,11 +296,18 @@ fn run(
                 }
                 let _ = reply.send(result);
             }
-            Ok(Command::Close(reply)) => {
+            Ok(Command::Close { reply, retryable }) => {
                 let result = capture(repository.as_mut(), &state).map(|_| ());
-                state.send_modify(|s| s.phase = Phase::Closed);
+                let retire = result.is_ok() || !retryable;
+                if result.is_ok() {
+                    state.send_modify(|s| s.phase = Phase::Closed);
+                } else {
+                    schedule.failed(Instant::now());
+                }
                 let _ = reply.send(result);
-                return;
+                if retire {
+                    return;
+                }
             }
             Err(mpsc::RecvTimeoutError::Timeout) => {
                 if capture(repository.as_mut(), &state).is_ok() {

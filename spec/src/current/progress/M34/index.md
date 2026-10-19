@@ -10,20 +10,20 @@ be recorded. M33's conversation gates and unrelated work remain unchanged.
 | ----- | ------- | ----------- | ------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | M34   | Partial | -           | JST-LOCAL-007 | Functional Notes backup, restore, GitHub/Forgejo sync and history search integrated into main workspaces | Review integrated working version      | E-VAULT-BACKUP-001                                                                             |
 | M34.1 | Partial | -           | JST-LOCAL-007 | Stable vault identity, independent external JJ state and retained checkpoint commits                     | Deferred cold identity/reopen proof    | E-VAULT-BACKUP-001                                                                             |
-| M34.2 | Partial | M34.1       | JST-LOCAL-007 | Reusable capture coordinator, watch reconciliation and crash/close recovery                              | Qualify cold native lifecycle later    | E-VAULT-BACKUP-001,E-VAULT-BACKUP-002                                                          |
+| M34.2 | Partial | M34.1       | JST-LOCAL-007 | Reusable capture coordinator, watch reconciliation and crash/close recovery                              | Qualify cold native lifecycle later    | E-VAULT-BACKUP-001,E-VAULT-BACKUP-002,E-VAULT-BACKUP-018                                       |
 | M34.3 | Partial | M34.2       | JST-LOCAL-007 | Usable local timeline, guarded restore and visible background status                                     | Deferred cold restore qualification    | E-VAULT-BACKUP-003                                                                             |
 | M34.4 | Partial | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Qualify cold app/provider flow later   | E-VAULT-BACKUP-004,E-VAULT-BACKUP-005,E-VAULT-BACKUP-006,E-VAULT-BACKUP-007                    |
 | M34.5 | Partial | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Qualify cold app/provider gates later  | E-VAULT-BACKUP-008,E-VAULT-BACKUP-009,E-VAULT-BACKUP-016                                       |
 | M34.6 | Partial | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Deferred cold search/restore proof     | E-VAULT-BACKUP-010,E-VAULT-BACKUP-017                                                          |
 | M34.7 | Partial | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Deferred native/provider qualification | E-VAULT-BACKUP-011,E-VAULT-BACKUP-012,E-VAULT-BACKUP-013,E-VAULT-BACKUP-014,E-VAULT-BACKUP-015 |
 
-Original implementation is integrated; unified indexed Search integration is active. M34.6 focused
-source/desktop search proofs pass; cold app qualification remains deferred.
-M34.5 source/desktop recovery proofs pass; cold app/provider qualification is
-deferred. M34.4 setup/restore focused proofs pass; cold app/provider
-qualification is deferred. M34.3 local restore proofs pass; cold app
-qualification is deferred. M34.2 coordinator/watch/close proofs pass; cold app
-qualification is deferred. M34.1 native capture/relink proofs pass; cold app
+Original implementation is integrated; unified indexed Search integration is
+active. M34.6 focused source/desktop search proofs pass; cold app qualification
+remains deferred. M34.5 source/desktop recovery proofs pass; cold app/provider
+qualification is deferred. M34.4 setup/restore focused proofs pass; cold
+app/provider qualification is deferred. M34.3 local restore proofs pass; cold
+app qualification is deferred. M34.2 coordinator/watch/close proofs pass; cold
+app qualification is deferred. M34.1 native capture/relink proofs pass; cold app
 qualification remains deferred. Source and consumer workspaces live under
 `vault-backup/{jj-store,lapis-desktop}`. Original checkouts and review data are
 preserved. The completed implementation is integrated into main; deferred
@@ -42,6 +42,12 @@ Original metadata and saved files remain unchanged. Desktop original read scopes
 and source selection are being validated separately; cold app/provider
 acceptance and main integration remain open. M34.7 stays Active.
 
+E-VAULT-BACKUP-018 adds retryable final capture and worker abandonment. Failed
+close retains the original coordinator and failure status; repaired saved files
+must be captured before retry can release ownership. M34.2 stays Partial at its
+original complete cold-app lifecycle gate; source regressions and Desktop native
+requalification are recorded separately.
+
 ## Deferred verification
 
 - Full Rust/UI/catalog suites and platform/release qualification: deferred by
@@ -52,7 +58,7 @@ acceptance and main integration remain open. M34.7 stays Active.
   before any build; do not touch active targets.
 - Focused correctness checks, formatting, and canonical document checks remain
   part of each slice. No visual baselines or remote publication are authorized.
+
 <!-- generated-navigation -->
+
 ## Pages
-
-

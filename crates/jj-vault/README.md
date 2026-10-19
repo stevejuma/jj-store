@@ -8,9 +8,16 @@ outside the vault. Checkpoints preserve ordinary Git ancestry for backup.
 Construct a native `Binding` from host-owned vault identity and paths, create a
 `NativeRepository`, and pass it with `Timing::default()` to `Backup::start`.
 Forward internal and external change notifications to `changed()`, observe
-`subscribe()` for progress, and await `close()` after editor saves drain. Hosts
-supply watching, credentials, UI and admission; the library does not infer
+`subscribe()` for progress, and await `try_close()` after editor saves drain.
+Hosts supply watching, credentials, UI and admission; the library does not infer
 authority from renderer paths. `Repository` is injectable for other providers.
+
+Keep the same `Backup` after a failed `try_close`: repair the saved-file failure
+and retry before releasing the vault. Failure status and the original worker
+remain owned. Successful close is idempotent. The consuming `close()` remains
+available for terminal cleanup, returning any capture error before retiring its
+worker. Dropping the coordinator retires its worker without a final-capture
+success claim; retained change handles cannot keep it alive.
 
 Detailed contracts and delivery progress live in
 `spec/src/current/contracts/local-jj/32-automatic-vault-backup.md` and M34. Use

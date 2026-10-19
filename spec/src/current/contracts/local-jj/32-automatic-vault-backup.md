@@ -22,8 +22,13 @@ excluded. Unsupported or incomplete capture MUST NOT report success.
 Native workers own bounded scans, JJ locks and serialized per-vault mutations.
 Read-only history queries never trigger capture. A host close drains capture
 after editor persistence; remote availability cannot block saved-file closure.
-Pending work and unknown command outcomes survive restart without duplicate
-checkpoints or blind replay. All active work reports through host progress.
+Failed final capture MUST retain its failure status and the host's original
+worker ownership for an explicit close retry. A retry MUST capture repaired
+saved files before reporting closed. Successful close is idempotent. Dropping
+the sole coordinator owner MUST retire its worker even while change-notification
+handles remain; abandonment never reports a successful final capture. Pending
+work and unknown command outcomes survive restart without duplicate checkpoints
+or blind replay. All active work reports through host progress.
 
 Explicit restore preserves a safety checkpoint and uses guarded file writes.
 File restore previews pin retained checkpoint bytes and current disk hashes.
@@ -146,12 +151,13 @@ reconcile heads or fetch a remote. Source paths and credentials remain
 host-owned.
 
 Historical indexed search MUST remain a disposable, server-independent native
-projection. It records each retained checkpoint and its explicit parents, indexes
-each immutable eligible file body once, and links changed paths and deletions to
-exact checkpoints. Author/date filters select version-changing checkpoints.
-Current exclusions suppress historical results. Bounded background batches run
-after publication without delaying capture and resume their durable frontier
-on startup; incomplete checkpoints never report full index coverage. Queries
-retain usable partial results, fence obsolete generations and expose progress.
-Missing or corrupt projections rebuild without modifying native history. Search
-activation and guarded restore always resolve native revision/path identities.
+projection. It records each retained checkpoint and its explicit parents,
+indexes each immutable eligible file body once, and links changed paths and
+deletions to exact checkpoints. Author/date filters select version-changing
+checkpoints. Current exclusions suppress historical results. Bounded background
+batches run after publication without delaying capture and resume their durable
+frontier on startup; incomplete checkpoints never report full index coverage.
+Queries retain usable partial results, fence obsolete generations and expose
+progress. Missing or corrupt projections rebuild without modifying native
+history. Search activation and guarded restore always resolve native
+revision/path identities.
