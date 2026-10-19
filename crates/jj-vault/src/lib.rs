@@ -1,10 +1,12 @@
 //! Automatic checkpoint ownership, independent of any desktop, watcher or UI.
 #![forbid(unsafe_code)]
 mod native;
+mod remote;
 mod restore;
 mod schedule;
 pub use jj_store_jj::vault_workspace::{
-    Binding, Capture, Checkpoint, RestorePreview, RestoreRequest, VaultRestorePreview,
+    Binding, Capture, Checkpoint, FetchedHead, GitCredentials, PushIntent, PushOutcome,
+    RemoteTarget, RemoteTransfer, RestorePreview, RestoreRequest, VaultRestorePreview,
     VaultRestoreRequest,
 };
 pub use native::NativeRepository;
@@ -40,6 +42,12 @@ pub trait Repository: Send + 'static {
     fn restore_vault(&mut self, _request: &VaultRestoreRequest) -> Result<Capture, String> {
         Err("Vault restore is unavailable for this provider".into())
     }
+    fn import_remote(&mut self, _head: &FetchedHead) -> Result<Checkpoint, String> {
+        Err("Remote import is unavailable for this provider".into())
+    }
+    fn restore_remote(&mut self, _request: &VaultRestoreRequest) -> Result<Capture, String> {
+        Err("Remote restore is unavailable for this provider".into())
+    }
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -69,6 +77,7 @@ enum Command {
         VaultRestoreRequest,
         oneshot::Sender<Result<Capture, String>>,
     ),
+    Remote(remote::Request),
     Close(oneshot::Sender<Result<(), String>>),
 }
 #[derive(Clone)]
@@ -159,10 +168,14 @@ impl Backup {
         let (sender, receiver) = oneshot::channel();
         // A close barrier must not be dropped if the bounded command queue is full.
         let commands = self.commands.clone();
-        tokio::task::spawn_blocking(move || commands.send(Command::Close(sender)))
-            .await
-            .map_err(|e| e.to_string())?
-            .map_err(|e| e.to_string())?;
+        tokio::task::spawn_blocking(move || {
+            commands
+                .send(Command::Close(sender))
+                .map_err(|_| "Vault backup worker is closed".to_owned())
+        })
+        .await
+        .map_err(|e| e.to_string())?
+        .map_err(|e| e.to_string())?;
         let result = receiver
             .await
             .map_err(|_| "Vault backup stopped".to_string())?;
@@ -222,6 +235,9 @@ fn run(
             .min(Duration::from_secs(60));
         match receiver.recv_timeout(timeout) {
             Ok(Command::Wake) => {}
+            Ok(Command::Remote(request)) => {
+                remote::run(request, repository.as_mut(), &state, &mut schedule)
+            }
             Ok(Command::Preview(checkpoint, path, reply)) => {
                 let _ = reply.send(repository.preview_restore(&checkpoint, &path));
             }

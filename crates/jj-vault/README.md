@@ -17,5 +17,12 @@ Detailed contracts and delivery progress live in
 `preview_restore(checkpoint, path)` before `restore(RestoreRequest)` for a
 guarded file restore. Keep the same request ID when recovering a lost response;
 the native provider retains a safety checkpoint and a durable receipt. Hosts
-must protect and flush editor writers around preview and apply. Remote
-synchronization, whole-vault restore and search remain tracked stages.
+must protect and flush editor writers around preview and apply. Whole-vault
+previews and restore use the corresponding `preview_vault_restore` and
+`restore_vault` methods.
+
+Hosts perform remote transfer separately, then pass its opaque fetched head to
+`import_remote`. `restore_remote` uses the same serialized worker, safety and
+status path while preserving imported ancestry. A network outage cannot hold the
+capture worker. Remote setup, automatic synchronization and historical search
+remain tracked delivery stages; policy and UI belong to the host.

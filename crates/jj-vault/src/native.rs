@@ -5,6 +5,30 @@ pub struct NativeRepository {
     pub exclusions: Vec<String>,
 }
 impl Repository for NativeRepository {
+    fn import_remote(&mut self, head: &FetchedHead) -> Result<Checkpoint, String> {
+        runtime()?.block_on(async {
+            let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session
+                .import_fetched(head)
+                .await
+                .map_err(|e| e.to_string())
+        })
+    }
+    fn restore_remote(&mut self, request: &VaultRestoreRequest) -> Result<Capture, String> {
+        runtime()?.block_on(async {
+            let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            let mut result = session
+                .restore_imported(request, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())?;
+            result.checkpoint = session.checkpoint().map_err(|e| e.to_string())?;
+            Ok(result)
+        })
+    }
     fn preview_vault_restore(&mut self, checkpoint: &str) -> Result<VaultRestorePreview, String> {
         runtime()?.block_on(async {
             let session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())

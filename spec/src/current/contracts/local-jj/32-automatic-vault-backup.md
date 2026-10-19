@@ -66,3 +66,7 @@ ancestry. Publication records its exact expected remote head and immutable
 target before network IO. An unknown push is observed before any further
 publication; automatic replay cannot create another intent. Exact-head guards
 reject remote drift.
+
+Hosts queue fetched-head import and guarded remote restore through the injected
+vault worker. Transfer remains outside its queue; only the resulting native
+restore updates the saved local checkpoint status.

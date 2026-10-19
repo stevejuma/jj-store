@@ -326,3 +326,9 @@ File and whole-vault restore extend the injected `jj-vault::Repository`
 interface with preview and apply methods. Native JJ imports remain in
 `jj-store-jj`; host editor guards, credentials and admission remain host-owned
 (JST-ARCH-007 unchanged).
+
+Remote transfer remains host-owned and separate from the capture command lease.
+The injected vault provider accepts an opaque fetched-head proof for serialized
+native import and a guarded remote restore command on the same worker. Imported
+restore publishes the resulting local checkpoint through existing status;
+network outages cannot block that worker's final saved-file capture.
