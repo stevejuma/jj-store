@@ -43,6 +43,14 @@ whole stage.
 
 ## Current checkpoint
 
+- **Completed: DISCUSS-01A local reply navigation.** Notes c45dc84f / E-AI-052
+  binds acknowledged comments to exact completed native answers, with restored
+  source/reply controls in Document and Classic. All 518 AI tests, 280 affected
+  interaction/axe checks and actual Codex comment/cold-navigation acceptance
+  pass. The ordinary app refresh preserves all 131 vault files. Native
+  tools/multi/queue reruns pass; GAP-11 retains one intermittent Stop timeout.
+  DISCUSS-01B is pending; JJ persistence stays deferred.
+
 - **Completed review implementation: NOTES-08A — Document/classic AI review.**
   Production-owned AI components use the retained controller and catalog-only
   fake clients. Separate Design Core reference stories run inside the same
@@ -532,8 +540,9 @@ the real Codex local-file workflow; wider effect-fault qualification waits.
 AGENT-01A completes recipient selection and saved tags. Independent logical
 participants and multiple-recipient delivery are complete in AGENT-01B1/B2.
 AGENT-01C completes persisted bounded local queues and explicit recovery.
-AGENT-01 is Complete for the local-file profile. No child is Active at this
-verified checkpoint; original JJ and wider qualification gates remain open.
+AGENT-01 and DISCUSS-01A are Complete for the local-file profile. No child is
+Active at this verified checkpoint. DISCUSS-01B is pending; original JJ and
+wider qualification gates remain open, including the retained GAP-11 timeout.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
 parity. The shared AI UI and local-file chat are working; JJ capture awaits its
 deferred managed backend integration.
@@ -733,6 +742,16 @@ deferred managed backend integration.
       all 131 vault files. JJ and wider qualification remain deferred.
 - [ ] **DISCUSS-01:** Add exact message/tool/code discussion anchors and
       recovery using the owning stores; qualify unsupported profiles explicitly.
+- [x] **DISCUSS-01A — Complete (local files):** Notes c45dc84f / E-AI-052 reuses
+      local captures and Design Core controls/readers. Exact terminal request,
+      authored parent and accepted binding/receipt evidence link comments to
+      final answers; cancelled/unknown turns stay unlinked. All 518 AI tests,
+      280 affected story checks, strict types and actual Codex cold reply/source
+      navigation pass. Native tool/multi/queue reruns pass, and the updated
+      ordinary review app preserves 131 files. GAP-11 retains the initial
+      intermittent pending-edit cancellation timeout.
+- [ ] **DISCUSS-01B — Pending:** Qualify native code/table/tool selections,
+      continued threads and cold recovery; keep JJ discussion storage deferred.
 - [ ] **IMPORT-01:** Add explicit imports with deduplication and source
       provenance.
 - [ ] **CAPTURE-01:** Add opt-in local automatic capture with source lifecycle,
@@ -746,6 +765,8 @@ deferred managed backend integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [Restored comments linked to agent replies](http://127.0.0.1:7490/iframe.html?id=desktop-ai-comment-history--linked-code-table-and-tool-replies&viewMode=story)
 
 - [Waiting follow-up messages](http://127.0.0.1:7490/iframe.html?id=desktop-ai-queued-messages--waiting-followups&viewMode=story)
 - [Explicit recovery after interruption](http://127.0.0.1:7490/iframe.html?id=desktop-ai-queued-messages--interrupted-before-checkpoint&viewMode=story)
@@ -831,6 +852,12 @@ yet.
       clicks and strict document/native keyboard-window assertions. The driver
       alone cannot reliably activate a cold app. Preserve this automation gap
       separately from the actual native history result.
+
+- [ ] **GAP-11:** Notes c45dc84f / E-AI-052 observed one native pending-edit
+      Stop timeout waiting for its tool receipt. The note was preserved; the
+      exact target passed on unchanged production source, and the new
+      cancellation source guard passes. The intermittent cause remains unproven.
+      Later multi/queue and exact comment/cold-reply acceptance pass separately.
 
 ## Keeping this list current
 

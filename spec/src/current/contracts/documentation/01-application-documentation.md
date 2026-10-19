@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-045 records Notes c45dc84f / E-AI-052 exact local
+comment/reply links, public reader navigation and cold Codex recovery.
+DISCUSS-01A is complete for local files; native code/table/tool continuation and
+JJ gates remain pending. JST-DOC-001 and JST-ARCH-007 are unchanged; GAP-11
+retains one intermittent native Stop timeout despite a passing unchanged rerun.
+
 E-REUSABLE-PROGRESS-044 records Notes E-AI-051/33b442ed: bounded persisted local
 queues, FIFO delivery, cancellation, paused Stop and explicit cold Resume. All
 506 AI tests, 256 affected story checks and actual Codex queue/tool/multi-agent
