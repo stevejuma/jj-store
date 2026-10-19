@@ -70,3 +70,13 @@ retains receipt lineage. A failed move can be resumed with its original request;
 capture and drain readers before changing layout, then bind fresh readers and
 restart capture using `binding()`. All migration work belongs on a native
 worker.
+
+For a vault that already has JJ history, `Binding::existing_history()` observes
+its recorded operation and working revision without snapshotting the original.
+Pass that exact source and a stable request ID to `Backup::adopt_history` to
+retain its Git ancestry in the independent backup. Saved vault files stay in
+place. Native operation/evolution metadata remains in the original repository;
+hosts should provide a separate immutable reader for it. Reuse the original
+request after a lost response; `stop_adoption` fences even a request that has
+not arrived yet, without undoing accepted ancestry or enabling remote
+publication.

@@ -1,6 +1,8 @@
 //! Host-owned vault checkpoints with independently located JJ working-copy state.
 //! Call from a bounded native worker. Never invoke through immutable read APIs.
+mod adoption;
 mod batch_plan;
+pub use adoption::{AdoptionRequest, ExistingHistory};
 mod batch_restore;
 mod binding;
 mod capture;

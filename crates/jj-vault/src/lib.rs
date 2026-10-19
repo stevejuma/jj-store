@@ -1,5 +1,6 @@
 //! Automatic checkpoint ownership, independent of any desktop, watcher or UI.
 #![forbid(unsafe_code)]
+mod adoption;
 mod native;
 mod remote;
 mod restore;
@@ -7,10 +8,10 @@ mod schedule;
 pub mod search;
 mod sync;
 pub use jj_store_jj::vault_workspace::{
-    Binding, Capture, Checkpoint, FetchedHead, GitCredentials, PendingPublication, PendingStorage,
-    PushIntent, PushOutcome, RemoteTarget, RemoteTransfer, RestorePreview, RestoreRequest, Storage,
-    StorageLocation, StorageProgress, StorageStatus, SyncConflict, SyncProposal, SyncResolution,
-    SyncTerm, VaultRestorePreview, VaultRestoreRequest,
+    AdoptionRequest, Binding, Capture, Checkpoint, ExistingHistory, FetchedHead, GitCredentials,
+    PendingPublication, PendingStorage, PushIntent, PushOutcome, RemoteTarget, RemoteTransfer,
+    RestorePreview, RestoreRequest, Storage, StorageLocation, StorageProgress, StorageStatus,
+    SyncConflict, SyncProposal, SyncResolution, SyncTerm, VaultRestorePreview, VaultRestoreRequest,
 };
 pub use native::NativeRepository;
 pub use schedule::Timing;
@@ -28,6 +29,12 @@ use tokio::sync::{oneshot, watch};
 
 /// Runs only on the owned backup worker. No caller UI thread performs native IO.
 pub trait Repository: Send + 'static {
+    fn adopt_history(&mut self, _request: &AdoptionRequest) -> Result<Checkpoint, String> {
+        Err("History adoption is unavailable".into())
+    }
+    fn stop_adoption(&mut self, _request: &str) -> Result<(), String> {
+        Err("History adoption is unavailable".into())
+    }
     fn capture(&mut self) -> Result<Capture, String>;
     fn prepare_sync(&mut self, _incoming: &str) -> Result<SyncProposal, String> {
         Err("Synchronization is unavailable".into())
@@ -102,6 +109,7 @@ enum Command {
     ),
     Remote(remote::Request),
     Sync(sync::Request),
+    Adoption(adoption::Request),
     Close(oneshot::Sender<Result<(), String>>),
 }
 #[derive(Clone)]
@@ -259,6 +267,9 @@ fn run(
             .min(Duration::from_secs(60));
         match receiver.recv_timeout(timeout) {
             Ok(Command::Wake) => {}
+            Ok(Command::Adoption(request)) => {
+                adoption::run(request, repository.as_mut(), &state, &mut schedule)
+            }
             Ok(Command::Sync(request)) => {
                 sync::run(request, repository.as_mut(), &state, &mut schedule)
             }

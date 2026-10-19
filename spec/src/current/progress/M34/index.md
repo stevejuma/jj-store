@@ -15,7 +15,7 @@ be recorded. M33's conversation gates and unrelated work remain unchanged.
 | M34.4 | Partial     | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Qualify cold app/provider flow later          | E-VAULT-BACKUP-004,E-VAULT-BACKUP-005,E-VAULT-BACKUP-006,E-VAULT-BACKUP-007 |
 | M34.5 | Partial     | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Qualify cold app/provider gates later         | E-VAULT-BACKUP-008,E-VAULT-BACKUP-009                                       |
 | M34.6 | Partial     | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Complete desktop proof then storage/providers | E-VAULT-BACKUP-010                                                          |
-| M34.7 | In progress | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Complete desktop storage and source selection | E-VAULT-BACKUP-011,E-VAULT-BACKUP-012                                       |
+| M34.7 | In progress | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Complete source UI and native acceptance      | E-VAULT-BACKUP-011,E-VAULT-BACKUP-012,E-VAULT-BACKUP-013                    |
 
 Only M34.7 is active. M34.6 focused source/desktop search proofs pass; cold app
 qualification remains deferred. M34.5 source/desktop recovery proofs pass; cold
@@ -33,6 +33,13 @@ recovery, pending-publication path lineage and excluded root control files. Six
 new native regressions and ten direct capture/transfer/publication regressions
 pass. Desktop storage selection and existing-source adoption remain required
 implementation; native app/provider and wider deferred gates stay open.
+
+E-VAULT-BACKUP-013 qualifies explicit original Git-ancestry adoption, durable
+prepared/published recovery and stopped-request fencing. Fourteen native source
+and ten coordinator/search/restore cases pass, with strict affected Clippy.
+Original metadata and saved files remain unchanged. Desktop original read scopes
+and source selection are being validated separately; cold app/provider
+acceptance and main integration remain open. M34.7 stays Active.
 
 ## Deferred verification
 

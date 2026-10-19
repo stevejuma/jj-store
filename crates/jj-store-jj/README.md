@@ -62,3 +62,9 @@ initializing or snapshotting it. This reader takes no working-copy lease.
 `jj-vault::search` adds the reusable rebuildable projection and filters;
 detailed authority and limits remain in the automatic-vault-backup
 specification.
+
+Existing vault repositories can remain independent read sources. Use
+`Binding::existing_history()` to pin their recorded state, then explicitly call
+`Session::adopt_history` to retain Git ancestry in managed backup without
+replacing current files. Preserve the original request for recovery; source JJ
+operations and evolution metadata remain in the original repository.

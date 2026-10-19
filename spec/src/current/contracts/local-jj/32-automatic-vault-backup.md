@@ -118,3 +118,19 @@ capture can initialize anything. Current layout publication is atomic; a
 completed old request cannot undo a later layout choice. Native receipt bytes
 remain unchanged and stored path lineage permits their original recovery. Root
 metadata locks/staging live below excluded application-private state.
+
+Explicit adoption imports an existing vault JJ workspace's recorded commit and
+Git ancestry into its independent managed backup. The source operation and
+working revision are pinned before import; source repository bytes, operation
+heads and saved/unsaved vault files remain unchanged. A retained ancestry join
+uses the managed backup's captured tree and an empty working-copy child. No
+source checkout, configuration execution or remote publication is permitted.
+Original request receipts retain immutable candidate identities. Capture
+reconciles prepared adoption publications before advancing; replay never
+duplicates an accepted adoption or overwrites later saved files. Adoption uses
+upstream Git import semantics; native operation/evolution metadata remains in
+the original repository and its independent read-only scope.
+
+Explicit stop fences the original adoption request even if native delivery has
+not begun. A delayed request cannot revive it. Terminal receipts never undo
+accepted ancestry or clear another request's active pointer.

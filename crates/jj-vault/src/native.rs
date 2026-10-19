@@ -5,6 +5,25 @@ pub struct NativeRepository {
     pub exclusions: Vec<String>,
 }
 impl Repository for NativeRepository {
+    fn adopt_history(&mut self, request: &AdoptionRequest) -> Result<Checkpoint, String> {
+        runtime()?.block_on(async {
+            let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session
+                .adopt_history(request, &self.exclusions)
+                .await
+                .map_err(|e| e.to_string())
+        })
+    }
+    fn stop_adoption(&mut self, id: &str) -> Result<(), String> {
+        runtime()?.block_on(async {
+            let session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
+                .await
+                .map_err(|e| e.to_string())?;
+            session.stop_adoption(id).map_err(|e| e.to_string())
+        })
+    }
     fn prepare_sync(&mut self, incoming: &str) -> Result<SyncProposal, String> {
         runtime()?.block_on(async {
             let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())

@@ -6,6 +6,7 @@ impl Session {
     /// checks out files, invokes a shell, or changes an existing user repository.
     pub async fn capture(&mut self, exclusions: &[String], description: &str) -> Result<Capture> {
         self.binding.verify_saved()?;
+        self.recover_adoptions().await?;
         if description.len() > 4096 {
             return Err(Error::Binding);
         }

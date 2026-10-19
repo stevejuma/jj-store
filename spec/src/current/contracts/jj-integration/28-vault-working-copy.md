@@ -56,3 +56,10 @@ native fields. Current native heads are never reconciled during a move. The
 transport fence is independent of the capture lease, preserving network/capture
 separation; storage movement takes both exclusively. Path lineage belongs only
 to private binding/receipt metadata (JST-JJ-003/005, JST-LOCAL-007).
+
+Explicit history adoption reads a pinned existing workspace operation and
+imports its Git objects into the managed backend through a bounded local
+transfer. Native source identities remain unchanged; the managed ancestry join
+retains its own current tree. Prepared receipts recover publication before
+subsequent capture. Discovery, ordinary history reads and original workspace
+files/heads remain immutable (JST-JJ-003/005, JST-LOCAL-007).

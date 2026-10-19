@@ -1,4 +1,5 @@
 //! Native-approved Git transfer. Network calls never hold the capture lease.
+mod adoption;
 mod import;
 mod process;
 pub(super) mod publication;
