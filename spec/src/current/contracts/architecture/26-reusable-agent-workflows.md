@@ -1,5 +1,11 @@
 # Reusable agent workflows
 
+E-REUSABLE-PROGRESS-049 confirms JST-ARCH-007 unchanged for Notes' capture
+source foundation. Shared acquisition/privacy stay native; Notes owns separate
+manual/capture handles, physical-vault admission and transient confirmation.
+Cold reobservation is not a durable reader ACK, local receipt or JJ publication.
+Opt-in watching and grouped local custody remain separate consumer work.
+
 M34 adds the independent `jj-vault` backup coordinator. It depends on the owned
 `jj-store-jj` vault interface, exposes injectable repository/progress
 boundaries, and owns no UI, server, credential store or upstream JJ types.

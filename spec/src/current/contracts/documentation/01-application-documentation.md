@@ -1,11 +1,11 @@
 # Application documentation
 
-E-REUSABLE-PROGRESS-048 records Notes 830eb9ef / E-AI-055 native local Codex
-imports, shared privacy, unknown tool outcomes and cold read-only reopen. Lapis
-AI b120a3c2 adds the exact CLI/Lapis ACP header pair; alpha stays excluded. The
-review app shows real sources and preserves notes/transcripts. CAPTURE-01 is
-next; broader Node GAP-12, JJ persistence and original JST-DOC-001 /
-JST-ARCH-007 / M33 gates remain open. No implementation child is Active.
+E-REUSABLE-PROGRESS-049 / Notes `2be49684` / E-AI-056 qualifies the native
+capture source foundation. Grouped local storage and opt-in controls remain
+pending. E-REUSABLE-PROGRESS-048 / Notes `830eb9ef` / E-AI-055 qualifies native
+imports and the CLI/Lapis ACP pair; Desktop alpha stays excluded.
+JST-DOC-001/JST-ARCH-007 and original gates stay unchanged. JJ, GAP-12 and wider
+qualification remain deferred. The ordinary review app and vault are preserved.
 
 E-REUSABLE-PROGRESS-046 records Notes 8f5b9395 / E-AI-053 exact native
 code/table/tool discussions, continued threads and two cold History reopens.

@@ -43,6 +43,18 @@ whole stage.
 
 ## Current checkpoint
 
+- **Completed: CAPTURE-01A — native source foundation.** Notes `2be49684` /
+  E-AI-056 qualifies independent manual/capture scopes, physical-vault context
+  fences, immutable pending snapshots and retry-safe transient confirmation. Six
+  source, eight existing import and six host ownership cases pass; 572 AI tests
+  and 40 affected story checks pass. Cold native capture/reobservation and the
+  existing cold import pass. This foundation enables no watcher or opt-in by
+  itself.
+- **Next: CAPTURE-01B**, local grouped capture receipts and bounded versions,
+  then **CAPTURE-01C**, default-off controls, watching and status/toast
+  lifetime. CAPTURE-01 remains incomplete. No implementation child is Active at
+  this checkpoint. JJ persistence and broader qualification remain deferred.
+
 - **Completed: IMPORT-01B / IMPORT-01 (Codex local files).** Notes `830eb9ef` /
   E-AI-055 connects native source discovery, bounded immutable snapshots, shared
   privacy and read-only local save/reopen. Lapis AI `b120a3c2` accepts the exact
@@ -800,8 +812,16 @@ deferred managed backend integration.
       save/duplicate/cold reopen. Real app sources are visible after the
       source-owned Lapis ACP header fix (`lapis-ai` `b120a3c2`). Native import
       needs no provider or JJ writer. Broader Node gaps remain GAP-12.
-- [ ] **CAPTURE-01 — Pending, next:** Add opt-in local automatic capture with
-      source lifecycle, progress, acknowledgement and privacy qualification.
+- [ ] **CAPTURE-01:** Finish opt-in local automatic capture; A is qualified,
+      while grouped local storage and the watcher/controls remain pending.
+- [x] **CAPTURE-01A — Complete:** Notes `2be49684` / E-AI-056 qualifies
+      independent native read scopes, physical-vault context admission,
+      immutable observations, transient idempotent confirmation and cold
+      reobservation. No watcher runs.
+- [ ] **CAPTURE-01B:** Group bounded local captured versions and publish a
+      latest selection only after exact verified local durability.
+- [ ] **CAPTURE-01C:** Add default-off opt-in/Stop controls, status progress,
+      recovery toasts and cold restart/drained lifecycle acceptance.
 - [ ] **QUAL-01:** Complete remaining contract/compatibility and source
       portability gates, independent Rust/Tauri consumers and public package
       archive acceptance. Wire the optional native-privacy test profile into its
