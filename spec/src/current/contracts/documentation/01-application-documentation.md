@@ -1,5 +1,12 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-043 records Notes E-AI-050/d266b544: one authored local
+message, independent delivery outcomes and binding-scoped approvals. All 491 AI
+tests, 228 affected story checks and fresh real Codex multi-delivery plus
+read/edit/cancel/cold History pass. The ordinary review refresh preserves 131
+vault files. AGENT-01B2/B are Complete; queues and original M33/JJ/release gates
+remain open under JST-DOC-001. No child is Active at this checkpoint.
+
 E-REUSABLE-PROGRESS-042 records Notes E-AI-049: independent logical
 participants, retained attribution and working-state ownership while switching.
 All 474 AI tests, 140 affected story cases and fresh native Codex acceptance

@@ -530,8 +530,9 @@ transport prerequisite. TOOLS-01B is complete for authenticated native IPC,
 owned coordinator/launch lifetime and durable turn gates. TOOLS-01C1 qualifies
 the real Codex local-file workflow; wider effect-fault qualification waits.
 AGENT-01A completes recipient selection and saved tags. Independent logical
-participants are complete in AGENT-01B1. Multiple-recipient routing and queued
-delivery follow; no implementation child is Active at this verified checkpoint.
+participants and multiple-recipient delivery are complete in AGENT-01B1/B2.
+AGENT-01C persisted bounded queues remain next. No child is Active at this
+verified checkpoint; original JJ and wider qualification gates remain open.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
 parity. The shared AI UI and local-file chat are working; JJ capture awaits its
 deferred managed backend integration.
@@ -699,8 +700,8 @@ deferred managed backend integration.
       source audits and fresh real Codex/native read/edit/cancel/cold History
       pass. Ordinary native pointer selection works; all 131 review-vault files
       remain byte-identical. Multiple recipients still refuse explicitly.
-- [ ] **AGENT-01B — In progress:** Add independent logical participants and
-      explicit multiple-recipient delivery, retaining per-recipient outcomes.
+- [x] **AGENT-01B — Complete:** Independent logical participants and explicit
+      multiple-recipient delivery retain separate durable outcomes in B1/B2.
 - [x] **AGENT-01B1 — Complete:** Notes `40141fc5` / E-AI-049 keeps logical
       participants distinct from shared runtime/native bindings and preserves
       saved attribution in Document/Classic and bounded context handoffs.
@@ -710,8 +711,15 @@ deferred managed backend integration.
       along with fresh real Codex read/edit/cancel/cold History. Ordinary review
       update preserves all 131 vault files. Independent custom aliases are
       qualified by controller/catalog fixtures; multi-delivery stays pending.
-- [ ] **AGENT-01B2:** Add explicit multiple-recipient dispatch with one authored
-      message and separate durable delivery outcomes.
+- [x] **AGENT-01B2 — Complete:** Notes `d266b544` / E-AI-050 saves one authored
+      message for two to four named recipients with separate durable outcomes.
+      Normal participant creation sends nothing; per-binding approvals cannot
+      collide when native IDs repeat. All 491 AI tests, 228 affected story
+      interaction/axe cases, types and source audits pass. Fresh native Codex
+      proves two registered reads/two answers/one authored message and cold
+      History without replay or JJ metadata; the read/edit/cancel regression
+      also passes. The refreshed review app preserves all 131 vault files.
+      Persisted queues and wider provider/platform/release gates remain open.
 - [ ] **AGENT-01C:** Add persisted bounded queues with explicit cancellation and
       unknown-outcome recovery; no implicit replay on restart.
 - [ ] **DISCUSS-01:** Add exact message/tool/code discussion anchors and
@@ -729,6 +737,9 @@ deferred managed backend integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [One message to multiple agents](http://127.0.0.1:7490/iframe.html?id=desktop-ai-multiple-recipients--one-authored-message&viewMode=story)
+- [Separate approvals for each participant](http://127.0.0.1:7490/iframe.html?id=desktop-ai-multiple-recipients--separate-approvals&viewMode=story)
 
 - [Independent participants sharing one runtime](http://127.0.0.1:7490/iframe.html?id=desktop-ai-addressed-messages--independent-participants&viewMode=story)
 
