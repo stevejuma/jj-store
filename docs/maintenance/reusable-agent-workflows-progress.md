@@ -9,15 +9,17 @@ standing implementation approval on 2026-10-18. Focused checks accompany each
 slice; broad provider/platform/release and visual baseline qualification remain
 deferred.
 
-**Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A/B.** Notes
+**Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A/B/C.** Notes
 E-AI-042 qualifies real installed Codex chat, bounded file context,
 cancellation, local saving and cold History reopen. E-AI-043 adds pre-dispatch
 authored-message and intent durability, conservative unknown recovery and
 explicit new-message continuation. Its isolated real Codex test kills the app
 after streamed output, reopens the unchanged journal cold and completes one new
-message without replay. No child is Active. The unqualified JJ client draft
-remains in Notes change `lqqoypxx` (`567e9e95`), outside the active application.
-NOTES-07K and JJ capture/restart stay deferred until requested.
+message without replay. NOTES-09-FILES-C is complete in Notes `8e3da0be` /
+E-AI-044: complete bounded streaming and the refreshed review app are qualified
+for local Codex. No child is Active. The unqualified JJ client draft remains in
+Notes change `lqqoypxx` (`567e9e95`), outside the active application. NOTES-07K
+and JJ capture/restart stay deferred until requested.
 
 The delivered focused profile is **Notes AI chat with local file transcripts and
 cold saved-history reopen**. The original M33.5 target of pinned history/diffs
@@ -516,7 +518,8 @@ that every task in it is executing simultaneously.
 shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
 NOTES-07L-FILES and NOTES-09-FILES-A are complete under the revised local-file
-priority. NOTES-09-FILES-B completes durable local recovery; no child is Active.
+priority. NOTES-09-FILES-B completes durable local recovery; NOTES-09-FILES-C
+completes bounded native Codex streaming. No child is currently Active.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
 parity. The shared AI UI and local-file chat are working; JJ capture awaits its
 deferred managed backend integration.
@@ -605,6 +608,12 @@ deferred managed backend integration.
 - [x] **NOTES-09-FILES — Complete for the local Codex profile:** E-AI-042/043
       qualify normal saving, cancellation and cold saved/unknown recovery. Wider
       provider/platform/distribution gates remain separate.
+- [x] **NOTES-09-FILES-C — Complete:** Notes E-AI-044 and Lapis AI `d3a1785b`
+      preserve complete output across bounded helper, native, renderer and UI
+      delivery. Real Codex saves all 500 requested lines exactly; crash/cold
+      recovery still retains the unknown prompt without replay. The refreshed
+      ordinary preview preserves existing notes and conversations. Broader
+      provider, JJ, application-tool and distribution gates remain separate.
 - [ ] **NOTES-07K — Deferred by user:** Native JJ listing/creation/pinned reads;
       preserve the client draft for later, without enabling it now.
 - [ ] **NOTES-07L — Deferred JJ capture:** Run bundled lapis-agent with native

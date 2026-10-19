@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-036 records Notes E-AI-044 bounded native Codex streaming:
+all 500 response lines persist exactly, with no duplicate prompt or pending
+intent, while crash/cold recovery retains unknown outcomes without replay. The
+normal preview is refreshed without resetting its data. JST-DOC-001/M33 JJ,
+tool, broader provider/platform, release and visual gates remain open.
+
 E-REUSABLE-PROGRESS-035 records Notes E-AI-043 local turn recovery: durable
 authored prompts, unknown outcomes, read-only restore and explicit continuation.
 Real Codex crash/cold recovery and focused UI checks qualify the local profile;
