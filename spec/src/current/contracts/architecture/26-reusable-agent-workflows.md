@@ -72,6 +72,18 @@ service or upstream JJ dependency. Hosts must durably retain sanitized records
 and matching progress before acknowledging them. The feature boundary neither
 supplies publication authority nor changes existing spool encodings.
 
+Explicit read-only imports may select the separate transient Codex snapshot
+reader. It reuses approved physical-file, complete-record, version and context
+checks without accepting or fabricating a durable acknowledgement. The bounded
+snapshot has no resume/persistence or publication capability. Consumers retain
+raw batches in native memory and may accept the snapshot only after the final
+unchanged-file fence; errors discard all tentative results. Incomplete final
+records, source replacement/rewrite/growth and byte limits refuse. Native
+sanitized observation conversion does not require an invented repository ID; the
+existing publication adapter still wraps the same observations with its real
+selected repository and original acknowledged cursor. Durable reader and spool
+formats, identities, receipts and ACK-before-progress rules are unchanged.
+
 The first `jj-store-conversations` slice extracts shared Control V3 stream
 framing and bounded per-participant assistant/tool accumulation. A host-injected
 sanitizer performs prefix replacement and final frame scanning; the library

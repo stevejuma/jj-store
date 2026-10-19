@@ -1,9 +1,9 @@
 # Application documentation
 
-E-REUSABLE-PROGRESS-047 records Notes 6081be31 / E-AI-054: IMPORT-01A completes
-the local snapshot journal and injected UI. Native sources remain IMPORT-01B;
-fixtures are not native proof. Review on 7491 passes 32 import and 8 consumer
-checks; all 559 AI tests pass. JJ persistence and original
+E-REUSABLE-AGENTS-018 qualifies transient snapshot/privacy APIs for active
+IMPORT-01B; native Notes wiring is pending. E-REUSABLE-PROGRESS-047 records
+Notes 6081be31 / E-AI-054 local import UI/journal, 559 AI tests and 40 Storybook
+checks. The 7491 sources remain fixtures. JJ persistence and original
 JST-DOC-001/JST-ARCH-007/M33 gates remain unchanged.
 
 E-REUSABLE-PROGRESS-046 records Notes 8f5b9395 / E-AI-053 exact native

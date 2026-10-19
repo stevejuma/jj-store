@@ -1,5 +1,17 @@
 # Readers, durability, identity and supervision
 
+The separate transient Codex snapshot API serves explicit read-only host
+previews. It reuses physical/header/context and bounded complete-record checks,
+but neither accepts nor fabricates durable capture acknowledgements. Every batch
+remains tentative until the unchanged-file completion fence; replacement,
+rewrite, growth, an incomplete final record or a configured byte-limit failure
+invalidates the entire snapshot. Raw batches stay native-only. The neutral
+sanitized observation method needs no repository ID and grants no source lease,
+enrollment, spool progress, publication or process authority. Existing durable
+readers still repeat the exact batch until their original host ACK is verified;
+native publication and existing capture/privacy/durability gates remain
+unchanged.
+
 Automatic capture derives its authenticated actor from the installation identity
 under the fixed `agent-capture-worker` purpose. Source native identities and
 captured AgentIdentity never select that principal. Preparing this authority is

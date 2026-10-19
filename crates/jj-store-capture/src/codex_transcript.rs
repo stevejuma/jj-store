@@ -15,6 +15,8 @@ pub(crate) mod context;
 pub(crate) mod file;
 mod poll;
 mod progress;
+mod snapshot;
+pub use snapshot::{CodexSnapshotReader, SnapshotPoll, SnapshotSummary};
 #[cfg(feature = "application")]
 pub(crate) mod recovery;
 use crate::codex_discovery::PhysicalId;
@@ -252,6 +254,11 @@ impl CodexTranscriptReader {
         if pending.batch.batch_id != ack.batch_id || pending.batch.cursor.position != ack.position {
             return Err("transcript acknowledgement mismatch".into());
         }
+        self.advance_pending();
+        Ok(())
+    }
+    // Private consumption shared with the separate transient snapshot mode.
+    fn advance_pending(&mut self) {
         let pending = self.pending.take().expect("checked pending batch");
         let SourcePositionV1::JsonLines {
             complete_byte_offset,
@@ -266,6 +273,5 @@ impl CodexTranscriptReader {
         self.hash = pending.hash;
         self.stamp = pending.stamp;
         self.history = pending.history;
-        Ok(())
     }
 }

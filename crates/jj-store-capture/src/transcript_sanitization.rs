@@ -76,6 +76,31 @@ impl CodexTranscriptBatch {
         profile: &NormalizerProfileV1,
         sanitizer: Option<&TranscriptSanitizer>,
     ) -> CaptureResult<ReaderCapture> {
+        Ok(ReaderCapture {
+            repository,
+            profile: profile.clone(),
+            cursor: self.cursor.clone(),
+            batch: self.observations(profile, sanitizer)?,
+            metadata: self.metadata.clone(),
+            thread_binding: None,
+        })
+    }
+    /// Native-only privacy projection; grants no durable progress or repository authority.
+    pub fn sanitized_observations(
+        &self,
+        profile: &NormalizerProfileV1,
+        sanitizer: &TranscriptSanitizer,
+    ) -> CaptureResult<SanitizedObservationBatchV1> {
+        if self.directory().is_none() {
+            return Err("transcript directory context unavailable".into());
+        }
+        self.observations(profile, Some(sanitizer))
+    }
+    fn observations(
+        &self,
+        profile: &NormalizerProfileV1,
+        sanitizer: Option<&TranscriptSanitizer>,
+    ) -> CaptureResult<SanitizedObservationBatchV1> {
         profile.validate()?;
         self.cursor.validate()?;
         if !matches!(
@@ -159,13 +184,6 @@ impl CodexTranscriptBatch {
             observations,
         };
         batch.validate()?;
-        Ok(ReaderCapture {
-            repository,
-            profile: profile.clone(),
-            cursor: self.cursor.clone(),
-            batch,
-            metadata: self.metadata.clone(),
-            thread_binding: None,
-        })
+        Ok(batch)
     }
 }

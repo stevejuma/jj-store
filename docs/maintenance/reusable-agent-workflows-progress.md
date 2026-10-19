@@ -43,14 +43,21 @@ whole stage.
 
 ## Current checkpoint
 
+- **Active: IMPORT-01B.** E-REUSABLE-AGENTS-018 qualifies the shared transient
+  snapshot reader and repository-neutral native observation sanitizer. It reuses
+  the existing parser without durable ACKs or invented repository identities.
+  All 195 application-feature and 75 headless capture tests pass; existing
+  fixture child skips remain explicit. Native Notes worker/admission, truthful
+  unknown-tool projection, actual-file import and app adoption are next. This
+  source prerequisite does not make ordinary native import available.
+
 - **Completed: IMPORT-01A local journal and preview.** Notes `6081be31` /
   E-AI-054 qualifies read-only snapshot storage, exact deduplication,
   interrupted writes, untrusted source provenance and production preview UI. All
   559 AI tests, 40 focused import/context cases and 40 affected interaction/axe
   checks pass. The review is on **7491**; 7490 belongs to another desktop
   checkout and remains untouched. Native discovery/read/privacy is IMPORT-01B,
-  still pending. No child is Active at this checkpoint; JJ persistence stays
-  deferred.
+  still pending. IMPORT-01B is Active; JJ persistence stays deferred.
 
 - **Completed: DISCUSS-01B local continued discussions.** Notes `8f5b9395` /
   E-AI-053 qualifies exact native code/table/tool comments, continued threads
@@ -553,12 +560,12 @@ AGENT-01A completes recipient selection and saved tags. Independent logical
 participants and multiple-recipient delivery are complete in AGENT-01B1/B2.
 AGENT-01C completes persisted bounded local queues and explicit recovery.
 AGENT-01 and DISCUSS-01A/B are Complete for the local-file profile. IMPORT-01A
-is Complete for the local journal and injected preview UI. No child is Active at
-this checkpoint. Native IMPORT-01B is next; opt-in capture follows. Original JJ
-and wider qualification gates remain open, including the retained GAP-11
-timeout. NOTES-05F/05G/05H complete the initial canvas/header port, not full
-source-view parity. The shared AI UI and local-file chat are working; JJ capture
-awaits its deferred managed backend integration.
+is Complete for the local journal and injected preview UI. **IMPORT-01B is
+Active:** reusable native snapshot acquisition, then ordinary app wiring. Opt-in
+capture follows. Original JJ and wider qualification gates remain open,
+including the retained GAP-11 timeout. NOTES-05F/05G/05H complete the initial
+canvas/header port, not full source-view parity. The shared AI UI and local-file
+chat are working; JJ capture awaits its deferred managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -781,7 +788,7 @@ awaits its deferred managed backend integration.
       AI tests and 40 affected Storybook checks pass, with strict types and
       ownership/document audits. Production UI uses injected fixture sources in
       Storybook; actual native source discovery/import remains IMPORT-01B.
-- [ ] **IMPORT-01B — Waiting:** Native Codex discovery, bounded reading/privacy,
+- [ ] **IMPORT-01B — Active:** Native Codex discovery, bounded reading/privacy,
       actual local-file import and ordinary review-app adoption.
 - [ ] **CAPTURE-01:** Add opt-in local automatic capture with source lifecycle,
       progress, acknowledgement and privacy qualification.

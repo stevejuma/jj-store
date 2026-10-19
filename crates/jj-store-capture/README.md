@@ -30,15 +30,25 @@ For a host-owned capture pipeline, disable the application feature:
 jj-store-capture = { version = "0.1.0", default-features = false }
 ```
 
-This retains source discovery, leases, bounded readers, sanitization and progress
-without service, RPC, WAL or upstream JJ dependencies. `CodexTranscriptReader`
-returns the same pending batch until an exact `DurableCaptureAck` arrives. The
-host must sanitize, durably retain the accepted records and progress, and only
-then acknowledge. Raw source records must never reach logs, UI or persistence.
-A source lease does not authorize repository writes.
+This retains source discovery, leases, bounded readers, sanitization and
+progress without service, RPC, WAL or upstream JJ dependencies.
+`CodexTranscriptReader` returns the same pending batch until an exact
+`DurableCaptureAck` arrives. The host must sanitize, durably retain the accepted
+records and progress, and only then acknowledge. Raw source records must never
+reach logs, UI or persistence. A source lease does not authorize repository
+writes.
 
 The default `application` feature additionally provides the existing
 `AgentCaptureSpool`, prepared request recovery and native/local publishers.
 Applications needing that private journal keep defaults enabled. Headless hosts
 supply their own durable journal and publication adapter; disabling defaults
 does not translate or migrate an existing application spool.
+
+For an explicit read-only import preview, use
+`codex_transcript::CodexSnapshotReader` with an approved candidate and a byte
+limit. Poll tentative native batches until `SnapshotPoll::Complete`; discard
+them on any error. This mode reuses bounded physical-file and record checks
+without a durable ACK or resume capability.
+`CodexTranscriptBatch::sanitized_observations` applies native privacy without a
+repository ID. Publish/display only the sanitized, complete accepted snapshot;
+keep raw batches native and never treat snapshot completion as publication.
