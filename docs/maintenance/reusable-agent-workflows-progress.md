@@ -43,6 +43,15 @@ whole stage.
 
 ## Current checkpoint
 
+- **Completed: IMPORT-01A local journal and preview.** Notes `6081be31` /
+  E-AI-054 qualifies read-only snapshot storage, exact deduplication,
+  interrupted writes, untrusted source provenance and production preview UI. All
+  559 AI tests, 40 focused import/context cases and 40 affected interaction/axe
+  checks pass. The review is on **7491**; 7490 belongs to another desktop
+  checkout and remains untouched. Native discovery/read/privacy is IMPORT-01B,
+  still pending. No child is Active at this checkpoint; JJ persistence stays
+  deferred.
+
 - **Completed: DISCUSS-01B local continued discussions.** Notes `8f5b9395` /
   E-AI-053 qualifies exact native code/table/tool comments, continued threads
   and independent reply destinations through two cold History reopens. Sibling
@@ -244,7 +253,7 @@ Active. The stages below are not being worked on simultaneously.
 | 4. Local history and Tauri (M33.4)          | Started; gate open | Headless history, lossless client, Notes admission/drain and cold visible history | Native event ownership                                                |
 | 5. First usable Notes milestone (M33.5)     | Pending            | Qualified history prerequisites, existing Notes AI shell and injection seams      | One durable JJ-backed conversation and restart proof                  |
 | 6. Addressed agents and discussions (M33.6) | Pending            | Existing jj-store behavior available as the source reference                      | Shared addressing, queues, anchors and recovery in downstream clients |
-| 7. Imports and opt-in capture (M33.7)       | Pending            | Reusable acquisition prerequisites                                                | Explicit deduplicated import and opt-in automatic local capture       |
+| 7. Imports and opt-in capture (M33.7)       | Started; gate open | Local snapshot journal and production preview UI                                  | Native source/privacy and opt-in automatic capture                    |
 | 8. Standalone qualification (M33.8)         | Pending            | Some independent Rust/package consumers pass                                      | Complete downstream, packaging, documentation and qualification gates |
 
 ## Completed slices
@@ -543,13 +552,13 @@ the real Codex local-file workflow; wider effect-fault qualification waits.
 AGENT-01A completes recipient selection and saved tags. Independent logical
 participants and multiple-recipient delivery are complete in AGENT-01B1/B2.
 AGENT-01C completes persisted bounded local queues and explicit recovery.
-AGENT-01 and DISCUSS-01A/B are Complete for the local-file profile. No child is
-Active at this checkpoint. IMPORT-01 is the next pending local-file slice;
-opt-in automatic capture follows. Original JJ and wider qualification gates
-remain open, including the retained GAP-11 timeout. NOTES-05F/05G/05H complete
-the initial canvas/header port, not full source-view parity. The shared AI UI
-and local-file chat are working; JJ capture awaits its deferred managed backend
-integration.
+AGENT-01 and DISCUSS-01A/B are Complete for the local-file profile. IMPORT-01A
+is Complete for the local journal and injected preview UI. No child is Active at
+this checkpoint. Native IMPORT-01B is next; opt-in capture follows. Original JJ
+and wider qualification gates remain open, including the retained GAP-11
+timeout. NOTES-05F/05G/05H complete the initial canvas/header port, not full
+source-view parity. The shared AI UI and local-file chat are working; JJ capture
+awaits its deferred managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -765,6 +774,15 @@ integration.
       deferred. GAP-11 remains separately unproven.
 - [ ] **IMPORT-01:** Add explicit imports with deduplication and source
       provenance.
+- [x] **IMPORT-01A — Complete (local files):** Notes `6081be31` / E-AI-054
+      qualifies the local preparing/complete journal, exact source/content
+      collision refusal, read-only snapshots and cold/unknown-write retry.
+      Captured messages retain untrusted attribution in shared context. All 559
+      AI tests and 40 affected Storybook checks pass, with strict types and
+      ownership/document audits. Production UI uses injected fixture sources in
+      Storybook; actual native source discovery/import remains IMPORT-01B.
+- [ ] **IMPORT-01B — Waiting:** Native Codex discovery, bounded reading/privacy,
+      actual local-file import and ordinary review-app adoption.
 - [ ] **CAPTURE-01:** Add opt-in local automatic capture with source lifecycle,
       progress, acknowledgement and privacy qualification.
 - [ ] **QUAL-01:** Complete remaining contract/compatibility and source
@@ -776,6 +794,13 @@ integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [Import AI sessions: select and preview](http://127.0.0.1:7491/iframe.html?id=desktop-ai-import-review--select-and-preview&viewMode=story)
+- [Saved read-only imported snapshot](http://127.0.0.1:7491/iframe.html?id=desktop-ai-import-review--saved-read-only-snapshot&viewMode=story)
+
+The qualified history/AI checkout is now served on 7491. The older 7490 links
+below identify the previous review location; that listener is currently owned by
+a separate desktop checkout. Both services are preserved.
 
 - [Continue a restored discussion](http://127.0.0.1:7490/iframe.html?id=desktop-ai-comment-history--continue-restored-thread&viewMode=story)
 - [Grouped tools in Document and Classic](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--grouped-tool-disclosures&viewMode=story)
