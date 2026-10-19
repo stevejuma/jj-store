@@ -1,5 +1,12 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-042 records Notes E-AI-049: independent logical
+participants, retained attribution and working-state ownership while switching.
+All 474 AI tests, 140 affected story cases and fresh native Codex acceptance
+pass. The refreshed ordinary app preserves all 131 vault files. AGENT-01B1 is
+Complete; multi-delivery, queues and original M33/JJ/release gates remain open
+under JST-DOC-001. No implementation child is Active at this checkpoint.
+
 E-REUSABLE-PROGRESS-041 records Notes E-AI-048: removable agent recipients,
 exact saved tags and retained context after failed/unknown Send. All 469 AI
 tests, 120 affected story cases and fresh real Codex/native acceptance pass. The

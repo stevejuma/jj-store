@@ -530,11 +530,11 @@ transport prerequisite. TOOLS-01B is complete for authenticated native IPC,
 owned coordinator/launch lifetime and durable turn gates. TOOLS-01C1 qualifies
 the real Codex local-file workflow; wider effect-fault qualification waits.
 AGENT-01A completes recipient selection and saved tags. Independent logical
-participants, multiple-recipient routing and queued delivery remain next; no
-implementation child is Active at this verified checkpoint. NOTES-05F/05G/05H
-complete the initial canvas/header port, not full source-view parity. The shared
-AI UI and local-file chat are working; JJ capture awaits its deferred managed
-backend integration.
+participants are complete in AGENT-01B1. Multiple-recipient routing and queued
+delivery follow; no implementation child is Active at this verified checkpoint.
+NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
+parity. The shared AI UI and local-file chat are working; JJ capture awaits its
+deferred managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -699,8 +699,19 @@ backend integration.
       source audits and fresh real Codex/native read/edit/cancel/cold History
       pass. Ordinary native pointer selection works; all 131 review-vault files
       remain byte-identical. Multiple recipients still refuse explicitly.
-- [ ] **AGENT-01B:** Add independent logical participants and explicit
-      multiple-recipient delivery, retaining per-recipient outcomes.
+- [ ] **AGENT-01B — In progress:** Add independent logical participants and
+      explicit multiple-recipient delivery, retaining per-recipient outcomes.
+- [x] **AGENT-01B1 — Complete:** Notes `40141fc5` / E-AI-049 keeps logical
+      participants distinct from shared runtime/native bindings and preserves
+      saved attribution in Document/Classic and bounded context handoffs.
+      Switching back uses only that participant's verified cursor. Old session
+      detachment cannot clear the new turn's working state. All 474 AI tests,
+      140 affected interaction/axe cases, strict types and source audits pass,
+      along with fresh real Codex read/edit/cancel/cold History. Ordinary review
+      update preserves all 131 vault files. Independent custom aliases are
+      qualified by controller/catalog fixtures; multi-delivery stays pending.
+- [ ] **AGENT-01B2:** Add explicit multiple-recipient dispatch with one authored
+      message and separate durable delivery outcomes.
 - [ ] **AGENT-01C:** Add persisted bounded queues with explicit cancellation and
       unknown-outcome recovery; no implicit replay on restart.
 - [ ] **DISCUSS-01:** Add exact message/tool/code discussion anchors and
@@ -718,6 +729,8 @@ backend integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [Independent participants sharing one runtime](http://127.0.0.1:7490/iframe.html?id=desktop-ai-addressed-messages--independent-participants&viewMode=story)
 
 - [Addressed Codex message ready to send](http://127.0.0.1:7490/iframe.html?id=desktop-ai-addressed-messages--ready-to-send&viewMode=story)
 
