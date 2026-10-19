@@ -523,10 +523,10 @@ NOTES-07L-FILES and NOTES-09-FILES-A are complete under the revised local-file
 priority. NOTES-09-FILES-B completes durable local recovery; NOTES-09-FILES-C
 completes bounded native Codex streaming. D1/D2 complete stable local anchors
 and acknowledged durable comment context. TOOLS-01A completes the reusable MCP
-transport prerequisite. No child is currently Active; native authentication and
-Notes wiring are next. NOTES-05F/05G/05H complete the initial canvas/header
-port, not full source-view parity. The shared AI UI and local-file chat are
-working; JJ capture awaits its deferred managed backend integration.
+transport prerequisite. TOOLS-01B is the sole Active child for authenticated
+native IPC and owned binding lifetime. NOTES-05F/05G/05H complete the initial
+canvas/header port, not full source-view parity. The shared AI UI and local-file
+chat are working; JJ capture awaits its deferred managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -648,8 +648,21 @@ working; JJ capture awaits its deferred managed backend integration.
       verified Cargo archive, crate README and full embedding guide are
       available. This enables no native tool access by itself; the Notes runtime
       retains its disabled MCP capability.
-- [ ] **TOOLS-01B:** Add authenticated native IPC and owned bridge lifetime,
-      reusing the existing AppToolHost, registry, scope and approvals.
+- [ ] **TOOLS-01B — Active:** Add authenticated native IPC and owned bridge
+      lifetime, reusing the existing AppToolHost, registry, scope and approvals.
+- [x] **TOOLS-01B1 — Complete:** Notes `34ae452a` / E-AI-046 supplies a
+      native-only authenticated socket and bundled stdio role, strict opaque IPC
+      and exact original-owner cleanup. Cold helper tests pass without Tauri
+      startup. Cancellation retains actual callback ownership; errors after
+      dispatch remain unknown. Current policy is rechecked after
+      approval/capture waits. Lapis AI `96ced413` validates snapshots before
+      allocation and redacts MCP environment diagnostics. The runtime capability
+      remains disabled.
+- [ ] **TOOLS-01B2:** Adapt the existing conversation coordinator, approval/tool
+      events and status publication to this native bridge. Connect native Codex
+      launch admission and arm only after durable turn preparation; gate
+      completion on actual callback drain. This is the remaining work in the
+      active TOOLS-01B task.
 - [ ] **TOOLS-01C:** Wire Codex to the admitted bridge and qualify actual reads,
       guarded edits, cancellation, unknown outcomes and cold cleanup while
       retaining local transcript files. Original M10.3 gates remain separate.

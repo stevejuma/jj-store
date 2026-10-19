@@ -1,5 +1,11 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-039 records TOOLS-01B1: authenticated native MCP transport,
+strict main-window IPC, cold helper startup and actual callback drain. Policy
+changes after snapshot/approval refuse dispatch; uncertain effects retain their
+original identity. TOOLS-01B remains the sole active task for coordinator
+wiring; actual Codex tools, JJ persistence and original M33 gates stay open.
+
 E-REUSABLE-PROGRESS-036 records Notes E-AI-044 bounded native Codex streaming:
 all 500 response lines persist exactly, with no duplicate prompt or pending
 intent, while crash/cold recovery retains unknown outcomes without replay. The
