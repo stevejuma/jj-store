@@ -71,3 +71,11 @@ JST-JJ-003/005 identities/read behavior and adds no writer lease, capture, head
 reconciliation or transfer. Bounds/unavailable semantics follow
 [automatic vault backup](../local-jj/32-automatic-vault-backup.md)
 (JST-LOCAL-007; E-VAULT-BACKUP-016).
+
+Indexed history extraction exposes exact checkpoint parent IDs and immutable
+changed-file deltas, including deletions and native content IDs. Each delta page
+is bounded to eight paths and five seconds; eligible UTF-8 text remains bounded
+to one MiB. Retained-object checks precede source access. These read methods
+preserve JST-JJ-003/005 identities, take no working-copy writer lease and cannot
+initialize, reconcile or snapshot a repository. The server-free text projection
+and its resumable frontier remain disposable jj-vault-owned state.

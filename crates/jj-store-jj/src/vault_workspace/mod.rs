@@ -11,6 +11,7 @@ mod history;
 mod initialize;
 pub use history::{
     CheckpointDivergence, HistoryFile, HistoryFiles, HistoryPage, HistoryReader, HistoryRevision,
+    IndexFile, IndexFiles, IndexRevision,
 };
 mod remote;
 mod restore;

@@ -1,5 +1,6 @@
 //! Rebuildable changed-version text/path/metadata projection, never restore authority.
 mod cache;
+pub mod indexed;
 mod native;
 pub use jj_store_jj::vault_workspace::{HistoryFile, HistoryFiles, HistoryPage, HistoryRevision};
 pub use native::NativeHistory;

@@ -144,3 +144,14 @@ remain unavailable, never partial totals or zero. Each direction is bounded to
 initialize storage, acquire a working-copy mutation lease, snapshot files,
 reconcile heads or fetch a remote. Source paths and credentials remain
 host-owned.
+
+Historical indexed search MUST remain a disposable, server-independent native
+projection. It records each retained checkpoint and its explicit parents, indexes
+each immutable eligible file body once, and links changed paths and deletions to
+exact checkpoints. Author/date filters select version-changing checkpoints.
+Current exclusions suppress historical results. Bounded background batches run
+after publication without delaying capture and resume their durable frontier
+on startup; incomplete checkpoints never report full index coverage. Queries
+retain usable partial results, fence obsolete generations and expose progress.
+Missing or corrupt projections rebuild without modifying native history. Search
+activation and guarded restore always resolve native revision/path identities.
