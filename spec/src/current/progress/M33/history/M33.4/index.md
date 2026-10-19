@@ -47,19 +47,9 @@ not a completion gate selection.
 | [E-REUSABLE-PROGRESS-031](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-031/index.md) | 2026-10-18 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-032](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-032/index.md) | 2026-10-18 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-033](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-033/index.md) | 2026-10-18 | pass            | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-034](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-034/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-035](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-035/index.md)
-| 2026-10-19 | pending | Original outcome |
+| [E-REUSABLE-PROGRESS-034](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-034/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-035](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-035/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-036](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-036/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-037](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-037/index.md) | 2026-10-19 | pass            | Original outcome |
 
 <!-- generated-navigation -->
-
-## Pages
-
-|
-[E-REUSABLE-PROGRESS-036](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-036/index.md)
-| 2026-10-19 | pass | Original outcome |

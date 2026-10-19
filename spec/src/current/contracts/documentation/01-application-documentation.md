@@ -328,3 +328,7 @@ The delivery checklist and Notes E-REPO-007 distinguish the requested repository
 view port from durable conversation delivery. Borrowed graph/identifier/body
 sources retain attribution; Storybook, source-package and cold native read
 evidence remain separate from visual approval and managed conversation gates.
+
+E-REUSABLE-PROGRESS-037 records stable live/durable local comment anchors and
+acknowledged comments-only Codex delivery. The checklist distinguishes native
+file recovery from JJ store publication and retained wider gates.

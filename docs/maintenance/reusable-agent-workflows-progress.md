@@ -9,17 +9,19 @@ standing implementation approval on 2026-10-18. Focused checks accompany each
 slice; broad provider/platform/release and visual baseline qualification remain
 deferred.
 
-**Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A/B/C.** Notes
-E-AI-042 qualifies real installed Codex chat, bounded file context,
+**Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A/B/C/D1/D2.**
+Notes E-AI-042 qualifies real installed Codex chat, bounded file context,
 cancellation, local saving and cold History reopen. E-AI-043 adds pre-dispatch
 authored-message and intent durability, conservative unknown recovery and
 explicit new-message continuation. Its isolated real Codex test kills the app
 after streamed output, reopens the unchanged journal cold and completes one new
 message without replay. NOTES-09-FILES-C is complete in Notes `8e3da0be` /
 E-AI-044: complete bounded streaming and the refreshed review app are qualified
-for local Codex. No child is Active. The unqualified JJ client draft remains in
-Notes change `lqqoypxx` (`567e9e95`), outside the active application. NOTES-07K
-and JJ capture/restart stay deferred until requested.
+for local Codex. E-AI-045 completes D1/D2: stable source anchors and
+acknowledged local comments survive cold History reopen, including comments-only
+Codex turns. The unqualified JJ client draft remains in Notes change `lqqoypxx`
+(`567e9e95`), outside the active application. NOTES-07K and JJ capture/restart
+stay deferred until requested.
 
 The delivered focused profile is **Notes AI chat with local file transcripts and
 cold saved-history reopen**. The original M33.5 target of pinned history/diffs
@@ -519,7 +521,8 @@ shared runtime hook and NOTES-06B supplies the qualified Tauri factory.
 NOTES-06C/D must connect the Notes capture owner and qualify the complete path.
 NOTES-07L-FILES and NOTES-09-FILES-A are complete under the revised local-file
 priority. NOTES-09-FILES-B completes durable local recovery; NOTES-09-FILES-C
-completes bounded native Codex streaming. No child is currently Active.
+completes bounded native Codex streaming. D1/D2 complete stable local anchors
+and acknowledged durable comment context. No child is currently Active.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
 parity. The shared AI UI and local-file chat are working; JJ capture awaits its
 deferred managed backend integration.
@@ -614,6 +617,17 @@ deferred managed backend integration.
       recovery still retains the unknown prompt without replay. The refreshed
       ordinary preview preserves existing notes and conversations. Broader
       provider, JJ, application-tool and distribution gates remain separate.
+- [x] **NOTES-09-FILES-D1 — Complete:** Notes E-AI-045 gives live and saved
+      message/tool blocks identical identities, preserving source provenance and
+      avoiding duplicate assistant entries after close.
+- [x] **NOTES-09-FILES-D2 — Complete:** Notes E-AI-045 persists submitted
+      comment captures before dispatch and restores only exact acknowledged
+      feedback. Code/table stories retain original quotes and row context, Sent
+      status, both presentations and continuation handoff. Real installed Codex
+      accepts a comments-only turn; cold History restores visible inline
+      feedback with unchanged transcript and no replay. File snapshots stay
+      transient; JJ persistence remains deferred. One native pre-dispatch
+      startup timeout is retained; the unchanged isolated500-line check passes.
 - [ ] **NOTES-07K — Deferred by user:** Native JJ listing/creation/pinned reads;
       preserve the client draft for later, without enabling it now.
 - [ ] **NOTES-07L — Deferred JJ capture:** Run bundled lapis-agent with native
@@ -647,6 +661,7 @@ deferred managed backend integration.
 
 - [AI document conversation](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--document-conversation&viewMode=story)
 - [AI comments as context](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--comments-as-context&viewMode=story)
+- [Restored local code/table comments](http://127.0.0.1:7490/iframe.html?id=desktop-ai-comment-history--restored-code-and-table-feedback&viewMode=story)
 
 The rebuilt native review app also runs real Codex with local files; its
 file-context conversation is open in the main panel after cold History reopen.
