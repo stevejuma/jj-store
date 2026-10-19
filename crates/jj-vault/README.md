@@ -60,3 +60,13 @@ For Forgejo, the native host supplies `GitCredentials::basic` with the approved
 account login and PAT. GitHub retains `GitCredentials::token`. Neither type is
 printable or serializable; selected endpoint/branch guards and original push
 recovery are unchanged.
+
+Hosts can offer external or root `.jj` storage using `Storage::new` with a
+host-owned external binding and separate private control directory. Call
+`recover()` before starting capture, and use revision-guarded `change()` for an
+explicit layout choice. The move archives the original native repository and
+retains receipt lineage. A failed move can be resumed with its original request;
+`rollback()` keeps the original layout only before installation. Stop owned
+capture and drain readers before changing layout, then bind fresh readers and
+restart capture using `binding()`. All migration work belongs on a native
+worker.

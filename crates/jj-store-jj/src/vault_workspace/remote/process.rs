@@ -4,6 +4,7 @@ use std::process::Stdio;
 use tokio::{io::AsyncReadExt as _, process::Command};
 impl RemoteTransfer {
     pub(super) async fn run(&self, args: &[&str]) -> Result<(Option<i32>, String)> {
+        let _transport = binding::transport(&self.binding, false)?;
         self.binding.verify_saved()?;
         let mut command = Command::new("git");
         command.env_clear();

@@ -107,3 +107,14 @@ login follow the selected provider. Git clone endpoints must remain on that
 account's origin/project. GitHub device OAuth and endpoint admission do not
 change; Forgejo OAuth, HTTP endpoints and hosted subpath profiles remain outside
 this initial provider profile.
+
+Storage layout is selected by versioned, device-private vault control records.
+Explicit migration serializes capture and Git transport, fences both layouts and
+archives the complete original managed repository before copying. A staged copy
+is installed only after native operation/commit identity validation; an existing
+unrelated destination is never overwritten. The original archive and request
+journal survive interruption. Startup recovery resumes the same request before
+capture can initialize anything. Current layout publication is atomic; a
+completed old request cannot undo a later layout choice. Native receipt bytes
+remain unchanged and stored path lineage permits their original recovery. Root
+metadata locks/staging live below excluded application-private state.

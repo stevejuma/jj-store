@@ -49,3 +49,10 @@ Native Git credential construction accepts an explicitly selected provider login
 for Forgejo. GitHub retains its existing username; header injection fails before
 transfer. Native JJ identities, immutable reads, operation codecs and
 publication/receipt semantics are unchanged (JST-JJ-003/005).
+
+Managed storage relocation copies the complete native repository/working-copy
+files and validates upstream operation/commit identities without re-encoding
+native fields. Current native heads are never reconciled during a move. The
+transport fence is independent of the capture lease, preserving network/capture
+separation; storage movement takes both exclusively. Path lineage belongs only
+to private binding/receipt metadata (JST-JJ-003/005, JST-LOCAL-007).

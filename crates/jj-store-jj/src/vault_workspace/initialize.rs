@@ -18,7 +18,11 @@ pub(super) async fn ensure(binding: &Binding, settings: &UserSettings) -> Result
     }
     let staged = tempfile::Builder::new()
         .prefix(".lapis-vault-init-")
-        .tempdir_in(binding.state.parent().ok_or(Error::Binding)?)?;
+        .tempdir_in(if binding.state == binding.root.join(".jj") {
+            binding::private(&binding.root, "vault-history-staging")?
+        } else {
+            binding.state.parent().ok_or(Error::Binding)?.to_owned()
+        })?;
     let metadata = staged.path().join("repo");
     fs::create_dir(&metadata)?;
     let repo = ReadonlyRepo::init(
@@ -71,6 +75,8 @@ pub(super) async fn ensure(binding: &Binding, settings: &UserSettings) -> Result
             version: 1,
             binding: binding.clone(),
             root_identity: root_identity(&binding.root)?,
+            previous_states: vec![],
+            relocations: vec![],
         })
         .map_err(jj)?,
     )?;

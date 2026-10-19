@@ -11,7 +11,7 @@ pub struct PendingPublication {
 impl PushIntent {
     // A physical-root relink does not change the vault's private repository.
     pub(super) fn bound_to(&self, binding: &Binding) -> bool {
-        self.binding.vault_id == binding.vault_id && self.binding.state == binding.state
+        self.binding.vault_id == binding.vault_id && binding.accepts_state(&self.binding.state)
     }
 }
 impl PushOutcome {

@@ -12,6 +12,7 @@ mod remote;
 mod restore;
 mod restore_io;
 mod scan;
+mod storage;
 mod sync;
 pub use batch_restore::{VaultRestorePreview, VaultRestoreRequest};
 pub use content::FileContents;
@@ -35,6 +36,7 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
+pub use storage::{PendingStorage, Storage, StorageLocation, StorageProgress, StorageStatus};
 pub use sync::{SyncConflict, SyncProposal, SyncResolution, SyncTerm};
 
 #[derive(Debug, thiserror::Error)]
@@ -68,6 +70,10 @@ struct StoredBinding {
     version: u32,
     binding: Binding,
     root_identity: String,
+    #[serde(default)]
+    previous_states: Vec<PathBuf>,
+    #[serde(default)]
+    relocations: Vec<String>,
 }
 fn root_identity(root: &Path) -> Result<String> {
     let metadata = fs::symlink_metadata(root)?;
@@ -92,6 +98,7 @@ impl Binding {
                 .vault_id
                 .bytes()
                 .all(|b| b.is_ascii_alphanumeric() || b == b'-')
+            || (self.state.exists() && fs::canonicalize(&self.state)? != self.state)
             || !self.root.is_absolute()
             || !self.state.is_absolute()
             || fs::canonicalize(&self.root)? != self.root
@@ -137,6 +144,9 @@ impl Session {
     pub async fn open(binding: Binding) -> Result<Self> {
         binding.validate()?;
         let lease = binding::lease(&binding)?;
+        if binding::fence(&binding)?.exists() {
+            return Err(Error::Busy);
+        }
         let settings = settings()?;
         initialize::ensure(&binding, &settings).await?;
         binding.verify_saved()?;

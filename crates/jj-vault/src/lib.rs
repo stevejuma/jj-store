@@ -7,9 +7,10 @@ mod schedule;
 pub mod search;
 mod sync;
 pub use jj_store_jj::vault_workspace::{
-    Binding, Capture, Checkpoint, FetchedHead, GitCredentials, PendingPublication, PushIntent,
-    PushOutcome, RemoteTarget, RemoteTransfer, RestorePreview, RestoreRequest, SyncConflict,
-    SyncProposal, SyncResolution, SyncTerm, VaultRestorePreview, VaultRestoreRequest,
+    Binding, Capture, Checkpoint, FetchedHead, GitCredentials, PendingPublication, PendingStorage,
+    PushIntent, PushOutcome, RemoteTarget, RemoteTransfer, RestorePreview, RestoreRequest, Storage,
+    StorageLocation, StorageProgress, StorageStatus, SyncConflict, SyncProposal, SyncResolution,
+    SyncTerm, VaultRestorePreview, VaultRestoreRequest,
 };
 pub use native::NativeRepository;
 pub use schedule::Timing;
