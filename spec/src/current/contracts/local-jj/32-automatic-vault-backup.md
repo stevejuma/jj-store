@@ -49,3 +49,10 @@ Implementation starts with external initialization and checkpoint primitives in
 upstream JJ imports. The Tauri bridge keeps writer permissions distinct from its
 existing read capabilities. The delivery ledger records implementation and
 verification separately; deferred checks do not satisfy original gates.
+
+Vault forge accounts use an installation-owned native manager and OS credential
+namespace, outside vaults and separate from jj-store accounts. The desktop may
+reuse jj-store's configured public GitHub OAuth client ID. Device codes and
+tokens never enter renderer persistence. Account work is bounded and runs off
+the UI thread; cancellation can revoke an in-flight authorization before it
+persists.
