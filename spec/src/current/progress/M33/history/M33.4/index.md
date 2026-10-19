@@ -52,33 +52,11 @@ not a completion gate selection.
 | [E-REUSABLE-PROGRESS-036](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-036/index.md) | 2026-10-19 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-037](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-037/index.md) | 2026-10-19 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-038](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-038/index.md) | 2026-10-19 | pass            | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-039](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-039/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-040](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-040/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-041](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-041/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-042](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-042/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-043](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-043/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-044](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-044/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-|
-[E-REUSABLE-PROGRESS-045](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-045/index.md)
-| 2026-10-19 | pass | Original outcome |
-
-<!-- generated-navigation -->
+| [E-REUSABLE-PROGRESS-039](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-039/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-040](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-040/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-041](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-041/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-042](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-042/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-043](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-043/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-044](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-044/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-045](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-045/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-046](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-046/index.md) | 2026-10-19 | pass            | Original outcome |

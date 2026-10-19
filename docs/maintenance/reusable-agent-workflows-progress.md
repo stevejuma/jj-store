@@ -43,13 +43,16 @@ whole stage.
 
 ## Current checkpoint
 
-- **Completed: DISCUSS-01A local reply navigation.** Notes c45dc84f / E-AI-052
-  binds acknowledged comments to exact completed native answers, with restored
-  source/reply controls in Document and Classic. All 518 AI tests, 280 affected
-  interaction/axe checks and actual Codex comment/cold-navigation acceptance
-  pass. The ordinary app refresh preserves all 131 vault files. Native
-  tools/multi/queue reruns pass; GAP-11 retains one intermittent Stop timeout.
-  DISCUSS-01B is pending; JJ persistence stays deferred.
+- **Completed: DISCUSS-01B local continued discussions.** Notes `8f5b9395` /
+  E-AI-053 qualifies exact native code/table/tool comments, continued threads
+  and independent reply destinations through two cold History reopens. Sibling
+  tool ownership and duplicate paired-tool IDs are repaired; Design Core
+  `e80b333d` repairs duplicated tool-comment paste. All 523 AI tests, 68
+  refreshed interaction/axe checks and actual Codex discussion/tool/multi/queue
+  targets pass. The ordinary app is refreshed: all 131 files remain, 130 are
+  byte-identical and only the workspace layout saves the reviewed conversation.
+  No child is Active; explicit imports are next. JJ persistence stays deferred,
+  and the earlier intermittent Stop timeout remains GAP-11.
 
 - **Completed review implementation: NOTES-08A — Document/classic AI review.**
   Production-owned AI components use the retained controller and catalog-only
@@ -540,12 +543,13 @@ the real Codex local-file workflow; wider effect-fault qualification waits.
 AGENT-01A completes recipient selection and saved tags. Independent logical
 participants and multiple-recipient delivery are complete in AGENT-01B1/B2.
 AGENT-01C completes persisted bounded local queues and explicit recovery.
-AGENT-01 and DISCUSS-01A are Complete for the local-file profile. No child is
-Active at this verified checkpoint. DISCUSS-01B is pending; original JJ and
-wider qualification gates remain open, including the retained GAP-11 timeout.
-NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
-parity. The shared AI UI and local-file chat are working; JJ capture awaits its
-deferred managed backend integration.
+AGENT-01 and DISCUSS-01A/B are Complete for the local-file profile. No child is
+Active at this checkpoint. IMPORT-01 is the next pending local-file slice;
+opt-in automatic capture follows. Original JJ and wider qualification gates
+remain open, including the retained GAP-11 timeout. NOTES-05F/05G/05H complete
+the initial canvas/header port, not full source-view parity. The shared AI UI
+and local-file chat are working; JJ capture awaits its deferred managed backend
+integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -750,8 +754,15 @@ deferred managed backend integration.
       navigation pass. Native tool/multi/queue reruns pass, and the updated
       ordinary review app preserves 131 files. GAP-11 retains the initial
       intermittent pending-edit cancellation timeout.
-- [ ] **DISCUSS-01B — Pending:** Qualify native code/table/tool selections,
-      continued threads and cold recovery; keep JJ discussion storage deferred.
+- [x] **DISCUSS-01B — Complete (local files):** Notes `8f5b9395` / E-AI-053
+      proves exact native code/table/tool anchors and original table-row
+      context, same-thread follow-up with a new comment identity, independent
+      reply controls and two cold read-only reopens. Real native paste/keyboard
+      input, 523 AI tests, 68 refreshed story checks and tool/multi/queue
+      regressions pass. The refreshed preview preserves all notes/transcripts;
+      its selected conversation updates only the workspace layout. Shared input
+      repair belongs to Design Core `e80b333d`; JJ discussion storage stays
+      deferred. GAP-11 remains separately unproven.
 - [ ] **IMPORT-01:** Add explicit imports with deduplication and source
       provenance.
 - [ ] **CAPTURE-01:** Add opt-in local automatic capture with source lifecycle,
@@ -765,6 +776,9 @@ deferred managed backend integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [Continue a restored discussion](http://127.0.0.1:7490/iframe.html?id=desktop-ai-comment-history--continue-restored-thread&viewMode=story)
+- [Grouped tools in Document and Classic](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--grouped-tool-disclosures&viewMode=story)
 
 - [Restored comments linked to agent replies](http://127.0.0.1:7490/iframe.html?id=desktop-ai-comment-history--linked-code-table-and-tool-replies&viewMode=story)
 

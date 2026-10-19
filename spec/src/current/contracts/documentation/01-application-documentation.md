@@ -1,5 +1,13 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-046 records Notes 8f5b9395 / E-AI-053 exact native
+code/table/tool discussions, continued threads and two cold History reopens.
+DISCUSS-01B is complete for local files; paired-tool identities and shared
+editor input are repaired. The refreshed app preserves notes/transcripts, with
+only the selected workspace layout changed. No child is Active; imports are
+next. JST-DOC-001/JST-ARCH-007 and original JJ/wider gates are unchanged; GAP-11
+retains the older intermittent Stop timeout despite passing reruns.
+
 E-REUSABLE-PROGRESS-045 records Notes c45dc84f / E-AI-052 exact local
 comment/reply links, public reader navigation and cold Codex recovery.
 DISCUSS-01A is complete for local files; native code/table/tool continuation and
