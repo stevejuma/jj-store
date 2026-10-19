@@ -1,5 +1,12 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-044 records Notes E-AI-051/33b442ed: bounded persisted local
+queues, FIFO delivery, cancellation, paused Stop and explicit cold Resume. All
+506 AI tests, 256 affected story checks and actual Codex queue/tool/multi-agent
+regressions pass. Review refresh preserves 131 files. AGENT-01C/01 are Complete
+for local files; no child is Active at this checkpoint. Original JST-DOC-001
+M33/JJ/provider/release and visual gates remain open.
+
 E-REUSABLE-PROGRESS-043 records Notes E-AI-050/d266b544: one authored local
 message, independent delivery outcomes and binding-scoped approvals. All 491 AI
 tests, 228 affected story checks and fresh real Codex multi-delivery plus

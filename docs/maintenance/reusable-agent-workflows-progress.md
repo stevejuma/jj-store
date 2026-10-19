@@ -531,7 +531,8 @@ owned coordinator/launch lifetime and durable turn gates. TOOLS-01C1 qualifies
 the real Codex local-file workflow; wider effect-fault qualification waits.
 AGENT-01A completes recipient selection and saved tags. Independent logical
 participants and multiple-recipient delivery are complete in AGENT-01B1/B2.
-AGENT-01C persisted bounded queues remain next. No child is Active at this
+AGENT-01C completes persisted bounded local queues and explicit recovery.
+AGENT-01 is Complete for the local-file profile. No child is Active at this
 verified checkpoint; original JJ and wider qualification gates remain open.
 NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
 parity. The shared AI UI and local-file chat are working; JJ capture awaits its
@@ -689,9 +690,10 @@ deferred managed backend integration.
       failures, delayed actual effects, lost replies and process teardown across
       the remaining provider/platform profiles. Source fixtures and one real
       pending-edit cancellation do not complete this original qualification.
-- [ ] **AGENT-01 — In progress:** Extract/adopt participant addressing,
-      persisted agent tags, multiple recipients and queued delivery with exact
-      identity/authority separation.
+- [x] **AGENT-01 — Complete (local files):** A/B/C deliver participant
+      addressing, saved tags, independent participants, multiple recipients and
+      bounded queues with exact identity/authority separation. Original JJ
+      persistence and broader provider/platform qualification remain deferred.
 - [x] **AGENT-01A — Complete:** Notes `6933af75` / E-AI-048 reuses the shared
       agent-token codec and adapts removable recipient pills. Exact metadata
       saves separately from authored text before dispatch and restores in
@@ -720,8 +722,15 @@ deferred managed backend integration.
       History without replay or JJ metadata; the read/edit/cancel regression
       also passes. The refreshed review app preserves all 131 vault files.
       Persisted queues and wider provider/platform/release gates remain open.
-- [ ] **AGENT-01C:** Add persisted bounded queues with explicit cancellation and
-      unknown-outcome recovery; no implicit replay on restart.
+- [x] **AGENT-01C — Complete:** Notes `33b442ed` / E-AI-051 persists up to
+      sixteen waiting messages, keeps Document/Classic editable and dispatches
+      FIFO after durable completion. Cancel retains exact captures; Stop pauses;
+      cold History sends nothing and explicit Resume sends only unstarted work.
+      Crash recovery keeps one stable notice. All 506 AI tests, 256 affected
+      story interaction/axe checks, strict types and source audits pass. Fresh
+      actual Codex proves queue/cancel/edit/Stop/cold Resume, original tools and
+      multi-recipient regressions pass, and the ordinary app refresh preserves
+      all 131 vault files. JJ and wider qualification remain deferred.
 - [ ] **DISCUSS-01:** Add exact message/tool/code discussion anchors and
       recovery using the owning stores; qualify unsupported profiles explicitly.
 - [ ] **IMPORT-01:** Add explicit imports with deduplication and source
@@ -737,6 +746,9 @@ deferred managed backend integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [Waiting follow-up messages](http://127.0.0.1:7490/iframe.html?id=desktop-ai-queued-messages--waiting-followups&viewMode=story)
+- [Explicit recovery after interruption](http://127.0.0.1:7490/iframe.html?id=desktop-ai-queued-messages--interrupted-before-checkpoint&viewMode=story)
 
 - [One message to multiple agents](http://127.0.0.1:7490/iframe.html?id=desktop-ai-multiple-recipients--one-authored-message&viewMode=story)
 - [Separate approvals for each participant](http://127.0.0.1:7490/iframe.html?id=desktop-ai-multiple-recipients--separate-approvals&viewMode=story)
