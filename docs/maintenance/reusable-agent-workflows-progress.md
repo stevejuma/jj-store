@@ -528,7 +528,9 @@ completes bounded native Codex streaming. D1/D2 complete stable local anchors
 and acknowledged durable comment context. TOOLS-01A completes the reusable MCP
 transport prerequisite. TOOLS-01B is complete for authenticated native IPC,
 owned coordinator/launch lifetime and durable turn gates. TOOLS-01C1 qualifies
-the real Codex local-file workflow; wider effect-fault qualification waits. No
+the real Codex local-file workflow; wider effect-fault qualification waits.
+AGENT-01A completes recipient selection and saved tags. Independent logical
+participants, multiple-recipient routing and queued delivery remain next; no
 implementation child is Active at this verified checkpoint. NOTES-05F/05G/05H
 complete the initial canvas/header port, not full source-view parity. The shared
 AI UI and local-file chat are working; JJ capture awaits its deferred managed
@@ -686,9 +688,21 @@ backend integration.
       failures, delayed actual effects, lost replies and process teardown across
       the remaining provider/platform profiles. Source fixtures and one real
       pending-edit cancellation do not complete this original qualification.
-- [ ] **AGENT-01:** Extract/adopt participant addressing, persisted agent tags,
-      multiple recipients and queued delivery with exact identity/authority
-      separation.
+- [ ] **AGENT-01 — In progress:** Extract/adopt participant addressing,
+      persisted agent tags, multiple recipients and queued delivery with exact
+      identity/authority separation.
+- [x] **AGENT-01A — Complete:** Notes `6933af75` / E-AI-048 reuses the shared
+      agent-token codec and adapts removable recipient pills. Exact metadata
+      saves separately from authored text before dispatch and restores in
+      History. Failed or unknown Send retains recipients and attachments. All
+      469 AI tests, 120 affected story interaction/axe cases, strict types,
+      source audits and fresh real Codex/native read/edit/cancel/cold History
+      pass. Ordinary native pointer selection works; all 131 review-vault files
+      remain byte-identical. Multiple recipients still refuse explicitly.
+- [ ] **AGENT-01B:** Add independent logical participants and explicit
+      multiple-recipient delivery, retaining per-recipient outcomes.
+- [ ] **AGENT-01C:** Add persisted bounded queues with explicit cancellation and
+      unknown-outcome recovery; no implicit replay on restart.
 - [ ] **DISCUSS-01:** Add exact message/tool/code discussion anchors and
       recovery using the owning stores; qualify unsupported profiles explicitly.
 - [ ] **IMPORT-01:** Add explicit imports with deduplication and source
@@ -704,6 +718,8 @@ backend integration.
       downstream clients.
 
 ## What can be viewed now
+
+- [Addressed Codex message ready to send](http://127.0.0.1:7490/iframe.html?id=desktop-ai-addressed-messages--ready-to-send&viewMode=story)
 
 - [AI document conversation](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--document-conversation&viewMode=story)
 - [AI comments as context](http://127.0.0.1:7490/iframe.html?id=desktop-ai-transcript-review--comments-as-context&viewMode=story)

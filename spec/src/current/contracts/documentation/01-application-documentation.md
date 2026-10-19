@@ -1,5 +1,12 @@
 # Application documentation
 
+E-REUSABLE-PROGRESS-041 records Notes E-AI-048: removable agent recipients,
+exact saved tags and retained context after failed/unknown Send. All 469 AI
+tests, 120 affected story cases and fresh real Codex/native acceptance pass. The
+ordinary app accepts pointer selection and preserves all 131 vault files.
+AGENT-01A is Complete; participants, multiple-recipient delivery and queues
+remain pending. JST-DOC-001 and original M33/JJ/release gates stay unchanged.
+
 E-REUSABLE-PROGRESS-040 records Notes E-AI-047: native coordinator/launch wiring
 and real Codex read, approved edit, pending-edit cancellation and cold local
 History. The refreshed review app preserves all 131 vault files. No child is
