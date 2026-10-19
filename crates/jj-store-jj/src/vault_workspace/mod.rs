@@ -9,7 +9,9 @@ mod capture;
 mod content;
 mod history;
 mod initialize;
-pub use history::{HistoryFile, HistoryFiles, HistoryPage, HistoryReader, HistoryRevision};
+pub use history::{
+    CheckpointDivergence, HistoryFile, HistoryFiles, HistoryPage, HistoryReader, HistoryRevision,
+};
 mod remote;
 mod restore;
 mod restore_io;

@@ -63,3 +63,11 @@ transfer. Native source identities remain unchanged; the managed ancestry join
 retains its own current tree. Prepared receipts recover publication before
 subsequent capture. Discovery, ordinary history reads and original workspace
 files/heads remain immutable (JST-JJ-003/005, JST-LOCAL-007).
+
+Immutable checkpoint divergence uses upstream native revsets at the reader's
+existing operation pin. Both directions compare retained checkpoint ancestry;
+concurrent capture cannot move that reader or change its totals. Counting keeps
+JST-JJ-003/005 identities/read behavior and adds no writer lease, capture, head
+reconciliation or transfer. Bounds/unavailable semantics follow
+[automatic vault backup](../local-jj/32-automatic-vault-backup.md)
+(JST-LOCAL-007; E-VAULT-BACKUP-016).

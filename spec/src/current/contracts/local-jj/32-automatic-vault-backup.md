@@ -134,3 +134,13 @@ the original repository and its independent read-only scope.
 Explicit stop fences the original adoption request even if native delivery has
 not begun. A delayed request cannot revive it. Terminal receipts never undo
 accepted ancestry or clear another request's active pointer.
+
+Immutable history readers MAY expose incoming/outgoing retained-checkpoint
+counts. Both ancestry differences MUST use the same admitted operation, compare
+the saved local checkpoint with an explicitly retained fetched checkpoint and
+exclude the mutable working-copy child. Missing anchors or exhausted bounds MUST
+remain unavailable, never partial totals or zero. Each direction is bounded to
+100,000 revisions and both share a two-second read budget. Counting MUST NOT
+initialize storage, acquire a working-copy mutation lease, snapshot files,
+reconcile heads or fetch a remote. Source paths and credentials remain
+host-owned.

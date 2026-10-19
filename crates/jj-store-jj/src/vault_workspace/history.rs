@@ -1,5 +1,7 @@
 //! Bounded immutable checkpoint history for a rebuildable search projection.
+mod divergence;
 use super::*;
+pub use divergence::CheckpointDivergence;
 use futures::{AsyncReadExt as _, StreamExt as _, TryStreamExt as _};
 use jj_lib::{backend::TreeValue, revset::RevsetExpression};
 use std::time::{Duration, Instant};

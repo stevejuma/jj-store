@@ -13,7 +13,7 @@ be recorded. M33's conversation gates and unrelated work remain unchanged.
 | M34.2 | Partial | M34.1       | JST-LOCAL-007 | Reusable capture coordinator, watch reconciliation and crash/close recovery                              | Qualify cold native lifecycle later    | E-VAULT-BACKUP-001,E-VAULT-BACKUP-002                                                          |
 | M34.3 | Partial | M34.2       | JST-LOCAL-007 | Usable local timeline, guarded restore and visible background status                                     | Deferred cold restore qualification    | E-VAULT-BACKUP-003                                                                             |
 | M34.4 | Partial | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Qualify cold app/provider flow later   | E-VAULT-BACKUP-004,E-VAULT-BACKUP-005,E-VAULT-BACKUP-006,E-VAULT-BACKUP-007                    |
-| M34.5 | Partial | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Qualify cold app/provider gates later  | E-VAULT-BACKUP-008,E-VAULT-BACKUP-009                                                          |
+| M34.5 | Partial | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Qualify cold app/provider gates later  | E-VAULT-BACKUP-008,E-VAULT-BACKUP-009,E-VAULT-BACKUP-016                                       |
 | M34.6 | Partial | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Deferred cold search/restore proof     | E-VAULT-BACKUP-010                                                                             |
 | M34.7 | Partial | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Deferred native/provider qualification | E-VAULT-BACKUP-011,E-VAULT-BACKUP-012,E-VAULT-BACKUP-013,E-VAULT-BACKUP-014,E-VAULT-BACKUP-015 |
 
@@ -56,13 +56,3 @@ acceptance and main integration remain open. M34.7 stays Active.
 <!-- generated-navigation -->
 
 ## Pages
-
-E-VAULT-BACKUP-014 integrates the source delivery with current main, preserving
-M33 evidence and the unrelated working progress edit. Production code matches
-the verified adoption slice exactly. M34/M34.7 are Partial because cold native
-app/provider and wider qualification remain deferred. No stage is marked Done.
-
-E-VAULT-BACKUP-015 corrects the optional rendered-book audit outcome: no
-generated HTML exists in the fresh source workspace. Canonical source validation
-passes; rendered-book link qualification remains deferred and is not claimed as
-passing.
