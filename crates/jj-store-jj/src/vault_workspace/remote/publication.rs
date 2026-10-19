@@ -1,5 +1,7 @@
+mod recovery;
 use super::*;
 use jj_lib::backend::CommitId;
+pub use recovery::PendingPublication;
 use std::io::{Read as _, Write as _};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -19,6 +21,7 @@ pub enum PushOutcome {
     Complete,
     Unknown,
     Stale,
+    Stopped,
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -138,7 +141,7 @@ impl RemoteTransfer {
     pub fn reserve(&self, intent: &PushIntent) -> Result<()> {
         self.binding.verify_saved()?;
         request_id(&intent.request_id)?;
-        if intent.binding != self.binding
+        if !intent.bound_to(&self.binding)
             || intent.endpoint != self.endpoint
             || intent.branch != self.branch
         {
@@ -165,7 +168,7 @@ impl RemoteTransfer {
             if receipt.version != 1 || receipt.intent != *intent {
                 return Err(Error::Binding);
             }
-            if matches!(receipt.outcome, PushOutcome::Complete | PushOutcome::Stale) {
+            if receipt.outcome.terminal() {
                 return Ok(());
             }
         } else {
@@ -193,11 +196,14 @@ impl RemoteTransfer {
     pub async fn publish(&self, intent: &PushIntent) -> Result<PushOutcome> {
         self.binding.verify_saved()?;
         request_id(&intent.request_id)?;
-        if intent.binding != self.binding
+        if !intent.bound_to(&self.binding)
             || intent.endpoint != self.endpoint
             || intent.branch != self.branch
         {
             return Err(Error::Binding);
+        }
+        if let Some(outcome) = self.finish_if_terminal(intent)? {
+            return Ok(outcome);
         }
         // Deserializable receipts do not constitute publication authority.
         // Reprove the pinned target and ancestry through the native repository.
@@ -243,7 +249,7 @@ impl RemoteTransfer {
                 if prior.version != 1 || prior.intent != original {
                     return Err(Error::Binding);
                 }
-                if original.binding != self.binding
+                if !original.bound_to(&self.binding)
                     || original.endpoint != self.endpoint
                     || original.branch != self.branch
                 {
@@ -251,7 +257,7 @@ impl RemoteTransfer {
                         "An earlier backup push needs observation using its original remote".into(),
                     ));
                 }
-                if prior.outcome != PushOutcome::Complete {
+                if !prior.outcome.terminal() {
                     if !self.observes_publication(&original.after).await? {
                         return Ok(PushOutcome::Unknown);
                     }
@@ -277,10 +283,8 @@ impl RemoteTransfer {
             save(&path, &receipt)?;
             receipt
         };
-        if matches!(receipt.outcome, PushOutcome::Complete | PushOutcome::Stale) {
-            if active.exists() {
-                fs::remove_file(&active)?;
-            }
+        if receipt.outcome.terminal() {
+            recovery::clear_active(&active, intent)?;
             return Ok(receipt.outcome);
         }
         let observed = self.observe().await?;
@@ -321,8 +325,7 @@ impl RemoteTransfer {
             }
         }
         save(&path, &receipt)?;
-        if matches!(receipt.outcome, PushOutcome::Complete | PushOutcome::Stale) && active.exists()
-        {
+        if receipt.outcome.terminal() && active.exists() {
             let original: PushIntent = read(&active)?;
             if original == *intent {
                 fs::remove_file(&active)?;

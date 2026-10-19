@@ -5,7 +5,7 @@ pub(super) mod publication;
 use super::*;
 use base64::{Engine as _, engine::general_purpose::STANDARD};
 use jj_lib::git;
-pub use publication::{PushIntent, PushOutcome};
+pub use publication::{PendingPublication, PushIntent, PushOutcome};
 use url::Url;
 use zeroize::Zeroizing;
 

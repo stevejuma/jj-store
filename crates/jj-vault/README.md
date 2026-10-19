@@ -33,3 +33,10 @@ candidates. `preview_sync` and `apply_sync` materialize only a current clean
 proposal through guarded safety/receipt semantics. Keep the editor writer guard
 across preview/apply and preserve the original request during recovery. Transfer
 and credentials stay host-owned, outside this serialized worker.
+
+Inspect `Binding::pending_publication` for a safe original-request summary.
+`RemoteTransfer::reconcile` observes acceptance without sending a push,
+including with read-only credentials. After explicit user confirmation,
+`Binding::stop_publication` retains a terminal receipt and stops tracking that
+request without contacting the remote. It cannot cancel or undo an accepted
+push; subsequent synchronization must fetch and merge before a new publication.

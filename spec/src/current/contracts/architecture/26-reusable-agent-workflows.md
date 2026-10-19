@@ -4,8 +4,8 @@ M34 adds the independent `jj-vault` backup coordinator. It depends on the owned
 `jj-store-jj` vault interface, exposes injectable repository/progress
 boundaries, and owns no UI, server, credential store or upstream JJ types.
 JST-ARCH-007 ownership stays unchanged; native backup is governed by
-JST-LOCAL-007. E-VAULT-BACKUP-007 retains this ownership while
-using native no-follow capabilities for guarded restore ancestors.
+JST-LOCAL-007. E-VAULT-BACKUP-007 retains this ownership while using native
+no-follow capabilities for guarded restore ancestors.
 
 The staged M33 extraction builds on M32's independently selected collaboration
 stores. Lapis AI owns execution and source acquisition, Agent Redaction owns
@@ -336,5 +336,12 @@ network outages cannot block that worker's final saved-file capture.
 
 The injected vault repository and worker expose sync proposal, preview/apply and
 conflict inspection/resolution. Hosts retain transfer, credential and editor
-writer authority. Native merge identity and conflict terms remain upstream-owned;
-`jj-vault` schedules owned DTOs without importing `jj-lib` (JST-ARCH-007).
+writer authority. Native merge identity and conflict terms remain
+upstream-owned; `jj-vault` schedules owned DTOs without importing `jj-lib`
+(JST-ARCH-007).
+
+Publication recovery re-exports owned PendingPublication and terminal stopped
+DTOs. Native Binding/RemoteTransfer own receipt validation, publication locking
+and observe-only network behavior. Host account/editor authority, injected
+worker interfaces and the no-upstream-import boundary remain unchanged
+(JST-ARCH-007).

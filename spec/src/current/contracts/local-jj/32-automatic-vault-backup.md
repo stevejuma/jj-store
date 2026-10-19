@@ -72,8 +72,8 @@ vault worker. Transfer remains outside its queue; only the resulting native
 restore updates the saved local checkpoint status.
 
 Restoration MUST reject symbolic links in every directory ancestor, including
-when an alias targets otherwise excluded runtime state inside the vault.
-Preview and apply both enforce this boundary; a previously valid preview cannot
+when an alias targets otherwise excluded runtime state inside the vault. Preview
+and apply both enforce this boundary; a previously valid preview cannot
 authorize a later alias replacement.
 
 Automatic synchronization captures saved local files before constructing a
@@ -83,3 +83,11 @@ preview remain current. Conflicted proposals never overwrite current files;
 explicit per-path term/text/delete resolution creates retained native commits.
 Proposal IDs and guarded apply receipts survive restart. Unresolved conflicts
 cannot be published. Native JJ merge ancestry and conflict terms are preserved.
+
+Publication recovery exposes a path-free original-request summary. Observation
+never sends a push, including for a prepared request or read-only account. An
+explicit user stop retains a terminal stopped receipt, clears only its own
+active pointer and never cancels or undoes remote state. Replays of a stopped
+request cannot publish or clear a newer intent. Root relink preserves the
+original request through the stable vault/private-repository binding. Native
+identities, immutable reads and network/capture separation stay unchanged.
