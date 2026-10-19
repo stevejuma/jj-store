@@ -20,3 +20,7 @@ explicitly pinned in the managed view. Fresh-device restoration uses the
 existing guarded safety-checkpoint/receipt path and retains both local and
 imported ancestry. Push intent and observed outcomes are device-local; immutable
 readers never transfer, merge, snapshot or publish.
+
+Guarded restoration opens parent directories with no-follow capability APIs,
+component by component. It rechecks this on apply rather than trusting preview
+paths. Symlink aliases cannot reach private metadata or bypass backup exclusions.

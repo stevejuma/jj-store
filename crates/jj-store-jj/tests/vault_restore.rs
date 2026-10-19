@@ -2,6 +2,76 @@
 use jj_store_jj::vault_workspace::{Binding, FileContents, RestoreRequest, Session};
 use std::fs;
 
+#[cfg(unix)]
+#[tokio::test]
+async fn restore_cannot_follow_an_ancestor_alias_into_private_vault_metadata() {
+    let temp = tempfile::tempdir().unwrap();
+    let base = temp.path().canonicalize().unwrap();
+    let binding = Binding {
+        vault_id: "aliased-restore".into(),
+        root: base.join("notes"),
+        state: base.join("private/history"),
+    };
+    fs::create_dir_all(binding.root.join("alias")).unwrap();
+    fs::create_dir(binding.root.join(".lapis")).unwrap();
+    fs::write(
+        binding.root.join("alias/settings.json"),
+        "historical public note",
+    )
+    .unwrap();
+    fs::write(
+        binding.root.join(".lapis/settings.json"),
+        "private runtime state",
+    )
+    .unwrap();
+    let mut session = Session::open(binding.clone()).await.unwrap();
+    let checkpoint = session
+        .capture(&[], "Public history")
+        .await
+        .unwrap()
+        .checkpoint
+        .unwrap();
+    fs::write(
+        binding.root.join("alias/settings.json"),
+        "private runtime state",
+    )
+    .unwrap();
+    let preview = session
+        .preview_file_restore(&checkpoint.commit, "alias/settings.json")
+        .await
+        .unwrap();
+    fs::remove_dir_all(binding.root.join("alias")).unwrap();
+    std::os::unix::fs::symlink(".lapis", binding.root.join("alias")).unwrap();
+    let preview_denied = session
+        .preview_file_restore(&checkpoint.commit, "alias/settings.json")
+        .await
+        .is_err();
+    let applied = session
+        .restore_file(
+            &RestoreRequest {
+                request_id: "aliased-command".into(),
+                checkpoint: checkpoint.commit,
+                path: preview.path,
+                expected: preview.expected,
+            },
+            &[],
+        )
+        .await;
+    assert_eq!(
+        fs::read_to_string(binding.root.join(".lapis/settings.json")).unwrap(),
+        "private runtime state",
+        "Restoration must not write excluded runtime state through an ancestor alias"
+    );
+    assert!(
+        preview_denied,
+        "Restore preview must reject symbolic-link ancestors"
+    );
+    assert!(
+        applied.is_err(),
+        "Apply must recheck ancestors even after a valid preview"
+    );
+}
+
 #[tokio::test]
 async fn restores_retained_bytes_after_a_safety_checkpoint_and_replays_only_its_receipt() {
     let temp = tempfile::tempdir().unwrap();

@@ -4,7 +4,8 @@ M34 adds the independent `jj-vault` backup coordinator. It depends on the owned
 `jj-store-jj` vault interface, exposes injectable repository/progress
 boundaries, and owns no UI, server, credential store or upstream JJ types.
 JST-ARCH-007 ownership stays unchanged; native backup is governed by
-JST-LOCAL-007.
+JST-LOCAL-007. E-VAULT-BACKUP-007 retains this ownership while
+using native no-follow capabilities for guarded restore ancestors.
 
 The staged M33 extraction builds on M32's independently selected collaboration
 stores. Lapis AI owns execution and source acquisition, Agent Redaction owns

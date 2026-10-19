@@ -15,3 +15,6 @@
 
 - [E-VAULT-BACKUP-006](E-VAULT-BACKUP-006/index.md)
   {{#include E-VAULT-BACKUP-006/SUMMARY.nav.md}}
+
+- [E-VAULT-BACKUP-007](E-VAULT-BACKUP-007/index.md)
+  {{#include E-VAULT-BACKUP-007/SUMMARY.nav.md}}

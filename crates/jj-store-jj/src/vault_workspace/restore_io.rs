@@ -1,5 +1,6 @@
 //! Capability-contained regular-file restoration, shared by native hosts.
 use super::*;
+use cap_fs_ext::DirExt as _;
 use cap_std::{ambient_authority, fs::Dir};
 use sha2::{Digest as _, Sha256};
 use std::io::{Read as _, Write as _};
@@ -18,11 +19,50 @@ pub(super) fn checked(path: &str) -> Result<()> {
 }
 pub(super) fn root(binding: &Binding) -> Result<Dir> {
     binding.verify_saved()?;
-    Ok(Dir::open_ambient_dir(&binding.root, ambient_authority())?)
+    let root = Dir::open_ambient_dir(&binding.root, ambient_authority())?;
+    binding.verify_saved()?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt as _;
+        let opened = root.try_clone()?.into_std_file().metadata()?;
+        let selected = fs::symlink_metadata(&binding.root)?;
+        if opened.dev() != selected.dev() || opened.ino() != selected.ino() {
+            return Err(Error::Binding);
+        }
+    }
+    Ok(root)
+}
+/// Open one parent at a time: rejecting only the leaf symlink is insufficient
+/// when a directory alias can point into excluded runtime state.
+fn parent(root: &Dir, path: &str, create: bool) -> std::io::Result<(Dir, std::ffi::OsString)> {
+    let path = Path::new(path);
+    let name = path
+        .file_name()
+        .ok_or_else(|| std::io::Error::other("Invalid restore path"))?
+        .to_owned();
+    let mut directory = root.try_clone()?;
+    for component in path.parent().unwrap_or(Path::new("")).components() {
+        let std::path::Component::Normal(part) = component else {
+            return Err(std::io::Error::other("Invalid restore directory"));
+        };
+        if create {
+            match directory.create_dir(part) {
+                Ok(()) => {}
+                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {}
+                Err(error) => return Err(error),
+            }
+        }
+        directory = directory.open_dir_nofollow(part)?;
+    }
+    Ok((directory, name))
 }
 pub(super) fn read(root: &Dir, path: &str) -> Result<Option<Vec<u8>>> {
     checked(path)?;
-    match root.symlink_metadata(path) {
+    let (directory, name) = match parent(root, path, false) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        result => result?,
+    };
+    match directory.symlink_metadata(&name) {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
         Ok(info) if !info.is_file() || info.is_symlink() => return Err(Error::Binding),
         Ok(_) => {}
@@ -37,7 +77,7 @@ pub(super) fn read(root: &Dir, path: &str) -> Result<Option<Vec<u8>>> {
             (rustix::fs::OFlags::NONBLOCK | rustix::fs::OFlags::NOFOLLOW).bits() as i32,
         );
     }
-    let file = root.open_with(path, &options)?;
+    let file = directory.open_with(&name, &options)?;
     if !file.metadata()?.is_file() {
         return Err(Error::Binding);
     }
@@ -53,14 +93,16 @@ pub(super) fn digest(data: Option<&[u8]>) -> String {
         .unwrap_or_else(|| "missing".into())
 }
 pub(super) fn executable(root: &Dir, path: &str) -> Result<bool> {
+    checked(path)?;
+    let (directory, name) = parent(root, path, false)?;
     #[cfg(unix)]
     {
         use cap_std::fs::PermissionsExt as _;
-        Ok(root.symlink_metadata(path)?.permissions().mode() & 0o111 != 0)
+        Ok(directory.symlink_metadata(name)?.permissions().mode() & 0o111 != 0)
     }
     #[cfg(not(unix))]
     {
-        let _ = (root, path);
+        let _ = (directory, name);
         Ok(false)
     }
 }
@@ -72,25 +114,19 @@ pub(super) fn apply(
     executable: bool,
 ) -> Result<()> {
     checked(path)?;
-    let parent_path = Path::new(path)
-        .parent()
-        .filter(|p| !p.as_os_str().is_empty())
-        .unwrap_or(Path::new("."));
-    let name = Path::new(path).file_name().ok_or(Error::Binding)?;
     if digest(read(root, path)?.as_deref()) != expected {
         return Err(Error::Jj(
             "The file changed since the restore preview; review it again".into(),
         ));
     }
     if let Some(bytes) = target {
-        root.create_dir_all(parent_path)?;
-        let parent = root.open_dir(parent_path)?;
+        let (parent, name) = parent(root, path, true)?;
         let mut file = cap_tempfile::TempFile::new(&parent)?;
         #[cfg(unix)]
         {
             use cap_std::fs::PermissionsExt as _;
             let mode = parent
-                .metadata(name)
+                .symlink_metadata(&name)
                 .map(|m| m.permissions().mode())
                 .unwrap_or(0o644);
             file.as_file()
@@ -107,11 +143,12 @@ pub(super) fn apply(
         if digest(read(root, path)?.as_deref()) != expected {
             return Err(Error::Binding);
         }
-        file.replace(name)?;
+        file.replace(&name)?;
         parent.into_std_file().sync_all()?;
     } else if expected != "missing" {
-        root.remove_file(path)?;
-        root.open_dir(parent_path)?.into_std_file().sync_all()?;
+        let (parent, name) = parent(root, path, false)?;
+        parent.remove_file(name)?;
+        parent.into_std_file().sync_all()?;
     }
     Ok(())
 }
