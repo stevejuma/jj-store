@@ -43,21 +43,25 @@ whole stage.
 
 ## Current checkpoint
 
-- **Active: IMPORT-01B.** E-REUSABLE-AGENTS-018 qualifies the shared transient
-  snapshot reader and repository-neutral native observation sanitizer. It reuses
-  the existing parser without durable ACKs or invented repository identities.
-  All 195 application-feature and 75 headless capture tests pass; existing
-  fixture child skips remain explicit. Native Notes worker/admission, truthful
-  unknown-tool projection, actual-file import and app adoption are next. This
-  source prerequisite does not make ordinary native import available.
+- **Completed: IMPORT-01B / IMPORT-01 (Codex local files).** Notes `830eb9ef` /
+  E-AI-055 connects native source discovery, bounded immutable snapshots, shared
+  privacy and read-only local save/reopen. Lapis AI `b120a3c2` accepts the exact
+  observed CLI/Lapis ACP header pair; newer Desktop alpha remains excluded. All
+  568 AI tests, 40 affected story checks, eight native source cases, four import
+  ownership/frame cases and the packaged cold import pass. The ordinary review
+  app is refreshed and shows actual local sources. All 131 vault files remain:
+  130 byte-identical, with only the workspace layout updated. No implementation
+  child is Active at this checkpoint; opt-in CAPTURE-01 is next. The broader
+  Node lane retains four parent-reproducing failures (GAP-12). JJ persistence
+  and wider qualification remain deferred.
 
 - **Completed: IMPORT-01A local journal and preview.** Notes `6081be31` /
   E-AI-054 qualifies read-only snapshot storage, exact deduplication,
   interrupted writes, untrusted source provenance and production preview UI. All
   559 AI tests, 40 focused import/context cases and 40 affected interaction/axe
   checks pass. The review is on **7491**; 7490 belongs to another desktop
-  checkout and remains untouched. Native discovery/read/privacy is IMPORT-01B,
-  still pending. IMPORT-01B is Active; JJ persistence stays deferred.
+  checkout and remains untouched. E-AI-055 now completes native IMPORT-01B;
+  automatic capture is next and JJ persistence stays deferred.
 
 - **Completed: DISCUSS-01B local continued discussions.** Notes `8f5b9395` /
   E-AI-053 qualifies exact native code/table/tool comments, continued threads
@@ -560,12 +564,13 @@ AGENT-01A completes recipient selection and saved tags. Independent logical
 participants and multiple-recipient delivery are complete in AGENT-01B1/B2.
 AGENT-01C completes persisted bounded local queues and explicit recovery.
 AGENT-01 and DISCUSS-01A/B are Complete for the local-file profile. IMPORT-01A
-is Complete for the local journal and injected preview UI. **IMPORT-01B is
-Active:** reusable native snapshot acquisition, then ordinary app wiring. Opt-in
-capture follows. Original JJ and wider qualification gates remain open,
-including the retained GAP-11 timeout. NOTES-05F/05G/05H complete the initial
-canvas/header port, not full source-view parity. The shared AI UI and local-file
-chat are working; JJ capture awaits its deferred managed backend integration.
+and IMPORT-01B are Complete for the Codex local-file profile. Explicit native
+import is working, including privacy, deduplication and cold local History. No
+child is Active at this checkpoint; opt-in CAPTURE-01 is next. Original JJ and
+wider qualification gates remain open, including the retained GAP-11 timeout.
+NOTES-05F/05G/05H complete the initial canvas/header port, not full source-view
+parity. The shared AI UI and local-file chat are working; JJ capture awaits its
+deferred managed backend integration.
 
 - [ ] **NOTES-06C — Waiting for NOTES-07:** Connect the real durable backend
       through the native factory, retaining the qualified privacy/batch owner
@@ -779,19 +784,24 @@ chat are working; JJ capture awaits its deferred managed backend integration.
       its selected conversation updates only the workspace layout. Shared input
       repair belongs to Design Core `e80b333d`; JJ discussion storage stays
       deferred. GAP-11 remains separately unproven.
-- [ ] **IMPORT-01:** Add explicit imports with deduplication and source
-      provenance.
+- [x] **IMPORT-01 — Complete (Codex local files):** Explicit imports retain
+      stable deduplication and untrusted source provenance (E-AI-054/055).
 - [x] **IMPORT-01A — Complete (local files):** Notes `6081be31` / E-AI-054
       qualifies the local preparing/complete journal, exact source/content
       collision refusal, read-only snapshots and cold/unknown-write retry.
       Captured messages retain untrusted attribution in shared context. All 559
       AI tests and 40 affected Storybook checks pass, with strict types and
       ownership/document audits. Production UI uses injected fixture sources in
-      Storybook; actual native source discovery/import remains IMPORT-01B.
-- [ ] **IMPORT-01B — Active:** Native Codex discovery, bounded reading/privacy,
-      actual local-file import and ordinary review-app adoption.
-- [ ] **CAPTURE-01:** Add opt-in local automatic capture with source lifecycle,
-      progress, acknowledgement and privacy qualification.
+      Storybook; native acquisition is qualified separately by IMPORT-01B /
+      E-AI-055.
+- [x] **IMPORT-01B — Complete (Codex local files):** Notes `830eb9ef` / E-AI-055
+      qualifies independently admitted workers, exact native source selection,
+      bounded reading/privacy, unknown tool states and read-only local
+      save/duplicate/cold reopen. Real app sources are visible after the
+      source-owned Lapis ACP header fix (`lapis-ai` `b120a3c2`). Native import
+      needs no provider or JJ writer. Broader Node gaps remain GAP-12.
+- [ ] **CAPTURE-01 — Pending, next:** Add opt-in local automatic capture with
+      source lifecycle, progress, acknowledgement and privacy qualification.
 - [ ] **QUAL-01:** Complete remaining contract/compatibility and source
       portability gates, independent Rust/Tauri consumers and public package
       archive acceptance. Wire the optional native-privacy test profile into its
@@ -911,6 +921,14 @@ After each verified slice, update the affected stable task IDs, link its fresh
 evidence/commit, move the current-work marker and review the canonical milestone
 in the same delivery update. Keep unresolved failures and unrun gates explicit.
 If work splits, add a task ID rather than checking off an incomplete parent.
+
+- [ ] **GAP-12 — Deferred broader Node checks:** Notes E-AI-055 records 204
+      passing renderer cases and four failures reproduced against parent
+      `6081be31`: two older cancellation expectations and two Node strip-only
+      TypeScript imports. Focused 568-case AI and native import lanes pass. This
+      is not a repository-wide test pass; retain the user’s deferred wider
+      verification scope and repair these before aggregate qualification.
+
 When switching tasks, move the single Active marker and state why other started
 tasks are Waiting. A named next step is pending until it starts. Do not count a
 parent and its current child as separate work. Current uncommitted counts are

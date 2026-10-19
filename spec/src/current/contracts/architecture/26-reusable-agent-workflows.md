@@ -7,6 +7,11 @@ JST-ARCH-007 ownership stays unchanged; native backup is governed by
 JST-LOCAL-007. E-VAULT-BACKUP-007 retains this ownership while using native
 no-follow capabilities for guarded restore ancestors.
 
+E-REUSABLE-PROGRESS-048 records Notes' native local-file import adoption and
+Lapis AI's exact CLI/Lapis ACP header pair. JST-ARCH-007 keeps source inspection
+in Lapis AI and custody/admission in Notes; no renderer parser or JJ writer is
+introduced. Data-only inspection does not qualify automatic capture/publication.
+
 The staged M33 extraction builds on M32's independently selected collaboration
 stores. Lapis AI owns execution and source acquisition, Agent Redaction owns
 native privacy, and JJ libraries own publication and conversation coordination.

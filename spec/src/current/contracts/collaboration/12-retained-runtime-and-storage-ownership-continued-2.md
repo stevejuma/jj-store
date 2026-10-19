@@ -161,8 +161,13 @@ OpenCode database pages.
 The Codex file profiles distinguish CLI 0.156.1 (`source=cli` or `source=exec`)
 and Desktop 0.159.2 (`source=vscode`, `originator=Codex Desktop`). The CLI
 accepts the qualified `codex_cli_rs`, `codex_exec` and inherited `Codex Desktop`
-originators; an inherited originator does not change the product surface. Other
-originators remain unqualified. Codex's pinned rollout recorder writes the
+originators; an inherited originator does not change the product surface. The
+shared reader also accepts CLI 0.156.1's exact Lapis ACP pair `source=vscode`,
+`originator=lapis-acp` for native file inspection and local read-only snapshot
+import. This does not select the Desktop profile or qualify Lapis ACP automatic
+capture/JJ publication under JST-COLLAB-026. Other adapter labels and the
+observed Desktop alpha version remain excluded; broader native
+source/publication gates stay open. Codex's pinned rollout recorder writes the
 session source independently of the environment-overridable originator. A
 complete bounded first `session_meta` record MUST match the configured
 surface/version, contain a native UUID session identity and an absolute working

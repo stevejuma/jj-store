@@ -1,10 +1,11 @@
 # Application documentation
 
-E-REUSABLE-AGENTS-018 qualifies transient snapshot/privacy APIs for active
-IMPORT-01B; native Notes wiring is pending. E-REUSABLE-PROGRESS-047 records
-Notes 6081be31 / E-AI-054 local import UI/journal, 559 AI tests and 40 Storybook
-checks. The 7491 sources remain fixtures. JJ persistence and original
-JST-DOC-001/JST-ARCH-007/M33 gates remain unchanged.
+E-REUSABLE-PROGRESS-048 records Notes 830eb9ef / E-AI-055 native local Codex
+imports, shared privacy, unknown tool outcomes and cold read-only reopen. Lapis
+AI b120a3c2 adds the exact CLI/Lapis ACP header pair; alpha stays excluded. The
+review app shows real sources and preserves notes/transcripts. CAPTURE-01 is
+next; broader Node GAP-12, JJ persistence and original JST-DOC-001 /
+JST-ARCH-007 / M33 gates remain open. No implementation child is Active.
 
 E-REUSABLE-PROGRESS-046 records Notes 8f5b9395 / E-AI-053 exact native
 code/table/tool discussions, continued threads and two cold History reopens.

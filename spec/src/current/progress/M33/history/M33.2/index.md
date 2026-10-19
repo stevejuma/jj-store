@@ -10,11 +10,7 @@ not a completion gate selection.
 | [E-REUSABLE-AGENTS-003](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-003/index.md)     | 2026-10-17 | pass            | Original outcome |
 | [E-REUSABLE-AGENTS-014](../../../../../history/2026/10/18/E-REUSABLE-AGENTS-014/index.md)     | 2026-10-18 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-014](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-014/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-018](../../../../../history/2026/10/19/E-REUSABLE-AGENTS-018/index.md)     | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-048](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-048/index.md) | 2026-10-19 | pass            | Original outcome |
 
 <!-- generated-navigation -->
-
-## Pages
-
-|
-[E-REUSABLE-AGENTS-018](../../../../../history/2026/10/19/E-REUSABLE-AGENTS-018/index.md)
-| 2026-10-19 | pass | Original outcome |

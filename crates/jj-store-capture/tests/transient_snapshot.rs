@@ -279,3 +279,39 @@ fn neutral_native_sanitization_requires_no_repository_and_matches_the_publicatio
     assert_eq!(capture.cursor, raw.cursor);
     assert_eq!(capture.metadata, raw.metadata);
 }
+
+#[test]
+fn lapis_acp_cli_snapshot_retains_exact_version_and_source_surface_checks() {
+    let root = tempfile::tempdir().unwrap();
+    let path = root.path().join("rollout.jsonl");
+    let bytes = fixture(&path, 2, false);
+    let header_end = bytes.iter().position(|b| *b == b'\n').unwrap();
+    let mut header: serde_json::Value = serde_json::from_slice(&bytes[..header_end]).unwrap();
+    header["payload"]["source"] = json!("vscode");
+    header["payload"]["originator"] = json!("lapis-acp");
+    let mut accepted = format!("{header}\n").into_bytes();
+    accepted.extend(&bytes[header_end + 1..]);
+    fs::write(&path, &accepted).unwrap();
+    let mut reader = open(root.path());
+    let summary = loop {
+        if let SnapshotPoll::Complete(summary) = reader.poll().unwrap() {
+            break summary;
+        }
+    };
+    assert_eq!(summary.records, 3);
+    assert_eq!(summary.sha256, <[u8; 32]>::from(Sha256::digest(&accepted)));
+    assert_eq!(fs::read(&path).unwrap(), accepted);
+    for (originator, version) in [
+        ("other-adapter", "0.156.1"),
+        ("lapis-acp", "0.159.2"),
+        ("Codex Desktop", "0.163.0-alpha.10.2"),
+    ] {
+        header["payload"]["originator"] = json!(originator);
+        header["payload"]["cli_version"] = json!(version);
+        fs::write(&path, format!("{header}\n")).unwrap();
+        assert!(
+            CodexSnapshotReader::open(PROFILE, discover(root.path()), SOURCE, 64 * 1024 * 1024)
+                .is_err()
+        );
+    }
+}
