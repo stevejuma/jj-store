@@ -91,3 +91,12 @@ active pointer and never cancels or undoes remote state. Replays of a stopped
 request cannot publish or clear a newer intent. Root relink preserves the
 original request through the stable vault/private-repository binding. Native
 identities, immutable reads and network/capture separation stay unchanged.
+
+Historical search walks a fixed retained checkpoint ancestry, with bounded
+revision and changed-file pages. Text projection includes UTF-8 regular files up
+to one MiB; other files remain path-searchable and their omission from text
+search is reported. Current backup exclusions also apply to past file results.
+Projection loss or malformed cache rebuilds from immutable native objects.
+Selection revalidates the exact native revision/path before preview or restore.
+Search never snapshots disk, merges heads, transfers or publishes. Immutable
+search takes no working-copy writer lease; pausing capture retains read access.

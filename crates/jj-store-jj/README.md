@@ -55,3 +55,10 @@ then use `Session` to import and preview/restore the selected checkpoint.
 intent; resume its original pending identity after an unknown outcome. Network
 work holds no capture lease. Forge account selection and automatic sync policy
 belong to the embedding host.
+
+With `vault-backup`, `vault_workspace::HistoryReader` reads an already admitted
+backup's immutable checkpoint ancestry and changed-file text pages without
+initializing or snapshotting it. This reader takes no working-copy lease.
+`jj-vault::search` adds the reusable rebuildable projection and filters;
+detailed authority and limits remain in the automatic-vault-backup
+specification.

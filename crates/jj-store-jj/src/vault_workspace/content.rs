@@ -14,22 +14,7 @@ pub enum FileContents {
 }
 impl Session {
     pub(super) async fn retained_commit(&self, checkpoint: &str) -> Result<jj_lib::commit::Commit> {
-        self.binding.verify_saved()?;
-        let selected = CommitId::try_from_hex(checkpoint).ok_or(Error::Binding)?;
-        for name in ["lapis-backup", "lapis-incoming", "lapis-sync"] {
-            let head = self.repo.view().get_local_bookmark(RefName::new(name));
-            if let Some(head) = head.as_normal()
-                && self
-                    .repo
-                    .index()
-                    .is_ancestor(&selected, head)
-                    .await
-                    .map_err(jj)?
-            {
-                return self.repo.store().get_commit(&selected).map_err(jj);
-            }
-        }
-        Err(Error::Binding)
+        retained_commit(&self.binding, &self.repo, checkpoint).await
     }
     /// Resolve only retained checkpoint/imported-head ancestors, never arbitrary objects.
     pub async fn file_at(&self, checkpoint: &str, path: &str) -> Result<Option<FileContents>> {
@@ -78,4 +63,29 @@ impl Session {
             Some(_) => return Err(Error::Binding),
         })
     }
+}
+
+pub(super) async fn retained_commit(
+    binding: &Binding,
+    repo: &ReadonlyRepo,
+    checkpoint: &str,
+) -> Result<jj_lib::commit::Commit> {
+    binding.verify_saved()?;
+    let selected = CommitId::try_from_hex(checkpoint).ok_or(Error::Binding)?;
+    if !repo.index().has_id(&selected).await.map_err(jj)? {
+        return Err(Error::Binding);
+    }
+    for name in ["lapis-backup", "lapis-incoming", "lapis-sync"] {
+        let head = repo.view().get_local_bookmark(RefName::new(name));
+        if let Some(head) = head.as_normal()
+            && repo
+                .index()
+                .is_ancestor(&selected, head)
+                .await
+                .map_err(jj)?
+        {
+            return repo.store().get_commit(&selected).map_err(jj);
+        }
+    }
+    Err(Error::Binding)
 }

@@ -5275,6 +5275,8 @@ version = "0.1.0"
 dependencies = [
  "jj-store-jj",
  "serde",
+ "serde_json",
+ "sha2 0.10.9",
  "tempfile",
  "tokio",
 ]

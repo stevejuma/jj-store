@@ -4,6 +4,7 @@ mod native;
 mod remote;
 mod restore;
 mod schedule;
+pub mod search;
 mod sync;
 pub use jj_store_jj::vault_workspace::{
     Binding, Capture, Checkpoint, FetchedHead, GitCredentials, PendingPublication, PushIntent,

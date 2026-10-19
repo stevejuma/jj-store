@@ -39,3 +39,8 @@ active pointer and never cancels or undoes remote state. Replays of a stopped
 request cannot publish or clear a newer intent. Root relink preserves the
 original request through the stable vault/private-repository binding. Native
 identities, immutable reads and network/capture separation stay unchanged.
+
+Historical revision and changed-file paging walks retained native ancestry at an
+explicit checkpoint anchor. Concurrent capture cannot shift that anchor; query
+pages retain full native IDs. Read queries neither snapshot saved disk files nor
+create operations (JST-JJ-003/005).

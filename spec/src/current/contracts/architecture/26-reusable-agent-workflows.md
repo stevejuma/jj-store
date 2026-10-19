@@ -345,3 +345,10 @@ DTOs. Native Binding/RemoteTransfer own receipt validation, publication locking
 and observe-only network behavior. Host account/editor authority, injected
 worker interfaces and the no-upstream-import boundary remain unchanged
 (JST-ARCH-007).
+
+Historical search uses an injected `jj-vault::search::Source`; its native
+provider reads upstream objects through `jj-store-jj::HistoryReader` without
+initialization or a capture writer lease. The disposable projection/cache has no
+restore authority. Hosts own admitted identity, private cache placement, worker
+bounds and presentation; upstream JJ imports stay in the native package
+(JST-ARCH-007).
