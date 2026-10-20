@@ -167,3 +167,24 @@ Queries retain usable partial results, fence obsolete generations and expose
 progress. Missing or corrupt projections rebuild without modifying native
 history. Search activation and guarded restore always resolve native
 revision/path identities.
+
+## AI turn observations
+
+Hosts MAY register bounded AI turn context with the same serialized backup
+worker. A confirmed baseline precedes provider writes; terminal capture follows
+known writer drainage. Durable request records bind conversation, turn, agent,
+harness and requested/resolved model to exact retained checkpoints. Automatic
+captures include all active turn contexts in versioned Git-portable description
+trailers without changing commit authors. These are observations, not proof of
+exclusive authorship. Identical trees reuse the existing checkpoint. Startup
+marks unfinished turns incomplete without fabricating terminal snapshots or
+replaying execution. A failed terminal capture retires active attribution and
+retains an incomplete record.
+
+Explicit selected-path AI undo derives its allowed paths from one confirmed
+before/after comparison, excludes conversation/runtime metadata and requires
+current bytes and executable state to match the ending checkpoint. Active turns
+block undo. Preview and apply revalidate the original comparison. One safety
+checkpoint and durable per-path progress preserve interruption and exact-request
+recovery. Later edits stop recovery; partial work never reports success. Undo
+creates new retained history and never invokes generic operation undo.

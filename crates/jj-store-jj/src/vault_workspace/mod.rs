@@ -1,6 +1,12 @@
 //! Host-owned vault checkpoints with independently located JJ working-copy state.
 //! Call from a bounded native worker. Never invoke through immutable read APIs.
 mod adoption;
+mod ai_turn_capture;
+mod ai_turns;
+mod ai_undo;
+mod ai_undo_apply;
+pub use ai_turns::{AiTurnContext, AiTurnOutcome, AiTurnPage, AiTurnPhase, AiTurnRecord};
+pub use ai_undo::{AiUndoPreview, AiUndoRequest};
 mod batch_plan;
 pub use adoption::{AdoptionRequest, ExistingHistory};
 mod batch_restore;

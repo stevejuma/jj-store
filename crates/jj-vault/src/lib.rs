@@ -1,6 +1,8 @@
 //! Automatic checkpoint ownership, independent of any desktop, watcher or UI.
 #![forbid(unsafe_code)]
 mod adoption;
+mod ai;
+pub use ai::{AiHistoryRequest, AiHistoryResponse};
 mod lifetime;
 mod native;
 mod remote;
@@ -9,10 +11,12 @@ mod schedule;
 pub mod search;
 mod sync;
 pub use jj_store_jj::vault_workspace::{
-    AdoptionRequest, Binding, Capture, Checkpoint, ExistingHistory, FetchedHead, GitCredentials,
-    PendingPublication, PendingStorage, PushIntent, PushOutcome, RemoteTarget, RemoteTransfer,
-    RestorePreview, RestoreRequest, Storage, StorageLocation, StorageProgress, StorageStatus,
-    SyncConflict, SyncProposal, SyncResolution, SyncTerm, VaultRestorePreview, VaultRestoreRequest,
+    AdoptionRequest, AiTurnContext, AiTurnOutcome, AiTurnPage, AiTurnPhase, AiTurnRecord,
+    AiUndoPreview, AiUndoRequest, Binding, Capture, Checkpoint, ExistingHistory, FetchedHead,
+    GitCredentials, PendingPublication, PendingStorage, PushIntent, PushOutcome, RemoteTarget,
+    RemoteTransfer, RestorePreview, RestoreRequest, Storage, StorageLocation, StorageProgress,
+    StorageStatus, SyncConflict, SyncProposal, SyncResolution, SyncTerm, VaultRestorePreview,
+    VaultRestoreRequest,
 };
 pub use native::NativeRepository;
 pub use schedule::Timing;
@@ -30,6 +34,12 @@ use tokio::sync::{oneshot, watch};
 
 /// Runs only on the owned backup worker. No caller UI thread performs native IO.
 pub trait Repository: Send + 'static {
+    fn recover_ai_history(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+    fn ai_history(&mut self, _request: AiHistoryRequest) -> Result<AiHistoryResponse, String> {
+        Err("AI history is unavailable".into())
+    }
     fn adopt_history(&mut self, _request: &AdoptionRequest) -> Result<Checkpoint, String> {
         Err("History adoption is unavailable".into())
     }
@@ -95,6 +105,10 @@ pub struct Status {
     pub error: Option<String>,
 }
 enum Command {
+    Ai(
+        AiHistoryRequest,
+        oneshot::Sender<Result<AiHistoryResponse, String>>,
+    ),
     Wake,
     Capture(oneshot::Sender<Result<Capture, String>>),
     Preview(
@@ -244,6 +258,7 @@ fn run(
     mut schedule: schedule::Schedule,
     abandoned: Arc<AtomicBool>,
 ) {
+    let mut recovered = false;
     while !abandoned.load(Ordering::Acquire) {
         if dirty.swap(false, Ordering::AcqRel) {
             schedule.changed(Instant::now());
@@ -252,7 +267,23 @@ fn run(
             .due()
             .saturating_duration_since(Instant::now())
             .min(Duration::from_secs(60));
-        match receiver.recv_timeout(timeout) {
+        let command = receiver.recv_timeout(timeout);
+        // Idle startup must not initialize native history before the host has
+        // attached its watcher and explicitly requested the first capture.
+        if !recovered && !matches!(&command, Ok(Command::Wake)) {
+            if let Err(error) = repository.recover_ai_history() {
+                state.send_modify(|s| {
+                    s.phase = Phase::Failed;
+                    s.error = Some(error.clone());
+                });
+                return;
+            }
+            recovered = true;
+        }
+        match command {
+            Ok(Command::Ai(request, reply)) => {
+                ai::run(request, reply, repository.as_mut(), &state);
+            }
             Ok(Command::Wake) => {}
             Ok(Command::Adoption(request)) => {
                 adoption::run(request, repository.as_mut(), &state, &mut schedule)

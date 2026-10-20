@@ -5,6 +5,12 @@ pub struct NativeRepository {
     pub exclusions: Vec<String>,
 }
 impl Repository for NativeRepository {
+    fn recover_ai_history(&mut self) -> Result<(), String> {
+        self.ai_recover()
+    }
+    fn ai_history(&mut self, request: AiHistoryRequest) -> Result<AiHistoryResponse, String> {
+        self.ai_request(request)
+    }
     fn adopt_history(&mut self, request: &AdoptionRequest) -> Result<Checkpoint, String> {
         runtime()?.block_on(async {
             let mut session = jj_store_jj::vault_workspace::Session::open(self.binding.clone())
@@ -168,7 +174,7 @@ impl Repository for NativeRepository {
                 .await
                 .map_err(|e| e.to_string())?;
             let mut value = session
-                .capture(&self.exclusions, "Automatic vault backup")
+                .capture_observed(&self.exclusions)
                 .await
                 .map_err(|e| e.to_string())?;
             if value.checkpoint.is_none() {
@@ -178,7 +184,7 @@ impl Repository for NativeRepository {
         })
     }
 }
-fn runtime() -> Result<tokio::runtime::Runtime, String> {
+pub(super) fn runtime() -> Result<tokio::runtime::Runtime, String> {
     tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()
