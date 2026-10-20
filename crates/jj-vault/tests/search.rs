@@ -204,3 +204,82 @@ fn projection_recovers_corrupt_cache_and_applies_author_date_and_path_filters() 
             .is_err()
     );
 }
+
+#[test]
+fn history_search_indexes_transcripts_but_not_private_runtime_files() {
+    let temp = tempfile::tempdir().unwrap();
+    let base = temp.path().canonicalize().unwrap();
+    let binding = Binding {
+        vault_id: "chat-search".into(),
+        root: base.join("notes"),
+        state: base.join("private/history"),
+    };
+    let path = ".lapis/agents/sessions/7297795f-c00b-475e-b430-5b0e2e11a2e3/transcript.jsonl";
+    fs::create_dir_all(binding.root.join(path).parent().unwrap()).unwrap();
+    fs::write(binding.root.join(path), "rare transcript phrase").unwrap();
+    fs::create_dir_all(binding.root.join(".lapis/cache")).unwrap();
+    fs::write(
+        binding.root.join(".lapis/cache/private"),
+        "rare transcript phrase",
+    )
+    .unwrap();
+    let mut repo = NativeRepository {
+        binding: binding.clone(),
+        exclusions: vec![],
+    };
+    let first = repo.capture().unwrap().checkpoint.unwrap();
+    let mut source = NativeHistory {
+        binding: binding.clone(),
+        exclusions: vec![],
+    };
+    let page = source
+        .search(&Request {
+            query: Query {
+                text: "rare transcript".into(),
+                ..Default::default()
+            },
+            cursor: None,
+        })
+        .unwrap();
+    assert_eq!(page.hits.len(), 1);
+    assert_eq!(page.hits[0].path.as_deref(), Some(path));
+    assert_eq!(page.hits[0].revision.checkpoint.commit, first.commit);
+    use jj_vault::search::indexed::{Expression, Request as IndexedRequest};
+    let indexed = IndexedRequest {
+        expression: Expression::Term {
+            field: Some("content".into()),
+            value: "rare transcript".into(),
+        },
+        cursor: None,
+        limit: 100,
+        case_sensitive: false,
+    };
+    for _ in 0..20 {
+        if source.index_step().unwrap().complete {
+            break;
+        }
+    }
+    let hits = source.indexed_search(&indexed).unwrap();
+    assert!(hits.status.complete);
+    assert_eq!(hits.hits.len(), 1);
+    assert_eq!(hits.hits[0].record.path.as_deref(), Some(path));
+    source.exclusions = vec![".lapis/agents".into()];
+    let page = source
+        .search(&Request {
+            query: Query {
+                text: "rare transcript".into(),
+                ..Default::default()
+            },
+            cursor: None,
+        })
+        .unwrap();
+    assert!(page.hits.is_empty());
+    for _ in 0..20 {
+        if source.index_step().unwrap().complete {
+            break;
+        }
+    }
+    let hidden = source.indexed_search(&indexed).unwrap();
+    assert!(hidden.status.complete);
+    assert!(hidden.hits.is_empty());
+}

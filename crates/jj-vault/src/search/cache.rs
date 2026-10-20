@@ -6,12 +6,7 @@ use std::{
     path::Path,
 };
 fn safe(path: &str) -> bool {
-    !path.is_empty()
-        && path.len() <= 4096
-        && !path.contains('\\')
-        && !path
-            .split('/')
-            .any(|v| matches!(v, "" | "." | ".." | ".git" | ".jj" | ".lapis"))
+    jj_store_jj::vault_workspace::backup_path(path).file()
 }
 fn valid(value: &HistoryFiles, commit: &str, after: Option<&str>) -> bool {
     value.commit == commit

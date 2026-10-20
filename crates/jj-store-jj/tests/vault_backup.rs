@@ -149,3 +149,131 @@ async fn relinking_the_same_physical_vault_preserves_history_and_rejects_replace
     fs::create_dir(&binding.root).unwrap();
     assert!(binding.relink().is_err());
 }
+
+#[tokio::test]
+async fn transcript_files_are_backed_up_without_private_runtime_siblings() {
+    let temp = tempfile::tempdir().unwrap();
+    let base = temp.path().canonicalize().unwrap();
+    let binding = binding(&base);
+    let id = "7297795f-c00b-475e-b430-5b0e2e11a2e3";
+    let relative = format!("Notes/.lapis/agents/sessions/{id}/transcript.jsonl");
+    let directory = binding
+        .root
+        .join(format!("Notes/.lapis/agents/sessions/{id}"));
+    fs::create_dir_all(&directory).unwrap();
+    fs::write(directory.join("metadata.yaml"), "version: 1\n").unwrap();
+    fs::write(directory.join("agents.jsonl"), "{}\n").unwrap();
+    fs::write(directory.join("transcript.jsonl"), "first\n").unwrap();
+    fs::write(directory.join("private.tmp"), "must stay private").unwrap();
+    fs::create_dir_all(binding.root.join(".lapis/cache")).unwrap();
+    fs::write(binding.root.join(".lapis/cache/private"), "secret").unwrap();
+    let root_relative = format!(".lapis/agents/sessions/{id}/transcript.jsonl");
+    fs::create_dir_all(binding.root.join(&root_relative).parent().unwrap()).unwrap();
+    fs::write(binding.root.join(&root_relative), "root transcript\n").unwrap();
+    let mut session = Session::open(binding.clone()).await.unwrap();
+    let first = session
+        .capture(&[], "Chat")
+        .await
+        .unwrap()
+        .checkpoint
+        .unwrap();
+    assert_eq!(
+        session.file_at(&first.commit, &relative).await.unwrap(),
+        Some(FileContents::Regular {
+            data: b"first\n".to_vec(),
+            executable: false
+        })
+    );
+    assert!(
+        session
+            .file_at(&first.commit, ".lapis/cache/private")
+            .await
+            .unwrap()
+            .is_none()
+    );
+    assert!(
+        session
+            .file_at(&first.commit, &root_relative)
+            .await
+            .unwrap()
+            .is_some()
+    );
+    for file in ["metadata.yaml", "agents.jsonl"] {
+        let path = format!("Notes/.lapis/agents/sessions/{id}/{file}");
+        assert!(
+            session
+                .file_at(&first.commit, &path)
+                .await
+                .unwrap()
+                .is_some()
+        );
+    }
+    assert!(
+        session
+            .file_at(
+                &first.commit,
+                &format!("Notes/.lapis/agents/sessions/{id}/private.tmp")
+            )
+            .await
+            .unwrap()
+            .is_none()
+    );
+    fs::write(directory.join("transcript.jsonl"), "second\n").unwrap();
+    assert!(session.capture(&[], "Changed chat").await.unwrap().changed);
+    assert!(
+        !session
+            .capture(&[], "Unchanged chat")
+            .await
+            .unwrap()
+            .changed
+    );
+    let preview = session
+        .preview_file_restore(&first.commit, &relative)
+        .await
+        .unwrap();
+    session
+        .restore_file(
+            &jj_store_jj::vault_workspace::RestoreRequest {
+                request_id: "restore-transcript".into(),
+                checkpoint: first.commit.clone(),
+                path: relative.clone(),
+                expected: preview.expected,
+            },
+            &[],
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        fs::read_to_string(directory.join("transcript.jsonl")).unwrap(),
+        "first\n"
+    );
+    let excluded = session
+        .capture(&["Notes/.lapis".into()], "Explicit exclusion")
+        .await
+        .unwrap()
+        .checkpoint
+        .unwrap();
+    assert!(
+        session
+            .file_at(&excluded.commit, &relative)
+            .await
+            .unwrap()
+            .is_none()
+    );
+    assert!(
+        session
+            .file_at(&excluded.commit, &root_relative)
+            .await
+            .unwrap()
+            .is_some()
+    );
+    drop(session);
+    let reopened = Session::open(binding).await.unwrap();
+    assert!(
+        reopened
+            .file_at(&first.commit, &relative)
+            .await
+            .unwrap()
+            .is_some()
+    );
+}

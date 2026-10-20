@@ -13,10 +13,12 @@ pub use history::{
     CheckpointDivergence, HistoryFile, HistoryFiles, HistoryPage, HistoryReader, HistoryRevision,
     IndexFile, IndexFiles, IndexRevision,
 };
+mod path_policy;
 mod remote;
 mod restore;
 mod restore_io;
 mod scan;
+pub use path_policy::{BackupPath, backup_path};
 mod storage;
 mod sync;
 pub use batch_restore::{VaultRestorePreview, VaultRestoreRequest};

@@ -17,7 +17,13 @@ changed tree becomes a retained Git-compatible checkpoint with a fresh
 working-copy child. Identical trees create no checkpoint. Completed checkpoints
 remain reachable without relying on the operation log. Independent backup
 exclusions override Git ignore rules; metadata/runtime/cache/credential state is
-excluded. Unsupported or incomplete capture MUST NOT report success.
+excluded. The three ordinary ACP conversation files (`metadata.yaml`,
+`agents.jsonl`, `transcript.jsonl`) under each valid scoped
+`.lapis/agents/sessions/<UUIDv4>/` are portable content included by default.
+Only their ancestor directories are traversable; other `.lapis` paths stay
+excluded. Explicit exclusions win. One shared path classifier governs scan,
+watch, history/search, restore and sync. Unsupported or incomplete capture MUST
+NOT report success.
 
 Native workers own bounded scans, JJ locks and serialized per-vault mutations.
 Read-only history queries never trigger capture. A host close drains capture

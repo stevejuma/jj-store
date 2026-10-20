@@ -6,13 +6,7 @@ use sha2::{Digest as _, Sha256};
 use std::io::{Read as _, Write as _};
 
 pub(super) fn checked(path: &str) -> Result<()> {
-    if path.is_empty()
-        || path.len() > 4096
-        || path.contains('\\')
-        || path
-            .split('/')
-            .any(|p| matches!(p, "" | "." | ".." | ".jj" | ".git" | ".lapis"))
-    {
+    if !backup_path(path).file() {
         return Err(Error::Binding);
     }
     Ok(())

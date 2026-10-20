@@ -21,8 +21,7 @@ struct Stamp {
     modified: Option<SystemTime>,
 }
 pub(super) fn excluded(path: &str, exclusions: &[String]) -> bool {
-    path.split('/')
-        .any(|part| matches!(part, ".git" | ".jj" | ".lapis" | ".DS_Store"))
+    backup_path(path) == BackupPath::Excluded
         || exclusions
             .iter()
             .any(|prefix| path == prefix || path.starts_with(&format!("{prefix}/")))
@@ -65,6 +64,9 @@ fn inventory(
                 return Err(Error::Binding);
             }
             let info = root.symlink_metadata(&path)?;
+            if !info.is_dir() && !backup_path(&path).file() {
+                continue;
+            }
             if !(info.is_file() || info.is_dir() || info.is_symlink()) {
                 return Err(Error::Binding);
             }
