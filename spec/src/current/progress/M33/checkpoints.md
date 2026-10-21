@@ -275,3 +275,9 @@ Git or JJ files. NOTES-07K is sole Active; native listing/creation/pinned reads,
 NOTES-07L capture and NOTES-09 restart follow. Later
 participant/discussion/import/capture slices stay in scope. Original M33
 statuses and completion gates are unchanged.
+
+E-HISTORY-CLOSE-001 repairs shared history scope retirement after successful
+shutdown, allowing subsequent native window-destroyed/exit cleanup. M33 and
+M33.4 remain In progress; original Notes managed-conversation, restart, provider
+and distribution gates are unchanged. JJ Desktop supplies a separate cold native
+consumer of the same public lifecycle contract.

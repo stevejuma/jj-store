@@ -400,3 +400,21 @@ async fn revocation_preserves_other_windows_and_failed_preparation_is_observable
 mod blame;
 mod file_history;
 mod operations;
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn completed_shutdown_allows_later_window_revocation() {
+    let (_root, policy) = fixture();
+    let cache = tempfile::tempdir().unwrap();
+    let host = History::new(policy, cache.path().into(), Config::default()).unwrap();
+    let main = caller("main");
+    let operation = host.heads(&main, "vault").await.unwrap().heads[0];
+    let handle = host.open(&main, "vault", operation).await.unwrap();
+    ready(&host, &main, handle).await;
+    host.shutdown().await.unwrap();
+    host.revoke("main").await.unwrap();
+    host.shutdown().await.unwrap();
+    assert!(matches!(
+        host.heads(&main, "vault").await,
+        Err(Error::Denied)
+    ));
+}

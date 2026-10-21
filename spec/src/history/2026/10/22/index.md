@@ -6,3 +6,5 @@ Browse the child pages below.
 
 - [E-SHELL-BOUNDARIES-001](E-SHELL-BOUNDARIES-001/index.md)
 - [E-SHELL-LAYOUT-001](E-SHELL-LAYOUT-001/index.md)
+
+- [E-HISTORY-CLOSE-001](E-HISTORY-CLOSE-001/index.md)

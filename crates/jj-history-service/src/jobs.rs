@@ -169,6 +169,9 @@ impl History {
         for scope in scopes {
             scope.drain().await;
         }
+        if result.is_ok() {
+            self.windows.lock().map_err(|_| Error::Unavailable)?.clear();
+        }
         result
     }
 }

@@ -2,3 +2,5 @@
   {{#include E-SHELL-BOUNDARIES-001/SUMMARY.nav.md}}
 - [E-SHELL-LAYOUT-001](E-SHELL-LAYOUT-001/index.md)
   {{#include E-SHELL-LAYOUT-001/SUMMARY.nav.md}}
+- [E-HISTORY-CLOSE-001](E-HISTORY-CLOSE-001/index.md)
+  {{#include E-HISTORY-CLOSE-001/SUMMARY.nav.md}}

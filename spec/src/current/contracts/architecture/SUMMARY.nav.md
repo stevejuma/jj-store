@@ -27,3 +27,4 @@
 - [Injectable collaboration stores](25-injectable-collaboration-stores.md)
 - [Reusable agent workflows](26-reusable-agent-workflows.md)
 - [Vault history search projection](27-vault-history-search.md)
+- [Completed history shutdown](28-completed-history-shutdown.md)
