@@ -50,10 +50,26 @@ remain native-only. The crate README provides an entry-point overview.
 
 ## Embedding in Tauri
 
-`tauri-plugin-jj-store` provides an optional read-only bridge using the focused
-local-history profile. Its default service can be tested without Tauri; enable
-its `tauri` feature to register `Builder::new(history).build()`. Default plugin
-permissions are empty. Grant `jj-store:local-history` only to intended windows.
+Automatic saved-file history is separately owned by `jj-vault`. Its injected
+`Repository` and native `Binding` retain checkpoints outside disposable indexes.
+Hosts supply current vault admission, watching and progress, and drain editor
+writes before `try_close`. Failed final capture keeps the same coordinator for
+explicit retry. Guarded file/whole-vault restore retains a safety checkpoint and
+original request receipt; it requires host writer protection. Remote transfer
+and credentials remain host-owned. Ordinary immutable history reads never
+capture files or infer restore authority.
+
+`jj-history-service` owns the transport-independent read service using the
+focused local-history profile. Native hosts construct it directly with admitted
+caller scope/origin, physical vault identity and generation. The retained
+`Context.window` field is an opaque caller scope, not evidence of a WebView.
+Private hosted IPC and HTTP authentication remain the application's
+responsibility.
+
+`tauri-plugin-jj-store` reexports those shared types and provides the optional
+read-only Tauri bridge. Enable its `tauri` feature to register
+`Builder::new(history).build()`. Default plugin permissions are empty. Grant
+`jj-store:local-history` only to intended windows.
 
 Implement `Admission::admit` using the host's actual caller window/URL, live
 vault token and physical root. Return a fresh `local::Access` with current

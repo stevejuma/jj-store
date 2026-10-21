@@ -51,9 +51,9 @@ void client.blame("h", {
   path: "note.md",
   continuation: null,
 });
-// @ts-expect-error Blame cannot override the native operation or physical root.
 void client.blame("h", {
   commit: "11".repeat(20),
   path: "note.md",
+  // @ts-expect-error Blame cannot override the native operation or physical root.
   root: "outside",
 });

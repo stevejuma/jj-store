@@ -120,7 +120,8 @@ export function dependencyErrors(packages) {
       "jj-agent",
       "jj-collab",
     ],
-    "tauri-plugin-jj-store": ["jj-store-jj", "jj-store-model"],
+    "jj-history-service": ["jj-store-jj", "jj-store-model"],
+    "tauri-plugin-jj-store": ["jj-history-service"],
     "jj-store-capture": [
       "jj-agent",
       "jj-collab",

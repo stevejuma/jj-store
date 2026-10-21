@@ -1,3 +1,6 @@
+use jj_history_service::{
+    Admission, Config, Context, Error, Handle, History, Result, Status, local,
+};
 use std::{
     path::{Path, PathBuf},
     process::Command,
@@ -5,9 +8,6 @@ use std::{
         Arc,
         atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
     },
-};
-use tauri_plugin_jj_store::{
-    Admission, Config, Context, Error, Handle, History, Result, Status, local,
 };
 use tokio::sync::Notify;
 
@@ -377,7 +377,7 @@ async fn revocation_preserves_other_windows_and_failed_preparation_is_observable
         Status::Ready(_)
     ));
     host.close(&popup, "vault", second).await.unwrap();
-    let missing = tauri_plugin_jj_store::OperationId::new([99; 64]);
+    let missing = jj_history_service::OperationId::new([99; 64]);
     let failed = host.open(&popup, "vault", missing).await.unwrap();
     tokio::time::timeout(std::time::Duration::from_secs(15), async {
         loop {

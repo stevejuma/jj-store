@@ -240,7 +240,7 @@ export default defineConfig({
         },
         {
           pattern:
-            "^(?:crates/(?:jj-store-conversations|tauri-plugin-jj-store)/|packages/jj-(?:conversations|history)/)",
+            "^(?:crates/(?:jj-store-conversations|jj-history-service|tauri-plugin-jj-store)/|packages/jj-(?:conversations|history)/)",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/26-reusable-agent-workflows\\.md$",
           ],

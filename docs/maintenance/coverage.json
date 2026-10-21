@@ -50,15 +50,15 @@
   },
   {
     "id": "local",
-    "sources": ["crates/jj-store-jj/src"],
+    "sources": ["crates/jj-store-jj/src", "crates/jj-vault/src"],
     "pages": [
       "docs/site/technical/local.md",
       "docs/site/guides/git.md",
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact native file predicates under complete upstream changed-path coverage, bounded preflight and retained operation pins. Local manual documents derived preparation without source files, source index, heads or refs mutation.",
-      "fingerprint": "41f25784221959714f4f079a0b654a19bad40b4c36bb74d2b28592570a882c34"
+      "reason": "Reviewed existing jj-vault coordinator ownership against its native README and canonical backup contract: retained checkpoints, writer-drained close, guarded restore, injected admission and credentials stay distinct from history reads.",
+      "fingerprint": "9b9a5953b7a03ebd832e9393ebe3ed1bb4be1c6c3e7bc59e7cb667fd256b3660"
     }
   },
   {
@@ -251,12 +251,13 @@
     "sources": [
       "crates/tauri-plugin-jj-store/src",
       "crates/tauri-plugin-jj-store/build.rs",
-      "crates/tauri-plugin-jj-store/permissions/default.toml"
+      "crates/tauri-plugin-jj-store/permissions/default.toml",
+      "crates/jj-history-service/src"
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed additive blame through the retained native handle, bounded native annotation cache, current window and vault admission, generation checks and drained blocking work. Version-one frames and generated permissions include only the explicit local-history grant; defaults remain empty.",
-      "fingerprint": "91581c24cc00169e8aa3f79841124d230fcb92f0284da4bdc2e9657d5940adc7"
+      "reason": "Reviewed the mechanical service extraction, identical version-one schema, operation pins, opaque caller scope, physical-vault admission and drained native jobs; Tauri reexports shared types and owns only its transport.",
+      "fingerprint": "312c764b3a48344ca5fb4aaee3de223cbc40f90997a24881bc4bd48bdf00b3d5"
     }
   },
   {

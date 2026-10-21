@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 const cargo = (args) => execFileSync("cargo", args, { encoding: "utf8" });
 
@@ -63,12 +63,20 @@ test("default native retains every integration binary and headless gates native-
     assert.deepEqual(target["required-features"], ["native"], target.name);
   }
   for (const target of tests) {
+    const standaloneVault = target.name.startsWith("vault_");
+    if (standaloneVault) {
+      assert.match(
+        readFileSync(`crates/jj-store-jj/tests/${target.name}.rs`, "utf8"),
+        /^#!\[cfg\(feature = "vault-backup"\)\]/,
+        target.name,
+      );
+    }
     const expected =
       target.name === "local_history"
         ? ["local-history"]
         : ["local_evidence", "local_metadata", "local_discovery"].includes(
               target.name,
-            )
+            ) || standaloneVault
           ? []
           : ["native"];
     assert.deepEqual(target["required-features"] ?? [], expected, target.name);

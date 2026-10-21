@@ -321,3 +321,10 @@ identity from Tauri and its default service depends on no Tauri or native object
 store. Workspace dependency defaults are disabled for selective embeddings;
 existing CLI, RPC, service and server consumers explicitly enable their native
 profile.
+
+`jj-history-service` owns the same bounded local-history service independently
+of its optional Tauri adapter. `tauri-plugin-jj-store` composes and reexports
+the owned service types for existing native consumers and owns only WebView
+command admission, permissions and delivery. Shared readers acquire no Tauri,
+HTTP, credential, Notes or publication dependency. JST-ARCH-001/007 boundaries
+and the versioned history schema remain unchanged.

@@ -1,9 +1,9 @@
 # tauri-plugin-jj-store
 
-Read-only local JJ history and diffs for an embedding host. It reuses
-`jj-store-jj/local-history` and owns bounded preparation jobs and
-operation-pinned handles. It has no repository initialization, conversion or
-mutation command.
+Tauri transport for the independent `jj-history-service`. Shared bounded
+preparation, operation-pinned handles, read lifecycle and wire types live in
+that service crate and remain reexported here for existing native consumers. It
+has no repository initialization, conversion or mutation command.
 
 Implement `Admission` using your application's physical vault and window policy.
 Return a fresh `local::Access` whose authorization checks remain valid

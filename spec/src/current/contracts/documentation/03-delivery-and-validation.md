@@ -19,7 +19,11 @@ M33's crate README and local manual describe independent local-history
 construction, private cache admission and retained read pins. Original query
 budgets and public paths remain unchanged. Source review retains the separate
 companion-only metadata profile, native-only working-copy capabilities and the
-remaining Tauri qualification gate.
+remaining Tauri qualification gate. The local embedding manual and separate
+`jj-history-service` README also document neutral caller scope/origin and the
+Tauri compatibility imports. Service extraction preserves the native schema and
+qualification distinctions; hosted IPC/browser admission remains a separate
+consumer gate.
 
 Native capture documentation MUST distinguish an expected content digest from
 the injected backend's actual durability confirmation. Describe exact native

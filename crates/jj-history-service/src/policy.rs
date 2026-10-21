@@ -1,7 +1,8 @@
 use crate::{Result, cache, local};
 use std::sync::Arc;
 
-/// Derived from the actual native caller; never accepted as renderer arguments.
+/// Derived by the host, never accepted as browser or renderer arguments.
+/// `window` is the opaque caller scope; Tauri uses its actual window label.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Context {
     pub window: String,

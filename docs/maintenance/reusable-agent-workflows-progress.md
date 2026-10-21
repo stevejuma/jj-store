@@ -1,5 +1,12 @@
 # Reusable agent workflows: delivery checklist
 
+Hosted Notes H02 source prerequisite: the shared local-history implementation
+now lives in `jj-history-service`; its Tauri adapter consumes and reexports it.
+Operation pins, admission generations, bounded frames and lifecycle contracts
+are preserved. E-HISTORY-SERVICE-001 records native and dependency
+qualification; the Notes companion, authenticated routes and browser integration
+remain pending.
+
 Last reviewed: 2026-10-19. Overall: **In progress**.
 
 **Current direction: visible AI delivery.** The user approved a staged

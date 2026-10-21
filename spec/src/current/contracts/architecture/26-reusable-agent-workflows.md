@@ -1,5 +1,13 @@
 # Reusable agent workflows
 
+The hosted Notes prerequisite extracts `jj-history-service` from the optional
+Tauri crate without changing JST-ARCH-007 history authority, operations, limits
+or wire formats. Hosts inject caller scope/origin and physical-vault generation
+admission; the retained `Context.window` field is an opaque caller-scope label,
+not proof of a WebView. Tauri still derives that label from the actual window.
+The service retains pinned reads, cancellation and supervised drain. A private
+hosted companion and authenticated browser adapter remain consumer-owned gates.
+
 E-REUSABLE-PROGRESS-049 confirms JST-ARCH-007 unchanged for Notes' capture
 source foundation. Shared acquisition/privacy stay native; Notes owns separate
 manual/capture handles, physical-vault admission and transient confirmation.

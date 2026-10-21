@@ -43,7 +43,7 @@ async fn blame_matches_jj_and_retains_pin_scope_and_source_bytes() {
     jj(root.path(), &["new", "-m", "external advance"]);
     std::fs::write(root.path().join("note.md"), "dirty outside pinned source\n").unwrap();
     let before = source_bytes(root.path());
-    let mut query = tauri_plugin_jj_store::frames::BlameQuery {
+    let mut query = jj_history_service::frames::BlameQuery {
         commit: commit.parse().unwrap(),
         path: "note.md".into(),
         continuation: None,
@@ -116,7 +116,7 @@ async fn blame_close_waits_for_the_owned_read_to_exit() {
                 &main,
                 "vault",
                 handle,
-                tauri_plugin_jj_store::frames::BlameQuery {
+                jj_history_service::frames::BlameQuery {
                     commit: commit.parse().unwrap(),
                     path: "note.md".into(),
                     continuation: None,

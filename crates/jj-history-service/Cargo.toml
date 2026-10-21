@@ -1,0 +1,24 @@
+[package]
+name = "jj-history-service"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+description = "Host-admitted operation-pinned local history without a UI transport"
+
+[dependencies]
+jj-store-jj = { workspace = true, default-features = false, features = ["local-history"] }
+jj-store-model.workspace = true
+async-trait = "0.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+schemars.workspace = true
+tokio = { version = "1", features = ["rt", "sync"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[dev-dependencies]
+tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }

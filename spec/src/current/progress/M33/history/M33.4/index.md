@@ -62,11 +62,9 @@ not a completion gate selection.
 | [E-REUSABLE-PROGRESS-046](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-046/index.md) | 2026-10-19 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-047](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-047/index.md) | 2026-10-19 | pass            | Original outcome |
 | [E-REUSABLE-PROGRESS-048](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-048/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-049](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-049/index.md) | 2026-10-19 | pass            | Original outcome |
+| [E-HISTORY-SERVICE-001](../../../../../history/2026/10/21/E-HISTORY-SERVICE-001/index.md)     | 2026-10-21 | pending         | Original outcome |
 
 <!-- generated-navigation -->
 
 ## Pages
-
-|
-[E-REUSABLE-PROGRESS-049](../../../../../history/2026/10/19/E-REUSABLE-PROGRESS-049/index.md)
-| 2026-10-19 | pass | Original outcome |

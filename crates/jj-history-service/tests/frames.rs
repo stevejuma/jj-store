@@ -1,4 +1,4 @@
-use tauri_plugin_jj_store::frames::*;
+use jj_history_service::frames::*;
 #[test]
 fn renderer_frames_cannot_supply_native_authority() {
     for field in [

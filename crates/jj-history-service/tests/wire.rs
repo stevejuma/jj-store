@@ -1,4 +1,4 @@
-use tauri_plugin_jj_store::{Error, frames, wire};
+use jj_history_service::{Error, frames, wire};
 
 #[test]
 fn text_envelopes_preserve_full_width_integers_unicode_and_exact_escaping() {
