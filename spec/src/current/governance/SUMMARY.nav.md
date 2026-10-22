@@ -22,3 +22,5 @@
 - [Shared AI client integration](23-shared-ai-clients.md)
 - [Reusable capture boundaries](reusable-capture-boundaries.md)
 - [Change map](spec-governance.md)
+
+- [Unchanged-contract chapter lookup](24-unchanged-contract-chapters.md)

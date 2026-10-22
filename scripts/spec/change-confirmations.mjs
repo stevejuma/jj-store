@@ -22,13 +22,19 @@ export function changeConfirmations(root, selection) {
   ).map((rev) => revisionReader(root, rev));
   const old = parentReaders.flatMap((reader) => loadLedger(reader).entries);
   const definitions = new Map();
+  const chapters = new Map();
   for (const file of current.files.filter((p) =>
     /^spec\/src\/current\/(?:contracts|governance)\/.+\.md$/.test(p),
-  ))
-    for (const match of current
-      .read(file)
-      .matchAll(/^\| (JST-[A-Z]+-\d{3}) \|/gm))
+  )) {
+    const source = current.read(file);
+    for (const match of source.matchAll(/^\| (JST-[A-Z]+-\d{3}) \|/gm))
       definitions.set(match[1], file);
+    if (/(?:^|\/)(?:index|SUMMARY(?:\.nav)?)\.md$/.test(file)) continue;
+    for (const [id] of source.matchAll(/\bJST-[A-Z]+-\d{3}\b/g)) {
+      if (!chapters.has(id)) chapters.set(id, new Set());
+      chapters.get(id).add(file);
+    }
+  }
   const errors = integrityErrors(
     ledger,
     current,
@@ -73,7 +79,11 @@ export function changeConfirmations(root, selection) {
     )
     .map((e) => ({
       paths: e.files,
-      chapters: (e.requirements ?? []).map((id) => definitions.get(id)),
+      chapters: [
+        ...new Set(
+          (e.requirements ?? []).flatMap((id) => [...(chapters.get(id) ?? [])]),
+        ),
+      ],
       evidence: ledger.evidencePaths.get(e.id),
       reason: e.contract_review.reason,
     }));
