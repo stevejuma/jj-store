@@ -59,10 +59,14 @@
       view.getByRole("button", { name: "Preview resolution" }),
     ).toBeEnabled();
     await userEvent.click(
-      within(browser).getByRole("button", { name: "src/output.ts" }),
+      within(browser).getByRole("button", {
+        name: "output.ts Repository file",
+      }),
     );
     await userEvent.click(
-      within(browser).getByRole("button", { name: "src/settings.ts" }),
+      within(browser).getByRole("button", {
+        name: "settings.ts Repository file",
+      }),
     );
     expect(editor).toHaveValue("// retained workspace merge\n");
     await userEvent.click(

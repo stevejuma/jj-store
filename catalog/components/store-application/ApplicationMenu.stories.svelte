@@ -20,7 +20,7 @@
     const menu = await canvas.findByRole("button", {
       name: "Application menu",
     });
-    const toolbar = menu.closest('[data-ui-part="toolbar"]')!;
+    const toolbar = menu.closest('[data-ui-part="topbar"]')!;
     const settings = canvasElement.querySelector(
       '[data-ui-part="body"][aria-label="Repository settings"]',
     )!;
@@ -155,7 +155,7 @@
       canvas.queryByRole("navigation", { name: "Application navigation" }),
     ).toBeNull();
     await expect(menu.closest('[data-ui-part="main"]')).not.toBeNull();
-    await expect(menu.closest('[data-ui-part="toolbar"]')).not.toBeNull();
+    await expect(menu.closest('[data-ui-part="topbar"]')).not.toBeNull();
     await expect(
       canvas.getByRole("button", { name: "Open navigation sidebar" }),
     ).toBeVisible();
@@ -212,6 +212,9 @@
           canvas.getByRole("button", { name: "Application menu" }),
         ).toHaveFocus(),
       );
+      await waitFor(() =>
+        expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
+      );
       await expect(
         canvasElement.ownerDocument.documentElement.scrollWidth,
       ).toBeLessThanOrEqual(390);
@@ -229,9 +232,10 @@
       body = within(document.body);
     try {
       await page.viewport(390, 844);
-      await userEvent.click(
-        await canvas.findByRole("button", { name: "Application menu" }),
-      );
+      const menu = await canvas.findByRole("button", {
+        name: "Application menu",
+      });
+      await userEvent.click(menu);
       await userEvent.click(
         await body.findByRole("menuitem", { name: "Create change" }),
       );
@@ -252,6 +256,9 @@
           }),
         ).toBeInTheDocument(),
       );
+      await expect(
+        canvas.getByRole("button", { name: "Application menu" }),
+      ).toBe(menu);
       await expect(description).toHaveTextContent(
         "Keep this draft across the breakpoint",
       );

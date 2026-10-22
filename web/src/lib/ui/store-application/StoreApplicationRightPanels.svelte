@@ -166,6 +166,7 @@
   <AppShell.Sidebar
     hidden={!visible}
     side="right"
+    variant="attached"
     constraintPriority={0}
     constrainedPresentation="replace-main"
     class="community-application__standard-right-sidebar"
@@ -182,6 +183,7 @@
   <AppShell.Sidebar
     hidden={!visible}
     side="right"
+    variant="attached"
     constraintPriority={0}
     constrainedPresentation="replace-main"
     class="community-application__standard-right-sidebar"
@@ -224,6 +226,7 @@
   <AppShell.Sidebar
     hidden={!visible}
     side="right"
+    variant="attached"
     constraintPriority={0}
     constrainedPresentation="replace-main"
     class="community-application__standard-right-sidebar"
@@ -239,6 +242,7 @@
 {#if !inspection?.current && !inspection?.file && chatOpen && controller.execution}<AppShell.Sidebar
     hidden={!visible}
     side="right"
+    variant="attached"
     constraintPriority={0}
     constrainedPresentation="replace-main"
     class="community-application__standard-right-sidebar"

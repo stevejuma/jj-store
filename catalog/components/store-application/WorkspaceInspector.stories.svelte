@@ -31,7 +31,7 @@
     );
     await userEvent.click(rail.getByRole("tab", { name: "Changes" }));
     await userEvent.click(
-      await rail.findByRole("button", { name: "src/example.ts" }),
+      await rail.findByRole("button", { name: "example.ts +1 -1" }),
     );
     const inspector = await c.findByRole("complementary", {
       name: "Workspace file",
@@ -58,10 +58,10 @@
       header.getByText("src/example.ts").parentElement!.querySelector("svg"),
     ).not.toBeNull();
     await expect(
-      rail.getByRole("button", { name: "src/example.ts" }),
+      rail.getByRole("button", { name: "example.ts +1 -1" }),
     ).toHaveTextContent("+1");
     await expect(
-      rail.getByRole("button", { name: "src/example.ts" }),
+      rail.getByRole("button", { name: "example.ts +1 -1" }),
     ).toHaveTextContent("-1");
     await browser.viewport(1800, 988);
     try {
@@ -134,8 +134,13 @@
       for (const name of ["Show files as folders", "Show files as packages"]) {
         await userEvent.click(rail.getByRole("radio", { name }));
         await waitFor(() => {
-          const root = rail.getByRole("button", { name: "README.md" });
-          const nested = rail.getByRole("button", { name: "src/example.ts" });
+          const root = rail.getByRole("button", {
+            name: `README.md ${tab === "Files" ? "Repository file" : "+1 -1"}`,
+          });
+          const nested = rail.getByRole("button", {
+            name: `example.ts ${tab === "Files" ? "Repository file" : "+1 -1"}`,
+          });
+          expect(nested).toHaveAttribute("data-file-path", "src/example.ts");
           const inset = (row: HTMLElement) =>
             row
               .querySelector(".ui-diff-file-listing__icon")!

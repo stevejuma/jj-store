@@ -25,3 +25,4 @@ Browse the child pages below.
 - [2026-10-19](19/index.md)
 - [20](20/index.md)
 - [21](21/index.md)
+- [22](22/index.md)

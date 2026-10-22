@@ -79,6 +79,7 @@
 
 {#if agent}<AppShell.Sidebar
     side="right"
+    variant="attached"
     constraintPriority={0}
     constrainedPresentation="replace-main"
     label="Agent details sidebar"

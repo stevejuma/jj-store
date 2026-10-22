@@ -71,9 +71,14 @@
     await expect(
       getComputedStyle(rail.getByRole("tab", { name: "Files" })).borderRadius,
     ).toBe("999px");
-    await userEvent.click(
-      await rail.findByRole("button", { name: "src/unchanged.ts" }),
+    const unchanged = await rail.findByRole("button", {
+      name: "unchanged.ts Repository file",
+    });
+    await expect(unchanged).toHaveAttribute(
+      "data-file-path",
+      "src/unchanged.ts",
     );
+    await userEvent.click(unchanged);
     const inspector = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
     );
@@ -114,11 +119,11 @@
     ).toHaveTextContent("Branch");
     await waitFor(() =>
       expect(
-        rail.queryByRole("button", { name: "src/unchanged.ts" }),
+        rail.queryByRole("button", { name: "unchanged.ts Repository file" }),
       ).not.toBeInTheDocument(),
     );
     await userEvent.click(
-      await rail.findByRole("button", { name: "src/example.ts" }),
+      await rail.findByRole("button", { name: "example.ts +1 -1" }),
     );
     const diff = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
@@ -146,7 +151,7 @@
     const panel = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
-    await panel.findByRole("button", { name: "src/unchanged.ts" });
+    await panel.findByRole("button", { name: "unchanged.ts Repository file" });
     const refresh = panel.getByRole("button", {
       name: "Refresh workspace files",
     });
@@ -162,7 +167,7 @@
       "true",
     );
     await expect(
-      panel.getByRole("button", { name: "src/unchanged.ts" }),
+      panel.getByRole("button", { name: "unchanged.ts Repository file" }),
     ).toBeVisible();
     await expect(
       panel.queryByText("Loading more repository files"),
@@ -212,7 +217,9 @@
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
     await userEvent.click(
-      await files.findByRole("button", { name: "src/unchanged.ts" }),
+      await files.findByRole("button", {
+        name: "unchanged.ts Repository file",
+      }),
     );
     await within(
       await c.findByRole("complementary", { name: "Workspace file" }),
@@ -278,7 +285,7 @@
     const rail = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
-    await rail.findByRole("button", { name: "src/unchanged.ts" });
+    await rail.findByRole("button", { name: "unchanged.ts Repository file" });
     await waitFor(() =>
       expect(
         rail.getByRole("button", { name: "Refresh workspace files" }),
@@ -299,11 +306,15 @@
     const reopened = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
-    await reopened.findByRole("button", { name: "src/unchanged.ts" });
+    await reopened.findByRole("button", {
+      name: "unchanged.ts Repository file",
+    });
     await userEvent.click(
       c.getByRole("button", { name: "Hold next workspace read" }),
     );
-    await browser.getByRole("button", { name: /^src\/unchanged\.ts$/ }).click();
+    await browser
+      .getByRole("button", { name: "unchanged.ts Repository file" })
+      .click();
     const inspector = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
     );

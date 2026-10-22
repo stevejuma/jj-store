@@ -37,6 +37,8 @@
       name: "Application navigation",
     });
     await expect(header).toHaveAttribute("data-tauri-drag-region", "deep");
+    await expect(header).toHaveAttribute("data-ui-part", "topbar");
+    await expect(header).toHaveAttribute("data-placement", "top");
     const sidebarToggle = canvas.getByRole("button", {
       name: "Expand left sidebar",
     });
@@ -77,16 +79,18 @@
     });
     await aligned(
       header,
-      canvas.getByRole("button", { name: "Expand left sidebar" }),
+      canvas.getByRole("button", { name: "Open navigation sidebar" }),
     );
     await expect(header).toBeVisible();
     await expect(header).toHaveAttribute("data-tauri-drag-region", "deep");
+    await expect(header).toHaveAttribute("data-ui-part", "topbar");
+    await expect(header).toHaveAttribute("data-placement", "top");
     await expect(header.getBoundingClientRect().height).toBeGreaterThanOrEqual(
       40,
     );
     await expect(
       canvas
-        .getByRole("button", { name: "Expand left sidebar" })
+        .getByRole("button", { name: "Open navigation sidebar" })
         .getBoundingClientRect().left - header.getBoundingClientRect().left,
     ).toBeGreaterThanOrEqual(80);
   }}

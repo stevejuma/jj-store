@@ -41,7 +41,7 @@
       }),
     );
     await userEvent.click(
-      view.getByRole("button", { name: "assets/logo.bin" }),
+      view.getByRole("button", { name: "logo.bin Repository file" }),
     );
     await userEvent.click(
       view.getByRole("button", { name: "Use publication" }),
@@ -180,7 +180,9 @@
       within(sidebar).getByRole("radio", { name: "Show files as list" }),
     );
     await userEvent.click(
-      await within(sidebar).findByRole("button", { name: "assets/logo.bin" }),
+      await within(sidebar).findByRole("button", {
+        name: "assets/logo.bin Repository file",
+      }),
     );
     await expect(
       view.queryByRole("button", { name: "Stage merged file" }),
@@ -189,7 +191,9 @@
       within(header).getByRole("button", { name: "Delete path" }),
     ).toBeVisible();
     await userEvent.click(
-      await within(sidebar).findByRole("button", { name: "src/lib.rs" }),
+      await within(sidebar).findByRole("button", {
+        name: "src/lib.rs Repository file",
+      }),
     );
     await expect(editor).toHaveValue("// retained merge draft\n");
   }}
@@ -206,7 +210,7 @@
     );
     await expect(view.getByText(/Merged file staged/u)).toBeVisible();
     await userEvent.click(
-      view.getByRole("button", { name: "assets/logo.bin" }),
+      view.getByRole("button", { name: "logo.bin Repository file" }),
     );
     await userEvent.click(view.getByRole("button", { name: "Delete path" }));
     await userEvent.click(view.getByRole("button", { name: "Preview 2/2" }));

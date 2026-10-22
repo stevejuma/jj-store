@@ -93,6 +93,11 @@
     ).toBeVisible();
     await expect(canvas.getByText("Files/Repository")).toBeVisible();
     await expect(
+      canvas
+        .getByRole("complementary", { name: "Repository details" })
+        .querySelectorAll('[data-ui-part="sidebar-section"]').length,
+    ).toBeGreaterThanOrEqual(2);
+    await expect(
       canvas.queryByRole("button", { name: "Close details" }),
     ).not.toBeInTheDocument();
     await userEvent.click(
@@ -182,7 +187,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     const toggle = c.getByRole("button", { name: "Open details sidebar" });
-    const toolbar = toggle.closest("header")!;
+    const toolbar = toggle.closest('[data-ui-part="topbar"]')!;
     const bounds = toolbar.getBoundingClientRect(),
       button = toggle.getBoundingClientRect();
     const menu = c

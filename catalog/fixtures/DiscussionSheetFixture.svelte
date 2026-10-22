@@ -22,16 +22,22 @@
   rail.open();
   onDestroy(() => void shell.dispose());
   provideDiscussionFocus();
+  let mainElement = $state<HTMLElement | null>(null);
+  let mobileTarget = $state<HTMLElement | null>(null);
   const first = $state({ open: false, value: "" });
   const second = $state({ open: false, value: "" });
 </script>
 
 <CommunityAppShell
   controller={shell}
+  {mainElement}
+  {mobileTarget}
   displayMode={mobile ? "mobile" : "desktop"}
 >
-  <AppShell.Main>
+  <AppShell.Main bind:ref={mainElement}>
+    <AppShell.Topbar.Target bind:ref={mobileTarget} />
     <AppShell.Toolbar>
+      <AppShell.Sidebar.Toggle side="right" sidebarName="standard pane" />
       <Button onclick={() => appearance.update({ threads: "focus" })}
         >Focus layout</Button
       >
@@ -59,13 +65,25 @@
       {/each}
     </AppShell.Body>
   </AppShell.Main>
-  <AppShell.Sidebar side="right" label="Standard right pane">
+  <AppShell.Sidebar
+    side="right"
+    variant="attached"
+    label="Standard right pane"
+    resizeLabel="Resize standard pane"
+    closeable
+  >
+    <AppShell.Sidebar.Header>
+      <strong>Discussion</strong>
+      <AppShell.Sidebar.Close label="Close standard pane" />
+    </AppShell.Sidebar.Header>
     <AppShell.Sidebar.Body>Standard right pane content</AppShell.Sidebar.Body>
   </AppShell.Sidebar>
   <AppShell.Sidebar
     side="right"
     sidebarController={rail}
+    variant="rail"
     label="Outer details rail"
+    resizeLabel="Resize outer details rail"
   >
     <AppShell.Sidebar.Body>Outer rail content</AppShell.Sidebar.Body>
   </AppShell.Sidebar>

@@ -6,7 +6,6 @@
   } from "./menu-context.js";
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import XIcon from "@lucide/svelte/icons/x";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
   import StoreConflictBody from "./StoreConflictBody.svelte";
   import "./store-conflicts.css";
@@ -58,6 +57,7 @@
   mobilePlacement="root"
   dismissOnEscape={!busy && dismissOnEscape && menuCount === 0}
   onDismiss={onClose}
+  dismissLabel="Close conflict editor"
   class="store-conflict-editor"
 >
   <AppShell.SurfaceLayer.Header class="store-conflict-editor__header">
@@ -74,16 +74,12 @@
     >
     <h1 class="store-conflict-editor__title">Resolve conflicts</h1>
     {@render actions()}
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label="Close conflict editor"
-      disabled={busy}
-      onclick={onClose}><XIcon aria-hidden="true" /></Button
-    >
+    <AppShell.SurfaceLayer.Close disabled={busy} />
   </AppShell.SurfaceLayer.Header>
-  <AppShell.SurfaceLayer.Body class="store-conflict-editor__body">
+  <AppShell.SurfaceLayer.Body
+    scrollable={false}
+    class="store-conflict-editor__body"
+  >
     <StoreConflictBody
       {files}
       {activePath}

@@ -9,7 +9,6 @@
     AppShell,
     type AppShellController,
   } from "@lapismd/design-core/shell";
-  import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
   import {
     isStacksRoute,
     stacksRouteView,
@@ -24,17 +23,16 @@
   import type { StorePage } from "../community-navigation/model.js";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreTerminalWorkspace from "../store-terminal/StoreTerminalWorkspace.svelte";
-  import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
-  import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import StoreWorkspaceSectionHeader from "./StoreWorkspaceSectionHeader.svelte";
   import StoreRepositoryNotices from "./StoreRepositoryNotices.svelte";
   import StoreApplicationPlaceholder from "./StoreApplicationPlaceholder.svelte";
   let {
+    mainElement = $bindable(null),
+    mobileTarget = $bindable(null),
     controller,
     stackWorkspace,
-    shell,
     current,
     layoutStorage,
     settingsOpen,
@@ -44,18 +42,15 @@
     linkFolder,
     conflictOpen,
     workspaceBlocked,
-    canNavigateBack,
-    canNavigateForward,
-    navigate,
     detailsRail,
     selectPage,
     children,
     agents,
-    applicationMenu,
   }: {
+    mainElement?: HTMLElement | null;
+    mobileTarget?: HTMLElement | null;
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
-    shell: AppShellController;
     current: StoreRoute;
     layoutStorage?: Storage;
     settingsOpen: boolean;
@@ -65,14 +60,10 @@
     linkFolder(): void;
     conflictOpen: boolean;
     workspaceBlocked: boolean;
-    canNavigateBack: boolean;
-    canNavigateForward: boolean;
-    navigate(delta: -1 | 1): void;
     detailsRail: AppShellController["right"];
     selectPage(page: StorePage): void;
     children?: Snippet<[StorePage, string]>;
     agents?: Snippet;
-    applicationMenu?: Snippet;
   } = $props();
   const repositorySettingsOpen = $derived(
     current.page === "settings" && !settingsOpen,
@@ -100,7 +91,11 @@
   );
 </script>
 
-<AppShell.Main>
+<AppShell.Main bind:ref={mainElement}>
+  <AppShell.Topbar.Target
+    bind:ref={mobileTarget}
+    style="--ui-shell-topbar-height: var(--ui-shell-toolbar-height);"
+  />
   <StoreTerminalWorkspace
     repository={current.repository}
     profile={controller.state.repository.profile ?? "native"}
@@ -123,30 +118,6 @@
       void controller.actions.refresh();
     }}
   >
-    {#if shell.mobile.resolvedMode === "mobile"}
-      <AppShell.Toolbar>
-        {#if settingsOpen}
-          <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
-        {:else}
-          <CommunityApplicationMobileNavigation
-            model={{ canNavigateBack, canNavigateForward, navigate }}
-          />
-          {#if focusedStacks && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
-              controller={stackWorkspace}
-            />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
-              {controller}
-            />{/if}
-        {/if}
-        <div class="store-application__details-toggle">
-          {#if !settingsOpen && !repositorySettingsOpen && !current.agentsHub && !["workflows", "threads"].includes(current.page)}<AppShell.Sidebar.Toggle
-              side="right"
-              sidebarController={detailsRail}
-              sidebarName="details"
-            />{/if}
-          {@render applicationMenu?.()}
-        </div>
-      </AppShell.Toolbar>
-    {/if}
     {#key current.repository}
       <div
         hidden={!repositorySettingsOpen}

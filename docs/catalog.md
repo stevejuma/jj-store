@@ -16,7 +16,7 @@ Community source revision: `d859f33a484a9238bb11f974f4ead8e9be729ec6`. Source
 repository: https://github.com/lapismd/lapis-community. Directly adapted source
 is copyright its original contributors and licensed Apache-2.0, as is jj-store.
 Design Core primitives are consumed through released
-`@lapismd/design-core@^0.2.0`; their source is not copied. Community-local
+`@lapismd/design-core@^0.5.1`; their source is not copied. Community-local
 tarballs are not runtime dependencies.
 
 Repository loading compositions were additionally inspected at Community
@@ -56,8 +56,6 @@ component was copied for this slice.
 | `src/components/community-chip/model.ts`                                                                                                                                                                            | `web/src/lib/ui/community-chip/model.ts`                                                     | Direct copy.                                                                                                                                             |
 | `src/components/community-app-shell/CommunityAppShell.svelte`                                                                                                                                                       | `web/src/lib/ui/community-app-shell/CommunityAppShell.svelte`                                | Shell geometry/styles retained; domain actions replaced with presentation inputs.                                                                        |
 | `src/components/community-app-shell/CommunitySidebarToggleIcon.svelte`                                                                                                                                              | `web/src/lib/ui/community-app-shell/CommunitySidebarToggleIcon.svelte`                       | Shell geometry/styles retained; domain actions replaced with presentation inputs.                                                                        |
-| `src/components/community-app-shell/shell-header-geometry.ts`                                                                                                                                                       | `web/src/lib/ui/community-app-shell/shell-header-geometry.ts`                                | Shell geometry/styles retained; domain actions replaced with presentation inputs.                                                                        |
-| `src/components/community-app-shell/shell-header-geometry.test.ts`                                                                                                                                                  | `catalog/components/community-app-shell/shell-header-geometry.test.ts`                       | Catalog regression exercises the production-owned helper.                                                                                                |
 | `src/components/community-app-shell/right-sidebar.css`                                                                                                                                                              | `web/src/lib/ui/community-app-shell/right-sidebar.css`                                       | Shell geometry/styles retained; domain actions replaced with presentation inputs.                                                                        |
 | `src/components/community-overlays.css`                                                                                                                                                                             | `web/src/lib/ui/community-overlays.css`                                                      | Shell geometry/styles retained; domain actions replaced with presentation inputs.                                                                        |
 | `src/components/community-navigation/CommunityNavigation.css`                                                                                                                                                       | `web/src/lib/ui/community-navigation/CommunityNavigation.css`                                | Shell geometry/styles retained; domain actions replaced with presentation inputs.                                                                        |
@@ -176,3 +174,89 @@ presentation adaptations; no shared package implementation is patched.
 **Review refinements** stories exercise the requested presentation and directory
 navigation; branch-card stories cover separators before and after filtering. All
 changed stories remain visual-pending.
+
+## AppShell layout adoption
+
+This workspace adopts the Design Core shell extensions from change `kulovuqu`
+(`e6320c0d`). It keeps jj-store's existing shell controllers, panel IDs, layout
+storage, history callbacks, route selection, pending commands and lazy view
+owners. The application uses one mounted topbar, body-adjacent attached panels,
+an independent outer details rail, shared rail sections and overlay-page chrome.
+
+The browser topbar moves into a target before Main's scrolling content. Native
+macOS chrome retains top placement, 40px height, traffic-light clearance and its
+existing drag region. The details action still opens/closes its existing rail;
+mobile entry selects that same panel through the existing mobile controller.
+
+Discussion pages use contextual Close, fixed Footer and responsive inset tokens.
+Nested thread bodies, document readers and the conflict editor explicitly own
+their scrolling. Other discussion bodies retain the default shell Scroll Area.
+The existing single-active-layer, coverage and return-focus rules remain intact.
+
+### Temporary dependency validation
+
+The new shell APIs are not included in the current registry release. This is a
+local adoption workspace, using an explicitly packed archive rather than a
+source alias. The tracked manifest and lockfile retain registry dependencies.
+Registry-only deployment requires a released Design Core version containing the
+new APIs, a normal dependency update and focused acceptance again.
+
+The qualified archive is
+`../design-core/.release/tarballs/lapismd-design-core-0.6.0.tgz`, with SHA-256:
+
+```text
+272678190a387b017f73b58c46417093340d9ccc069d31240e4e857fa629817a
+```
+
+Its public prepared shell components were compared with the owning source. The
+package provides compiled rune modules, declarations, consumer-compiled Svelte
+components and CSS at its public subpaths. Its `0.6.0` development manifest does
+not mean the registry's `0.6.0` release includes these additions.
+
+To reproduce from this checkout, first install the normal dependencies, then
+prepare the ignored local archive and pnpm hook:
+
+```sh
+pnpm install --frozen-lockfile --ignore-pnpmfile
+mkdir -p .local/shell-layout
+cp ../design-core/.release/tarballs/lapismd-design-core-0.6.0.tgz \
+  .local/shell-layout/lapismd-design-core-shell-layout.tgz
+```
+
+Save this as `.local/shell-layout/pnpmfile.cjs`:
+
+```js
+const archive =
+  "file:" +
+  require("node:path").join(__dirname, "lapismd-design-core-shell-layout.tgz");
+module.exports = {
+  hooks: {
+    readPackage(manifest) {
+      for (const field of [
+        "dependencies",
+        "devDependencies",
+        "optionalDependencies",
+      ]) {
+        if (manifest[field]?.["@lapismd/design-core"])
+          manifest[field]["@lapismd/design-core"] = archive;
+      }
+      return manifest;
+    },
+  },
+};
+```
+
+Install it without rewriting the tracked registry lockfile:
+
+```sh
+pnpm --config.pnpmfile=.local/shell-layout/pnpmfile.cjs \
+  --config.lockfile=false install
+```
+
+Do not run an ordinary install over this setup before testing these unpublished
+APIs. Restore registry-only dependencies with
+`pnpm install --frozen-lockfile --ignore-pnpmfile` when retiring the local
+review. No package publication, production restart or state migration is part of
+this slice. Functional evidence and the remaining release/visual gates are
+recorded in
+[E-SHELL-LAYOUT-001](../spec/src/history/2026/10/22/E-SHELL-LAYOUT-001/index.md).
