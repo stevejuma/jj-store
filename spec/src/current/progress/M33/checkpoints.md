@@ -281,3 +281,9 @@ shutdown, allowing subsequent native window-destroyed/exit cleanup. M33 and
 M33.4 remain In progress; original Notes managed-conversation, restart, provider
 and distribution gates are unchanged. JJ Desktop supplies a separate cold native
 consumer of the same public lifecycle contract.
+
+E-HISTORY-METADATA-001 qualifies ready-handle query information, workspace and
+bookmark lookup, and selected/ancestor operation details for JJ Desktop complete
+screens. Source byte preservation, future-operation rejection, service/transport
+tests and cold native consumer acceptance pass. M33/M33.4 remain In progress;
+original Notes, provider and distribution gates remain unchanged.

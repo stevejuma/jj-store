@@ -36,3 +36,5 @@ Read the owning topic and requirement before implementation.
 - [Vault history search projection](27-vault-history-search.md)
 
 - [Completed history shutdown](28-completed-history-shutdown.md)
+
+- [Pinned history metadata](29-pinned-history-metadata.md)

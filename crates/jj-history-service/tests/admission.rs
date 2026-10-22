@@ -399,6 +399,7 @@ async fn revocation_preserves_other_windows_and_failed_preparation_is_observable
 
 mod blame;
 mod file_history;
+mod metadata;
 mod operations;
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

@@ -156,6 +156,22 @@ impl History {
             }
         };
         tokio::time::timeout(self.config.preparation.timeout, async {
+            // Point metadata uses the existing bounded reader, not a graph-index
+            // rebuild. The handle still owns caller admission and the outer pin.
+            let metadata = matches!(&request, local::Request::QueryInfo | local::Request::Operation { .. })
+                || matches!(&request, local::Request::References(query)
+                    if matches!(query.kind, local::references::Kind::Bookmarks | local::references::Kind::Workspaces)
+                    && query.query.is_empty());
+            if metadata {
+                let anchor = prepared.snapshot().operation;
+                let operation = if let local::Request::Operation { operation } = &request {
+                    if *operation != anchor {
+                        self.executor.validate_reference_operation(selection.access.clone(), anchor, *operation).await?;
+                    }
+                    *operation
+                } else { anchor };
+                return self.executor.read(selection.access.clone(), operation, request).await;
+            }
             let mut prepared = prepared;
             loop {
                 let result = self.executor

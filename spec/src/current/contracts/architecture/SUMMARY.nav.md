@@ -28,3 +28,5 @@
 - [Reusable agent workflows](26-reusable-agent-workflows.md)
 - [Vault history search projection](27-vault-history-search.md)
 - [Completed history shutdown](28-completed-history-shutdown.md)
+
+- [Pinned history metadata](29-pinned-history-metadata.md)
