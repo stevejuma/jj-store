@@ -47,6 +47,13 @@ explicit. Receipts bind the original source digest and request identity, so
 retries recover the original result without re-normalizing. Legacy upload
 commands and legacy emoji receipts retain their original intent encoding.
 
+The transport-independent `jj-collab::normalize_settings_image` helper owns
+these same source/retained raster bounds for native consumers; the server
+delegates to it. This reusable preparation function grants no installation,
+repository or publication authority. Native applications retain their own
+installation storage, admission, request receipts and explicit profile/emoji
+saves.
+
 The custom emoji chooser keeps source files and previews in browser session
 memory until Save emoji. That explicit save first obtains normalized owner-only
 media, then selects it in the retained definition request. Unknown outcomes keep
