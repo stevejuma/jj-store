@@ -5,8 +5,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agents/Conversation metadata",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreConversationMetadataSettings.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 

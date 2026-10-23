@@ -23,14 +23,18 @@
   const { Story } = defineMeta({
     title: "JJ Store/Desktop chrome",
     component: StoreApplication,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 
 <Story
   name="MacDesktopHeader"
-  args={{ desktopChrome: true, displayMode: "desktop" }}
+  args={{ desktopChrome: true }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const header = canvas.getByRole("navigation", {
@@ -56,9 +60,10 @@
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
     await userEvent.click(canvas.getByRole("button", { name: "Back" }));
-    await expect(
-      canvas.getByText("jj-store · Branches", { exact: true }),
-    ).toBeVisible();
+    await expect(canvas.getByRole("tab", { name: "Branches" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   }}
 />
 

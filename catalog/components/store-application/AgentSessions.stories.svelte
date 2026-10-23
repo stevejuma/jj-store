@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import SkeletonFixture from "../../fixtures/AgentsSkeletonFixture.svelte";
@@ -6,8 +7,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Interactive agent sessions",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -39,9 +40,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await c.findByRole("button", { name: /Open session Fixture conversation/ });
     const row = await c.findByRole("button", {
       name: /Open session Fixture conversation/,
@@ -73,9 +72,7 @@
   args={{ status: "Offline", lastActivityAt: null }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const row = await c.findByRole("button", {
       name: /Open session Fixture conversation/,
     });
@@ -220,6 +217,12 @@
 />
 
 <Story
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject: "web/src/lib/ui/community-agents/CommunityAgents.svelte",
+    },
+  }}
   name="Agents skeleton matches fixed card dimensions"
   asChild
   play={async ({ canvasElement }) => {
@@ -308,9 +311,7 @@
   args={{ holdHistory: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const loading = await c.findByRole("status", {
       name: "Loading previous messages",
     });
@@ -340,9 +341,7 @@
     await expect(
       c.getByRole("textbox", { name: "Markdown editor" }),
     ).toHaveAttribute("aria-disabled", "true");
-    await userEvent.click(
-      c.getByRole("button", { name: "Resolve fixture history" }),
-    );
+    await storyControl(document.body, "Resolve fixture history");
     await c.findByText("Ready to help.");
     await expect(
       c.queryByRole("status", { name: "Loading previous messages" }),

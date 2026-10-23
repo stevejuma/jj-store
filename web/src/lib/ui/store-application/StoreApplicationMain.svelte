@@ -94,6 +94,8 @@
 <AppShell.Main bind:ref={mainElement}>
   <AppShell.Topbar.Target
     bind:ref={mobileTarget}
+    role="navigation"
+    aria-label="Application navigation"
     style="--ui-shell-topbar-height: var(--ui-shell-toolbar-height);"
   />
   <StoreTerminalWorkspace

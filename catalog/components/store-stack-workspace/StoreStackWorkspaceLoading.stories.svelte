@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
@@ -6,8 +7,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Loading",
     component: StackWorkspaceLoadingApplicationFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await Promise.all([views.stacks(), views.log()]);
     },
@@ -67,21 +72,13 @@
   ) {
     const canvas = within(element);
     const initialWidth = await assertPending(element, view);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Connect repository" }),
-    );
+    await storyControl(document.body, "Connect repository");
     await assertPending(element, view);
-    await userEvent.click(
-      await canvas.findByRole("button", { name: "Discover workspace binding" }),
-    );
+    await storyControl(document.body, "Discover workspace binding");
     await assertPending(element, view);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Start workspace read" }),
-    );
+    await storyControl(document.body, "Start workspace read");
     await assertPending(element, view);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Complete workspace read" }),
-    );
+    await storyControl(document.body, "Complete workspace read");
     await waitFor(() =>
       expect(
         canvas.queryByRole("status", { name: "Loading stack workspace" }),
@@ -110,16 +107,12 @@
     await load(canvasElement);
     const canvas = within(canvasElement);
     const files = canvas.getByRole("region", { name: "Unstaged files" });
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Start workspace read" }),
-    );
+    await storyControl(document.body, "Start workspace read");
     expect(files).toBeVisible();
     expect(
       canvas.queryByRole("status", { name: "Loading stack workspace" }),
     ).toBeNull();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Complete workspace read" }),
-    );
+    await storyControl(document.body, "Complete workspace read");
     expect(files).toBeVisible();
   }}
 />
@@ -161,15 +154,9 @@
   name="Failed initial read uses toast and empty recovery then retry skeleton"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole("button", { name: "Discover workspace binding" }),
-    );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Start workspace read" }),
-    );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Fail workspace read" }),
-    );
+    await storyControl(document.body, "Discover workspace binding");
+    await storyControl(document.body, "Start workspace read");
+    await storyControl(document.body, "Fail workspace read");
     await within(canvasElement.ownerDocument.body).findByText(
       "The workspace read failed. Try again.",
     );
@@ -182,9 +169,7 @@
       canvas.getByRole("button", { name: "Retry workspace" }),
     );
     await assertPending(canvasElement);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Complete workspace read" }),
-    );
+    await storyControl(document.body, "Complete workspace read");
     await canvas.findByRole("region", { name: "Unstaged files" });
   }}
 />
@@ -269,9 +254,7 @@
       loading.querySelector(".stack-history-skeleton__actions"),
     ).not.toBeNull();
     expect(within(loading).queryByRole("button")).toBeNull();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Complete stack histories" }),
-    );
+    await storyControl(document.body, "Complete stack histories");
     await within(stack).findByRole("button", { name: "Expose repository API" });
     await waitFor(() =>
       expect(

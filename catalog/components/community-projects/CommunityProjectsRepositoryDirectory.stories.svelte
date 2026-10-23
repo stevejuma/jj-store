@@ -1,12 +1,20 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import CommunityProjectsRepositoryDirectory from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte";
 
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      },
+    },
     title: "JJ Store/Components/Repository directory",
     component: CommunityProjectsRepositoryDirectory,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       now: 0,
       currentPath: "",

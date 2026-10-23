@@ -1,12 +1,14 @@
 <script module lang="ts">
+  import { expectSelectedViewTab } from "../../fixtures/view-tabs.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreApplication from "../../fixtures/StoreApplicationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Shell",
     component: StoreApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       jjStoreShell: true,
       docs: {
@@ -47,28 +49,18 @@
     await expect(
       mainBody.querySelector(".ui-minimal-app-shell__body-scroll-area"),
     ).toBeNull();
-    await expect(
-      canvas.getByText("jj-store · Branches", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Branches");
     await expect(
       canvas.getByRole("button", { name: "Expand left sidebar" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
-    await expect(
-      canvas.getByText("jj-store · Commits", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Commits");
     await userEvent.click(canvas.getByRole("tab", { name: "Op Log" }));
-    await expect(
-      canvas.getByText("jj-store · Op Log", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Op Log");
     await userEvent.click(canvas.getByRole("button", { name: "Back" }));
-    await expect(
-      canvas.getByText("jj-store · Commits", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Commits");
     await userEvent.click(canvas.getByRole("button", { name: "Forward" }));
-    await expect(
-      canvas.getByText("jj-store · Op Log", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Op Log");
   }}
 />
 <Story
@@ -84,7 +76,7 @@
     );
     await userEvent.click(canvas.getByRole("button", { name: "Repositories" }));
     await userEvent.click(canvas.getByRole("button", { name: "native-demo" }));
-    await expect(canvas.getByText("native-demo · Overview")).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Overview");
     await userEvent.click(
       canvas.getByRole("button", { name: "Toggle details" }),
     );
@@ -138,13 +130,12 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile"
-  args={{ displayMode: "mobile" }}
+  args={{}}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      canvas.getByText("jj-store · Branches", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Branches");
     await userEvent.click(
       canvas.getByRole("button", { name: "Open details sidebar" }),
     );
@@ -152,9 +143,7 @@
       canvas.getByRole("navigation", { name: "Repository views" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
-    await expect(
-      canvas.getByText("jj-store · Commits", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Commits");
     await expect(
       canvas.queryByRole("navigation", { name: "Repository views" }),
     ).not.toBeInTheDocument();
@@ -174,16 +163,15 @@
       canvas.getByRole("button", { name: "native-demo" }),
     ).toBeVisible();
     await userEvent.unhover(edge);
-    await userEvent.hover(
-      canvas.getByText("jj-store · Branches", { exact: true }),
-    );
+    await userEvent.hover(canvas.getByRole("tab", { name: "Branches" }));
     await waitFor(() => expect(edge).toHaveAttribute("aria-expanded", "false"));
   }}
 />
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile header controls stay at toolbar end"
-  args={{ displayMode: "mobile", initialPage: "log" }}
+  args={{ initialPage: "log" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     const toggle = c.getByRole("button", { name: "Open details sidebar" });
@@ -195,6 +183,6 @@
       .getBoundingClientRect();
     await expect(bounds.right - menu.right).toBeLessThan(30);
     await expect(button.right).toBeLessThanOrEqual(menu.left);
-    await expect(button.left).toBeGreaterThan(bounds.left + bounds.width * 0.8);
+    await expect(menu.left - button.right).toBeLessThanOrEqual(12);
   }}
 />

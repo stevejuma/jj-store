@@ -133,3 +133,12 @@ executors. The GitHub YAML executor additionally checks YAML from the exact
 recorded code revision; a newer source or YAML edit cannot replace a queued
 run's pins. Server publication retains metadata while the CLI-owned host and
 external Forgejo Runner execute jobs. See [workflow CLI](../cli/jj-workflow.md).
+
+## Shared image preparation
+
+Avatar and custom emoji uploads accept PNG, JPEG, GIF and WebP sources within
+the 20 MiB upload bound. Decode dimensions and memory are bounded before
+normalization. Oversized images retain their aspect ratio and orientation within
+512 by 512 pixels; retained assets and previews still pass the domain's 2 MiB
+asset limit and validation. Native consumers share the server's normalization
+rules, while each host retains upload admission and publication authority.

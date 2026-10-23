@@ -51,3 +51,9 @@ for host-supplied file-row snippets: selection stories address the rendered
 filename and metadata while retaining path-identity assertions. A released
 version containing these APIs remains an integration gate before registry-only
 deployment.
+
+The browser compact toolbar target is a labelled Application navigation
+landmark. Its relocated Application controls toolbar remains inside that
+landmark on repository pages and Settings; desktop retains its existing
+navigation subtree. This preserves landmark coverage without remounting
+controls.

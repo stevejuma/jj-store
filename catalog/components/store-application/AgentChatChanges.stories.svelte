@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentFleetApplicationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent completed changes",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -146,9 +147,7 @@
     );
     await userEvent.click(editor);
     await userEvent.type(editor, "Retain this draft");
-    await userEvent.click(
-      c.getByRole("button", { name: "Restore chat updates" }),
-    );
+    await storyControl(document.body, "Restore chat updates");
     await waitFor(() =>
       expect(
         c.queryByText("Chat updates are unavailable. Reconnecting…"),

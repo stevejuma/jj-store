@@ -72,6 +72,20 @@ export default defineConfig({
       rules: [
         {
           pattern:
+            "^(?:scripts/validation(?:/|\\.mjs$|\\.test\\.mjs$)|docs/validation\\.md$)",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/23-public-distribution\\.md$",
+          ],
+        },
+        {
+          pattern:
+            "^scripts/(?:check-storybook-parity\\.mjs$|storybook-parity(?:/|\\.test\\.mjs$))",
+          chapterPatterns: [
+            "^spec/src/current/contracts/ui/42-application-story-parity\\.md$",
+          ],
+        },
+        {
+          pattern:
             "^(?:\\.github/|\\.changeset/|\\.config/nextest|Dockerfile$|\\.dockerignore$|docs/releases\\.md$)",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/23-public-distribution\\.md$",
@@ -411,15 +425,18 @@ export default defineConfig({
       },
       {
         name: "rust-tests",
-        command: "cargo",
-        args: ["test", "--workspace", "--locked"],
+        command: "pnpm",
+        args: ["dev:cargo", "--", "test", "--workspace", "--locked"],
       },
     ],
     build: true,
     first: true,
   },
   name: "jj-store",
-  plugins: ["scripts/check-ui-ownership.mjs"],
+  plugins: [
+    "scripts/check-ui-ownership.mjs",
+    "scripts/check-storybook-parity.mjs",
+  ],
   idPattern: "^JST-[A-Z]+-\\d{3}$",
   tableSection: "Requirements",
   documentRoles: [

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { untrack, onDestroy } from "svelte";
   import type {
     StoreController,
@@ -100,8 +101,9 @@
 </script>
 
 <main style:width={narrow ? "390px" : "100%"} style:max-width="100%">
-  {#if loading}<button onclick={() => (discovering = false)}
-      >Finish discovery</button
+  {#if loading}<FixtureControls floating={false}
+      ><button onclick={() => (discovering = false)}>Finish discovery</button
+      ></FixtureControls
     >{/if}
   <StoreRepositorySettingsView {controller} /><output
     aria-label="Settings route"

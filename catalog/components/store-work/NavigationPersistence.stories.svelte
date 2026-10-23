@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/NavigationPersistenceFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Navigation persistence",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -18,9 +19,7 @@
       await canvas.findByRole("button", { name: "Expand Native release" }),
     );
     await userEvent.click(canvas.getByRole("button", { name: "Repositories" }));
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Remount navigation" }),
-    );
+    await storyControl(document.body, "Remount navigation");
     await expect(
       await canvas.findByRole("button", { name: "Collapse Native release" }),
     ).toHaveAttribute("aria-expanded", "true");
@@ -33,11 +32,9 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Your projects" }),
     );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Remount navigation" }),
-    );
+    await storyControl(document.body, "Remount navigation");
     await expect(
-      canvas.getByRole("button", { name: "Your projects" }),
+      await canvas.findByRole("button", { name: "Your projects" }),
     ).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(
       canvas.getByRole("button", { name: "Your projects" }),

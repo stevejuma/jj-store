@@ -5,8 +5,17 @@
   const { Story } = defineMeta({
     title: "JJ Store/Shell overlay scroll ownership",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "prototype"],
+    parameters: {
+      jjStoreStory: {
+        kind: "prototype",
+        requirement: "JST-UI-010",
+        reason:
+          "Explicit structural or conversation design prototype; does not qualify application parity.",
+      },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function bounded({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
@@ -47,6 +56,7 @@
 
 <Story name="Fixed footer and child-owned scrolling" play={bounded} />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile fixed footer and retained draft"
   args={{ mobile: true }}
   play={bounded}

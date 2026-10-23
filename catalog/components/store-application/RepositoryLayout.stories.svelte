@@ -5,9 +5,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository body layout",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initialPage: "files", initiallyCollapsed: true },
-    parameters: { layout: "fullscreen" },
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function overviewInset({
     canvasElement,
@@ -59,7 +59,7 @@
 <Story name="Overview body inset" play={overviewInset} />
 <Story
   name="Overview mobile body inset"
-  args={{ displayMode: "mobile" }}
+  args={{}}
   parameters={{ viewport: { value: "mobile1" } }}
   play={overviewInset}
 />

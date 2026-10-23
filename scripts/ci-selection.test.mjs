@@ -124,6 +124,7 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     "jj-agent",
     "jj-collab",
     "jj-forge",
+    "jj-history-service",
     "jj-review",
     "jj-store-adapters",
     "jj-store-conversations",
@@ -140,6 +141,7 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     "jj-store-service",
     "jj-store-tantivy",
     "jj-store-wal",
+    "jj-vault",
     "jj-work",
     "jj-workflow",
     "tauri-plugin-jj-store",
@@ -157,7 +159,30 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     ],
   );
   const core = impact(["crates/jj-store-model/src/lib.rs"], false, g, inputs);
-  assert.equal(core.packages.length, 19);
+  assert.deepEqual(core.packages, [
+    "jj-agent",
+    "jj-collab",
+    "jj-history-service",
+    "jj-review",
+    "jj-store-adapters",
+    "jj-store-conversations",
+    "jj-store-core",
+    "jj-store-git",
+    "jj-store-http",
+    "jj-store-jj",
+    "jj-store-model",
+    "jj-store-native",
+    "jj-store-object",
+    "jj-store-replication",
+    "jj-store-rpc",
+    "jj-store-service",
+    "jj-store-tantivy",
+    "jj-store-wal",
+    "jj-vault",
+    "jj-work",
+    "jj-workflow",
+    "tauri-plugin-jj-store",
+  ]);
   assert.ok(core.packages.includes("tauri-plugin-jj-store"));
   assert.equal(core.web, true);
 });

@@ -24,8 +24,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Application/Connection",
     component: StoreConnection,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", a11y: { test: "error" } },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-application/StoreConnection.svelte",
+      },
+      layout: "fullscreen",
+      a11y: { test: "error" },
+    },
   });
 </script>
 

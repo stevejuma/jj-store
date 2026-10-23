@@ -5,8 +5,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Appearance",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-appearance/StoreAppearance.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   const saved = (canvas: HTMLElement) =>
     JSON.parse(

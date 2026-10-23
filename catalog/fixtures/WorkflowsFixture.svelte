@@ -1,11 +1,10 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
-  import { AppShell, AppShellController } from "@lapismd/design-core/shell";
   import { createStoreRouteHistory } from "../../web/src/lib/controller/store-route-history.svelte.js";
   import { storePageRoute } from "../../web/src/lib/controller/store-stacks-navigation.js";
   import { storeRouteToHash } from "../../web/src/lib/controller/store-route-codec.js";
-  import StoreWorkflows from "../../web/src/lib/ui/store-workflows/StoreWorkflows.svelte";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createProjectsHub } from "../../web/src/lib/controller/production-projects-hub.svelte.js";
   import { fixtureTransport } from "./projects-hub-fixture.js";
@@ -20,7 +19,7 @@
   let {
     unknown = false,
     choiceFailures = false,
-    shell = false,
+    shell = true,
     width,
     noHome = false,
     loading = false,
@@ -54,7 +53,6 @@
     downloadFailure?: boolean;
     readOnly?: boolean;
   } = $props();
-  const fixtureShell = new AppShellController();
   const base = untrack(() => createInMemoryStoreController("workflows"));
   let location = $state(untrack(() => initialHash));
   let locations = untrack(() => [location]),
@@ -267,23 +265,8 @@
   };
 </script>
 
-<div
-  style:width={width ? `${width}px` : "100%"}
-  style:max-width="100%"
-  style:height="100vh"
-  data-testid="workflow-frame"
->
-  {#if shell}<StoreRepositoryApplication
-      {controller}
-      initiallyCollapsed={false}
-    />{:else}<AppShell.Root
-      controller={fixtureShell}
-      displayMode="desktop"
-      desktopMinMainWidth={0}
-      style="--ui-shell-height: 100vh; --ui-shell-main-block-inset: 0px"
-    >
-      <AppShell.Main><StoreWorkflows {controller} /></AppShell.Main>
-    </AppShell.Root>{/if}
+<div style:max-width="100%" style:height="100vh" data-testid="workflow-frame">
+  <StoreRepositoryApplication {controller} initiallyCollapsed={false} />
 </div>
 <span class="sr-only" aria-label="Workflow location"
   >{storeRouteToHash(navigation.route)}</span
@@ -292,9 +275,11 @@
 {#if lastCommand}<span class="sr-only" aria-label="Last workflow command"
     >{lastCommand}</span
   >{/if}
-<button class="sr-only" onclick={() => navigation.navigate(-1)}
-  >Fixture back</button
+<FixtureControls
+  ><button onclick={() => navigation.navigate(-1)}>Fixture back</button
+  ></FixtureControls
 >
-<button class="sr-only" onclick={() => navigation.navigate(1)}
-  >Fixture forward</button
+<FixtureControls
+  ><button onclick={() => navigation.navigate(1)}>Fixture forward</button
+  ></FixtureControls
 >

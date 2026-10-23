@@ -132,3 +132,13 @@ envelope. Projection reuses controller session/turn/message/tool identities,
 including one final assistant message. Native closure and uncertain errors stay
 distinct. This profile does not provide a durable journal or select a backend;
 hosts must retain exact requests and verify publication receipts separately.
+
+## Transient native snapshots
+
+A native host can use `CodexSnapshotReader` for a physically bound, immutable
+Codex JSONL selection of at most 64 MiB. Ready batches remain tentative until
+`Complete`; a changed source, partial final record or failed identity check
+rejects the snapshot. This mode provides no acknowledgement, persisted cursor or
+resume API. Its sanitized observations retain the selected source and policy
+identities; hosts separately own durability and publication. The ordinary
+application spool and exact durable acknowledgement contracts remain unchanged.

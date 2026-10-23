@@ -1,3 +1,4 @@
+import { storyControl } from "../story-controls.js";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { reader, draft, addComment } from "./acceptance-helpers.js";
 export const collapsedComments = async ({
@@ -90,8 +91,8 @@ export const collapsedComments = async ({
   await expect(
     await reader(canvasElement, "Captured patch example.ts"),
   ).toHaveFocus();
-  await userEvent.click(c.getByRole("button", { name: "Hide body" }));
-  await userEvent.click(c.getByRole("button", { name: "Show body" }));
+  await storyControl(document.body, "Hide body");
+  await storyControl(document.body, "Show body");
   await expect(
     c.getByRole("group", { name: "Pending comments" }),
   ).toHaveTextContent("Patch comment");

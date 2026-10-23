@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { untrack } from "svelte";
   import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreWorkspaceSettings from "../../web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte";
@@ -61,14 +62,18 @@
 
 <main>
   {#if loading}
-    <button
-      onclick={() => {
-        settings.workspaceLinks = loaded;
-        settings.workspaceLinksState = "ready";
-      }}>Finish loading</button
+    <FixtureControls floating={false}
+      ><button
+        onclick={() => {
+          settings.workspaceLinks = loaded;
+          settings.workspaceLinksState = "ready";
+        }}>Finish loading</button
+      ></FixtureControls
     >
-    <button onclick={() => (settings.workspaceLinksState = "refreshing")}
-      >Start background refresh</button
+    <FixtureControls floating={false}
+      ><button onclick={() => (settings.workspaceLinksState = "refreshing")}
+        >Start background refresh</button
+      ></FixtureControls
     >
   {/if}
   <StoreSettingsPage

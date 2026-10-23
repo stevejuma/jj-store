@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import FilePanel from "../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte";
@@ -149,7 +150,11 @@
 </script>
 
 <div class="fixture-controls">
-  <Button onclick={() => finish?.()} disabled={!pending}>Resolve window</Button>
+  <FixtureControls floating={false}
+    ><Button onclick={() => finish?.()} disabled={!pending}
+      >Resolve window</Button
+    ></FixtureControls
+  >
   <Button onclick={() => fail?.()} disabled={!pending}>Fail window</Button>
   <Button onclick={() => history.navigate(-1)} disabled={!history.canBack}
     >Back</Button

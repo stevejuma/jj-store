@@ -1,0 +1,5 @@
+.stack-workspace__action-menu[data-ui-component="dropdown-menu"] {
+  width: max-content;
+  min-width: min(18rem, var(--bits-dropdown-menu-content-available-width));
+  max-width: var(--bits-dropdown-menu-content-available-width);
+}

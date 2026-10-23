@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import { page as browser } from "vitest/browser";
@@ -7,8 +8,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent chat feedback",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -17,9 +18,7 @@
   args={{ chatFeedback: "completed" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const completed = await c.findByRole("group", { name: "Turn completed" });
     await expect(completed.querySelector("svg")).not.toBeNull();
     await expect(completed.querySelector("time")).not.toBeNull();
@@ -39,9 +38,7 @@
   args={{ status: "Working", chatFeedback: "working" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const working = await c.findAllByText("Working", { exact: true });
     await expect(working).toHaveLength(1);
     const strip = canvasElement.querySelector<HTMLElement>(
@@ -60,9 +57,7 @@
     await expect(within(strip).getByRole("status")).toHaveTextContent(
       "Working",
     );
-    await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
-    );
+    await storyControl(document.body, "Manage fixture agents");
     await expect(
       canvasElement.querySelector(
         '[data-ui-component="community-agent-composer-activity"]',
@@ -76,9 +71,7 @@
   args={{ fail: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await userEvent.type(
       await c.findByRole("textbox", { name: "Markdown editor" }),
       "Retain uncertain message",
@@ -124,12 +117,8 @@
     await userEvent.click(
       page.getByRole("button", { name: "Dismiss Agent request unresolved" }),
     );
-    await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Manage fixture agents");
+    await storyControl(document.body, "Open fixture conversation");
     await c.findByText("Outcome unknown", { exact: true });
     await expect(
       page.queryByRole("button", { name: "Review workspace" }),
@@ -155,9 +144,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep this unsent prompt");
     await userEvent.click(c.getByRole("button", { name: "Send message" }));
@@ -194,9 +181,7 @@
   args={{ chatFeedback: "completed" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const user = await c.findByRole("article", { name: "Message from You" });
     const assistants = c.getAllByRole("article", {
       name: "Message from Repository helper",

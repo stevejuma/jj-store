@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { tick, untrack } from "svelte";
   import ProjectsHubFixture from "./ProjectsHubFixture.svelte";
   import { createMemoryStoryStorage } from "./memory-storage.js";
@@ -11,5 +12,9 @@
   }
 </script>
 
-<button onclick={remount}>Remount navigation</button>
+<FixtureControls
+  ><div data-story-controls>
+    <button onclick={remount}>Remount navigation</button>
+  </div></FixtureControls
+>
 {#if mounted}<ProjectsHubFixture {layoutStorage} />{/if}

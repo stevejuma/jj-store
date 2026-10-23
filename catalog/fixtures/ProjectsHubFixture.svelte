@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import type { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createProjectsHub } from "../../web/src/lib/controller/production-projects-hub.svelte.js";
   import { initialStoreRoute } from "../../web/src/lib/controller/store-route-history.svelte.js";
   import type {
@@ -276,18 +277,23 @@
   {controller}
   {layoutStorage}
   initiallyCollapsed={false}
-  displayMode={mobile ? "mobile" : "desktop"}
 />
-{#if deferredRefresh}<Button
-    onclick={() => {
-      refreshGate = new Promise<void>((resolve) => (finishRefresh = resolve));
-      refreshPending = true;
-      void hub.refresh();
-    }}>Pause project refresh</Button
-  >
-  <Button
-    onclick={() => {
-      refreshPending = false;
-      finishRefresh?.();
-    }}>Finish project refresh</Button
-  >{/if}
+<FixtureControls
+  ><div data-story-controls>
+    {#if deferredRefresh}<Button
+        onclick={() => {
+          refreshGate = new Promise<void>(
+            (resolve) => (finishRefresh = resolve),
+          );
+          refreshPending = true;
+          void hub.refresh();
+        }}>Pause project refresh</Button
+      >
+      <Button
+        onclick={() => {
+          refreshPending = false;
+          finishRefresh?.();
+        }}>Finish project refresh</Button
+      >{/if}
+  </div></FixtureControls
+>

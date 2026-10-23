@@ -3,18 +3,20 @@
   import { page } from "vitest/browser";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/RuntimeReloadFixture.svelte";
+  import { expectMobileApplicationToolbar } from "./application-menu-story-assertions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Application menu",
     component: Fixture,
     args: { application: true },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile repository settings retain the toolbar above their body"
-  args={{ displayMode: "mobile", initialPage: "settings" }}
+  args={{ initialPage: "settings" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const menu = await canvas.findByRole("button", {
@@ -29,9 +31,7 @@
       toolbar.compareDocumentPosition(settings) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    await expect(
-      canvas.queryByRole("navigation", { name: "Application navigation" }),
-    ).toBeNull();
+    await expectMobileApplicationToolbar(canvasElement);
   }}
 />
 
@@ -84,11 +84,7 @@
     });
     try {
       await page.viewport(390, 844);
-      await waitFor(() =>
-        expect(
-          canvas.queryByRole("navigation", { name: "Application navigation" }),
-        ).toBeNull(),
-      );
+      await expectMobileApplicationToolbar(canvasElement);
       await expect(check).toBeVisible();
       await userEvent.click(check);
       await waitFor(() =>
@@ -144,16 +140,15 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile hides top navigation and locates its one menu in the body"
-  args={{ displayMode: "mobile" }}
+  args={{}}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const menu = await canvas.findByRole("button", {
       name: "Application menu",
     });
-    await expect(
-      canvas.queryByRole("navigation", { name: "Application navigation" }),
-    ).toBeNull();
+    await expectMobileApplicationToolbar(canvasElement);
     await expect(menu.closest('[data-ui-part="main"]')).not.toBeNull();
     await expect(menu.closest('[data-ui-part="topbar"]')).not.toBeNull();
     await expect(
@@ -197,11 +192,7 @@
     });
     try {
       await page.viewport(390, 844);
-      await waitFor(() =>
-        expect(
-          canvas.queryByRole("navigation", { name: "Application navigation" }),
-        ).toBeNull(),
-      );
+      await expectMobileApplicationToolbar(canvasElement);
       await expect(body.getAllByRole("dialog")).toHaveLength(1);
       await waitFor(async () => {
         await expect(dialog).toBeVisible();

@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, within, userEvent, waitFor } from "storybook/test";
   import WorkflowsFixture from "../../fixtures/WorkflowsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Workflow history",
     component: WorkflowsFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   const run = "51".repeat(16),
     home = "41".repeat(16);
@@ -78,15 +79,13 @@
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
       "state=failed",
     );
-    await userEvent.click(canvas.getByRole("button", { name: "Fixture back" }));
+    await storyControl(document.body, "Fixture back");
     await expect(
       await canvas.findByRole("button", {
         name: /Open run Build parser 51515151/,
       }),
     ).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Fixture forward" }),
-    );
+    await storyControl(document.body, "Fixture forward");
     await expect(
       await canvas.findByRole("button", {
         name: /Open run Build parser 53535353/,
@@ -162,7 +161,9 @@
       expect(canvas.getByLabelText("stdout log")).not.toBeVisible(),
     );
     await userEvent.click(canvas.getByRole("button", { name: "Run output" }));
-    await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByLabelText("stdout log")).toBeVisible(),
+    );
     await expect(
       canvas.getByRole("combobox", { name: "Run attempt" }),
     ).toBeVisible();
@@ -175,10 +176,12 @@
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
       "attempt=" + "52".repeat(16),
     );
-    await userEvent.click(
-      await canvas.findByRole("button", { name: "Run output" }),
+    await expect(
+      canvas.getByRole("button", { name: "Run output" }),
+    ).toHaveAttribute("aria-expanded", "true");
+    await waitFor(() =>
+      expect(canvas.getByLabelText("stdout log")).toBeVisible(),
     );
-    await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
     await userEvent.click(
       canvas.getByRole("button", { name: "Follow latest" }),
     );
@@ -210,7 +213,9 @@
     await userEvent.click(
       await canvas.findByRole("button", { name: "Run output" }),
     );
-    await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByLabelText("stdout log")).toBeVisible(),
+    );
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
       "run=" + run,
     );

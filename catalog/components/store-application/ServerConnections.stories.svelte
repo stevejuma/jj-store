@@ -7,8 +7,12 @@
   const { Story } = defineMeta({
     title: "Store/Server connections",
     component: StoreServerSwitcher,
-    tags: ["autodocs", "visual-pending"],
+    tags: ["autodocs", "visual-pending", "component"],
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-connections/StoreServerSwitcher.svelte",
+      },
       docs: { source: { code: "<StoreServerSwitcher compact />" } },
     },
   });

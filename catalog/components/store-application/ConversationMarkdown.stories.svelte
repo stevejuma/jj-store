@@ -3,9 +3,16 @@
   import { expect, waitFor } from "storybook/test";
   import CommunityMarkdownContent from "../../../web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
+      },
+    },
     title: "JJ Store/Conversation Markdown",
     component: CommunityMarkdownContent,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: { content: "A brief inline comment.", fullWidth: true },
   });
 </script>

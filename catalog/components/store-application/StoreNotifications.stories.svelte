@@ -3,9 +3,16 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import NotificationsFixture from "../../fixtures/NotificationsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-notifications/StoreNotificationHost.svelte",
+      },
+    },
     title: "JJ Store/Notifications",
     component: NotificationsFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

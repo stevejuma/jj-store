@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreAgentChatBody from "../../../web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte";
@@ -57,9 +58,7 @@
     const input = c.getByRole("textbox", { name: "Next message" });
     await userEvent.click(input);
     await userEvent.keyboard("Keep this draft");
-    await userEvent.click(
-      c.getByRole("button", { name: "Finish loading history" }),
-    );
+    await storyControl(document.body, "Finish loading history");
     expect(
       c.queryByRole("status", { name: "Loading previous messages" }),
     ).toBeNull();
@@ -72,9 +71,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Commentable agent chat body",
     component: StoreAgentChatBody,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "prototype"],
     args: { items: [] },
     parameters: {
+      jjStoreStory: {
+        kind: "prototype",
+        requirement: "JST-UI-015",
+        reason:
+          "Explicit structural or conversation design prototype; does not qualify application parity.",
+      },
       layout: "fullscreen",
       jjStoreShell: true,
       docs: {
@@ -234,11 +239,11 @@
     );
     expect(getComputedStyle(commentEditor).paddingLeft).toBe("0px");
     await addComment(canvasElement);
-    await userEvent.click(c.getByRole("button", { name: "Hide body" }));
+    await storyControl(document.body, "Hide body");
     await expect(
       c.queryByRole("region", { name: "Agent chat body" }),
     ).toBeNull();
-    await userEvent.click(c.getByRole("button", { name: "Show body" }));
+    await storyControl(document.body, "Show body");
     await expect(
       await inlineComments(canvasElement).findByRole("article", {
         name: "Comment by You",

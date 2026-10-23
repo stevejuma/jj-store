@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Projects interactive sessions",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 

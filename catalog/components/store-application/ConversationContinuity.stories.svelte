@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { EditorView } from "@codemirror/view";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
@@ -12,8 +13,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Conversation continuity",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 
@@ -49,7 +57,7 @@
       head: editor.state.selection.main.head,
     };
     await fireEvent.compositionStart(input(), { data: "" });
-    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await storyControl(document.body, "Switch renderer");
     await expect(next).toBeInTheDocument();
     await fireEvent.compositionEnd(input(), { data: "" });
     await waitFor(() =>
@@ -64,7 +72,7 @@
     await expect(
       EditorView.findFromDOM(input())!.state.selection.main.head,
     ).toBe(selected.head);
-    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await storyControl(document.body, "Switch renderer");
     await c.findByRole("group", { name: "Next message draft" });
     await expect(EditorView.findFromDOM(input())!.state.doc.toString()).toBe(
       "first\nsecond 🦀\nlast",
@@ -125,7 +133,7 @@
     )!;
     await expect(queued).toHaveTextContent("x pending 🦀");
     await fireEvent.compositionStart(editor, { data: "" });
-    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await storyControl(document.body, "Switch renderer");
     await expect(
       canvasElement.querySelector("[data-conversation-view]"),
     ).toHaveAttribute("data-conversation-view", "document");
@@ -138,7 +146,7 @@
     await expect(inline()).toHaveTextContent("x pending 🦀");
     await userEvent.click(c.getByRole("button", { name: "Remount body" }));
     await waitFor(() => expect(inline()).toHaveTextContent("x pending 🦀"));
-    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await storyControl(document.body, "Switch renderer");
     await waitFor(() => expect(inline()).toHaveTextContent("x pending 🦀"));
     const message = c.getByRole("textbox", { name: "Markdown editor" });
     await userEvent.click(message);

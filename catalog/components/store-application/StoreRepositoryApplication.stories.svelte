@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { expectPersistentRepositoryLayout } from "./repository-layout-story-assertions.js";
   import { SOURCE_TEXT } from "../../fixtures/repository.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
@@ -10,9 +11,10 @@
   const { Story } = defineMeta({
     title: "JJ Store/Connected application",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false },
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       jjStoreShell: true,
       docs: {
@@ -82,7 +84,9 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Show repository file tree" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("README.md") }),
+    );
     const selectedMarkdownPreview = await canvas.findByRole("region", {
       name: "Markdown preview for README.md",
     });
@@ -127,7 +131,9 @@
     await expect(
       canvas.getByRole("table", { name: "Repository files" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("src/lib.rs") }),
+    );
     await waitFor(() =>
       expect(
         canvasElement.querySelector('[data-ui-component="code-block"]'),
@@ -174,7 +180,9 @@
         name: "Repository bookmark or change",
       }),
     ).toHaveTextContent(/· 34343434/);
-    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("src/lib.rs") }),
+    );
     await waitFor(() =>
       expect(
         canvasElement.querySelector('[data-ui-component="code-block"]'),
@@ -202,7 +210,7 @@
     );
     await expect(body.getByText("Choose a bookmark target")).toBeVisible();
     await expect(
-      canvas.queryByRole("button", { name: "README.md" }),
+      canvas.queryByRole("button", { name: fileRowName("README.md") }),
     ).not.toBeInTheDocument();
     await userEvent.click(
       canvas.getByRole("button", {
@@ -213,7 +221,7 @@
       canvas.getByRole("button", { name: "Show repository file tree" }),
     );
     await userEvent.click(
-      canvas.getByRole("button", { name: "assets/logo.bin" }),
+      canvas.getByRole("button", { name: fileRowName("assets/logo.bin") }),
     );
     await expect(
       canvas.getByText("Binary file", { exact: true }),
@@ -236,18 +244,10 @@
         body.queryByRole("menu", { name: "Profile menu" }),
       ).not.toBeInTheDocument(),
     );
-    await waitFor(() =>
-      expect(
-        getComputedStyle(
-          canvas.getByRole("button", { name: "Open profile menu for Guest" }),
-        ).pointerEvents,
-      ).not.toBe("none"),
-    );
+    const picker = await canvas.findByRole("combobox", { name: "Repository" });
+    await userEvent.click(picker);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Open profile menu for Guest" }),
-    );
-    await userEvent.click(
-      await body.findByRole("menuitem", { name: "Sign in" }),
+      await body.findByRole("option", { name: /^jj-store/ }),
     );
     await waitFor(() =>
       expect(
@@ -259,8 +259,9 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile files"
-  args={{ initialPage: "files", displayMode: "mobile" }}
+  args={{ initialPage: "files" }}
 />
 
 <Story

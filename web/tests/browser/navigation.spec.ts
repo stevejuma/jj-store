@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import {
   api,
   connect,
+  commit,
   operation,
   repo,
   token,
@@ -27,6 +28,11 @@ test("hash route restores snapshot and file through controls reload and browser 
   await expect(
     page.getByRole("region", { name: "Source preview for bin" }),
   ).toContainText("window.sourceExecuted=true");
+  await expect
+    .poll(() => new URL(page.url()).hash)
+    .toBe(
+      `#/repos/${repo}/files?at_op=${operation}&bookmark=main&commit=${commit}&file=bin`,
+    );
   const deepHash = new URL(page.url()).hash;
   expect(deepHash).toContain(`#/repos/${repo}/files?`);
   expect(deepHash).toContain(`at_op=${operation}`);

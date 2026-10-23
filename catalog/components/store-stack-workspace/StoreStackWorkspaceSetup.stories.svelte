@@ -5,8 +5,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Setup",
     component: StackWorkspaceSetupApplicationFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   function assertSetupMargins(canvasElement: HTMLElement) {
     const picker = within(canvasElement).getByRole("combobox", {

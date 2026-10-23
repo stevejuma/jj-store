@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onMount, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import { workspaceSourceFiles } from "../../web/src/lib/controller/stack-workspace/files.js";
   import {
@@ -96,18 +97,22 @@
   });
 </script>
 
-<div style="height: 100vh; min-height: 36rem">
-  {#if simulateOperationChange}
-    <Button onclick={() => fixture.advanceOperation()}
-      >Simulate native operation change</Button
-    >
-    <output aria-label="Fixture patch reads">{patchReads}</output>
-  {/if}
+<div style="height: 100vh">
+  <FixtureControls
+    ><div data-story-controls>
+      {#if simulateOperationChange}
+        <Button onclick={() => fixture.advanceOperation()}
+          >Simulate native operation change</Button
+        >
+        <output aria-label="Fixture patch reads">{patchReads}</output>
+      {/if}
+    </div></FixtureControls
+  >
   <StoreRepositoryApplication
     {controller}
     {stackWorkspace}
     {layoutStorage}
-    displayMode="desktop"
+    displayMode="auto"
     initiallyCollapsed={false}
   />
 </div>

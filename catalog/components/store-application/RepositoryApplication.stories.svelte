@@ -6,8 +6,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Application",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       jjStoreShell: true,
       docs: {
@@ -45,6 +46,7 @@
 </Story>
 <Story
   name="Mobile workspace"
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
@@ -52,9 +54,7 @@
     ).toBeVisible();
   }}
 >
-  {#snippet template()}<StoreRepositoryApplication
-      displayMode="mobile"
-    />{/snippet}
+  {#snippet template()}<StoreRepositoryApplication />{/snippet}
 </Story>
 <Story
   name="Full app"

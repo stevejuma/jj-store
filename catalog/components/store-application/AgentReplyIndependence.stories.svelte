@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentInlineCommentsFixture.svelte";
@@ -14,8 +16,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Independent agent replies",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -26,9 +28,7 @@
     const c = await openInlineConversation(canvasElement);
     const editor = await startInlineComment(canvasElement);
     await userEvent.type(editor, "Comment while the agent is stopped");
-    await userEvent.click(
-      c.getByRole("button", { name: "Fail feedback refresh" }),
-    );
+    await storyControl(document.body, "Fail feedback refresh");
     await waitFor(() =>
       expect(
         canvasElement.querySelector('[data-testid="comment-feedback-error"]'),
@@ -45,9 +45,7 @@
     await expect(c.getByRole("button", { name: "Send message" })).toBeEnabled();
     expect(commentCommands(canvasElement)).toHaveLength(0);
     expect(promptCommands(canvasElement)).toHaveLength(0);
-    await userEvent.click(
-      c.getByRole("button", { name: "Refresh captured feedback" }),
-    );
+    await storyControl(document.body, "Refresh captured feedback");
     await waitFor(() =>
       expect(
         canvasElement.querySelector('[data-testid="comment-feedback-error"]'),
@@ -82,9 +80,7 @@
     ).toBeEnabled();
     expect(c.queryByRole("button", { name: "Stop agent" })).toBeNull();
     expect(c.queryByRole("button", { name: "Send message" })).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "Complete fixture turn" }),
-    );
+    await storyControl(document.body, "Complete fixture turn");
     await waitFor(() =>
       expect(c.getByRole("button", { name: "Send message" })).toBeEnabled(),
     );
@@ -171,7 +167,9 @@
     await userEvent.click(
       c.getByRole("button", { name: "Show details for Read captured.ts" }),
     );
-    const source = await c.findByRole("textbox", { name: "src/captured.ts" });
+    const source = await c.findByRole("textbox", {
+      name: fileRowName("src/captured.ts"),
+    });
     await expect(source).toHaveTextContent("export const captured = 42;");
     await userEvent.click(source);
     await userEvent.click(
@@ -249,7 +247,9 @@
         name: "Show rich output in read sidebar for Read captured.ts",
       }),
     );
-    const source = await c.findByRole("textbox", { name: "src/captured.ts" });
+    const source = await c.findByRole("textbox", {
+      name: fileRowName("src/captured.ts"),
+    });
     await userEvent.click(source);
     await userEvent.click(
       c.getByRole("button", { name: "Comment on src/captured.ts" }),

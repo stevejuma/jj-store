@@ -6,6 +6,7 @@
     title: "JJ Store/Workflow triggers",
     component: WorkflowsFixture,
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       visualDelta: { tags: ["visual-pending"] },
     },

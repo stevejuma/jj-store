@@ -101,3 +101,13 @@ connection/account changes and mutations invalidate them. There is no periodic
 forge polling or always-on backend maintenance service. These controls are
 implemented for the ordinary-local profile. Live forge/platform and packaged
 end-to-end qualification remain open; native-storage submission is separate.
+
+## Forgejo credentials in embedding hosts
+
+An embedding native host may explicitly admit a Forgejo PAT for an HTTPS
+`/api/v1` endpoint through the forge account manager. The endpoint is verified
+against its user API before the account is retained. Provider requests use
+Forgejo's token header, and a host-supplied credential namespace keeps separate
+installations independent. The jj-store browser continues to use explicit
+repository settings for Forgejo; native account support does not imply a global
+Forgejo account screen or permission to push.

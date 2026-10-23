@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent harness models",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -20,7 +20,7 @@
       await c.findByRole("button", { name: "View Repository helper" }),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Edit Repository helper" }),
+      await c.findByRole("button", { name: "Edit Repository helper" }),
     );
     const editor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),
@@ -62,7 +62,7 @@
       await c.findByRole("button", { name: "View Repository helper" }),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Edit Repository helper" }),
+      await c.findByRole("button", { name: "Edit Repository helper" }),
     );
     const editor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),

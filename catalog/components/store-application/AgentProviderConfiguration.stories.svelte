@@ -5,8 +5,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agents/Provider configuration",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-agent-execution/StoreAgentSetupEditor.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   async function select(label: string, option: string) {
     const p = within(document.body);

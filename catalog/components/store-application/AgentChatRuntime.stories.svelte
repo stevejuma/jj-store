@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent chat runtime",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -18,9 +19,7 @@
   }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Use my configured agent");
     await userEvent.click(c.getByRole("button", { name: "Send message" }));
@@ -52,9 +51,7 @@
   args={{ status: "Offline", resumeFailure: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep this after failure");
     await userEvent.click(c.getByRole("button", { name: "Session options" }));
@@ -64,7 +61,7 @@
       }),
     );
     const error = await c.findByRole("alert");
-    await expect(error).toHaveTextContent("agent_rejected");
+    await waitFor(() => expect(error).toHaveTextContent("agent_rejected"));
     await expect(
       error.closest('[data-ui-component="community-chat-composer"]'),
     ).not.toBeNull();
@@ -79,11 +76,9 @@
   args={{ status: "Offline", retainedError: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const error = await c.findByRole("alert");
-    await expect(error).toHaveTextContent("agent_rejected");
+    await waitFor(() => expect(error).toHaveTextContent("agent_rejected"));
     await expect(
       error.closest('[data-ui-component="community-chat-composer"]'),
     ).not.toBeNull();
@@ -102,9 +97,7 @@
   }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep uncertain prompt");
     await userEvent.click(c.getByRole("button", { name: "Send message" }));
@@ -121,9 +114,7 @@
   args={{ status: "Offline", agentModeReady: false }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await expect(draft).toBeEnabled();
     await userEvent.type(draft, "Keep this for resume");
@@ -160,29 +151,21 @@
   }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await userEvent.type(
       await c.findByRole("textbox", { name: "Markdown editor" }),
       "Retain through preparation",
     );
     await userEvent.click(c.getByRole("button", { name: "Send message" }));
     await c.findByRole("button", { name: "Resolve fixture configuration" });
-    await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Resolve fixture configuration" }),
-    );
+    await storyControl(document.body, "Manage fixture agents");
+    await storyControl(document.body, "Resolve fixture configuration");
     await waitFor(
       () =>
         expect(c.getByRole("button", { name: "Refresh agents" })).toBeEnabled(),
       { timeout: 4000 },
     );
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await expect(
       await c.findByRole("textbox", { name: "Markdown editor" }),
     ).toHaveTextContent("Retain through preparation");

@@ -6,8 +6,17 @@
   const { Story } = defineMeta({
     title: "JJ Store/Discussion sheets",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "prototype"],
+    parameters: {
+      jjStoreStory: {
+        kind: "prototype",
+        requirement: "JST-UI-010",
+        reason:
+          "Explicit structural or conversation design prototype; does not qualify application parity.",
+      },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 
@@ -77,6 +86,7 @@
 />
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile Focus uses the root sheet"
   args={{ mobile: true }}
   play={async ({ canvasElement }) => {
@@ -139,9 +149,6 @@
       const close = pane.querySelector<HTMLButtonElement>(
         '[data-ui-part="sidebar-close"]',
       )!;
-      const toggle = canvasElement.querySelector<HTMLButtonElement>(
-        '[data-target-panel-id="right"]',
-      )!;
       await expect(close).toHaveAttribute("aria-label", "Close standard pane");
       const before = resize.getAttribute("aria-valuenow");
       resize.focus();
@@ -150,18 +157,27 @@
         expect(resize.getAttribute("aria-valuenow")).not.toBe(before),
       );
       const width = resize.getAttribute("aria-valuenow");
-      await userEvent.click(close);
+      await page
+        .getByRole("button", { name: "Close standard pane", exact: true })
+        .click();
+      await expect(main).toBeInTheDocument();
       await waitFor(() => expect(main).not.toHaveAttribute("data-joined-end"));
       await expect(rail).toBeVisible();
       await expect(rail.getBoundingClientRect().width).toBeCloseTo(
         railWidth,
         1,
       );
-      await expect(toggle).toHaveAttribute(
-        "aria-label",
-        "Open standard pane sidebar",
-      );
-      await userEvent.click(toggle);
+      await expect(
+        c.getByRole("button", {
+          name: "Open standard pane sidebar",
+        }),
+      ).toBeVisible();
+      await page
+        .getByRole("button", {
+          name: "Open standard pane sidebar",
+          exact: true,
+        })
+        .click();
       await waitFor(() => expect(main).toHaveAttribute("data-joined-end"));
       await expect(
         c.getByRole("slider", { name: "Resize standard pane" }),

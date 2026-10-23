@@ -5,8 +5,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Components/Tag list adoption",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/forum-topic-list/ForumTopicList.svelte",
+      },
       docs: {
         source: {
           code: 'import { TagList } from "@lapismd/design-core/shadcn/tag-list";\n// Map native labels and tones in the host; preserve their order.\n<TagList label="Revision tags" tags={revisionTags} />',

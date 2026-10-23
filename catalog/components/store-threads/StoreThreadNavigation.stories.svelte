@@ -5,9 +5,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository thread navigation",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { otherRepository: true, multiRepository: true },
-    parameters: { layout: "fullscreen" },
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function aliases({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
@@ -55,8 +55,9 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile Thread aliases retain one conversation"
-  args={{ displayMode: "mobile" }}
+  args={{}}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentInlineCommentsFixture.svelte";
@@ -13,8 +14,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent message discussion",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -100,19 +101,17 @@
     )!;
     await expect(queued).toHaveTextContent(text);
     expect(promptCommands(canvasElement)).toHaveLength(0);
-    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await storyControl(document.body, "Switch renderer");
     await waitFor(() =>
       expect(
         canvasElement.querySelector("[data-conversation-view]"),
       ).toHaveAttribute("data-conversation-view", "classic"),
     );
     await expect(inlineEditors(canvasElement)[0]).toHaveTextContent(text);
-    await userEvent.click(
-      c.getByRole("button", { name: "Leave fixture conversation" }),
-    );
+    await storyControl(document.body, "Leave fixture conversation");
     await openInlineConversation(canvasElement);
     await expect(inlineEditors(canvasElement)[0]).toHaveTextContent(text);
-    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await storyControl(document.body, "Switch renderer");
     await waitFor(() =>
       expect(
         canvasElement.querySelector("[data-conversation-view]"),
@@ -194,9 +193,7 @@
       await c.findByRole("button", { name: "Check retained request" }),
     ).toBeEnabled();
     expect(promptCommands(canvasElement)).toHaveLength(1);
-    await userEvent.click(
-      c.getByRole("button", { name: "Confirm fixture request" }),
-    );
+    await storyControl(document.body, "Confirm fixture request");
     await userEvent.click(
       c.getByRole("button", { name: "Check retained request" }),
     );
@@ -205,9 +202,7 @@
         c.queryByRole("button", { name: "Check retained request" }),
       ).toBeNull(),
     );
-    await userEvent.click(
-      c.getByRole("button", { name: "Refresh captured feedback" }),
-    );
+    await storyControl(document.body, "Refresh captured feedback");
     await c.findByRole("button", { name: "Edit comment" });
     expect(promptCommands(canvasElement)).toEqual([original]);
     const checks = JSON.parse(

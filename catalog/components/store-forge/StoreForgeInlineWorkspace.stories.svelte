@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
@@ -6,8 +7,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Forge/Inline workspace",
     component: ForgeWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await views.stacks();
     },
@@ -146,7 +151,9 @@
       }),
     );
     await userEvent.click(
-      await within(stack).findByRole("button", { name: "src/api.ts" }),
+      await within(stack).findByRole("button", {
+        name: fileRowName("src/api.ts"),
+      }),
     );
     const details = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
@@ -250,7 +257,9 @@
       }),
     );
     await userEvent.click(
-      await within(stack).findByRole("button", { name: "src/model.ts" }),
+      await within(stack).findByRole("button", {
+        name: fileRowName("src/model.ts"),
+      }),
     );
     const details = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
@@ -267,7 +276,9 @@
       }),
     );
     await userEvent.click(
-      await within(stack).findByRole("button", { name: "src/api.ts" }),
+      await within(stack).findByRole("button", {
+        name: fileRowName("src/api.ts"),
+      }),
     );
     await expect(
       within(details).getByRole("heading", { name: "Expose repository API" }),

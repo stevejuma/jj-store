@@ -3,9 +3,16 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/LinkRenderingFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
+      },
+    },
     title: "JJ Store/Appearance/Links",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function verify({
     canvasElement,
@@ -92,6 +99,7 @@
   play={verify}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Rich cards in a narrow dark column"
   globals={{ colorMode: "dark" }}
   args={{ links: "rich", mode: "dark", narrow: true }}

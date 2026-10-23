@@ -6,8 +6,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Workflow sidebar actions",
     component: WorkflowsFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
     args: { initialHash, historyExamples: true },
   });
   async function openMenu(canvasElement: HTMLElement) {
@@ -16,7 +16,7 @@
         name: "Workflows by repository",
       }),
     );
-    const trigger = nav.getByRole("button", {
+    const trigger = await nav.findByRole("button", {
       name: "Actions for Build parser",
     });
     await waitFor(() =>

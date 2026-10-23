@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { untrack } from "svelte";
   import { createAppearanceStore } from "../../web/src/lib/appearance/store.svelte.js";
   import { ownAppearance } from "../../web/src/lib/appearance/runtime.svelte.js";
@@ -23,8 +24,10 @@
 
 <div class="appearance-fixture" data-saved={JSON.stringify(appearance.saved)}>
   <StoreAppearance />
-  <button type="button" onclick={() => (mounted = !mounted)}
-    >Toggle message mount</button
+  <FixtureControls floating={false}
+    ><button type="button" onclick={() => (mounted = !mounted)}
+      >Toggle message mount</button
+    ></FixtureControls
   >
   {#if mounted}<div aria-label="Sample conversation">
       <CommunityMarkdownContent

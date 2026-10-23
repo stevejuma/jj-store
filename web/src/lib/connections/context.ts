@@ -1,7 +1,7 @@
 import { getContext, setContext } from "svelte";
-import type { ServerConnections } from "./owner.svelte.js";
+import type { ServerConnectionsView } from "./presentation.js";
 const key = Symbol("server-connections");
-export const provideServerConnections = (owner: ServerConnections) =>
+export const provideServerConnections = (owner: ServerConnectionsView) =>
   setContext(key, owner);
 export const serverConnections = () =>
-  getContext<ServerConnections | undefined>(key);
+  getContext<ServerConnectionsView | undefined>(key);

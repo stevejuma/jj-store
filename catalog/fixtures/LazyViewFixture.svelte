@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import StoreLazyView from "../../web/src/lib/ui/store-application/StoreLazyView.svelte";
   import { lazyView } from "../../web/src/lib/ui/store-application/lazy-view.js";
   import Content from "./LazyViewContent.svelte";
@@ -25,14 +26,16 @@
 </script>
 
 <div style="padding:1rem">
-  <button onclick={() => (active = true)}>Open view</button>
-  <button onclick={() => (active = false)}>Close view</button>
-  <button onclick={() => (second = true)}>Switch view</button>
-  <button onclick={() => (present = false)}>Navigate away</button>
-  <button onclick={() => firstResolve()}>Resolve first</button>
-  <button onclick={() => secondResolve()}>Resolve second</button>
-  <button onclick={() => firstReject()}>Reject first</button>
-  <p role="status">Imports: {calls}</p>
+  <FixtureControls floating={false}>
+    <button onclick={() => (active = true)}>Open view</button>
+    <button onclick={() => (active = false)}>Close view</button>
+    <button onclick={() => (second = true)}>Switch view</button>
+    <button onclick={() => (present = false)}>Navigate away</button>
+    <button onclick={() => firstResolve()}>Resolve first</button>
+    <button onclick={() => secondResolve()}>Resolve second</button>
+    <button onclick={() => firstReject()}>Reject first</button>
+    <p role="status">Imports: {calls}</p>
+  </FixtureControls>
   {#if present}
     <StoreLazyView {active} load={second ? next : first} label="Example view">
       {#snippet content(View)}<View

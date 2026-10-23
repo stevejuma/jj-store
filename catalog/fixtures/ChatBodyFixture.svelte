@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import "./delta-chat/fixture.css";
   import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
   import { AppShell, AppShellController } from "@lapismd/design-core/shell";
@@ -200,11 +201,10 @@
     desktopMinMainWidth={360}
   >
     <AppShell.Main>
-      <AppShell.Toolbar style="border-block-end: 1px solid var(--border)">
+      <AppShell.Toolbar
+        style="min-height: var(--ui-shell-toolbar-height); border-block-end: 1px solid var(--border)"
+      >
         <div class="chat-body-fixture-header">
-          {#if loading}<Button variant="ghost" onclick={() => (loading = false)}
-              >Finish loading history</Button
-            >{/if}
           <div>
             <h1>
               {scenario === "comments"
@@ -217,39 +217,6 @@
                 Synthetic interaction examples
               </p>{/if}
           </div>
-          {#if scenario !== "reference" && scenario !== "empty"}<div
-              class="chat-body-fixture-controls"
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={appended}
-                onclick={() => (appended = true)}>Append response</Button
-              >
-              <Button
-                variant="outline"
-                size="sm"
-                onclick={() => (changed = !changed)}>Replace content</Button
-              >
-              <Button
-                variant="outline"
-                size="sm"
-                onclick={() => (mounted = !mounted)}
-                >{mounted ? "Hide body" : "Show body"}</Button
-              >
-              <Button
-                variant="outline"
-                size="sm"
-                onclick={() => nextMessage.completeReplies(commentState)}
-                >Simulate replies</Button
-              >
-              <Button
-                variant="outline"
-                size="sm"
-                onclick={() => (nextMessage.failNext = true)}
-                >Fail next send</Button
-              >
-            </div>{/if}
         </div>
       </AppShell.Toolbar>
       <AppShell.Body layout="regions" label="Chat workspace">
@@ -274,6 +241,7 @@
     </AppShell.Main>
     {#if selectedTool}<AppShell.Sidebar
         side="right"
+        variant="attached"
         label="Read tool details"
         mobileLabel="Captured read"
         resizeLabel="Resize read tool details"
@@ -289,3 +257,36 @@
       </AppShell.Sidebar>{/if}
   </CommunityAppShell>
 </div>
+
+<FixtureControls>
+  {#if loading}<Button variant="ghost" onclick={() => (loading = false)}
+      >Finish loading history</Button
+    >{/if}
+  {#if scenario !== "reference" && scenario !== "empty"}<div
+      class="chat-body-fixture-controls"
+    >
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={appended}
+        onclick={() => (appended = true)}>Append response</Button
+      >
+      <Button variant="outline" size="sm" onclick={() => (changed = !changed)}
+        >Replace content</Button
+      >
+      <Button variant="outline" size="sm" onclick={() => (mounted = !mounted)}
+        >{mounted ? "Hide body" : "Show body"}</Button
+      >
+      <Button
+        variant="outline"
+        size="sm"
+        onclick={() => nextMessage.completeReplies(commentState)}
+        >Simulate replies</Button
+      >
+      <Button
+        variant="outline"
+        size="sm"
+        onclick={() => (nextMessage.failNext = true)}>Fail next send</Button
+      >
+    </div>{/if}</FixtureControls
+>

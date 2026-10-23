@@ -1,12 +1,14 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent session state",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       jjStoreShell: true,
       a11y: { test: "error" },
@@ -24,9 +26,7 @@
   }
   async function layout(canvasElement: HTMLElement, label: string) {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const activity = await waitFor(() => {
       const row = canvasElement.querySelector<HTMLElement>(
         '[data-ui-component="community-agent-composer-activity"]',

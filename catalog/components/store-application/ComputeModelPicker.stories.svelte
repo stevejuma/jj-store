@@ -5,9 +5,15 @@
   import Fixture from "../../fixtures/LocalComputeFixture.svelte";
   const gemma = "unsloth/gemma-4-E4B-it-GGUF:Q4_K_M";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreComputeSettings.svelte",
+      },
+    },
     title: "JJ Store/Compute model picker",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: { memoryLimit: null, selectedModel: gemma, installedModel: true },
   });
 </script>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from "svelte";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { MockStackWorkspaceAdapter } from "./stack-workspace/adapter.js";
@@ -71,7 +71,7 @@
     {controller}
     {stackWorkspace}
     {layoutStorage}
-    displayMode="desktop"
+    displayMode="auto"
     initiallyCollapsed={false}
   />
 </div>
@@ -79,6 +79,5 @@
 <style>
   .stack-workspace-application-fixture {
     height: 100vh;
-    min-height: 36rem;
   }
 </style>

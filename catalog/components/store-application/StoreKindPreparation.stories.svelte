@@ -3,9 +3,15 @@
   import { expect, userEvent, within } from "storybook/test";
   import KindPreparationFixture from "../../fixtures/KindPreparationFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte",
+      },
+    },
     title: "JJ Store/Settings/Inventory preparation",
     component: KindPreparationFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

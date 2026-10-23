@@ -4,9 +4,16 @@
   import CommunityProjectsColumnAlert from "../../../web/src/lib/ui/community-projects/CommunityProjectsColumnAlert.svelte";
 
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsColumnAlert.svelte",
+      },
+    },
     title: "JJ Store/Components/Column alert",
     component: CommunityProjectsColumnAlert,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       title: "Comparison needs a target",
       description:

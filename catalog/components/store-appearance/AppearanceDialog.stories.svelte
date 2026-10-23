@@ -7,8 +7,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Appearance/Modal",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-work/StoreWorkField.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 
   async function verify(canvasElement: HTMLElement, alert: boolean) {

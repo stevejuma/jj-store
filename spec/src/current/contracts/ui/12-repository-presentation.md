@@ -1,5 +1,11 @@
 # Repository presentation
 
+Automatic file refresh retains the visible rows' immutable file identities until
+replacement rows are ready. Selecting a visible file pins its known commit
+before reference restoration finishes; interrupted refreshes cannot strand that
+selection without a source preview. Reads retain server-admitted operation and
+commit pins.
+
 Branches are JJ bookmarks; conflicted bookmarks show every target and deleted
 bookmarks show empty history. A branch, revision and file occupy successive
 Column Canvas path levels. Changing an earlier selection clears later selection.

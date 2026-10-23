@@ -362,3 +362,22 @@ secondary query structures. The service supplies admitted immutable facts and
 retains authorization and native hydration. Storage, model and WAL do not depend
 on this engine. Native host sessions share the bounded source/projection owner;
 conversion to another storage source resets it.
+
+## Shared application and catalog presentation
+
+The browser and application-classified Storybook stories mount the same
+production application root. Hosts own transport creation and disposal; catalog
+adapters provide deterministic local controllers. Component and prototype
+stories identify their narrower scope. A repository spec-validator check rejects
+alternate application shells. Fixture controls sit in labelled padded panels
+with dotted borders and are excluded from product captures. The repository's
+`docs/validation.md` describes Docker and native development checks.
+
+In compact browser layouts, the relocated application toolbar stays inside the
+labelled Application navigation landmark, including Settings. This retains
+assistive-technology navigation while the same controls move between placements.
+
+File refresh keeps immutable identities attached to visible rows until their
+replacement is ready. Selecting a file pins its known commit even while
+reference restoration is pending, so an interrupted refresh can still open the
+source.

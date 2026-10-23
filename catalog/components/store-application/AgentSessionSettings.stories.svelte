@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent session settings",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   const workspace = "/device/agent-workspaces/helper/session-1234567890";
 </script>
@@ -21,9 +22,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep this session draft");
     const header = canvasElement.querySelector(
@@ -106,18 +105,6 @@
     await expect(getComputedStyle(settings).backgroundColor).toBe(
       getComputedStyle(header).backgroundColor,
     );
-    await userEvent.click(
-      runtime.getByRole("button", { name: "Open starting revision" }),
-    );
-    await expect(
-      JSON.parse(
-        (await c.findByLabelText("Last opened revision")).textContent ?? "{}",
-      ),
-    ).toEqual({
-      repository: "11".repeat(16),
-      commit: "33".repeat(20),
-      operation: "22".repeat(64),
-    });
     await expect(
       runtime.queryByRole("button", { name: "Apply runtime preferences" }),
     ).not.toBeInTheDocument();
@@ -200,6 +187,36 @@
       action: { action: "end" },
     });
     await expect(draft).toHaveTextContent("Keep this session draft");
+    await storyControl(document.body, "Open fixture conversation");
+    await waitFor(() =>
+      expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
+    );
+    await userEvent.click(c.getByRole("button", { name: "Session options" }));
+    await userEvent.click(
+      page.getByRole("menuitem", { name: "Conversation details" }),
+    );
+    const review = within(
+      await c.findByRole("complementary", { name: "Conversation details" }),
+    );
+    await waitFor(() =>
+      expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
+    );
+    await userEvent.click(
+      review.getByRole("button", { name: "Open starting revision" }),
+    );
+    await expect(
+      JSON.parse(
+        (await c.findByLabelText("Last opened revision")).textContent ?? "{}",
+      ),
+    ).toEqual({
+      repository: "11".repeat(16),
+      commit: "33".repeat(20),
+      operation: "22".repeat(64),
+    });
+    await expect(c.getByRole("tab", { name: "Commits" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   }}
 />
 
@@ -208,9 +225,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep this unapplied message");
     await userEvent.click(c.getByRole("button", { name: "Session options" }));
@@ -255,8 +270,9 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
+    await storyControl(document.body, "Open fixture conversation");
+    await waitFor(() =>
+      expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
     );
     await userEvent.click(c.getByRole("button", { name: "Session options" }));
     await userEvent.click(
@@ -324,8 +340,9 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
+    await storyControl(document.body, "Open fixture conversation");
+    await waitFor(() =>
+      expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
     );
     await userEvent.click(c.getByRole("button", { name: "Session options" }));
     await userEvent.click(

@@ -12,8 +12,16 @@
     title: "JJ Store/Agent prompt markup",
     component: Fixture,
     args: { conversationView: "classic" },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
+      },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function nested({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);

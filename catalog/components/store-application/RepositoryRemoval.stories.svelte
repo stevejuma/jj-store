@@ -3,9 +3,15 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/RepositoryRemovalFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreRepositoryRemoval.svelte",
+      },
+    },
     title: "JJ Store/Settings/Repository removal",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   const dialogFor = async (canvasElement: HTMLElement) => {
     const c = within(canvasElement);

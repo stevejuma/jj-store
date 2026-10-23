@@ -1,12 +1,18 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceLazyApplicationFixture from "../../fixtures/StackWorkspaceLazyApplicationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Lazy reads",
     component: StackWorkspaceLazyApplicationFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function openApi(canvasElement: HTMLElement) {
     const canvas = within(canvasElement);
@@ -17,7 +23,9 @@
       within(stack).getByRole("button", { name: "Expose repository API" }),
     );
     await userEvent.click(
-      await within(stack).findByRole("button", { name: "src/api.ts" }),
+      await within(stack).findByRole("button", {
+        name: workspaceFileName("src/api.ts"),
+      }),
     );
     return {
       canvas,
@@ -67,7 +75,9 @@
       within(ui).getByRole("button", { name: "Add workspace toolbar" }),
     );
     await userEvent.click(
-      await within(ui).findByRole("button", { name: "src/toolbar.ts" }),
+      await within(ui).findByRole("button", {
+        name: workspaceFileName("src/toolbar.ts"),
+      }),
     );
     const other = await canvas.findByRole("region", {
       name: "Selected changes from stack-ui",
@@ -86,7 +96,9 @@
     expect(other).toBeInTheDocument();
     const unstaged = canvas.getByRole("region", { name: "Unstaged files" });
     await userEvent.click(
-      await within(unstaged).findByRole("button", { name: "README.md" }),
+      await within(unstaged).findByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     );
     const working = await canvas.findByRole("region", {
       name: "Selected changes from working",
@@ -149,15 +161,15 @@
     });
     const unstaged = canvas.getByRole("region", { name: "Unstaged files" });
     await userEvent.click(
-      await within(unstaged).findByRole("button", { name: "README.md" }),
+      await within(unstaged).findByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     );
     const working = await canvas.findByRole("region", {
       name: "Selected changes from working",
     });
     await within(working).findByRole("group", { name: /^Draggable hunk/ });
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Simulate native operation change" }),
-    );
+    await storyControl(document.body, "Simulate native operation change");
     await waitFor(() => {
       expect(canvas.getByLabelText("Fixture patch reads")).toHaveTextContent(
         "4",

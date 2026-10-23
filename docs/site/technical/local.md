@@ -861,3 +861,18 @@ no automatic merge, push or cleanup occurs.
 Agent coordination uses a separate checkout bound to the conversation metadata
 home. Native materialization reuse checks both repository ID and LocalTrusted
 socket; local companion checkouts retain the same repository-owned metadata.
+
+## Retiring history scopes and physical status reads
+
+After successful history-service shutdown, drained window scopes are retired
+from the retained registry. Failed shutdown keeps recovery state. Pinned query
+metadata, operation details and unfiltered bookmark/workspace metadata use the
+bounded reader directly; referenced operations still require validation against
+the handle's original pin and caller admission.
+
+The private physical status helper compares the complete sparse/ignored
+working-tree projection with its operation-pinned baseline. It retains bounded
+comparison bytes privately, observes the workspace again after computing counts
+and rejects changed witnesses or revoked admission. Observer drain waits for
+actual worker leases to exit. These helpers grant no new browser route or
+mutation authority.

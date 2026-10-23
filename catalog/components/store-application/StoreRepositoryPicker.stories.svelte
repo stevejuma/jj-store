@@ -3,9 +3,16 @@
   import { expect, fn, userEvent, within, waitFor } from "storybook/test";
   import StoreRepositoryPicker from "../../../web/src/lib/ui/store-application/StoreRepositoryPicker.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-application/StoreRepositoryPicker.svelte",
+      },
+    },
     title: "JJ Store/Application/Repository picker",
     component: StoreRepositoryPicker,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       label: "Repository",
       repositories: [

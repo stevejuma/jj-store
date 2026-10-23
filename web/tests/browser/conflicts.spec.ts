@@ -155,7 +155,9 @@ test("native conflict editor stages and previews one complete atomic selection",
   ).toBeVisible();
   await dialog.getByRole("button", { name: "Stage merged file" }).click();
   await expect(dialog.getByText(/Merged file staged/u)).toBeVisible();
-  await dialog.getByRole("button", { name: "assets/logo.bin" }).click();
+  const binaryFile = dialog.locator('button[data-file-path="assets/logo.bin"]');
+  await expect(binaryFile).toHaveAccessibleName(/^logo\.bin(?:\s|$)/);
+  await binaryFile.click();
   await expect(
     dialog.getByText(/native descriptor reports binary/u),
   ).toBeVisible();
@@ -193,7 +195,9 @@ test("native conflict editor stages and previews one complete atomic selection",
     ],
   });
   await dialog.getByRole("button", { name: "Back", exact: true }).click();
-  await dialog.getByRole("button", { name: "src/lib.rs" }).click();
+  const textFile = dialog.locator('button[data-file-path="src/lib.rs"]');
+  await expect(textFile).toHaveAccessibleName(/^lib\.rs(?:\s|$)/);
+  await textFile.click();
   await expect(
     dialog.getByRole("textbox", { name: "Edit Resolved" }),
   ).toHaveValue("pub fn merged() {}\n");
@@ -290,7 +294,9 @@ for (const [side, term] of [
       await expect(
         sheet.getByRole("textbox", { name: "Edit Resolved" }),
       ).toBeHidden();
-      await browser.getByRole("button", { name: "src/lib.rs" }).click();
+      const file = browser.locator('button[data-file-path="src/lib.rs"]');
+      await expect(file).toHaveAccessibleName(/^lib\.rs(?:\s|$)/);
+      await file.click();
       await expect(browser).toBeHidden();
       await expect(
         sheet.getByRole("textbox", { name: "Edit Resolved" }),

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, within, userEvent, waitFor } from "storybook/test";
   import WorkflowsFixture from "../../fixtures/WorkflowsFixture.svelte";
@@ -9,8 +10,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository Actions",
     component: WorkflowsFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     args: { shell: true, historyExamples: true, initialHash: base },
   });
 </script>
@@ -89,13 +94,11 @@
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
       "author=" + "22".repeat(16),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "Fixture back" }));
+    await storyControl(document.body, "Fixture back");
     await expect(
       await canvas.findByRole("article", { name: "Run details" }),
     ).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Fixture forward" }),
-    );
+    await storyControl(document.body, "Fixture forward");
     await expect(
       await canvas.findByRole("navigation", {
         name: "Workflows by repository",

@@ -1,3 +1,4 @@
+import { nativeStoryControl } from "../native-story-controls.mjs";
 import { expect } from "@playwright/test";
 export async function largeCaptureAcceptance(page, base) {
   await page.goto(
@@ -29,8 +30,8 @@ export async function largeCaptureAcceptance(page, base) {
   await page.keyboard.press("Enter");
   await expect(code).not.toContainText("line30 = 30");
   await expect(code).toContainText("line60 = 60");
-  await page.getByRole("button", { name: "Hide body" }).click();
-  await page.getByRole("button", { name: "Show body" }).click();
+  await nativeStoryControl(page, "Hide body");
+  await nativeStoryControl(page, "Show body");
   const more = page.getByRole("button", {
     name: "Show 40 more lines in Large captured code",
   });
@@ -52,8 +53,8 @@ export async function largeCaptureAcceptance(page, base) {
   ).toHaveText("export const line13 = 13;");
   await expect(composer.getByRole("textbox")).toHaveText("Check hidden line");
   await page.getByRole("button", { name: "Send message" }).click();
-  await page.getByRole("button", { name: "Hide body" }).click();
-  await page.getByRole("button", { name: "Show body" }).click();
+  await nativeStoryControl(page, "Hide body");
+  await nativeStoryControl(page, "Show body");
   await expect(code).toContainText("line30 = 30");
   await expect(
     page.getByRole("article", { name: "Comment by You" }),

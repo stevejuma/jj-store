@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Reusable agent chat",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 

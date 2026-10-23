@@ -3,9 +3,16 @@
   import { expect, within } from "storybook/test";
   import Fixture from "../../fixtures/RepositorySettingsLoadingFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreRepositorySettingsLoading.svelte",
+      },
+    },
     title: "JJ Store/Settings/Loading",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function loading({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
@@ -51,6 +58,7 @@
   play={loading}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Search worker limits on narrow screens"
   args={{ section: "search", tab: "advanced", narrow: true }}
   play={loading}

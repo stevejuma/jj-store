@@ -141,6 +141,6 @@
     color: var(--muted-foreground);
   }
   :global(.store-agent-details-header[data-ui-part="sidebar-header"]) {
-    border-block-end: 0;
+    --ui-shell-attached-divider: 0;
   }
 </style>

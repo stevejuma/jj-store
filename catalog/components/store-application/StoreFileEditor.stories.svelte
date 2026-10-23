@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
@@ -7,8 +8,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository/File editor",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     args: { initialPage: "files" },
   });
 </script>
@@ -43,7 +48,9 @@
     await userEvent.click(
       await canvas.findByRole("button", { name: "Show repository file tree" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("README.md") }),
+    );
     await returnToRoot();
     await userEvent.click(canvas.getByRole("button", { name: "Edit README" }));
     await expect(await canvas.findByLabelText("File name")).toHaveValue(
@@ -51,7 +58,9 @@
     );
     await expect(workspace).toBeDisabled();
     await returnToRoot();
-    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("README.md") }),
+    );
     await waitFor(() =>
       expect(
         canvas.queryByLabelText("File name"),
@@ -61,7 +70,9 @@
     await userEvent.click(canvas.getByRole("button", { name: /^Edit$/ }));
     await expect(canvas.getByLabelText("File name")).toHaveValue("README.md");
     await returnToRoot();
-    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("README.md") }),
+    );
     await waitFor(() =>
       expect(
         canvas.queryByLabelText("File name"),
@@ -89,7 +100,9 @@
     await userEvent.click(
       await canvas.findByRole("button", { name: "Show repository file tree" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("README.md") }),
+    );
     const metadata = canvas.getByRole("region", {
       name: "Selected file metadata",
     });

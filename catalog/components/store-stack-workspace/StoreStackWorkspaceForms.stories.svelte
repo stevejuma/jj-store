@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
@@ -11,8 +12,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stack Workspace/Forms",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function settingsRows(dialog: HTMLElement, count: number) {
     await waitFor(() => {
@@ -88,12 +89,12 @@
     expect(
       within(
         canvas.getByRole("region", { name: "Stack feature/api" }),
-      ).getByRole("button", { name: "README.md" }),
+      ).getByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeVisible();
     expect(
       within(
         canvas.getByRole("region", { name: "Unstaged files" }),
-      ).queryByRole("button", { name: "README.md" }),
+      ).queryByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeNull();
   }}
 />

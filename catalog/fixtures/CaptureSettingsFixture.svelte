@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { ApiError } from "../../web/src/lib/api/api-error.js";
   import { createCaptureManagement } from "../../web/src/lib/controller/capture-management.svelte.js";
@@ -185,35 +186,44 @@
   onDestroy(() => management.destroy());
 </script>
 
-{#if delayedObservations}<Button onclick={() => releaseReads()}
-    >Finish capture load</Button
+{#if delayedObservations}<FixtureControls floating={false}
+    ><Button onclick={() => releaseReads()}>Finish capture load</Button
+    ></FixtureControls
   >
-  <Button
-    onclick={() => {
-      readGate = new Promise<void>((resolve) => {
-        releaseReads = resolve;
-      });
-      void management.refresh();
-    }}>Delay capture refresh</Button
+  <FixtureControls floating={false}
+    ><Button
+      onclick={() => {
+        readGate = new Promise<void>((resolve) => {
+          releaseReads = resolve;
+        });
+        void management.refresh();
+      }}>Delay capture refresh</Button
+    ></FixtureControls
   >{/if}
-{#if busyObservations}<Button
-    onclick={() => {
-      busyReads = false;
-      void management.refresh();
-    }}>Allow capture observations</Button
+{#if busyObservations}<FixtureControls floating={false}
+    ><Button
+      onclick={() => {
+        busyReads = false;
+        void management.refresh();
+      }}>Allow capture observations</Button
+    ></FixtureControls
   >{/if}
 {#if feedbackControls}
-  <Button
-    onclick={() => {
-      failedObservations = true;
-      void management.refresh();
-    }}>Fail capture observations</Button
+  <FixtureControls floating={false}
+    ><Button
+      onclick={() => {
+        failedObservations = true;
+        void management.refresh();
+      }}>Fail capture observations</Button
+    ></FixtureControls
   >
-  <Button
-    onclick={() => {
-      failedObservations = false;
-      void management.refresh();
-    }}>Recover capture observations</Button
+  <FixtureControls floating={false}
+    ><Button
+      onclick={() => {
+        failedObservations = false;
+        void management.refresh();
+      }}>Recover capture observations</Button
+    ></FixtureControls
   >
   <Button onclick={() => (visible = !visible)}>Toggle capture page</Button>
 {/if}

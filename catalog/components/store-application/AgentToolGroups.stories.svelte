@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { openSession } from "./agent-tool-groups-play.js";
   import { selectSettingsSubtab } from "./settings-shell-play.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
@@ -12,21 +13,13 @@
     beforeEach: async () => {
       await views.agentsRecorded();
     },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
-  const openSession = async (canvasElement: HTMLElement) => {
-    const c = within(canvasElement);
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Codex ended/ }),
-    );
-    await c.findByRole(
-      "button",
-      { name: "Expand 3 tool calls" },
-      { timeout: 10_000 },
-    );
-    return c;
-  };
 </script>
 
 <Story
@@ -34,7 +27,7 @@
   play={async ({ canvasElement }) => {
     const c = await openSession(canvasElement);
     await userEvent.click(
-      c.getByRole("button", { name: "Expand 3 tool calls" }),
+      c.getByRole("button", { name: /^Expand Read(?: .+)? 3 tool calls$/ }),
     );
     const heading = c.getByRole("button", { name: "Collapse 3 tool calls" });
     const group = heading.closest('[data-ui-component="ai-chat-tool-calls"]')!;
@@ -85,7 +78,9 @@
       });
     };
     await checkSpacing();
-    const single = c.getByRole("button", { name: "Show details for Search" });
+    const single = c.getByRole("button", {
+      name: /^Show details for Search(?: |$)/,
+    });
     await expect(
       single
         .querySelector('[data-ui-part="call-status"]')!
@@ -137,11 +132,13 @@
   name="Adjacent calls group and failed details retain the actual error"
   play={async ({ canvasElement }) => {
     const c = await openSession(canvasElement);
-    const group = c.getByRole("button", { name: "Expand 3 tool calls" });
+    const group = c.getByRole("button", {
+      name: /^Expand Read(?: .+)? 3 tool calls$/,
+    });
     await expect(group).toHaveAttribute("aria-expanded", "false");
     await expect(c.queryByText("Tool failed")).toBeNull();
     await expect(
-      c.getByRole("button", { name: "Show details for Search" }),
+      c.getByRole("button", { name: /^Show details for Search(?: |$)/ }),
     ).toBeVisible();
     await userEvent.click(group);
     const calls = canvasElement.querySelectorAll(
@@ -157,7 +154,7 @@
     ]);
     await expect(c.queryByText("Tool failed")).toBeNull();
     await userEvent.click(
-      c.getByRole("button", { name: "Show details for Bash" }),
+      c.getByRole("button", { name: /^Show details for Bash(?: |$)/ }),
     );
     await expect(
       within(c.getByRole("group", { name: "Bash tool call" })).getByText(
@@ -175,14 +172,14 @@
     );
     await waitFor(() =>
       expect(
-        c.queryByRole("button", { name: "Hide details for Bash" }),
+        c.queryByRole("button", { name: /^Hide details for Bash(?: |$)/ }),
       ).toBeNull(),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Expand 3 tool calls" }),
+      c.getByRole("button", { name: /^Expand Read(?: .+)? 3 tool calls$/ }),
     );
     await expect(
-      c.getByRole("button", { name: "Hide details for Bash" }),
+      c.getByRole("button", { name: /^Hide details for Bash(?: |$)/ }),
     ).toBeVisible();
   }}
 />
@@ -193,7 +190,7 @@
     const c = await openSession(canvasElement),
       body = within(document.body);
     await userEvent.click(
-      c.getByRole("button", { name: "Expand 3 tool calls" }),
+      c.getByRole("button", { name: /^Expand Read(?: .+)? 3 tool calls$/ }),
     );
     const tool = c.getByRole("group", { name: "Bash tool call" });
     const write = fn(),
@@ -289,7 +286,7 @@
   play={async ({ canvasElement }) => {
     const c = await openSession(canvasElement);
     await userEvent.click(
-      c.getByRole("button", { name: "Expand 3 tool calls" }),
+      c.getByRole("button", { name: /^Expand Read(?: .+)? 3 tool calls$/ }),
     );
     const tool = c.getByRole("group", { name: "apply_patch tool call" });
     await userEvent.hover(
@@ -304,7 +301,7 @@
       name: "Markdown editor",
     });
     const trigger = within(tool).getByRole("button", {
-      name: "Show details for apply_patch",
+      name: /^Show details for apply_patch(?: |$)/,
     });
     const composer = editor.closest<HTMLElement>(
       '[data-ui-part="agent-tool-reply-composer"]',
@@ -362,7 +359,7 @@
   play={async ({ canvasElement }) => {
     const c = await openSession(canvasElement);
     await userEvent.click(
-      c.getByRole("button", { name: "Expand 3 tool calls" }),
+      c.getByRole("button", { name: /^Expand Read(?: .+)? 3 tool calls$/ }),
     );
     const tool = c.getByRole("group", { name: "apply_patch tool call" });
     const comment = (
@@ -376,13 +373,13 @@
     });
     await userEvent.hover(
       within(tool).getByRole("button", {
-        name: "Show details for apply_patch",
+        name: /^Show details for apply_patch(?: |$)/,
       }),
     );
     await waitFor(() => expect(getComputedStyle(actions).opacity).toBe("1"));
     await userEvent.unhover(
       within(tool).getByRole("button", {
-        name: "Show details for apply_patch",
+        name: /^Show details for apply_patch(?: |$)/,
       }),
     );
     await userEvent.hover(comment);

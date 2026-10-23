@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { untrack } from "svelte";
   import type { StoreController } from "../../web/src/lib/controller/contracts.js";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   const base = untrack(() => createInMemoryStoreController("log"));
@@ -52,4 +53,7 @@
 </script>
 
 <StoreRepositoryApplication {controller} layoutStorage={storage} />
-<button onclick={() => (phase = "ready")}>Finish preparation</button>
+<FixtureControls
+  ><button onclick={() => (phase = "ready")}>Finish preparation</button
+  ></FixtureControls
+>

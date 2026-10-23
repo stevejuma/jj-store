@@ -39,3 +39,4 @@
 - [Intentional Threads inbox and Codebase](39-intentional-thread-inbox.md)
 - [Server selection](40-server-switcher.md)
 - [Workflows](41-workflows.md)
+- [Application story parity](42-application-story-parity.md)

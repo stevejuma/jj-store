@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
@@ -6,8 +7,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Refinements",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   function header(element: HTMLElement, name: string) {
     return workspaceCanvas(element)
@@ -204,12 +205,16 @@
       name: "Stack feature/api",
     });
     await userEvent.click(header(canvasElement, "feature/api"));
-    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: workspaceFileName("README.md") }),
+    );
     await canvas.findByRole("region", {
       name: "Selected changes from working",
     });
     await userEvent.click(
-      within(stack).getByRole("button", { name: "src/api.ts" }),
+      within(stack).getByRole("button", {
+        name: workspaceFileName("src/api.ts"),
+      }),
     );
     await canvas.findByRole("region", {
       name: "Selected changes from stack-api",

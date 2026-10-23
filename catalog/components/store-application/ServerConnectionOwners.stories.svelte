@@ -7,9 +7,15 @@
     restoredOwners,
   } from "../../fixtures/server-connections/owner.js";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-connections/StoreServerSwitcher.svelte",
+      },
+    },
     title: "Store/Server connection owners",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

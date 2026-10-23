@@ -5,9 +5,10 @@
   import { IDS } from "../../fixtures/repository.js";
   import { version } from "../../../package.json";
   const { Story } = defineMeta({
+    parameters: { jjStoreStory: { kind: "application" } },
     title: "JJ Store/Settings/Navigation",
     component: StoreApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false, accessMode: "local_trusted" },
   });
   async function openSettings(canvasElement: HTMLElement) {
@@ -67,8 +68,9 @@
     await openRepositorySettings(canvasElement)}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile repository header opens scoped settings"
-  args={{ initialPage: "files", displayMode: "mobile" }}
+  args={{ initialPage: "files" }}
   play={async ({ canvasElement }) =>
     await openRepositorySettings(canvasElement, true)}
 />

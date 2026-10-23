@@ -1,14 +1,15 @@
 <script lang="ts">
+  import { fleetStatus } from "./agent-fleet-status.js";
+  import FixtureControls from "./FixtureControls.svelte";
   import { AgentSettingsFixture } from "./agent-settings-fixture.svelte.js";
   import { onDestroy, untrack } from "svelte";
-  import StoreApplication from "../../web/src/lib/ui/store-application/StoreApplication.svelte";
+  import StoreApplication from "./ApplicationStory.svelte";
   import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   import {
     fixtureSession,
-    fixtureRunners,
     fixtureJsonResponse as json,
   } from "./agent-execution-session.js";
   import {
@@ -17,10 +18,7 @@
     stageFleetConversation,
     fleetTargetsResponse,
   } from "./agent-fleet-changes.js";
-  import type {
-    AgentStatus,
-    AgentEvent,
-  } from "../../web/src/lib/controller/agent-execution-types.js";
+  import type { AgentEvent } from "../../web/src/lib/controller/agent-execution-types.js";
   let {
     general = false,
     directory = false,
@@ -51,45 +49,7 @@
     createFleetChangesResponder(changesFailure),
   );
   let updatesUnavailable = $state(untrack(() => reconnect));
-  let status: AgentStatus = untrack(() => ({
-    version: 1,
-    runtime: "ready",
-    revision: 0,
-    sessions: catalogSession
-      ? [
-          fixtureSession({
-            repository: "aa".repeat(16),
-            operation: "11".repeat(64),
-            commit: "22".repeat(20),
-            status: catalogSession === "live" ? "Idle" : "Offline",
-            permission: false,
-            workspacePath: "/device/chat",
-            lastActivityAt: 1,
-            preferences: { model: null, effort: null, mode: null },
-            advertisedModels: true,
-            modeReady: true,
-          }),
-        ]
-      : [],
-    runners: fixtureRunners,
-    conversations: [],
-    live_agents: [],
-    setups: ["Helper", "Planner"].map((name, index) => ({
-      id: `agent-${index}`,
-      name,
-      avatar: index ? "🦉" : "🤖",
-      description: "",
-      instructions: "",
-      options: {
-        inherit_defaults: false,
-        provider: null,
-        endpoint: null,
-        environment: {},
-      },
-      runner: "codex",
-      preferences: { model: null, effort: null, mode: "ask" },
-    })),
-  }));
+  let status = untrack(() => fleetStatus(catalogSession));
   const events: Record<string, AgentEvent[]> = {};
   const defaults = new AgentSettingsFixture();
   const manager = untrack(
@@ -291,9 +251,11 @@
 <StoreApplication {controller} layoutStorage={storage} initiallyCollapsed />
 <output aria-label="Agent fleet requests">{JSON.stringify(requests)}</output>
 <output aria-label="Model catalog requests">{catalogRequests}</output>
-{#if reconnect}<button
-    onclick={() => {
-      updatesUnavailable = false;
-      void manager.chat.refresh();
-    }}>Restore chat updates</button
+{#if reconnect}<FixtureControls
+    ><button
+      onclick={() => {
+        updatesUnavailable = false;
+        void manager.chat.refresh();
+      }}>Restore chat updates</button
+    ></FixtureControls
   >{/if}

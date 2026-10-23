@@ -6,8 +6,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Column resizing",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 

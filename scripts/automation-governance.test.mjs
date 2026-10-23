@@ -140,12 +140,20 @@ test("bot PRs retain static spec and planned test lanes", () => {
   const packageJson = JSON.parse(
     readFileSync(new URL("package.json", root), "utf8"),
   );
+  const lanes = JSON.parse(
+    readFileSync(new URL("scripts/validation/lanes.json", root), "utf8"),
+  );
+  assert.equal(
+    packageJson.scripts["release:check"],
+    "node scripts/validation.mjs run release:check",
+  );
   for (const test of [
     "scripts/release.test.mjs",
     "scripts/ci*.test.mjs",
     "scripts/automation-governance.test.mjs",
   ])
-    assert.ok(packageJson.scripts["release:check"].includes(test), test);
+    assert.ok(lanes["release:check"].includes(test), test);
+  assert.ok(lanes["release:check"].includes("node scripts/package-check.mjs"));
 });
 
 function versionFixture() {

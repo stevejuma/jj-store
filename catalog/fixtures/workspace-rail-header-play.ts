@@ -1,3 +1,4 @@
+import { fileRowName } from "./file-row-name.js";
 import { expect, userEvent, within, waitFor } from "storybook/test";
 export const verifyWorkspaceRailHeader = async ({
   canvasElement,
@@ -17,7 +18,7 @@ export const verifyWorkspaceRailHeader = async ({
   const panel = await c.findByRole("complementary", {
     name: "Workspace files",
   });
-  await within(panel).findByRole("button", { name: "README.md" });
+  await within(panel).findByRole("button", { name: fileRowName("README.md") });
   const header = panel.querySelector<HTMLElement>(
     '[data-ui-part="sidebar-header"]',
   )!;

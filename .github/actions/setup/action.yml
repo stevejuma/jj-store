@@ -10,6 +10,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Select hosted validation runtime
+      shell: bash
+      run: echo "JJ_STORE_VALIDATION_RUNTIME=native" >> "$GITHUB_ENV"
     - name: Install Linux native credential-store build dependencies
       if: runner.os == 'Linux' && inputs.native-dependencies == 'true'
       shell: bash

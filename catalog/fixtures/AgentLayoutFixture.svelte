@@ -43,7 +43,6 @@
     initialPage="agents"
     {readOnly}
     {reviewOutcome}
-    displayMode={mobile ? "mobile" : "desktop"}
     layoutStorage={storage}
   />
 {:else}

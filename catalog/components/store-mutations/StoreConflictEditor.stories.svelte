@@ -7,9 +7,10 @@
   import { mergeEditorSettingsKey } from "../../../web/src/lib/ui/store-conflicts/merge-editor-settings.js";
 
   const { Story } = defineMeta({
+    parameters: { jjStoreStory: { kind: "application" } },
     title: "JJ Store/Mutations/Conflict editor",
     component: StoreConflictEditor,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     beforeEach: () => {
       const prior = localStorage.getItem(mergeEditorSettingsKey);
       localStorage.removeItem(mergeEditorSettingsKey);

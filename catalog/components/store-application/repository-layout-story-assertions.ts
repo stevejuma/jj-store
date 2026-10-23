@@ -111,7 +111,9 @@ export async function expectPersistentRepositoryLayout(
 
   await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
   await expect(
-    await canvas.findByRole("button", { name: "Expand Branches column" }),
+    await canvas.findByRole("button", {
+      name: /^Expand Branches column(?:: Branches \d+)?$/,
+    }),
   ).toBeVisible();
   await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
   await expect(
@@ -119,6 +121,8 @@ export async function expectPersistentRepositoryLayout(
   ).toBeVisible();
   await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
   await expect(
-    await canvas.findByRole("button", { name: "Expand Branches column" }),
+    await canvas.findByRole("button", {
+      name: /^Expand Branches column(?:: Branches \d+)?$/,
+    }),
   ).toBeVisible();
 }

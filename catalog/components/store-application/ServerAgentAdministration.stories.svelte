@@ -6,8 +6,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agents/Server administration",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-agent-execution/StoreServerAgentAdministration.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   async function close(dialog: ReturnType<typeof within>) {
     const button = dialog.getByRole("button", {

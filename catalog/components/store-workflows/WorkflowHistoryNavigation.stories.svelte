@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, within, userEvent, waitFor } from "storybook/test";
   import WorkflowsFixture from "../../fixtures/WorkflowsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Workflow history navigation",
     component: WorkflowsFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   const initialHash = "#/workflows?tab=history",
     home = "41".repeat(16),
@@ -25,10 +26,10 @@
       }),
     );
     await expect(
-      nav.getByRole("group", { name: "Parser workflows" }),
+      await nav.findByRole("group", { name: "Parser workflows" }),
     ).toBeVisible();
     await expect(
-      nav.getByRole("group", { name: "Automation home workflows" }),
+      await nav.findByRole("group", { name: "Automation home workflows" }),
     ).toBeVisible();
     await userEvent.click(
       await canvas.findByRole("button", { name: "More runs for Build parser" }),
@@ -206,15 +207,13 @@
       canvas.getByRole("button", { name: "Expand Parser workflows" }),
     );
     await userEvent.click(canvas.getByRole("button", { name: "Build parser" }));
-    await userEvent.click(canvas.getByRole("button", { name: "Fixture back" }));
+    await storyControl(document.body, "Fixture back");
     await waitFor(() =>
       expect(
         canvas.getByRole("button", { name: "All workflows" }),
       ).toHaveAttribute("aria-current", "page"),
     );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Fixture forward" }),
-    );
+    await storyControl(document.body, "Fixture forward");
     await waitFor(() =>
       expect(
         canvas.getByRole("button", { name: "Build parser" }),

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
@@ -112,13 +113,17 @@
             ><EllipsisIcon aria-hidden="true" /></Button
           >{/snippet}
         <div class="fixture-content">
-          {#if loadingList}<Button onclick={() => (sessionsLoaded = true)}
-              >Finish loading sessions</Button
+          {#if loadingList}<FixtureControls floating={false}
+              ><Button onclick={() => (sessionsLoaded = true)}
+                >Finish loading sessions</Button
+              ></FixtureControls
             >{/if}
           <p>Selected session: {active}</p>
           <Input aria-label="Conversation draft" bind:value={draft} />
-          <Button onclick={() => (refreshed = !refreshed)}
-            >Refresh and rename repository</Button
+          <FixtureControls floating={false}
+            ><Button onclick={() => (refreshed = !refreshed)}
+              >Refresh and rename repository</Button
+            ></FixtureControls
           >
           <Button onclick={() => (sessionsVisible = !sessionsVisible)}
             >{sessionsVisible
@@ -133,8 +138,10 @@
           >
         </div>
       </CommunityInbox>{/if}
-    <Button onclick={() => (inboxMounted = !inboxMounted)}
-      >{inboxMounted ? "Unmount inbox" : "Remount inbox"}</Button
+    <FixtureControls floating={false}
+      ><Button onclick={() => (inboxMounted = !inboxMounted)}
+        >{inboxMounted ? "Unmount inbox" : "Remount inbox"}</Button
+      ></FixtureControls
     >
   </AppShell.Main>
 </CommunityAppShell>

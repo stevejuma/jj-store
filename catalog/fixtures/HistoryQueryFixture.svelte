@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import StoreHistoryQuery from "../../web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte";
   import { createHistoryQuery } from "../../web/src/lib/controller/history-query.svelte.js";
@@ -153,8 +154,10 @@
   <output aria-label="Applied history query"
     >{history.route.historyQuery ?? "All history"}</output
   >
-  <button type="button" onclick={() => history.refresh("44".repeat(64))}
-    >Refresh current head</button
+  <FixtureControls floating={false}
+    ><button type="button" onclick={() => history.refresh("44".repeat(64))}
+      >Refresh current head</button
+    ></FixtureControls
   >
   <output aria-label="Displayed history operation"
     >{history.route.snapshotOperationId}</output

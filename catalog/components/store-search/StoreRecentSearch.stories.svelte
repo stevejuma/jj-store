@@ -46,9 +46,15 @@
     },
   ].map((action) => ({ ...action, run: fn() }));
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-search/StoreSearchCommand.svelte",
+      },
+    },
     title: "JJ Store/Search/Recent activity",
     component: StoreSearchCommand,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

@@ -31,8 +31,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed public opaque-binding validation and unchanged canonical domain/provider formats. The optional conversation adapter consumes existing native capture normalization and selected participants without changing AgentStore encodings.",
-      "fingerprint": "d1deb49c4580a5e27e9b48295342a24f7fd82f837db9318a7080ea888f0f764c"
+      "reason": "Reviewed d824a18f..4d660d4c shared settings image normalization: 20 MiB source/decode bounds, aspect ratio and orientation, 512-pixel and 2 MiB retained assets. Collaboration manual now describes the same host-owned admission and publication boundary.",
+      "fingerprint": "c61a57f8c13a7d02368e4bab692114b6dc580813c9326b3ac0dc91585b099f61"
     }
   },
   {
@@ -44,8 +44,8 @@
     ],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Reviewed additive headless source/progress/acknowledgement profile, optional exact application journal and unchanged default recovery encodings, with private host durability required before acknowledgement.",
-      "fingerprint": "07cb8f7379fbfe4eaf01127fae81c6ed8e524a393cfc75793afc8121792408dc"
+      "reason": "Reviewed 8a487398..4d660d4c transient CodexSnapshotReader and sanitized observations: bounded immutable physical selection, tentative batches until Complete and no durable ACK/resume. Technical capture manual distinguishes it from unchanged application spool and receipt contracts.",
+      "fingerprint": "7095f99dbe1aefca7d179d9f397e644e088f7dd12535f822489c55ec663c88ed"
     }
   },
   {
@@ -70,8 +70,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed native and local command/status composition through five factories, current principal/epoch admission and private semantic error adapters. Architecture and publication manuals describe exact original receipts and durable preparation; transport and conversion contracts are unchanged.",
-      "fingerprint": "2e7ff5cf619531c0d26f7015e48f6979bced0d12d6000bc5d267dc7acaeac95d"
+      "reason": "Reviewed 2a479c74..4d660d4c private working-tree status and observer drain: complete sparse/ignored baseline comparison, bounded private bytes, second witness observation and authorization. Local technical manual preserves read-only scope and no new browser route.",
+      "fingerprint": "299a0b26f9b04695c6573b29624ec1ed396664ae405cafe7c061834ac208e74e"
     }
   },
   {
@@ -101,8 +101,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed final scoped prompt adapter and immutable command binding; no executable, process, resource selection or provider configuration changes.",
-      "fingerprint": "de5c2e36e3dd228876e7fbddefb69863b13d26aefc002a3f8c87716d21f72f02"
+      "reason": "Reviewed 165041c2..4d660d4c server delegation to shared bounded image preparation. Configuration reference documents fixed source/decode/asset bounds without inventing new runtime settings or altering stored formats.",
+      "fingerprint": "3d282c0026dad48e2420408eb35f39f3e7f3e1183c0b3443a9ec55ad24546a77"
     }
   },
   {
@@ -141,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed mechanical mention and delivery projection delegation to the owning built client package; original token bytes, legacy pubkey presentation alias, numeric display conversion, UI labels and operational feedback paths are unchanged.",
-      "fingerprint": "79ae5ad4bda4f49c906e83e1032e3c47d65249b0e87872429dc99112df3515d1"
+      "reason": "Reviewed shared application root and compact navigation landmarks; automatic file refresh retains visible immutable identities and file selection pins its known commit before references settle.",
+      "fingerprint": "bb4faf29b4514938bf3ab1729bab938ce28d790f0717eb58ea44ae9c3d278b7a"
     }
   },
   {
@@ -205,8 +205,8 @@
     "sources": ["crates/jj-forge/src"],
     "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
     "review": {
-      "reason": "Reviewed equivalent forge let-chain guards after strict Rust lint: stale PR identity rejection, retained navigation context and latest-check filtering preserve short-circuit order and documented submission/check/credential semantics.",
-      "fingerprint": "b19a8560984447c3c9e8e06f83185a04dc61f27cbf87bed45861123d113df3fd"
+      "reason": "Reviewed 1a5d8cbc..4d660d4c explicit Forgejo PAT verification, provider-specific authorization header and host-owned secret namespaces. Git manual distinguishes native embedding support from current browser account screens and retains push/permission guards.",
+      "fingerprint": "974a6da232ac41765eb21c4166cb076fdf71577baa2cd8881586459fc7799fa1"
     }
   },
   {
@@ -256,8 +256,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed the mechanical service extraction, identical version-one schema, operation pins, opaque caller scope, physical-vault admission and drained native jobs; Tauri reexports shared types and owns only its transport.",
-      "fingerprint": "312c764b3a48344ca5fb4aaee3de223cbc40f90997a24881bc4bd48bdf00b3d5"
+      "reason": "Reviewed f58b9363..4d660d4c successful drained-scope retirement and direct bounded pinned metadata reads with reference-operation ancestry validation. Local technical manual preserves admission, original pins and failed-shutdown recovery state.",
+      "fingerprint": "041935d8e843a621bfbeec7b2fab0afc797b2148d334800f8ad3fc722d148c3b"
     }
   },
   {

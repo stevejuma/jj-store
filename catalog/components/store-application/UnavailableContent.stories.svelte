@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Unavailable content",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function expectEmpty(
     canvas: HTMLElement,
@@ -86,6 +86,13 @@
     )}
 />
 <Story
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject:
+        "web/src/lib/ui/store-agent-workspace/StoreWorkspaceInspector.svelte",
+    },
+  }}
   name="Unavailable workspace file retains its close control"
   args={{ surface: "file" }}
   play={async ({ canvasElement }) => {

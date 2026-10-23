@@ -1,3 +1,4 @@
+@import "./stack-workspace-menus.css";
 /* View composition only; controls, columns, lists and editors keep their owned styles. */
 .stack-workspace {
   --stack-workspace-branch-gap: 0.75rem;
@@ -234,11 +235,7 @@
 .stack-workspace__views {
   gap: 0;
 }
-.stack-workspace__action-menu {
-  width: max-content;
-  min-width: min(18rem, var(--bits-dropdown-menu-content-available-width));
-  max-width: var(--bits-dropdown-menu-content-available-width);
-}
+
 .stack-workspace__stack-header,
 .stack-workspace__bookmark-header {
   cursor: pointer;
@@ -258,7 +255,13 @@
   align-items: center;
   gap: 0.35rem;
 }
-.stack-workspace__bookmark-card .community-chip[data-chip-tone="neutral"] {
+/* Neutral tags stay distinct from the application-owned hovered commit rows. */
+.stack-workspace [data-ui-component="tag-list"] {
+  --secondary: color-mix(in srgb, var(--foreground) 14%, var(--background));
+}
+.stack-workspace
+  :is(.stack-workspace__bookmark-card, .community-revision-graph)
+  .community-chip[data-chip-tone="neutral"] {
   background: color-mix(in srgb, var(--foreground) 14%, var(--background));
   border-color: color-mix(in srgb, var(--foreground) 22%, var(--background));
 }

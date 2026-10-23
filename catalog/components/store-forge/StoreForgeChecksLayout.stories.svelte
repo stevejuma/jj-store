@@ -6,9 +6,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Forge/Grouped checks",
     component: ForgeWorkspaceFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { manyChecks: true },
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await views.stacks();
     },

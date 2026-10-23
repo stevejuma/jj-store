@@ -3,9 +3,15 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import AgentRuntimesFixture from "../../fixtures/AgentRuntimesFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+      },
+    },
     title: "JJ Store/Settings/Agent runtimes",
     component: AgentRuntimesFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function inlineIcon(control: HTMLElement) {
     const style = getComputedStyle(control);

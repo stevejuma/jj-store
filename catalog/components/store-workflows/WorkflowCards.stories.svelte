@@ -6,8 +6,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Workflow cards",
     component: StoreWorkflows,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 

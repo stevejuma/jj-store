@@ -3,9 +3,16 @@
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import RepositoryPickerPendingFixture from "../../fixtures/RepositoryPickerPendingFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-application/StoreRepositoryPicker.svelte",
+      },
+    },
     title: "JJ Store/Application/Repository picker pending",
     component: RepositoryPickerPendingFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: { onChange: fn() },
   });
 </script>

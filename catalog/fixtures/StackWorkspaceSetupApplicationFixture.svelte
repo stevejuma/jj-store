@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from "svelte";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import {
     cloneWorkspace,
@@ -69,12 +69,12 @@
   });
 </script>
 
-<div style="height: 100vh; min-height: 36rem">
+<div style="height: 100vh">
   <StoreRepositoryApplication
     {controller}
     {stackWorkspace}
     {layoutStorage}
-    displayMode="desktop"
+    displayMode="auto"
     initiallyCollapsed={false}
   />
 </div>

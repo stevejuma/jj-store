@@ -7,8 +7,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Evolution column",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await Promise.all([views.log()]);
     },

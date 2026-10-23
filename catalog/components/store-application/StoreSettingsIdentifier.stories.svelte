@@ -5,9 +5,15 @@
   const value = "ab".repeat(64);
   const open = fn();
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreReadOnlyRow.svelte",
+      },
+    },
     title: "JJ Store/Settings/Identifier",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: { value },
   });
   function clipboard(write: ReturnType<typeof fn>) {

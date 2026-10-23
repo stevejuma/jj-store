@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import { page as browser } from "vitest/browser";
@@ -6,8 +7,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Conversation workspace inspector",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -84,7 +85,7 @@
       await userEvent.click(menu.getByRole("menuitem", { name: "Before" }));
       await expect(
         await within(inspector).findByRole("textbox", {
-          name: "src/example.ts",
+          name: fileRowName("src/example.ts"),
         }),
       ).toHaveTextContent("Hello");
       await expect(

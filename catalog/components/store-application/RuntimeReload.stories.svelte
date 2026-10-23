@@ -5,8 +5,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Runtime reload",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreRuntimeReload.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   async function open(canvasElement: HTMLElement) {
     const canvas = within(canvasElement);

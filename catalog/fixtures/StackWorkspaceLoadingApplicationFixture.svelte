@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import type { StoreStacksView } from "../../web/src/lib/controller/store-stacks-navigation.js";
   import type {
@@ -129,38 +130,40 @@
   });
 </script>
 
-<div
-  style="display: flex; flex-direction: column; height: 100vh; min-height: 36rem"
->
-  <div
-    role="group"
-    aria-label="Loading fixture controls"
-    style="display: flex; flex: none; gap: 0.25rem"
+<div style="display: flex; flex-direction: column; height: 100vh">
+  <FixtureControls
+    ><div
+      data-story-controls
+      role="group"
+      aria-label="Loading fixture controls"
+      style="display: flex; flex: none; gap: 0.25rem"
+    >
+      <Button onclick={() => (phase = "discovering")}>Connect repository</Button
+      >
+      <Button onclick={discover}>Discover workspace binding</Button>
+      <Button onclick={read} disabled={!stackWorkspace || phase === "reading"}
+        >Start workspace read</Button
+      >
+      <Button onclick={() => complete?.()}>Complete workspace read</Button>
+      {#if holdHistory}<Button
+          onclick={() => {
+            for (const finish of histories.values()) finish();
+            histories.clear();
+          }}>Complete stack histories</Button
+        >{/if}
+      <Button
+        onclick={() =>
+          reject?.(new Error("The workspace read failed. Try again."))}
+        >Fail workspace read</Button
+      >
+    </div></FixtureControls
   >
-    <Button onclick={() => (phase = "discovering")}>Connect repository</Button>
-    <Button onclick={discover}>Discover workspace binding</Button>
-    <Button onclick={read} disabled={!stackWorkspace || phase === "reading"}
-      >Start workspace read</Button
-    >
-    <Button onclick={() => complete?.()}>Complete workspace read</Button>
-    {#if holdHistory}<Button
-        onclick={() => {
-          for (const finish of histories.values()) finish();
-          histories.clear();
-        }}>Complete stack histories</Button
-      >{/if}
-    <Button
-      onclick={() =>
-        reject?.(new Error("The workspace read failed. Try again."))}
-      >Fail workspace read</Button
-    >
-  </div>
   <div style="display: flex; flex: 1; min-height: 0">
     <StoreRepositoryApplication
       {controller}
       {stackWorkspace}
       layoutStorage={storage}
-      displayMode="desktop"
+      displayMode="auto"
       initiallyCollapsed={historyWidth !== undefined}
     />
   </div>

@@ -4,9 +4,16 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/StoreCapturedReactionsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      },
+    },
     title: "JJ Store/Captured message reactions",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function react({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement),

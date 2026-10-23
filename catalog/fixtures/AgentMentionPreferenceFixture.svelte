@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
   import { provideAgentExecution } from "../../web/src/lib/ui/store-agent-execution/context.js";
@@ -57,14 +58,16 @@
     {members}
   />
 </section>
-<button
-  onclick={() => {
-    saved.value = {
-      ...saved.value,
-      revision: Number(saved.value.revision) + 1,
-      automatically_mention: false,
-    };
-    void manager.settings.refresh();
-  }}>External preference off</button
+<FixtureControls floating={false}
+  ><button
+    onclick={() => {
+      saved.value = {
+        ...saved.value,
+        revision: Number(saved.value.revision) + 1,
+        automatically_mention: false,
+      };
+      void manager.settings.refresh();
+    }}>External preference off</button
+  ></FixtureControls
 >
 <output aria-label="Preference requests">{JSON.stringify(requests)}</output>

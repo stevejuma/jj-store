@@ -9,8 +9,12 @@
     beforeEach: async () => {
       await Promise.all([views.agentsRecorded(), views.agentSidebar()]);
     },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 

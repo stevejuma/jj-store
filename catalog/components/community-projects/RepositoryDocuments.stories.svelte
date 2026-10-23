@@ -3,9 +3,16 @@
   import { expect, userEvent, within } from "storybook/test";
   import Documents from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryDocuments.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDocuments.svelte",
+      },
+    },
     title: "JJ Store/Repository document previews",
     component: Documents,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       currentPath: "",
       previewDocuments: [

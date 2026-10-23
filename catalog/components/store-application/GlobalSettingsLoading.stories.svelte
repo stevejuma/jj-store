@@ -3,9 +3,16 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/GlobalSettingsLoadingFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreGlobalSettingsLoading.svelte",
+      },
+    },
     title: "JJ Store/Settings/Global loading",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function loading({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement),
@@ -44,11 +51,13 @@
   play={loading}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Compute resources narrow"
   args={{ section: "compute", tab: "resources", narrow: true }}
   play={loading}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Agent configuration overflow"
   args={{ section: "agents", tab: "configuration", narrow: true }}
   play={loading}

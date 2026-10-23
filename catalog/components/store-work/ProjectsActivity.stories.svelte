@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
@@ -6,8 +7,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Projects activity",
     component: ProjectsHubFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
     beforeEach: async () => {
       await views.projects();
     },
@@ -152,9 +153,7 @@
     const target = await c.findByRole("button", {
       name: "Open project Native release",
     });
-    await userEvent.click(
-      c.getByRole("button", { name: "Pause project refresh" }),
-    );
+    await storyControl(document.body, "Pause project refresh");
     await waitFor(() =>
       expect(
         c.getByRole("button", { name: "Refresh projects" }),
@@ -165,9 +164,7 @@
       c.queryByRole("status", { name: /Loading projects/ }),
     ).toBeNull();
     await expect(c.queryByText(/Checking home repositories/)).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "Finish project refresh" }),
-    );
+    await storyControl(document.body, "Finish project refresh");
     await waitFor(() =>
       expect(c.getByRole("button", { name: "Refresh projects" })).toBeEnabled(),
     );
@@ -181,15 +178,23 @@
           c.getByRole("button", { name: "Refresh projects" }),
         ).toBeEnabled(),
       );
-      const rows = [
-        ...canvasElement.querySelectorAll<HTMLElement>(
-          '[role="tabpanel"] [role="list"]',
-        ),
-      ];
-      expect(rows.length).toBeGreaterThan(0);
-      await userEvent.click(
-        c.getByRole("button", { name: "Pause project refresh" }),
+      const panel = c.getByRole("tabpanel", { name });
+      await waitFor(() =>
+        expect(
+          panel.querySelector('[aria-busy="true"], .store-projects__loading'),
+        ).toBeNull(),
       );
+      if (name === "Repositories")
+        await waitFor(() =>
+          expect(
+            panel.querySelectorAll(
+              '.store-projects__repository-description[title="Latest selected change"]',
+            ),
+          ).toHaveLength(2),
+        );
+      const rows = [...panel.querySelectorAll<HTMLElement>('[role="list"]')];
+      expect(rows.length).toBeGreaterThan(0);
+      await storyControl(document.body, "Pause project refresh");
       await waitFor(() =>
         expect(
           c.getByRole("button", { name: "Refresh projects" }),
@@ -199,9 +204,7 @@
       await expect(
         canvasElement.querySelector(".store-projects__loading"),
       ).toBeNull();
-      await userEvent.click(
-        c.getByRole("button", { name: "Finish project refresh" }),
-      );
+      await storyControl(document.body, "Finish project refresh");
       await waitFor(() =>
         expect(
           c.getByRole("button", { name: "Refresh projects" }),
@@ -221,17 +224,13 @@
       c.getByRole("group", { name: /^Comment$/ }),
     ).getByRole("textbox");
     await userEvent.type(editor, "Keep this draft while refreshing");
-    await userEvent.click(
-      c.getByRole("button", { name: "Pause project refresh" }),
-    );
+    await storyControl(document.body, "Pause project refresh");
     await expect(detail).toBeVisible();
     await expect(editor).toHaveTextContent("Keep this draft while refreshing");
     await expect(
       c.queryByRole("status", { name: "Loading task details" }),
     ).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "Finish project refresh" }),
-    );
+    await storyControl(document.body, "Finish project refresh");
     await waitFor(() =>
       expect(c.getByRole("button", { name: "Refresh projects" })).toBeEnabled(),
     );

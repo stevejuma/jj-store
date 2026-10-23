@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Selection",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -25,7 +26,9 @@
       name: "Changed files in feature/api",
     });
     await userEvent.click(
-      within(files).getByRole("button", { name: "src/api.ts" }),
+      within(files).getByRole("button", {
+        name: workspaceFileName("src/api.ts"),
+      }),
     );
     const diff = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",

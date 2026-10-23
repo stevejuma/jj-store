@@ -6,9 +6,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Application loading",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { loading: true, initiallyCollapsed: false },
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 
   async function expectSkeleton(

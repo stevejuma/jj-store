@@ -7,8 +7,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Components/Diff",
     component: CommunityProjectsRepositoryLogDiff,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
+      },
       docs: {
         source: {
           code: '<script>\n  import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";\n  import { CommunityProjectsRepositoryLogDiff } from "./catalog/index.js";\n<\/script>\n<ColumnCanvas.Root {controller}>\n  <CommunityProjectsRepositoryLogDiff {path} {patch} {files} />\n</ColumnCanvas.Root>',

@@ -1,4 +1,7 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
+  import { directoryRowName } from "../../fixtures/file-row-name.js";
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
     expect,
@@ -18,8 +21,11 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Drag and drop",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    beforeEach: async () => {
+      await views.stacks();
+    },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function start(source: HTMLElement, target: HTMLElement) {
     const dataTransfer = new DataTransfer();
@@ -59,7 +65,7 @@
       ),
     ).toBe(8);
     const file = within(unstaged).getByRole("button", {
-      name: "src/settings.ts",
+      name: workspaceFileName("src/settings.ts"),
     });
     expect(file).toHaveAttribute("draggable", "true");
     const stage = canvas.getByRole("group", {
@@ -90,10 +96,14 @@
     expect(stage).toHaveAttribute("data-drop-target-state", "idle");
     const form = within(stage).getByRole("form");
     expect(
-      within(form).getByRole("button", { name: "src/settings.ts" }),
+      within(form).getByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     ).toBeVisible();
     expect(
-      within(unstaged).getByRole("button", { name: "src/settings.ts" }),
+      within(unstaged).getByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     ).toBeVisible();
     await userEvent.click(within(form).getByRole("button", { name: "Cancel" }));
     const api = canvas.getByRole("region", { name: "Stack feature/api" });
@@ -101,14 +111,16 @@
       '[data-ui-part="column-body"]',
     )!;
     await dropWorkspaceChange(
-      within(unstaged).getByRole("button", { name: "README.md" }),
+      within(unstaged).getByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
       body,
     );
     expect(
       within(api).getByRole("form", { name: "Create commit in feature/api" }),
     ).toBeVisible();
     expect(
-      within(api).getByRole("button", { name: "README.md" }),
+      within(api).getByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeVisible();
   }}
 />
@@ -122,7 +134,7 @@
       name: "Unstaged files",
     });
     const folder = within(unstaged).getByRole("button", {
-      name: "src",
+      name: directoryRowName("src"),
     });
     expect(folder).toHaveAttribute("draggable", "true");
     const row = canvas
@@ -145,7 +157,9 @@
     );
     await applyPreview(canvasElement);
     expect(
-      within(unstaged).queryByRole("button", { name: "src/settings.ts" }),
+      within(unstaged).queryByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     ).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Add workspace toolbar" }),
@@ -153,7 +167,9 @@
     const stack = canvas.getByRole("region", {
       name: "Stack feature/workspace",
     });
-    const file = within(stack).getByRole("button", { name: "src/settings.ts" });
+    const file = within(stack).getByRole("button", {
+      name: workspaceFileName("src/settings.ts"),
+    });
     const body = unstaged.querySelector<HTMLElement>(
       '[data-ui-part="column-body"]',
     )!;
@@ -168,10 +184,14 @@
     );
     await applyPreview(canvasElement);
     expect(
-      within(unstaged).getByRole("button", { name: "src/settings.ts" }),
+      within(unstaged).getByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     ).toBeVisible();
     expect(
-      within(stack).queryByRole("button", { name: "src/settings.ts" }),
+      within(stack).queryByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     ).toBeNull();
   }}
 />
@@ -184,7 +204,9 @@
     const unstaged = await canvas.findByRole("region", {
       name: "Unstaged files",
     });
-    const file = within(unstaged).getByRole("button", { name: "README.md" });
+    const file = within(unstaged).getByRole("button", {
+      name: workspaceFileName("README.md"),
+    });
     const row = canvas
       .getByRole("button", { name: "Prepare add repository model" })
       .closest<HTMLElement>("[data-revision-id]")!;
@@ -198,7 +220,9 @@
     expect(row).toHaveAttribute("data-drop-target-state", "idle");
     expect(workspacePortal(canvasElement).queryByRole("dialog")).toBeNull();
     expect(
-      within(unstaged).getByRole("button", { name: "README.md" }),
+      within(unstaged).getByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     ).toBeVisible();
     const stage = canvas.getByRole("group", {
       name: "Commit composer for feature/workspace",

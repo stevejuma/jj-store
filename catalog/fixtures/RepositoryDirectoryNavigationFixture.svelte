@@ -1,8 +1,9 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../web/src/lib/controller/contracts.js";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
 
@@ -28,4 +29,8 @@
 </script>
 
 <StoreRepositoryApplication {controller} layoutStorage={storage} />
-<Button onclick={() => (pending = false)}>Finish folder load</Button>
+<FixtureControls
+  ><div data-story-controls>
+    <Button onclick={() => (pending = false)}>Finish folder load</Button>
+  </div></FixtureControls
+>

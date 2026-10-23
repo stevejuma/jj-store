@@ -8,7 +8,7 @@
     type AppShellController,
     type AppShellSidebarController,
   } from "@lapismd/design-core/shell";
-  import { PanelToggleIcon } from "@lapismd/design-core/shadcn/panel-toggle";
+  import { PanelToggle } from "@lapismd/design-core/shadcn/panel-toggle";
   import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
   import type { Snippet } from "svelte";
   import StoreWorkspaceToggle from "../store-agent-workspace/StoreWorkspaceToggle.svelte";
@@ -93,21 +93,17 @@
         ><MessageCircleIcon aria-hidden="true" /></Button
       >{/if}
     {#if !compact || !["workflows", "threads"].includes(current.page)}
-      <Button
-        variant="ghost"
+      <PanelToggle
+        side="right"
+        iconVariant="standard"
+        expanded={detailsExpanded}
         size="icon-sm"
         aria-label={detailsLabel}
         title={detailsLabel}
         aria-expanded={detailsExpanded}
         {disabled}
         onclick={toggleDetails}
-      >
-        <PanelToggleIcon
-          side="right"
-          iconVariant="standard"
-          expanded={detailsExpanded}
-        />
-      </Button>
+      />
     {/if}
   {/if}
 {/if}

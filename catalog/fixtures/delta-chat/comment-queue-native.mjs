@@ -1,3 +1,4 @@
+import { nativeStoryControl } from "../native-story-controls.mjs";
 import { expect } from "@playwright/test";
 export async function commentQueueAcceptance(page, base) {
   await page.goto(
@@ -27,8 +28,8 @@ export async function commentQueueAcceptance(page, base) {
   await expect(inline).toHaveText("Fxyzirst café");
   await page.keyboard.press("Escape");
   await expect(source).toBeFocused();
-  await page.getByRole("button", { name: "Hide body" }).click();
-  await page.getByRole("button", { name: "Show body" }).click();
+  await nativeStoryControl(page, "Hide body");
+  await nativeStoryControl(page, "Show body");
   await expect(queued).toHaveText("Fxyzirst café");
   await pending
     .getByRole("button", { name: "Go to source: Assistant explanation" })
@@ -42,7 +43,7 @@ export async function commentQueueAcceptance(page, base) {
   await page
     .getByRole("textbox", { name: "Next message", exact: true })
     .fill("Message with comments");
-  await page.getByRole("button", { name: "Fail next send" }).click();
+  await nativeStoryControl(page, "Fail next send");
   await page.getByRole("button", { name: "Send message" }).click();
   await expect(page.getByRole("alert")).toContainText("retained");
   await expect(queued).toHaveText("Fxyzirst café");
@@ -63,7 +64,7 @@ export async function commentQueueAcceptance(page, base) {
   await expect(
     page.getByRole("button", { name: "Go to reply", exact: true }),
   ).toHaveCount(0);
-  await page.getByRole("button", { name: "Simulate replies" }).click();
+  await nativeStoryControl(page, "Simulate replies");
   const original = page
     .locator('[data-placement="inline"]')
     .filter({ hasText: "Fxyzirst café" });
@@ -109,8 +110,8 @@ export async function commentQueueAcceptance(page, base) {
   });
   expect(placement.text - placement.icon).toBeGreaterThanOrEqual(7);
   expect(placement.text - placement.icon).toBeLessThanOrEqual(9);
-  await page.getByRole("button", { name: "Hide body" }).click();
-  await page.getByRole("button", { name: "Show body" }).click();
+  await nativeStoryControl(page, "Hide body");
+  await nativeStoryControl(page, "Show body");
   await expect(replyMarker).toHaveCount(1);
   await page
     .locator('[data-placement="reply"]')

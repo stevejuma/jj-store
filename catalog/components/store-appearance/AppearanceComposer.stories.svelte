@@ -7,8 +7,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Appearance/Composer",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-chat-composer/CommunityChatComposer.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 

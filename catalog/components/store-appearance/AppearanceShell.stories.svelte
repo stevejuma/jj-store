@@ -5,8 +5,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Appearance/Shell",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function chrome({ canvasElement }: { canvasElement: HTMLElement }) {
     const shell = canvasElement.querySelector<HTMLElement>(

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
@@ -15,8 +16,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stack Workspace",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -41,14 +42,20 @@
   name="Named combinations retain edits"
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
-    await canvas.findByRole("button", { name: "src/settings.ts" });
+    await canvas.findByRole("button", {
+      name: workspaceFileName("src/settings.ts"),
+    });
     await chooseWorkspace(canvasElement, "Experiment");
     await expect(
-      canvas.getByRole("button", { name: "src/experiment.ts" }),
+      canvas.getByRole("button", {
+        name: workspaceFileName("src/experiment.ts"),
+      }),
     ).toBeVisible();
     await chooseWorkspace(canvasElement, "Daily work");
     await expect(
-      canvas.getByRole("button", { name: "src/settings.ts" }),
+      canvas.getByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     ).toBeVisible();
   }}
 />
@@ -135,7 +142,7 @@
       canvas.getByRole("button", { name: "Browse stacks to apply" }),
     ).toBeVisible();
     await expect(
-      canvas.getByRole("button", { name: "README.md" }),
+      canvas.getByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
     await userEvent.click(canvas.getByRole("option", { name: "feature/api" }));

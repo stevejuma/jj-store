@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { views as applicationViews } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -6,8 +7,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Navigation",
     component: StackWorkspaceApplicationFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await Promise.all([
         applicationViews.stacks(),
@@ -51,7 +56,10 @@
       name: "Stack workspace views",
     });
     expect(
-      within(navigation).getByText("Details", { exact: true }),
+      within(navigation.closest('[data-ui-part="sidebar-section"]')!).getByText(
+        "Details",
+        { exact: true },
+      ),
     ).toBeVisible();
     expect(
       within(navigation)
@@ -215,7 +223,9 @@
       within(stack).getByRole("button", { name: "Expose repository API" }),
     );
     await userEvent.click(
-      within(stack).getByRole("button", { name: "src/api.ts" }),
+      within(stack).getByRole("button", {
+        name: workspaceFileName("src/api.ts"),
+      }),
     );
     await userEvent.click(
       canvas.getByRole("button", { name: "Toggle details" }),

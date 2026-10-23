@@ -1,3 +1,4 @@
+import { storyControl } from "../story-controls.js";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
   reader,
@@ -26,7 +27,7 @@ export const commentLifecycle = async ({
   await expect(queued).toHaveFocus();
   await userEvent.keyboard("{Enter}Second line");
   await expect(inline.querySelectorAll(".cm-line")).toHaveLength(2);
-  await userEvent.click(c.getByRole("button", { name: "Fail next send" }));
+  await storyControl(document.body, "Fail next send");
   await userEvent.click(c.getByRole("button", { name: "Send message" }));
   await expect(await c.findByRole("alert")).toHaveTextContent("retained");
   await expect(queued).toHaveTextContent("Second line");
@@ -55,7 +56,7 @@ export const commentLifecycle = async ({
   await userEvent.click(
     c.getByRole("button", { name: "Collapse 1 sent comments" }),
   );
-  await userEvent.click(c.getByRole("button", { name: "Simulate replies" }));
+  await storyControl(document.body, "Simulate replies");
   const sourceArea = canvasElement.querySelector(
     '[data-placement="inline"]',
   )! as HTMLElement;
@@ -94,7 +95,7 @@ export const unavailableDraft = async ({
   const c = within(canvasElement);
   await userEvent.click(await reader(canvasElement));
   await userEvent.keyboard("Keep this draft");
-  await userEvent.click(c.getByRole("button", { name: "Replace content" }));
+  await storyControl(document.body, "Replace content");
   await expect(
     c.getByRole("complementary", { name: "Comments on unavailable content" }),
   ).toHaveTextContent("unavailable or changed");

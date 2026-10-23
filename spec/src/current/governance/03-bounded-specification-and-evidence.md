@@ -1,5 +1,14 @@
 # Bounded specification and evidence
 
+E-STORY-PARITY-001 retains JST-GOV-002/011 owner coverage and qualification.
+Local Docker runs retain exact source, parent history, toolchain and explicit
+package-archive identities with their reports. Complete Storybook inventory and
+repaired-target results are recorded separately; interruption and omitted cases
+cannot establish a pass. Application composition is checked through the
+repository parity validator, while visual approval and registry/hosted release
+qualification retain their separate gates. An unrelated pending checkpoint is
+not an unchanged-contract confirmation for this verified slice.
+
 E-UI-CI-001 moves the existing core UI acceptance inventory into affected
 standard checks under JST-ARCH-005. Local and standalone UI results retain their
 source, platform, fixture and failure scope; they do not establish complete

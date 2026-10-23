@@ -3,9 +3,16 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/MarkdownReadingFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte",
+      },
+    },
     title: "JJ Store/Transcript Markdown",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

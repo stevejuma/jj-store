@@ -1,4 +1,8 @@
 <script module lang="ts">
+  import {
+    fileRowName,
+    directoryRowName,
+  } from "../../fixtures/file-row-name.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import CommunityProjectsRepositoryLogFiles from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogFiles.svelte";
@@ -7,8 +11,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Components/Changed files",
     component: CommunityProjectsRepositoryLogFiles,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogFiles.svelte",
+      },
       docs: {
         source: {
           code: '<script>\n  import { CommunityProjectsRepositoryLogFiles } from "./catalog/index.js";\n<\/script>\n<CommunityProjectsRepositoryLogFiles {files} {selectedPath} {onSelectPath} />',
@@ -25,14 +34,18 @@
     await userEvent.click(
       canvas.getByRole("radio", { name: "Show files as list" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("src/lib.rs") }),
+    );
     await expect(
-      canvas.getByRole("button", { name: "src/lib.rs" }),
+      canvas.getByRole("button", { name: fileRowName("src/lib.rs") }),
     ).toHaveAttribute("aria-current", "true");
     await userEvent.click(
       canvas.getByRole("radio", { name: "Show files as folders" }),
     );
-    await expect(canvas.getByRole("button", { name: "src" })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: directoryRowName("src") }),
+    ).toBeVisible();
   }}>{#snippet template()}<FilesFixture />{/snippet}</Story
 >
 

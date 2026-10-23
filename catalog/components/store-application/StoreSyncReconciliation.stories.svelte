@@ -3,9 +3,15 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import SyncReconciliationFixture from "../../fixtures/SyncReconciliationFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreSyncReconciliation.svelte",
+      },
+    },
     title: "JJ Store/Settings/Sync reconciliation",
     component: SyncReconciliationFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

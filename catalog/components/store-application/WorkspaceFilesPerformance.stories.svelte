@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, within, waitFor } from "storybook/test";
   import { page as browser, userEvent as browserEvent } from "vitest/browser";
@@ -18,8 +20,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Conversation workspace files",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -42,22 +44,26 @@
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
     await userEvent.click(
-      await rail.findByRole("button", { name: "README.md" }),
+      await rail.findByRole("button", { name: fileRowName("README.md") }),
     );
     const inspector = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
     );
-    await c.findByRole("textbox", { name: "README.md" });
+    await c.findByRole("textbox", { name: fileRowName("README.md") });
     await expect(c.getByLabelText("Workspace read count")).toHaveTextContent(
       "2",
     );
     await userEvent.click(
       inspector.getByRole("button", { name: "Close workspace file" }),
     );
-    await userEvent.click(rail.getByRole("button", { name: "src/example.ts" }));
-    await c.findByRole("textbox", { name: "src/example.ts" });
-    await userEvent.click(rail.getByRole("button", { name: "README.md" }));
-    await c.findByRole("textbox", { name: "README.md" });
+    await userEvent.click(
+      rail.getByRole("button", { name: fileRowName("src/example.ts") }),
+    );
+    await c.findByRole("textbox", { name: fileRowName("src/example.ts") });
+    await userEvent.click(
+      rail.getByRole("button", { name: fileRowName("README.md") }),
+    );
+    await c.findByRole("textbox", { name: fileRowName("README.md") });
     await expect(c.getByLabelText("Workspace read count")).toHaveTextContent(
       "3",
     );
@@ -69,9 +75,7 @@
   args={{ controlReads: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Hold next workspace read" }),
-    );
+    await storyControl(document.body, "Hold next workspace read");
     await userEvent.click(await c.findByRole("button", { name: /Workspace:/ }));
     await viewFiles();
     const rail = within(
@@ -91,13 +95,9 @@
       ),
     ).toHaveLength(6);
     expect(rail.queryByRole("button", { name: "Comparison range" })).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "Complete workspace read" }),
-    );
-    await rail.findByRole("button", { name: "README.md" });
-    await userEvent.click(
-      c.getByRole("button", { name: "Hold next workspace read" }),
-    );
+    await storyControl(document.body, "Complete workspace read");
+    await rail.findByRole("button", { name: fileRowName("README.md") });
+    await storyControl(document.body, "Hold next workspace read");
     await userEvent.click(rail.getByRole("tab", { name: /^Changes$/ }));
     const changes = await rail.findByRole("status", {
       name: "Loading workspace changes",
@@ -116,10 +116,8 @@
       rail.getByRole("button", { name: "Comparison range" }),
     ).toBeVisible();
     expect(rail.getByRole("button", { name: "Comparison base" })).toBeVisible();
-    await userEvent.click(
-      c.getByRole("button", { name: "Complete workspace read" }),
-    );
-    await rail.findByRole("button", { name: "src/example.ts" });
+    await storyControl(document.body, "Complete workspace read");
+    await rail.findByRole("button", { name: fileRowName("src/example.ts") });
     expect(
       rail.queryByRole("status", { name: "Loading workspace changes" }),
     ).toBeNull();

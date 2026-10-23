@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import StackWorkspaceLeaf from "../../fixtures/StackWorkspaceLeafFixture.svelte";
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
@@ -12,8 +14,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Presentation",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -106,7 +108,9 @@
       await userEvent.keyboard("{Escape}");
       await waitFor(() => expect(portal.queryByRole("menu")).toBeNull());
     }
-    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: workspaceFileName("README.md") }),
+    );
     const diff = await canvas.findByRole("region", {
       name: "Selected changes from working",
     });
@@ -137,7 +141,9 @@
         await userEvent.click(commit);
     }
     await userEvent.click(
-      await canvas.findByRole("button", { name: "src/api.ts" }),
+      await canvas.findByRole("button", {
+        name: workspaceFileName("src/api.ts"),
+      }),
     );
     const stackDiff = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
@@ -293,7 +299,14 @@
 
 <Story
   name="Bookmark action bars hidden"
-  args={{ showStackActions: false }}
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject:
+        "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    },
+  }}
+  tags={["!application", "component"]}
   play={async ({ canvasElement }) => {
     const stack = await workspaceCanvas(canvasElement).findByRole("region", {
       name: "Stack feature/api",
@@ -308,4 +321,6 @@
       within(stack).getByRole("button", { name: "Expose repository API" }),
     ).toBeVisible();
   }}
-/>
+>
+  {#snippet template()}<StackWorkspaceLeaf />{/snippet}
+</Story>

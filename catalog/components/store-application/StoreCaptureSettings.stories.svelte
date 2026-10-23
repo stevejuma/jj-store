@@ -24,9 +24,15 @@
   import CaptureSettingsFixture from "../../fixtures/CaptureSettingsFixture.svelte";
   import { sourceStatusCommand } from "./capture-status-command-play.js";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+      },
+    },
     title: "JJ Store/Settings/Capture",
     component: CaptureSettingsFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

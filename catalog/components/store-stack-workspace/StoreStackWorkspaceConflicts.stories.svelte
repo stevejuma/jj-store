@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { views as applicationViews } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -6,8 +8,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Conflict presentation",
     component: StackWorkspaceConflictApplicationFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await Promise.all([
         applicationViews.stacks(),
@@ -88,7 +94,7 @@
       );
       for (const path of ["src/settings.ts", "src/metadata.ts"]) {
         const row = await within(column).findByRole("button", {
-          name: path,
+          name: workspaceFileName(path),
         });
         expect(
           within(row).getByRole("img", { name: "Conflicted file" }),
@@ -113,7 +119,7 @@
       });
       for (const path of ["README.md", "src/resolved.ts"]) {
         const row = within(column).getByRole("button", {
-          name: path,
+          name: workspaceFileName(path),
         });
         expect(
           within(row).queryByRole("img", { name: "Conflicted file" }),
@@ -122,7 +128,7 @@
     }
     await userEvent.click(
       within(column).getByRole("button", {
-        name: "src/settings.ts",
+        name: workspaceFileName("src/settings.ts"),
       }),
     );
     const diff = await canvas.findByRole("region", {
@@ -147,9 +153,7 @@
           header.getBoundingClientRect().right,
       ),
     ).toBeLessThanOrEqual(1);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Simulate conflict recovery" }),
-    );
+    await storyControl(document.body, "Simulate conflict recovery");
     await waitFor(() =>
       expect(column.querySelectorAll("[data-workspace-conflict]")).toHaveLength(
         0,
@@ -232,9 +236,7 @@
     expect(getComputedStyle(resolve).outlineStyle).toBe("solid");
     await userEvent.keyboard("{Enter}");
     await closeEditor(canvasElement);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Simulate conflict recovery" }),
-    );
+    await storyControl(document.body, "Simulate conflict recovery");
     await waitFor(() =>
       expect(
         details.queryByRole("button", { name: "Resolve conflicts" }),
@@ -251,11 +253,7 @@
   args={{ membershipChanged: true }}
   play={async ({ canvasElement }) => {
     const details = await rail(canvasElement);
-    await userEvent.click(
-      within(canvasElement).getByRole("button", {
-        name: "Simulate conflict recovery",
-      }),
-    );
+    await storyControl(document.body, "Simulate conflict recovery");
     await waitFor(() =>
       expect(
         details.queryByRole("button", { name: "Resolve conflicts" }),

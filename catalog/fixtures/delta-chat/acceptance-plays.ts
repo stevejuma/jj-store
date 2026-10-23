@@ -1,3 +1,4 @@
+import { storyControl } from "../story-controls.js";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
   reader,
@@ -130,7 +131,7 @@ export const shellAndTurnNavigation = async ({
   expect(getComputedStyle(raw.closest(".chat-raw-toggle")!).opacity).toBe("0");
   opener.focus();
   expect(getComputedStyle(raw.closest(".chat-raw-toggle")!).opacity).toBe("1");
-  await userEvent.click(c.getByRole("button", { name: "Append response" }));
+  await storyControl(document.body, "Append response");
   const markers = c.getAllByRole("button", { name: /Preview turn/ });
   expect(markers).toHaveLength(2);
   expect(

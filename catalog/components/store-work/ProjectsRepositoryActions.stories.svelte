@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { selectViewTab } from "../../fixtures/view-tabs.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
@@ -7,8 +8,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Project repository actions",
     component: ProjectsHubFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
     beforeEach: async () => {
       await views.projects();
     },
@@ -17,7 +18,7 @@
     const c = within(canvasElement),
       body = within(document.body);
     await c.findByRole("button", { name: "Edit project" });
-    await userEvent.click(c.getByRole("tab", { name: "Repositories" }));
+    await selectViewTab(canvasElement, "Repositories");
     await expect(c.queryByRole("combobox", { name: "Repository" })).toBeNull();
     const link = c.getByRole("button", {
       name: "Link repository",
@@ -88,6 +89,7 @@
   play={async ({ canvasElement }) => actions(canvasElement)}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile project repository actions"
   args={{ projectDetail: true, mobile: true }}
   play={async ({ canvasElement }) => actions(canvasElement)}
@@ -98,7 +100,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await c.findByRole("tab", { name: "Repositories" });
-    await userEvent.click(c.getByRole("tab", { name: "Repositories" }));
+    await selectViewTab(canvasElement, "Repositories");
     await expect(c.queryByRole("button", { name: "Add" })).toBeNull();
     await expect(
       c.queryByRole("button", { name: "Link repository" }),

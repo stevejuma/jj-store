@@ -3,9 +3,16 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/RepositoryDeletionRecoveryFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreRepositoryDeletionRecovery.svelte",
+      },
+    },
     title: "JJ Store/Settings/Repository deletion recovery",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

@@ -150,8 +150,8 @@ importers:
         specifier: 6.0.6
         version: 6.0.6
       bits-ui:
-        specifier: 2.19.4
-        version: 2.19.4(@internationalized/date@3.12.4)(svelte@5.57.1)
+        specifier: 2.19.5
+        version: 2.19.5(@internationalized/date@3.12.4)(svelte@5.57.1)
       debug:
         specifier: ^4.4.3
         version: 4.4.3(supports-color@10.2.2)
@@ -2046,13 +2046,6 @@ packages:
 
   bits-ui@2.18.1:
     resolution: {integrity: sha512-KkemzKFH4T3gt3H+P86JcnAWExjByv/6vlwjm/BoCwTPHu03yiCdxbghdJLvFReQTe0acCAiRcKfmixxD6XvlA==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      '@internationalized/date': ^3.8.1
-      svelte: ^5.33.0
-
-  bits-ui@2.19.4:
-    resolution: {integrity: sha512-HTnJAqqxYq6u30c9jrxMjsV4xZfJsUb/KEzmdiENLgC3LEAaSXdDscpx/EKyk48YKmzO2z1+GQ6r/UO1POA6Wg==}
     engines: {node: '>=20'}
     peerDependencies:
       '@internationalized/date': ^3.8.1
@@ -6831,19 +6824,6 @@ snapshots:
       file-uri-to-path: 1.0.0
 
   bits-ui@2.18.1(@internationalized/date@3.12.4)(svelte@5.57.1):
-    dependencies:
-      '@floating-ui/core': 1.8.0
-      '@floating-ui/dom': 1.8.0
-      '@internationalized/date': 3.12.4
-      esm-env: 1.2.2
-      runed: 0.35.1(svelte@5.57.1)
-      svelte: 5.57.1
-      svelte-toolbelt: 0.10.6(svelte@5.57.1)
-      tabbable: 6.5.0
-    transitivePeerDependencies:
-      - '@sveltejs/kit'
-
-  bits-ui@2.19.4(@internationalized/date@3.12.4)(svelte@5.57.1):
     dependencies:
       '@floating-ui/core': 1.8.0
       '@floating-ui/dom': 1.8.0

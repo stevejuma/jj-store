@@ -1,32 +1,25 @@
 <script module lang="ts">
+  import { browseGguf } from "./local-compute-story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/LocalComputeFixture.svelte";
   import { page } from "vitest/browser";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreComputeSettings.svelte",
+      },
+    },
     title: "JJ Store/Local compute",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 
 <Story
   name="Browse GGUF selects a file before explicit import"
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(await c.findByRole("button", { name: "Browse…" }));
-    await expect(c.getByLabelText("Import GGUF")).toHaveValue(
-      "/models/My model.gguf",
-    );
-    await expect(c.getByLabelText("Compute commands")).toHaveTextContent("[]");
-    await userEvent.click(c.getByRole("button", { name: "Import model" }));
-    await waitFor(() =>
-      expect(
-        JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]")[0]
-          .action,
-      ).toEqual({ action: "import", path: "/models/My model.gguf" }),
-    );
-  }}
+  play={browseGguf}
 />
 <Story
   name="Cancelled GGUF browse preserves manual path"

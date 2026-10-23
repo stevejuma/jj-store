@@ -6,9 +6,16 @@
   const unknown = "ff".repeat(64);
   const selected = fn();
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-application/StoreComparisonParentPicker.svelte",
+      },
+    },
     title: "JJ Store/Comparison parent picker",
     component: StoreComparisonParentPicker,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       parents: [IDS.opLeft, IDS.opRight, unknown],
       revisions: operations.revisions,

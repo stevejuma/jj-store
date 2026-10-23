@@ -5,8 +5,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository file loading",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-application/StorePageSkeleton.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   async function frame({ canvasElement }: { canvasElement: HTMLElement }) {
     const canvas = within(canvasElement);

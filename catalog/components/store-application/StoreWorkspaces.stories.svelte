@@ -20,9 +20,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Workspaces",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initialPage: "files", initiallyCollapsed: false, workingCopies },
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function choose(canvasElement: HTMLElement, workspace: string) {
     const canvas = within(canvasElement),
@@ -127,8 +131,9 @@
 />
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile section header"
-  args={{ displayMode: "mobile" }}
+  args={{}}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await choose(canvasElement, "feature/native objects 日本語");

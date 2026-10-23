@@ -6,12 +6,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Native review detail",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initialPage: "reviews", initiallyCollapsed: true },
     beforeEach: async () => {
       await Promise.all([views.settings(), views.reviews()]);
     },
-    parameters: { layout: "fullscreen" },
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 

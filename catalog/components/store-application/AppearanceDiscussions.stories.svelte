@@ -5,9 +5,10 @@
   const { Story } = defineMeta({
     title: "JJ Store/Appearance discussions",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: true },
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       jjStoreShell: true,
       docs: { story: { inline: false, iframeHeight: 700 } },

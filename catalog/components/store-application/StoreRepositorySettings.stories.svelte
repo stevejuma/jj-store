@@ -3,9 +3,16 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/RepositorySettingsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreRepositorySettingsView.svelte",
+      },
+    },
     title: "JJ Store/Settings/Repository",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 
@@ -187,6 +194,7 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Narrow folder layout retains full input and bottom actions"
   args={{ section: "folders", narrow: true }}
   play={async ({ canvasElement }) => {

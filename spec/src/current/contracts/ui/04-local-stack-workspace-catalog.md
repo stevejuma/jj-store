@@ -1,8 +1,5 @@
 # Local stack workspace catalog
 
-Responsive repository and Stacks tabs skip duplicate width/section measurements
-so a visible overflow trigger remains mounted and usable during initial layout.
-
 Stacks tracks binding discovery separately from connection; a binding seed is
 not loaded content. Connection, discovery, module and first-read skeletons match
 the selected view: Workspace's 330px Unstaged column, anonymous stack/composer
@@ -397,3 +394,7 @@ Unknown commands retain their exact intent; native forge commands stay
 unavailable. Catalog evidence includes unsubmitted creation beside a submitted
 stack, rendered details, checks inspection, keyboard/float/redock/draft
 behavior, scoped failure toasts and both themes. Stories remain visual-pending.
+
+Neutral branch/commit chips use opaque public theme tokens that remain distinct
+from hovered rows in the active palette without changing actions, selection,
+counts or native command authority.

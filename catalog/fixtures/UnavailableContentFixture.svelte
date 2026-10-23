@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { onDestroy, untrack } from "svelte";
   import { AppShell } from "@lapismd/design-core/shell";
-  import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
-  import StoreAgentExecutionHost from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionHost.svelte";
-  import StoreThreads from "../../web/src/lib/ui/store-threads/StoreThreads.svelte";
-  import StoreReviewThreads from "../../web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte";
+  import ApplicationStory from "./ApplicationStory.svelte";
+  import { onDestroy, untrack } from "svelte";
   import StoreWorkspaceInspector from "../../web/src/lib/ui/store-agent-workspace/StoreWorkspaceInspector.svelte";
   import { createThreadPanel } from "../../web/src/lib/ui/store-threads/thread-panel.svelte.js";
   import { createStoreShell } from "../../web/src/lib/ui/store-application/create-store-shell.js";
@@ -87,15 +84,24 @@
   const controller: StoreController = {
     ...base,
     threads,
+    execution: manager,
     get state() {
       return {
         ...base.state,
         route:
           selected === "thread"
             ? threadRoute
-            : { ...base.state.route, reviewThreadId: "ff".repeat(16) },
+            : selected === "review"
+              ? { ...base.state.route, reviewThreadId: "ff".repeat(16) }
+              : route,
         reviewThread: undefined,
       };
+    },
+    actions: {
+      ...base.actions,
+      async openRoute(next: StoreRoute) {
+        route = next;
+      },
     },
   };
   createThreadPanel(
@@ -121,24 +127,16 @@
   });
 </script>
 
-<CommunityAppShell
-  controller={shell}
-  displayMode="desktop"
-  desktopChrome={false}
-  style="height: 100dvh"
->
-  <AppShell.Main>
-    {#if selected === "thread"}<StoreThreads {controller} />
-    {:else if selected === "review"}<StoreReviewThreads {controller} />
-    {:else if selected !== "file"}<StoreAgentExecutionHost
-        {manager}
-        {route}
-        layoutStorage={storage}
-      />{/if}
-  </AppShell.Main>
-  {#if selected === "file" && fileOpen}
+{#if selected === "file"}
+  <AppShell.Root controller={shell} style="--ui-shell-height: 36rem">
+    <AppShell.Main />
     <AppShell.Sidebar side="right" label="Workspace file">
-      <StoreWorkspaceInspector {browser} onClose={() => (fileOpen = false)} />
+      {#if fileOpen}<StoreWorkspaceInspector
+          {browser}
+          onClose={() => (fileOpen = false)}
+        />{/if}
     </AppShell.Sidebar>
-  {/if}
-</CommunityAppShell>
+  </AppShell.Root>
+{:else}
+  <ApplicationStory {controller} layoutStorage={storage} />
+{/if}

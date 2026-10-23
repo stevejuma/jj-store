@@ -320,3 +320,22 @@ Tauri import; the optional entry injects Tauri invocation without native host
 policy. Generated contracts are checked against the owned native schema and
 independent archives prove runtime and type consumption without source aliases.
 Package checks do not publish the archive or qualify Notes integration.
+
+Local Linux-compatible validation defaults to context-configured Docker with
+fingerprinted reusable UI/full toolchains. Exact source revisions, parent
+history, lockfiles, pinned sibling sources and explicit checksummed package
+archives govern run identity. Missing images are built on demand. Reports are
+retrieved on success/failure; interruption never establishes acceptance. Remote
+runs use source transfer, isolated services, bounded resources and managed Cargo
+storage. Native desktop/provider qualification remains separate. These local
+results do not assert hosted producer provenance or release qualification.
+
+Browser validation builds its preview through managed Cargo before timing server
+readiness, then launches the executable from the selected registered target. App
+and Help suites share this preparation. Build failure prevents startup; existing
+readiness bounds, caller filters and independent native targets are preserved.
+
+Release-governance acceptance follows the declared validation lane through its
+public package command and still requires every release/CI test plus package
+checks. The standard cohort includes history service and vault packages; model
+impact verifies their full reverse dependency closure without reducing coverage.

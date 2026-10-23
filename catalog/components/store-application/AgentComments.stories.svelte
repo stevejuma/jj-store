@@ -5,8 +5,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent session comments",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function comments(canvasElement: HTMLElement, focus: boolean) {
     const c = within(canvasElement),

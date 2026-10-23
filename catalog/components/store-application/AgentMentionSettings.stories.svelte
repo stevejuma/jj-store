@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Shared agent preferences",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function settings(c: ReturnType<typeof within>) {
     await userEvent.click(

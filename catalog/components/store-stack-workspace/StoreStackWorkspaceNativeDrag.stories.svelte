@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
     expect,
@@ -12,8 +13,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Native drag and drop",
     component: StackWorkspaceProductionFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     args: { editing: true },
   });
   async function drag(source: HTMLElement, target: HTMLElement) {
@@ -53,7 +58,7 @@
       name: "Changed files in branch topic",
     });
     const file = await within(files).findByRole("button", {
-      name: "src/topic.ts",
+      name: workspaceFileName("src/topic.ts"),
     });
     expect(file).toHaveAttribute("draggable", "true");
     const composer = canvas.getByRole("group", {
@@ -65,7 +70,9 @@
     });
     const form = within(composer).getByRole("form");
     expect(
-      within(form).getByRole("button", { name: "src/topic.ts" }),
+      within(form).getByRole("button", {
+        name: workspaceFileName("src/topic.ts"),
+      }),
     ).toBeVisible();
     await userEvent.click(within(form).getByRole("button", { name: "Cancel" }));
     await userEvent.click(file);
@@ -112,7 +119,9 @@
       ).toBeVisible(),
     );
     expect(
-      within(files).getByRole("button", { name: "src/topic.ts" }),
+      within(files).getByRole("button", {
+        name: workspaceFileName("src/topic.ts"),
+      }),
     ).toBeVisible();
   }}
 />
@@ -131,7 +140,7 @@
       name: "Changed files in branch topic",
     });
     const file = await within(files).findByRole("button", {
-      name: "src/topic.ts",
+      name: workspaceFileName("src/topic.ts"),
     });
     expect(file).toHaveAttribute("draggable", "false");
     await userEvent.click(file);

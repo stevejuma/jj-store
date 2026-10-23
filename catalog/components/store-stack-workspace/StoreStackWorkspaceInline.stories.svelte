@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
@@ -9,8 +10,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stack Workspace/Inline",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -38,8 +39,12 @@
       });
       const own = name === "feature/model" ? "src/model.ts" : "src/api.ts";
       const other = name === "feature/model" ? "src/api.ts" : "src/model.ts";
-      expect(within(files).getByRole("button", { name: own })).toBeVisible();
-      expect(within(files).queryByRole("button", { name: other })).toBeNull();
+      expect(
+        within(files).getByRole("button", { name: workspaceFileName(own) }),
+      ).toBeVisible();
+      expect(
+        within(files).queryByRole("button", { name: workspaceFileName(other) }),
+      ).toBeNull();
       expect(header).toHaveAttribute("data-selected");
       expect(getComputedStyle(header, "::before").width).toBe("4px");
       expect(files.parentElement!.previousElementSibling).toBe(header);
@@ -51,7 +56,9 @@
           .querySelector(".stack-workspace__stage-card")!
           .compareDocumentPosition(files) & Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy();
-      await userEvent.click(within(files).getByRole("button", { name: own }));
+      await userEvent.click(
+        within(files).getByRole("button", { name: workspaceFileName(own) }),
+      );
       expect(
         await canvas.findByRole("region", {
           name: "Selected changes from stack-api",
@@ -145,7 +152,7 @@
       canvas.getByRole("region", { name: "Unstaged files" }),
     );
     await dropWorkspaceChange(
-      unstaged.getByRole("button", { name: "README.md" }),
+      unstaged.getByRole("button", { name: workspaceFileName("README.md") }),
       composer,
     );
     form = stack.getByRole("form", { name: "Create commit in feature/api" });
@@ -153,7 +160,9 @@
       name: "Staged files for feature/api",
     });
     expect(
-      within(staged).getByRole("button", { name: "README.md" }),
+      within(staged).getByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     ).toBeVisible();
     const header = staged.querySelector<HTMLElement>(
       ".stack-workspace__staged-header",
@@ -176,8 +185,12 @@
       within(staged).getByRole("radio", { name: "Show files as folders" }),
     );
     expect(
-      within(staged).getByRole("button", { name: "README.md" }),
+      within(staged).getByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     ).toBeVisible();
-    expect(unstaged.getByRole("button", { name: "README.md" })).toBeVisible();
+    expect(
+      unstaged.getByRole("button", { name: workspaceFileName("README.md") }),
+    ).toBeVisible();
   }}
 />

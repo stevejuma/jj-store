@@ -5,8 +5,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Forge/Pull requests",
     component: ForgeFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-forge/StoreForgePanel.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 

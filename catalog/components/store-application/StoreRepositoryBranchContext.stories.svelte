@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -7,9 +8,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Connected application/Branch context",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false },
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await Promise.all([views.log()]);
     },
@@ -40,9 +45,7 @@
       await expect(search).toHaveValue("a");
       await expect(c.getByPlaceholderText("Search branches")).toBe(search);
       await expect(workingCopy).toBeVisible();
-      await userEvent.click(
-        c.getByRole("button", { name: "Finish branch load" }),
-      );
+      await storyControl(document.body, "Finish branch load");
       await waitFor(() =>
         expect(c.queryByLabelText("Loading JJ log")).not.toBeInTheDocument(),
       );

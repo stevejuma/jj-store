@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import AgentExecutionPendingControls from "./AgentExecutionPendingControls.svelte";
   import {
     staleResumeOutcome,
@@ -23,12 +24,9 @@
     prepareSessionFixture,
     fixtureAgentTargets,
   } from "./agent-execution-session.js";
-  import { AppShell } from "@lapismd/design-core/shell";
-  import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
-  import { provideAgentExecution } from "../../web/src/lib/ui/store-agent-execution/context.js";
+  import ApplicationStory from "./ApplicationStory.svelte";
+  import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
-  import StoreAgentDetailsSidebar from "../../web/src/lib/ui/store-agent-execution/StoreAgentDetailsSidebar.svelte";
-  import StoreAgentExecutionNotice from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionNotice.svelte";
   import type { StoreRoute } from "../../web/src/lib/controller/contracts.js";
   import { untrack } from "svelte";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
@@ -36,7 +34,6 @@
     AgentStatus,
     AgentSession,
   } from "../../web/src/lib/controller/agent-execution-types.js";
-  import StoreAgentExecutionHost from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionHost.svelte";
   let {
     permission = false,
     fail = false,
@@ -244,12 +241,9 @@
         feed.freshness,
       ),
   );
-  provideAgentExecution(() => manager);
   untrack(() =>
     seedStaleResume(manager, fixtureStatus.sessions[0], staleResumeReceipt),
   );
-  if (untrack(() => observeRuntime))
-    lifecycle.observeFixtureAgentRuntime(manager, () => route);
   const { shell, inboxStorage } = untrack(lifecycle.fixtureAgentShell);
   untrack(() => {
     if (replayHistory) discussion.seedReplayDrafts(manager.discussions.drafts);
@@ -258,41 +252,49 @@
     if (status === "Unknown") manager.value = fixtureStatus;
   });
   lifecycle.own(manager, receipts, feed.freshness, shell);
+  const base = untrack(() => createInMemoryStoreController("agents"));
+  const application = {
+    ...base,
+    execution: manager,
+    get state() {
+      return {
+        ...base.state,
+        route,
+        repositories: [
+          {
+            ...base.state.repository,
+            id: repository,
+            name: "Fixture repository",
+          },
+        ],
+      };
+    },
+    actions: {
+      ...base.actions,
+      async openRoute(next: StoreRoute) {
+        if (!next.agentsHub && next.commitId && next.snapshotOperationId)
+          lastOpened = {
+            repository: next.repository,
+            commit: next.commitId,
+            operation: next.snapshotOperationId,
+          };
+        route = next;
+      },
+    },
+  };
 </script>
 
-<CommunityAppShell
-  controller={shell}
-  displayMode="desktop"
-  desktopChrome={false}
-  style="height: 100dvh"
->
-  <AppShell.Main>
-    <div>
-      <AgentExecutionPendingControls
-        {manager}
-        sessionId={fixtureStatus.sessions[0]?.id}
-        controls={configuration.controls}
-        bind:history={resolveHistory}
-        bind:configuration={resolveConfiguration}
-      />
-      <AgentExecutionCommandOutput {commands} {lastCommand} {lastOpened} />
-    </div>
-    <StoreAgentExecutionHost
+<ApplicationStory controller={application} layoutStorage={inboxStorage} />
+<FixtureControls
+  ><div data-story-controls>
+    <AgentExecutionPendingControls
       {manager}
-      repositories={[{ id: repository, name: "Fixture repository" }]}
-      {route}
-      layoutStorage={inboxStorage}
-      onReview={(repository, commit, operation) => {
-        lastOpened = { repository, commit, operation };
-      }}
+      sessionId={fixtureStatus.sessions[0]?.id}
+      controls={configuration.controls}
+      bind:history={resolveHistory}
+      bind:configuration={resolveConfiguration}
     />
-  </AppShell.Main>
-  <StoreAgentDetailsSidebar {manager} {shell} {route} />
-</CommunityAppShell>
+    <AgentExecutionCommandOutput {commands} {lastCommand} {lastOpened} />
+  </div></FixtureControls
+>
 <output hidden data-testid="inbox-read-counts">{JSON.stringify(reads)}</output>
-<StoreAgentExecutionNotice
-  {manager}
-  activeSession={route.agentView === "session"
-    ? route.executionSessionId
-    : undefined}
-/>

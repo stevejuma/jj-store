@@ -3,9 +3,15 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import NumericSettingFixture from "../../fixtures/NumericSettingFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreNumericSettingRow.svelte",
+      },
+    },
     title: "JJ Store/Settings/Numeric setting row",
     component: NumericSettingFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 
@@ -148,6 +154,7 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Compact narrow and changed"
   args={{ narrow: true, density: "compact", value: "2000" }}
   play={async ({ canvasElement }) => {
@@ -289,6 +296,7 @@
 />
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Narrow byte slider labels follow units without overflow"
   args={{
     bytes: true,

@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Interactive agent execution",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -105,9 +106,7 @@
   args={{ permission: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await c.findByRole("article", { name: "Agent permission request" });
     await expect(c.getByRole("button", { name: "Allow once" })).toBeEnabled();
     await userEvent.click(c.getByRole("button", { name: "Reject once" }));
@@ -119,9 +118,7 @@
   args={{ fail: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep this draft");
     await userEvent.click(c.getByRole("button", { name: "Send message" }));
@@ -129,13 +126,9 @@
       name: "Review workspace",
     });
     await expect(draft).toHaveTextContent("Keep this draft");
-    await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
-    );
+    await storyControl(document.body, "Manage fixture agents");
     await c.findByRole("heading", { name: "Agents" });
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await expect(
       await c.findByRole("textbox", { name: "Markdown editor" }),
     ).toHaveTextContent("Keep this draft");
@@ -157,9 +150,7 @@
     await expect(
       c.queryByRole("heading", { name: "Agents" }),
     ).not.toBeInTheDocument();
-    await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
-    );
+    await storyControl(document.body, "Manage fixture agents");
     await c.findByRole("heading", { name: "Agents" });
   }}
 />

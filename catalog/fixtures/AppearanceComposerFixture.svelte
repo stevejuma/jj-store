@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { ownAppearance } from "../../web/src/lib/appearance/runtime.svelte.js";
   import { createAppearanceStore } from "../../web/src/lib/appearance/store.svelte.js";
   import {
@@ -28,12 +29,14 @@
 <div class="appearance-composer-fixture" data-theme={appearance.theme}>
   <h1>Composer palettes</h1>
   <p>Text and placeholders follow the selected app palette.</p>
-  <button
-    type="button"
-    onclick={() => {
-      index = (index + 1) % themeNames.length;
-      select();
-    }}>Next palette</button
+  <FixtureControls floating={false}
+    ><button
+      type="button"
+      onclick={() => {
+        index = (index + 1) % themeNames.length;
+        select();
+      }}>Next palette</button
+    ></FixtureControls
   >
   <CommunityChatComposer
     bind:value
