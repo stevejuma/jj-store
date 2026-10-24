@@ -55,6 +55,14 @@ uses port 6047; set `VISUAL_SERVER_PORT` to override it consistently for the
 CLI, Playwright suite and Storybook addon. Static builds retain their read-only
 behavior and emit dependency statistics for affected selection.
 
+Visual Delta 0.1.0 caches canonical static builds, but its native profile does
+not fingerprint the host font environment. Persistent actual-image reuse and
+unchanged-story skipping therefore remain disabled on macOS, even though
+`workflow.reuseActualComparisons` defaults to `true`. Both visual commands
+currently recapture native stories. Native font fingerprint support in the addon
+is required before unchanged macOS captures can be skipped safely. `--fresh`
+explicitly requests a new capture on profiles that support reuse.
+
 ## Provenance
 
 Community source revision: `d859f33a484a9238bb11f974f4ead8e9be729ec6`. Source

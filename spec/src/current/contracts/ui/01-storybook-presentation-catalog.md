@@ -7,6 +7,14 @@ macOS/Linux host provenance and OS/architecture-separated PNG paths. An ignored
 changing shared Docker defaults or CI configuration. Compare-only verification
 MUST preserve baseline files; baseline creation and approval remain explicit.
 
+The native macOS ARM64 Chromium PNG reference set lives under
+`tests/visual/storybook.spec.ts-snapshots/profiles/native/darwin-arm64`. The
+public preset discovers these files and injects image parameters at build time;
+generated image wiring need not be persisted in component stories.
+E-VISUAL-BASELINES-MACOS-001 records the exact captured set and missing stories.
+Baseline presence does not qualify interaction/accessibility gates or promote
+visual-pending stories to reviewed status.
+
 E-CI-SUITES-001 preserves JST-UI-001: qualification retains every existing
 interaction, accessibility and browser scenario with isolated fixtures. Heavy
 runners collect remaining failures and JUnit reports instead of stopping after
