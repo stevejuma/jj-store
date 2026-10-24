@@ -55,13 +55,24 @@ uses port 6047; set `VISUAL_SERVER_PORT` to override it consistently for the
 CLI, Playwright suite and Storybook addon. Static builds retain their read-only
 behavior and emit dependency statistics for affected selection.
 
-Visual Delta 0.1.0 caches canonical static builds, but its native profile does
-not fingerprint the host font environment. Persistent actual-image reuse and
-unchanged-story skipping therefore remain disabled on macOS, even though
-`workflow.reuseActualComparisons` defaults to `true`. Both visual commands
-currently recapture native stories. Native font fingerprint support in the addon
-is required before unchanged macOS captures can be skipped safely. `--fresh`
-explicitly requests a new capture on profiles that support reuse.
+Native captures use the same checksum-verified actual-image reuse and affected
+passing exclusions as Docker when host font evidence is complete. The addon
+measures registered font faces and contents on macOS, and Fontconfig fonts,
+fallback configuration and environment on Linux. Runtime/font changes,
+incomplete evidence and corrupt capture sets cause recapture. `--fresh` always
+requests browser images. Existing thresholds and profile PNG paths remain.
+
+The released 0.1.0 package lacks these native reuse fixes. This checkout uses
+the inspected upstream patch archive through the ignored
+`.local/native-visual-parity/pnpmfile.cjs`, which extends the existing packed
+Design Core setup below. The tracked manifest and lockfile retain registry
+ranges; the local install replaces only the Visual Delta archive. Its source,
+archive identity, regeneration and fresh/cached comparison results are recorded
+in
+[E-VISUAL-NATIVE-PARITY-001](../spec/src/history/2026/10/24/E-VISUAL-NATIVE-PARITY-001/index.md).
+Retire the temporary Visual Delta override after the patch is published and the
+registry lockfile is refreshed. Package release and human visual approval remain
+separate from this local acceptance.
 
 ## Provenance
 

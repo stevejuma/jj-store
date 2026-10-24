@@ -15,6 +15,15 @@ E-VISUAL-BASELINES-MACOS-001 records the exact captured set and missing stories.
 Baseline presence does not qualify interaction/accessibility gates or promote
 visual-pending stories to reviewed status.
 
+Native verification MUST support the same checksum-verified capture-set reuse,
+affected passing exclusions and fresh-capture controls as Docker. Complete
+measured host font and runtime evidence MUST govern reuse; a changed or
+incomplete profile MUST recapture conservatively. Native baseline namespaces,
+browser/mode/interaction identities, thresholds and review tags remain
+unchanged. E-VISUAL-NATIVE-PARITY-001 records the upstream patch archive, local
+baseline regeneration and verification independently of registry publication and
+visual review.
+
 E-CI-SUITES-001 preserves JST-UI-001: qualification retains every existing
 interaction, accessibility and browser scenario with isolated fixtures. Heavy
 runners collect remaining failures and JUnit reports instead of stopping after
