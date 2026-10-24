@@ -1,3 +1,12 @@
+# Planned chat and Thread files — 24 October 2026
+
+The
+[persistent attachments and editable thread files plan](maintenance/thread-files-implementation-plan.md)
+is saved for later implementation.
+[M35](../spec/src/current/progress/M35/index.md) is Planned; no attachment
+storage, editable library or agent file-access gate is qualified by this
+documentation update.
+
 # Ordinary local stack workspace delivery — 5 October 2026
 
 The updated user-approved plan keeps the reviewed UI and operation-pinned reads,

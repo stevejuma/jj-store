@@ -73,3 +73,5 @@
   {{#include M33/SUMMARY.nav.md}}
 - [M34 automatic vault history and backup](M34/index.md)
   {{#include M34/SUMMARY.nav.md}}
+- [M35 persistent attachments and editable thread files](M35/index.md)
+  {{#include M35/SUMMARY.nav.md}}

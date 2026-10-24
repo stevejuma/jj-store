@@ -54,3 +54,4 @@ Read the owning topic and requirement before implementation.
 - [Conversation details and generated metadata](42-conversation-metadata.md)
 - [Intentional Threads and conversation ownership](43-intentional-threads-and-codebases.md)
 - [Authenticated agent admission](44-authenticated-agent-admission.md)
+- [Thread files and static attachments](45-thread-files-and-attachments.md)

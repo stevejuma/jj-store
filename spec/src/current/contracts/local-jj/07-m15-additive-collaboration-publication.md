@@ -58,3 +58,12 @@ Repository bytes and retained Git reachability carry the definition and assets;
 a later library edit or retirement cannot rewrite history. The user-thread
 sidebar catalog excludes agent discussion threads, which remain directly
 addressable and retain their original event pagination.
+
+## Planned file retention
+
+[M35 thread files](../collaboration/45-thread-files-and-attachments.md) requires
+complete current/historical content reachability through the existing companion
+ref and retained Git trees/blobs. JST-COLLAB-037 and JST-LOCAL-001/002 require
+bounded content inventories outside eager metadata materialization and preserve
+legacy absent-field bytes. This is planned work; ordinary Git/JJ push/fetch does
+not transfer collaboration state, and new remote/export profiles stay deferred.

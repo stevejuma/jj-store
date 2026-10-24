@@ -159,3 +159,13 @@ M33 moves the CLI's read-only folder resolver into the existing JJ library. Its
 native local provider maps the same invalid/unsupported/unavailable/limit and
 identity-change categories; default-only settings and
 no-init/no-snapshot/no-head reconciliation behavior remain unchanged.
+
+## Planned thread file commands
+
+[M35 thread files](../collaboration/45-thread-files-and-attachments.md) plans
+`jj agent thread file` list/read/download, create/upload/edit, rename/remove,
+history/restore and existing receipt/status recovery through the verified
+coordination home. JST-COLLAB-037 through JST-COLLAB-039 and JST-CLI-004 retain
+shared authorization, bounded input/output, observed revisions, stable request
+identities and paired executable custody. These commands are planned and are not
+current CLI capabilities.

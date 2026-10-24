@@ -6,6 +6,7 @@ evidence; generated histories do not promote tasks.
 Read the selected milestone and its generated history. Every protected slice
 adds a Markdown record and an explicit milestone review.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Historical task mappings](task-mapping.md)
@@ -46,3 +47,4 @@ adds a Markdown record and an explicit milestone review.
 - [M32 injectable collaboration libraries](M32/index.md)
 - [M33 reusable agent workflows and Notes integration](M33/index.md)
 - [M34 automatic vault history and backup](M34/index.md)
+- [M35 persistent attachments and editable thread files](M35/index.md)

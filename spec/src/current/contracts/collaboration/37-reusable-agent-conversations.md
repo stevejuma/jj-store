@@ -279,3 +279,12 @@ directory-visible conversation owners as specified in
 [Intentional Threads](43-intentional-threads-and-codebases.md). Standalone chats
 still use internal ThreadStore records for comments and metadata. They do not
 create an intentional Thread or a primary user Thread assignment.
+
+## Planned conversation files
+
+[M35 thread files](45-thread-files-and-attachments.md), under JST-COLLAB-037
+through JST-COLLAB-039, adds a future shared file library to standalone chats
+and intentional Threads. Explicit file creation/save may provision a personal
+home and internal owner before the first Send; opening, reading and agent
+warming remain read-only. This planned extension does not change the currently
+implemented first-Send provisioning profile or qualify agent file access.

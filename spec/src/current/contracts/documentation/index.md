@@ -15,3 +15,4 @@ Read the owning topic and requirement before implementation.
 - [Interactive agent execution manual](08-interactive-agent-execution.md)
 - [Remote connection documentation](09-remote-agent-connections.md)
 - [Workflow documentation](10-workflows.md)
+- [Planned thread files documentation](11-thread-files-implementation-plan.md)

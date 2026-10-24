@@ -30,3 +30,4 @@
 - [Completed history shutdown](28-completed-history-shutdown.md)
 
 - [Pinned history metadata](29-pinned-history-metadata.md)
+- [Planned thread file storage boundary](30-thread-files-plan.md)
