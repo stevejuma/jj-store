@@ -1,0 +1,13 @@
+{
+  "browsers": ["chromium"],
+  "capture": {
+    "profile": "docker",
+    "profiles": {
+      "native": {
+        "adapter": "native",
+        "browsers": ["chromium"],
+        "snapshotDir": "tests/visual/storybook.spec.ts-snapshots"
+      }
+    }
+  }
+}

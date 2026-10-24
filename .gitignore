@@ -22,6 +22,11 @@
 /web/playwright-report/
 /storybook-static/
 /catalog/test-results/
+.visual-delta/artifacts/
+.visual-delta/cache/
+.visual-delta/config.local.json
+/test-results/
+/playwright-report/
 
 /desktop/target/
 /desktop/resources/

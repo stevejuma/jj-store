@@ -1,5 +1,12 @@
 # Storybook presentation catalog
 
+JST-UI-001 includes Visual Delta's released Storybook addon and portable
+Playwright suite. Native capture MUST use installed project browsers with actual
+macOS/Linux host provenance and OS/architecture-separated PNG paths. An ignored
+`.visual-delta/config.local.json` MAY select native capture for this Mac without
+changing shared Docker defaults or CI configuration. Compare-only verification
+MUST preserve baseline files; baseline creation and approval remain explicit.
+
 E-CI-SUITES-001 preserves JST-UI-001: qualification retains every existing
 interaction, accessibility and browser scenario with isolated fixtures. Heavy
 runners collect remaining failures and JUnit reports instead of stopping after

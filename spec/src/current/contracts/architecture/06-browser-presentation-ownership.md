@@ -1,5 +1,12 @@
 # Browser presentation ownership
 
+Visual Delta is a development-only registry dependency of the Storybook host.
+Its public preset, Node CLI and Playwright exports own capture execution and
+profile resolution; jj-store owns its shared/local configuration, catalog
+registration and artifact paths. This tooling adds no dependency to production
+browser components, native storage or the server, and does not replace existing
+interaction/accessibility qualification.
+
 Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3`
 through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.

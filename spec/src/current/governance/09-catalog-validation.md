@@ -1,5 +1,15 @@
 # Catalog validation
 
+E-VISUAL-DELTA-MACOS-001 adds registry Visual Delta 0.1.0, shared capture
+settings and an ignored machine-local native selection. Its CLI, Storybook panel
+and Playwright suite MUST resolve the same profile, static-server port and
+persisted PNG/artifact namespace. CI ignores local overrides. Comparison
+thresholds and interaction/accessibility gates remain unchanged; disposable
+capture evidence does not approve committed visual baselines. Shared Storybook
+registration requires the catalog check, unit, full interaction/accessibility
+and cold static browser lanes, plus focused native capture verification. Rust
+and live-server lanes are outside this development-tooling surface.
+
 Production presentation source lives under `web/src/lib`; catalog source owns
 only fixtures, stories and harnesses. Both areas require the UI chapter and
 same-change ledger evidence. Normal and specification lanes include catalog
@@ -110,8 +120,8 @@ production browser lane separately proves captured HTTP requests and a cold
 native RustFS-backed mutation. Because the application canvas already owns
 scrolling, repository menus and dialogs disable redundant body scroll locks and
 tests require body pointer/overflow state to be restored before navigation.
-Visual tests remain skipped at the user's request and stories remain
-visual-pending.
+Visual comparison is opt-in through the configured capture profile; stories
+remain visual-pending until separate baseline review.
 
 Collaboration presentation acceptance keeps focused agent/review Storybook
 interactions, the complete 84-story interaction and accessibility suite, a cold

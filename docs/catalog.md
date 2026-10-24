@@ -10,6 +10,51 @@ implementation shared by the served browser and these stories. Fixtures,
 harnesses and the in-memory data source remain under `catalog`. All stories
 remain visual-pending.
 
+## Native macOS visual capture
+
+The catalog uses released `@lapismd/storybook-addon-visual-delta` 0.1.0. Enable
+the native adapter on your Mac with the ignored local configuration:
+
+```sh
+cp .visual-delta/config.local.example.json .visual-delta/config.local.json
+mkdir -p "tests/visual/storybook.spec.ts-snapshots/profiles/native/$(node -p 'process.platform + "-" + process.arch')"
+pnpm exec playwright install chromium
+pnpm visual-delta doctor --runner
+pnpm storybook
+```
+
+Restart Storybook after changing the local file. Native capture uses the
+project's installed Playwright and browsers; it needs no Docker image. Shared
+defaults retain Docker, and CI ignores the local file. Use
+`--capture-profile native` to select native explicitly on macOS or Linux. You
+can override browsers and comparison settings in the local file; the default
+comparison thresholds remain unchanged.
+
+The panel and CLI use the same native PNGs. On macOS ARM64 their paths are:
+
+```text
+tests/visual/storybook.spec.ts-snapshots/profiles/native/darwin-arm64/<story-id>-chromium.png
+.visual-delta/artifacts/profiles/native/darwin-arm64/<story-id>-chromium.actual.png
+.visual-delta/artifacts/profiles/native/darwin-arm64/<story-id>-chromium.diff.png
+.visual-delta/artifacts/profiles/native/darwin-arm64/<story-id>-chromium.result.json
+```
+
+Intel Macs use `darwin-x64`. PNG baselines persist independently of the ignored
+actual/diff/result artifacts. Create an exact story's baseline explicitly,
+inspect it, then run compare-only verification against it:
+
+```sh
+pnpm visual-delta update --story-id jj-store-components-chip--bookmark --approved --create-only
+pnpm visual-delta test --story-id jj-store-components-chip--bookmark --failure-mode strict --fresh
+```
+
+`pnpm test:visual` compares all eligible stories; `pnpm test:visual:affected`
+selects affected stories. These commands preserve baseline files. Committing or
+approving baseline PNGs remains a separate review. The static capture server
+uses port 6047; set `VISUAL_SERVER_PORT` to override it consistently for the
+CLI, Playwright suite and Storybook addon. Static builds retain their read-only
+behavior and emit dependency statistics for affected selection.
+
 ## Provenance
 
 Community source revision: `d859f33a484a9238bb11f974f4ead8e9be729ec6`. Source

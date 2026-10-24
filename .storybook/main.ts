@@ -9,6 +9,14 @@ const config: StorybookConfig = {
     "@storybook/addon-svelte-csf",
     "@storybook/addon-themes",
     "@storybook/addon-vitest",
+    {
+      name: "@lapismd/storybook-addon-visual-delta",
+      options: {
+        visualDelta: {
+          visualServerPort: Number(process.env.VISUAL_SERVER_PORT ?? 6047),
+        },
+      },
+    },
   ],
   framework: {
     name: "@storybook/svelte-vite",
