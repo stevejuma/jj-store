@@ -1,11 +1,10 @@
 # Application documentation
 
-E-REUSABLE-PROGRESS-049 / Notes `2be49684` / E-AI-056 qualifies the native
-capture source foundation. Grouped local storage and opt-in controls remain
-pending. E-REUSABLE-PROGRESS-048 / Notes `830eb9ef` / E-AI-055 qualifies native
-imports and the CLI/Lapis ACP pair; Desktop alpha stays excluded.
-JST-DOC-001/JST-ARCH-007 and original gates stay unchanged. JJ, GAP-12 and wider
-qualification remain deferred. The ordinary review app and vault are preserved.
+E-REUSABLE-PROGRESS-050 / Notes E-AI-057 records the copied session-layout
+Storybook review. Live integration waits for UI confirmation; grouped custody is
+parked and the capture watcher stays pending. E-REUSABLE-PROGRESS-049 / E-AI-056
+retains native source qualification. JST-DOC-001/JST-ARCH-007 and original
+JJ/provider/release/visual gates remain unchanged.
 
 E-REUSABLE-PROGRESS-046 records Notes 8f5b9395 / E-AI-053 exact native
 code/table/tool discussions, continued threads and two cold History reopens.

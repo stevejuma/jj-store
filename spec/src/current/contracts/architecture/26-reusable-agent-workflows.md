@@ -8,6 +8,11 @@ not proof of a WebView. Tauri still derives that label from the actual window.
 The service retains pinned reads, cancellation and supervised drain. A private
 hosted companion and authenticated browser adapter remain consumer-owned gates.
 
+E-REUSABLE-PROGRESS-050 confirms JST-ARCH-007 unchanged for Notes’ catalog-only
+inbox port. Application-specific JJ Store presentation is copied with
+provenance; public Design Core remains foundational. Source ports, custody,
+authorization and lifetime stay host-owned. No new live writer is integrated.
+
 E-REUSABLE-PROGRESS-049 confirms JST-ARCH-007 unchanged for Notes' capture
 source foundation. Shared acquisition/privacy stay native; Notes owns separate
 manual/capture handles, physical-vault admission and transient confirmation.

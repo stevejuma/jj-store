@@ -9,12 +9,15 @@ remain pending.
 
 Last reviewed: 2026-10-19. Overall: **In progress**.
 
-**Current direction: visible AI delivery.** The user approved a staged
-implementation: document/classic Storybook review, live adoption, native JJ
-conversation browsing, real lapis-agent chat and cold restart. The user gave
-standing implementation approval on 2026-10-18. Focused checks accompany each
-slice; broad provider/platform/release and visual baseline qualification remain
-deferred.
+**Current direction: visible AI delivery.** Automated checks are paused at the
+user’s request while the Storybook UI is reviewed. Resume checks and live
+integration only after UI confirmation.
+
+**Delivery scope.** The user approved a staged implementation: document/classic
+Storybook review, live adoption, native JJ conversation browsing, real
+lapis-agent chat and cold restart. The user gave standing implementation
+approval on 2026-10-18. Focused checks accompany each slice; broad
+provider/platform/release and visual baseline qualification remain deferred.
 
 **Completed local profile: NOTES-07L-FILES and NOTES-09-FILES-A/B/C/D1/D2.**
 Notes E-AI-042 qualifies real installed Codex chat, bounded file context,
@@ -57,10 +60,18 @@ whole stage.
   and 40 affected story checks pass. Cold native capture/reobservation and the
   existing cold import pass. This foundation enables no watcher or opt-in by
   itself.
-- **Next: CAPTURE-01B**, local grouped capture receipts and bounded versions,
-  then **CAPTURE-01C**, default-off controls, watching and status/toast
-  lifetime. CAPTURE-01 remains incomplete. No implementation child is Active at
-  this checkpoint. JJ persistence and broader qualification remain deferred.
+- **Review ready: AI-SESSION-UI — awaiting UI confirmation.** Notes' new
+  Storybook inbox copies JJ Store’s nested shell, grouped rows, expanding
+  search, resize handle and compact header. Existing transcripts are reused; an
+  icon-only header control switches Document/Classic. Read-only comment actions
+  are omitted, harness artwork is reused and status footers align. The user
+  explicitly deferred ordinary plugin integration and app refresh until the UI
+  is confirmed. **CAPTURE-01B is Waiting** in parked Notes WIP `srppsnrl`;
+  **CAPTURE-01C is pending**. No implementation child is Active. CAPTURE-01 and
+  original JJ/wider qualification gates remain incomplete.
+  [Captured history review](http://127.0.0.1:7491/iframe.html?id=desktop-ai-session-layout-review--captured-history&viewMode=story)
+  ·
+  [Import layout review](http://127.0.0.1:7491/iframe.html?id=desktop-ai-import-layout-review--session-preview&viewMode=story).
 
 - **Completed: IMPORT-01B / IMPORT-01 (Codex local files).** Notes `830eb9ef` /
   E-AI-055 connects native source discovery, bounded immutable snapshots, shared
@@ -825,8 +836,13 @@ deferred managed backend integration.
       independent native read scopes, physical-vault context admission,
       immutable observations, transient idempotent confirmation and cold
       reobservation. No watcher runs.
-- [ ] **CAPTURE-01B:** Group bounded local captured versions and publish a
-      latest selection only after exact verified local durability.
+- [ ] **AI-SESSION-UI — Awaiting UI confirmation:** Copy the compact nested
+      session shell, grouped rows, search, header and resize behavior for
+      import/captured history. Review through Storybook before native
+      application refresh.
+- [ ] **CAPTURE-01B — Waiting for AI-SESSION-UI:** Group bounded local captured
+      versions and publish a latest selection only after exact verified local
+      durability.
 - [ ] **CAPTURE-01C:** Add default-off opt-in/Stop controls, status progress,
       recovery toasts and cold restart/drained lifecycle acceptance.
 - [ ] **QUAL-01:** Complete remaining contract/compatibility and source
