@@ -7,7 +7,7 @@ use std::{
     process::Command,
 };
 fn jj(root: &Path, args: &[&str]) {
-    let result = Command::new("/opt/homebrew/bin/jj")
+    let result = Command::new("jj")
         .current_dir(root)
         .args([
             "--no-pager",

@@ -1,3 +1,4 @@
+import { snapshotFile } from "./repository.mjs";
 import { readFile, writeFile, mkdir, rm, open } from "node:fs/promises";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
@@ -71,11 +72,7 @@ async function performRun(config, lane, args, selected, workspace) {
   for (const file of ["worker.mjs", "model.mjs", "process.mjs"])
     await writeFile(
       join(input, file),
-      execFileSync(
-        "git",
-        ["show", `${source.revision}:scripts/validation/${file}`],
-        { cwd: root },
-      ),
+      snapshotFile(root, source.revision, `scripts/validation/${file}`),
     );
   const dependencies = imageKey({
     image: selected.id,

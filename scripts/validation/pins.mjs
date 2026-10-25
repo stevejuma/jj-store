@@ -1,3 +1,8 @@
+import {
+  repositoryGitRoot,
+  repositoryParent,
+  snapshotFile,
+} from "./repository.mjs";
 import { execFileSync } from "node:child_process";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -18,22 +23,16 @@ export async function exportPinnedSources(root, input, revision) {
   const entries = [];
   for (const source of sources) {
     const pin = JSON.parse(
-      execFileSync("git", ["show", `${revision}:${source.file}`], {
-        cwd: root,
-        encoding: "utf8",
-      }),
+      snapshotFile(root, revision, source.file).toString("utf8"),
     );
     if (
       pin.repository !== `lapismd/${source.name}` ||
       !/^[a-f0-9]{40}$/.test(pin.revision)
     )
       throw Error("Invalid sibling source pin");
-    const sibling = resolve(root, `../${source.name}`);
+    const sibling = join(repositoryParent(root), source.name);
     const pkg = JSON.parse(
-      execFileSync("git", ["show", `${pin.revision}:package.json`], {
-        cwd: sibling,
-        encoding: "utf8",
-      }),
+      snapshotFile(sibling, pin.revision, "package.json").toString("utf8"),
     );
     if (pkg.name !== source.packageName || pkg.version !== pin.version)
       throw Error(`Pinned ${source.name} package identity mismatch`);
@@ -41,6 +40,8 @@ export async function exportPinnedSources(root, input, revision) {
     execFileSync(
       "git",
       [
+        "--git-dir",
+        repositoryGitRoot(sibling),
         "archive",
         "--format=tar",
         `--output=${join(input, path)}`,

@@ -93,7 +93,8 @@ fn copy(
             progress(count.clone())?;
         }
     }
-    target.try_clone()?.into_std_file().sync_all()?;
+    // Linux directory capabilities may be search-only; reopen for fsync.
+    target.open(".")?.sync_all()?;
     Ok(())
 }
 pub(super) fn all(

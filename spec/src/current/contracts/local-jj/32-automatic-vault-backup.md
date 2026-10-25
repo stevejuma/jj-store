@@ -37,6 +37,8 @@ work and unknown command outcomes survive restart without duplicate checkpoints
 or blind replay. All active work reports through host progress.
 
 Explicit restore preserves a safety checkpoint and uses guarded file writes.
+Regular-file replacement and deletion MUST sync the capability-relative parent
+through a readable directory handle, including Linux search-only capabilities.
 File restore previews pin retained checkpoint bytes and current disk hashes.
 Durable request receipts recover lost outcomes without overwriting later edits.
 Symlink restoration fails explicitly until its guarded profile is qualified.
@@ -122,7 +124,8 @@ this initial provider profile.
 Storage layout is selected by versioned, device-private vault control records.
 Explicit migration serializes capture and Git transport, fences both layouts and
 archives the complete original managed repository before copying. A staged copy
-is installed only after native operation/commit identity validation; an existing
+syncs readable capability-relative directories before installation and is
+installed only after native operation/commit identity validation; an existing
 unrelated destination is never overwritten. The original archive and request
 journal survive interruption. Startup recovery resumes the same request before
 capture can initialize anything. Current layout publication is atomic; a

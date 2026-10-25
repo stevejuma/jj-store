@@ -112,7 +112,8 @@
     "validate:collect": "node scripts/validation.mjs collect",
     "validate:stop": "node scripts/validation.mjs stop",
     "validate:clean": "node scripts/validation.mjs clean",
-    "check:storybook-parity": "node scripts/validation.mjs run check:storybook-parity"
+    "check:storybook-parity": "node scripts/validation.mjs run check:storybook-parity",
+    "validation:rust": "node scripts/validation.mjs run validation:rust"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",

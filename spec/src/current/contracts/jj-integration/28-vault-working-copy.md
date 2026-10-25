@@ -14,6 +14,10 @@ safety commit and persist receipts around guarded replacement. Native
 identities, codecs and immutable read behavior remain unchanged
 (JST-JJ-003/005).
 
+E-VAULT-BACKUP-021 reopens capability-relative directories for readable sync
+handles on Linux during restore, deletion and storage copy. Atomic guarded
+replacement, symlink refusal, native identity and receipts remain unchanged.
+
 Native remote transfer is separate from capture and holds no workspace lease
 during network IO. Imported Git commits keep upstream native identities and are
 explicitly pinned in the managed view. Fresh-device restoration uses the

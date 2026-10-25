@@ -138,11 +138,30 @@ pub(super) fn apply(
             return Err(Error::Binding);
         }
         file.replace(&name)?;
-        parent.into_std_file().sync_all()?;
+        // Linux directory capabilities may be search-only; reopen for fsync.
+        parent.open(".")?.sync_all()?;
     } else if expected != "missing" {
         let (parent, name) = parent(root, path, false)?;
         parent.remove_file(name)?;
-        parent.into_std_file().sync_all()?;
+        parent.open(".")?.sync_all()?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn root_file_restore_and_delete_synchronize_the_directory() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = Dir::open_ambient_dir(temp.path(), ambient_authority()).unwrap();
+        apply(&root, "Note.md", "missing", Some(b"restored"), false).unwrap();
+        assert_eq!(
+            read(&root, "Note.md").unwrap().as_deref(),
+            Some(b"restored".as_slice())
+        );
+        apply(&root, "Note.md", &digest(Some(b"restored")), None, false).unwrap();
+        assert!(read(&root, "Note.md").unwrap().is_none());
+    }
 }

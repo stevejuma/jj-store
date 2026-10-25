@@ -1,5 +1,9 @@
 # Public distribution and release orchestration
 
+E-VAULT-BACKUP-021 retains exact source and sibling pins when Docker validation
+runs from a separate Jujutsu workspace. The explicit generic Rust lane uses
+managed Cargo and the existing disk reserve; publication gates are unchanged.
+
 JST-ARCH-006's injectable core is a coordinated library package under the
 existing JST-ARCH-005 release policy. Source extraction and package checks do
 not publish a release. Existing canonical storage formats remain unchanged.

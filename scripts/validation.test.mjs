@@ -182,3 +182,46 @@ test("default browser suites run complete bounded shards without changing explic
   );
   assert.deepEqual(laneInvocations("web:test", []), [[]]);
 });
+
+test("source snapshots preserve a separate Jujutsu workspace without a Git worktree", async () => {
+  const { mkdtemp, writeFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { execFileSync } = await import("node:child_process");
+  const { snapshot } = await import("./validation/source.mjs");
+  const temp = await mkdtemp(join(tmpdir(), "jj-separate-validation-"));
+  const main = join(temp, "main"),
+    secondary = join(temp, "secondary");
+  const jj = (cwd, args) =>
+    execFileSync(
+      "jj",
+      [
+        "--config",
+        "user.name=Validation",
+        "--config",
+        "user.email=validation@localhost",
+        ...args,
+      ],
+      { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+    ).trim();
+  try {
+    jj(temp, ["git", "init", "--colocate", main]);
+    await writeFile(join(main, "file.txt"), "parent");
+    jj(main, ["commit", "-m", "parent"]);
+    jj(main, ["workspace", "add", secondary, "--name", "validation"]);
+    await writeFile(join(secondary, "file.txt"), "dirty source");
+    const source = await snapshot(secondary, join(temp, "input"));
+    assert.equal(
+      source.revision,
+      jj(secondary, ["log", "-r", "@", "--no-graph", "-T", "commit_id"]),
+    );
+    assert.deepEqual(
+      source.parents,
+      jj(secondary, ["log", "-r", "@-", "--no-graph", "-T", "commit_id"]).split(
+        "\n",
+      ),
+    );
+  } finally {
+    await rm(temp, { recursive: true, force: true });
+  }
+});

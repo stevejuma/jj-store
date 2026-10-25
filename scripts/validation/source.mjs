@@ -1,3 +1,4 @@
+import { repositoryGitRoot } from "./repository.mjs";
 import { execFileSync, spawn } from "node:child_process";
 import { createWriteStream } from "node:fs";
 import {
@@ -54,10 +55,20 @@ export async function snapshot(
     throw Error(
       "Private/local files must not be tracked in the source snapshot",
     );
-  const pack = spawn("git", ["pack-objects", "--revs", "--stdout"], {
-    cwd: root,
-    stdio: ["pipe", "pipe", "inherit"],
-  });
+  const pack = spawn(
+    "git",
+    [
+      "--git-dir",
+      repositoryGitRoot(root),
+      "pack-objects",
+      "--revs",
+      "--stdout",
+    ],
+    {
+      cwd: root,
+      stdio: ["pipe", "pipe", "inherit"],
+    },
+  );
   const done = new Promise((accept, reject) => {
     pack.once("error", reject);
     pack.once("exit", (code) =>

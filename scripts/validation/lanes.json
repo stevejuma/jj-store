@@ -39,5 +39,6 @@
   "client:test": "pnpm --filter @lapismd/jj-conversations test",
   "history:check": "pnpm history:contracts && pnpm --filter @lapismd/jj-history check",
   "history:test": "pnpm history:contracts && pnpm --filter @lapismd/jj-history test",
-  "check:storybook-parity": "spec-validator validate --only storybook-parity"
+  "check:storybook-parity": "spec-validator validate --only storybook-parity",
+  "validation:rust": "node scripts/managed-cargo.mjs"
 }
