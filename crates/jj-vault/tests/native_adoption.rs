@@ -13,7 +13,7 @@ async fn worker_adopts_original_history_and_receipt_replay_keeps_the_current_sta
         if args[0] == "describe" {
             fs::write(root.join("Note.md"), "Original version\n").unwrap();
         }
-        let result = Command::new("/opt/homebrew/bin/jj")
+        let result = Command::new("jj")
             .current_dir(&root)
             .args([
                 "--no-pager",

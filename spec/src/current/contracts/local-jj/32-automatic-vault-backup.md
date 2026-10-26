@@ -171,6 +171,13 @@ progress. Missing or corrupt projections rebuild without modifying native
 history. Search activation and guarded restore always resolve native
 revision/path identities.
 
+Read admission waits at most five seconds for a publishing batch, then pins the
+committed index generation and releases publisher admission before searching.
+Sustained contention remains explicit Busy. Queries never initialize or repair
+derived projection bytes and never schedule capture/indexing; the selected
+native owner repairs missing/corrupt caches. Cached progress is observation, not
+an exclusive read barrier.
+
 ## AI turn observations
 
 Hosts MAY register bounded AI turn context with the same serialized backup

@@ -2,6 +2,7 @@
 mod disk;
 mod native;
 mod query;
+mod read;
 pub use disk::Engine;
 pub use jj_store_jj::vault_workspace::{IndexFile, IndexFiles, IndexRevision};
 use serde::{Deserialize, Serialize};

@@ -48,3 +48,5 @@
   {{#include 24/SUMMARY.nav.md}}
 - [25](25/index.md)
   {{#include 25/SUMMARY.nav.md}}
+- [26](26/index.md)
+  {{#include 26/SUMMARY.nav.md}}

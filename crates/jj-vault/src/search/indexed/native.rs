@@ -49,22 +49,24 @@ impl Source for Native {
     }
 }
 impl NativeHistory {
-    fn engine(&self) -> Result<Engine, String> {
+    fn engine(&self, read: bool) -> Result<Engine, String> {
         let namespace =
             serde_json::to_string(&(&self.binding.vault_id, &self.exclusions)).map_err(error)?;
         let key = format!("{:x}", Sha256::digest(namespace.as_bytes()));
-        Engine::open(
-            &self.binding.state.join("history-search-v2").join(key),
-            &namespace,
-        )
+        let root = self.binding.state.join("history-search-v2").join(key);
+        if read {
+            Engine::read(&root, &namespace)
+        } else {
+            Engine::open(&root, &namespace)
+        }
     }
     pub fn index_step(&self) -> Result<Status, String> {
         let mut source = Native::open(self)?;
-        self.engine()?.step(&mut source)
+        self.engine(false)?.step(&mut source)
     }
     pub fn indexed_search(&self, request: &Request) -> Result<Page, String> {
         let mut source = Native::open(self)?;
-        self.engine()?.search(&mut source, request)
+        self.engine(true)?.search(&mut source, request)
     }
     pub fn indexed_text(&self, commit: &str, path: &str) -> Result<Option<String>, String> {
         Native::open(self)?.text(commit, path)

@@ -24,7 +24,7 @@ pub(super) struct Fields {
     pub time: Field,
     pub record: Field,
 }
-fn schema() -> (Schema, Fields) {
+pub(super) fn schema() -> (Schema, Fields) {
     let mut s = Schema::builder();
     let fields = Fields {
         key: s.add_text_field("key", STRING | STORED),
@@ -45,7 +45,7 @@ pub struct Engine {
     pub(super) reader: IndexReader,
     pub(super) fields: Fields,
     pub(super) state: State,
-    _owner: File,
+    pub(super) _owner: File,
 }
 impl Engine {
     /// The host selects this private directory, never a renderer path.
