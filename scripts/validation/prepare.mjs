@@ -11,8 +11,10 @@ export async function prepareFull(root, input, source, lane) {
   await execute("pnpm", ["install", "--frozen-lockfile"], {
     cwd: "/work/lapis-ai",
   });
-  if (lane === "test:governance") {
-    // Offline clean-install regressions need registry metadata as well as locked tarballs.
+  if (lane === "test:governance" || lane === "test") {
+    // The aggregate test lane nests the governance suite, so both need the
+    // offline clean-install regressions provisioned with registry metadata
+    // as well as locked tarballs.
     const dependencies = new Set();
     for (const name of ["jj-conversations", "jj-history"]) {
       const pkg = JSON.parse(

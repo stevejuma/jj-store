@@ -15,6 +15,6 @@ COPY --from=rust /usr/local/cargo /usr/local/cargo
 COPY --from=rust /usr/local/rustup /usr/local/rustup
 ENV RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential clang cmake libssl-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential clang cmake libssl-dev protobuf-compiler && rm -rf /var/lib/apt/lists/*
 RUN rustup component add clippy rustfmt && cargo install --locked cargo-nextest --version 0.9.148 && cargo install --locked mdbook --version 0.5.4 && python3 -m venv /opt/docs && /opt/docs/bin/pip install uv==0.9.28
 ENV PATH=/opt/docs/bin:$PATH

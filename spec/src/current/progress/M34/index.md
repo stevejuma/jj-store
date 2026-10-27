@@ -14,7 +14,7 @@ be recorded. M33's conversation gates and unrelated work remain unchanged.
 | M34.3 | Partial | M34.2       | JST-LOCAL-007 | Usable local timeline, guarded restore and visible background status                                     | Deferred cold restore qualification       | E-VAULT-BACKUP-003,E-VAULT-BACKUP-019,E-VAULT-BACKUP-021                                                          |
 | M34.4 | Partial | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Qualify cold app/provider flow later      | E-VAULT-BACKUP-004,E-VAULT-BACKUP-005,E-VAULT-BACKUP-006,E-VAULT-BACKUP-007                                       |
 | M34.5 | Partial | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Qualify cold app/provider gates later     | E-VAULT-BACKUP-008,E-VAULT-BACKUP-009,E-VAULT-BACKUP-016,E-VAULT-BACKUP-019                                       |
-| M34.6 | Partial | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Deferred cold search/restore proof        | E-VAULT-BACKUP-010,E-VAULT-BACKUP-017,E-VAULT-BACKUP-019,E-VAULT-BACKUP-022,E-VAULT-BACKUP-023                    |
+| M34.6 | Partial | M34.3       | JST-LOCAL-007 | Historical text/path/metadata search with exact restore anchors                                          | Deferred cold search/restore proof        | E-VAULT-BACKUP-010,E-VAULT-BACKUP-017,E-VAULT-BACKUP-019,E-VAULT-BACKUP-022,E-VAULT-BACKUP-023,E-VAULT-BACKUP-024 |
 | M34.7 | Partial | M34.5,M34.6 | JST-LOCAL-007 | Root metadata/adoption and Forgejo sync, followed by integration into main                               | Deferred native/provider qualification    | E-VAULT-BACKUP-011,E-VAULT-BACKUP-012,E-VAULT-BACKUP-013,E-VAULT-BACKUP-014,E-VAULT-BACKUP-015,E-VAULT-BACKUP-021 |
 | M34.8 | Partial | M34.3       | JST-LOCAL-007 | Durable AI turn observations, Git-portable attribution and guarded selected-path undo                    | Desktop visible integration qualification | E-VAULT-BACKUP-020                                                                                                |
 
@@ -80,6 +80,15 @@ aggregate Docker spec/check/test lanes run on the complete slice; sibling record
 E-CI-SUITES-FIX-002 owns the validation-runner shard repair they exposed. M34.6
 remains Partial; cold application/provider, cross-platform and distribution
 qualification stay deferred.
+
+E-VAULT-BACKUP-024 completes the Phase 2 aggregate gates on the integrated
+trunk: the Docker check lane, the Docker test lane and the platform-qualified
+native macOS workspace Rust suite, where the native_git family passes 8/8 at Git
+2.55.0 and agent_execution passes 22/0/2. The container suite retains only the
+separately owned environmental refusals (image Git 2.43.0 against the exact
+2.55.0 capability gate), and the pre-existing macOS native_rpc rustls provider
+defect is assigned and reported without weakening any gate. M34.6 remains
+Partial at its original cold application/search/restore gate.
 
 ## Deferred verification
 

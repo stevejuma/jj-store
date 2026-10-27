@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed shared codec and projection extraction into core, host-clock adapters and original selected-transaction receipt lookup. Publication manual retains manifest CAS, native framing, WAL recovery and stable prepared Agent identities.",
-      "fingerprint": "6577ba419b3dfb237de9d8e21c0b25a2e29008f957966cceac2988c867e69b59"
+      "reason": "Re-reviewed the publication topic pages against a test-only, clippy-directed collapse of two nested ifs in the jj-store-object S3 deletion test-harness mock server: no product behavior, deletion semantics, storage format or page statement changed, so the pages remain accurate as written.",
+      "fingerprint": "137f83249e308fc8d1e051d2959049cf2e69b5af1f85ce9235c995a2a89c2a04"
     }
   },
   {
@@ -127,8 +127,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed local Work commands and review/collaboration status adaptation through the existing bounded authorized handlers. HTTP routes, schemas, admission and error semantics remain unchanged; regenerated references include the already-committed repository deletion contract.",
-      "fingerprint": "8b7ede817ba947b8d1405585283fbc18c28b3811f25a2962d1686dc1ae95e4f3"
+      "reason": "Re-reviewed the http topic pages against a test-only repair that aligns the contract-inventory count pins (202 total/88 local) with the deliberately landed and already-regenerated 204-path openapi surface from the confirmed repository-deletion routes: the transport, security and conversion pages describe behavior, not test pins, and remain accurate without content changes.",
+      "fingerprint": "3734dbafe4b39ec528320d7a11175517655436dd0e82b71c32d4986be63c065c"
     }
   },
   {

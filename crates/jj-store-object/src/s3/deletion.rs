@@ -194,10 +194,10 @@ mod tests {
                 let n = socket.read(&mut buffer).unwrap();
                 assert_ne!(n, 0);
                 request.extend_from_slice(&buffer[..n]);
-                if let Some(end) = request.windows(4).position(|v| v == b"\r\n\r\n") {
-                    if request.len() >= end + 4 + 3 {
-                        break;
-                    }
+                if let Some(end) = request.windows(4).position(|v| v == b"\r\n\r\n")
+                    && request.len() >= end + 4 + 3
+                {
+                    break;
                 }
             }
             entered_tx.send(()).unwrap();
@@ -297,10 +297,10 @@ mod uncertainty_tests {
                 let n = socket.read(&mut buf).unwrap();
                 assert_ne!(n, 0);
                 bytes.extend_from_slice(&buf[..n]);
-                if let Some(end) = bytes.windows(4).position(|b| b == b"\r\n\r\n") {
-                    if bytes.len() >= end + 7 {
-                        break;
-                    }
+                if let Some(end) = bytes.windows(4).position(|b| b == b"\r\n\r\n")
+                    && bytes.len() >= end + 7
+                {
+                    break;
                 }
             }
             socket.write_all(b"HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n").unwrap();
