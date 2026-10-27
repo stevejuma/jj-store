@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed existing jj-vault coordinator ownership against its native README and canonical backup contract: retained checkpoints, writer-drained close, guarded restore, injected admission and credentials stay distinct from history reads.",
-      "fingerprint": "9b9a5953b7a03ebd832e9393ebe3ed1bb4be1c6c3e7bc59e7cb667fd256b3660"
+      "reason": "Reviewed the jj-vault committed indexed read-admission change (bounded five-second publisher wait, pinned committed index generation, explicit Busy under sustained contention, never initializes or repairs projection bytes) against the local topic pages: they keep their architecture-level history and backup statements accurate, and the canonical automatic-vault-backup chapter owns the admission detail.",
+      "fingerprint": "594da2826859232f55e3ad8a4c188fbfdb4455eaf9304d1ea537de7082c7052b"
     }
   },
   {

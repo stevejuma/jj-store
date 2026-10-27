@@ -2,7 +2,11 @@
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { root, localRoot, json } from "./validation/paths.mjs";
-import { validationConfig, label } from "./validation/model.mjs";
+import {
+  validationConfig,
+  label,
+  laneInvocations,
+} from "./validation/model.mjs";
 import { execute } from "./validation/process.mjs";
 import { image } from "./validation/images.mjs";
 import { owned, collect, remoteRun } from "./validation/runs.mjs";
@@ -31,6 +35,21 @@ export async function runNative(lane, args = [], directory = root) {
     },
   );
 }
+/**
+ * Keep the documented bounded suite discipline for every native dispatch,
+ * including lanes nested inside an aggregate lane or worker. Every invocation
+ * runs even when an earlier one fails; the first failure is rethrown.
+ */
+export async function runNativeInvocations(lane, args = [], directory = root) {
+  const failures = [];
+  for (const invocation of laneInvocations(lane, args))
+    try {
+      await runNative(lane, invocation, directory);
+    } catch (error) {
+      failures.push(error);
+    }
+  if (failures.length) throw failures[0];
+}
 export const dockerArguments = contextArguments;
 export async function main(argv = process.argv.slice(2)) {
   if (argv[0] === "--") argv.shift();
@@ -45,7 +64,7 @@ export async function main(argv = process.argv.slice(2)) {
       config.runtime === "native" ||
       process.env.JJ_STORE_VALIDATION_WORKER === "1"
     )
-      return runNative(lane, rest);
+      return runNativeInvocations(lane, rest);
     return remoteRun(config, lane, rest);
   }
   if (command === "images") {

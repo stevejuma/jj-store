@@ -50,3 +50,5 @@
   {{#include 25/SUMMARY.nav.md}}
 - [26](26/index.md)
   {{#include 26/SUMMARY.nav.md}}
+- [27](27/index.md)
+  {{#include 27/SUMMARY.nav.md}}

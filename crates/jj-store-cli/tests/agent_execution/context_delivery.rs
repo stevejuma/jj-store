@@ -58,7 +58,12 @@ async fn markdown_deltas_and_bound_task_cli_survive_loaded_and_fresh_sessions() 
     let bin_dir = fixture._root.path().join("bundled tools");
     fs::create_dir(&bin_dir).unwrap();
     let binary = bin_dir.join("jj");
-    fs::hard_link(env!("CARGO_BIN_EXE_jj-store-jj"), &binary).unwrap();
+    // Isolated validation runtimes may place build targets and test scratch on
+    // different devices, where hard links fail with EXDEV; an exact byte copy
+    // preserves the bundled-binary path contract either way.
+    if fs::hard_link(env!("CARGO_BIN_EXE_jj-store-jj"), &binary).is_err() {
+        fs::copy(env!("CARGO_BIN_EXE_jj-store-jj"), &binary).unwrap();
+    }
     fixture.resources.jj_executable = binary.clone();
     fixture.resources.driver = Arc::new(Driver(jj_store_jj::agent_workspaces::Provider {
         executable: binary.clone(),

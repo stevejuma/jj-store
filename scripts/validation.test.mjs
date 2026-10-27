@@ -183,6 +183,55 @@ test("default browser suites run complete bounded shards without changing explic
   assert.deepEqual(laneInvocations("web:test", []), [[]]);
 });
 
+test("native dispatch keeps bounded full-suite shards and exact explicit targets", async () => {
+  const { mkdtemp, mkdir, writeFile, readFile, rm } =
+    await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { runNativeInvocations } = await import("./validation.mjs");
+  const directory = await mkdtemp(join(tmpdir(), "jj-validation-shards-"));
+  const recorded = async () =>
+    (await readFile(join(directory, "invocations.jsonl"), "utf8"))
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line));
+  try {
+    await mkdir(join(directory, "scripts/validation"), { recursive: true });
+    await mkdir(join(directory, "node_modules/.bin"), { recursive: true });
+    await writeFile(
+      join(directory, "scripts/validation/lanes.json"),
+      JSON.stringify({ "test:storybook": "shard-probe" }),
+    );
+    await writeFile(
+      join(directory, "node_modules/.bin/shard-probe"),
+      `#!/usr/bin/env node
+const log = require('node:fs');
+log.appendFileSync('invocations.jsonl', JSON.stringify(process.argv.slice(2)) + '\\n');
+if (process.argv.includes('--shard=2/4')) process.exit(1);
+`,
+      { mode: 0o755 },
+    );
+    // Every shard runs even when an earlier one fails, then the first
+    // failure surfaces; explicit targets stay a single exact invocation.
+    await assert.rejects(runNativeInvocations("test:storybook", [], directory));
+    assert.deepEqual(await recorded(), [
+      ["--shard=1/4"],
+      ["--shard=2/4"],
+      ["--shard=3/4"],
+      ["--shard=4/4"],
+    ]);
+    await rm(join(directory, "invocations.jsonl"));
+    await runNativeInvocations(
+      "test:storybook",
+      ["Example.stories.svelte"],
+      directory,
+    );
+    assert.deepEqual(await recorded(), [["Example.stories.svelte"]]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("source snapshots preserve a separate Jujutsu workspace without a Git worktree", async () => {
   const { mkdtemp, writeFile, rm } = await import("node:fs/promises");
   const { tmpdir } = await import("node:os");
