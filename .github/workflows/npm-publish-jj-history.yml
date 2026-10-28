@@ -120,9 +120,9 @@ jobs:
       - package-gate
       - publish-production
     if: >-
-      always() &&
-      needs.package-gate.result == 'success' &&
-      (needs.publish-production.result == 'success' || needs.publish-production.result == 'skipped')
+      always() && needs.package-gate.result == 'success' &&
+      (needs.publish-production.result == 'success' ||
+      needs.publish-production.result == 'skipped')
     runs-on: ubuntu-22.04
     permissions:
       contents: read

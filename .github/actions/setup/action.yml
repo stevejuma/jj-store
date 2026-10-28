@@ -47,6 +47,9 @@ runs:
         tool: cargo-nextest@0.9.148,mdbook@0.5.4,uv@0.9.28
     - run: pnpm install --frozen-lockfile --ignore-pnpmfile
       shell: bash
+    - name: Fetch locked Rust dependencies for offline governance checks
+      run: cargo fetch --locked
+      shell: bash
     - name: Install shared AI development packaging dependencies
       run: pnpm install --frozen-lockfile
       working-directory: ../lapis-ai
