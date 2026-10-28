@@ -95,10 +95,12 @@ canonical transcript serialization. This preserves the existing Kingfisher scan
 and publication boundary.
 
 Native scanning and prefix replacement are owned by the independently reusable
-`lapis-agent-redaction` Rust crate. The JJ adapter retains domain payload
-bounds, host cache-path admission and canonical observation identities. The
-library has no JJ or application dependencies; the TypeScript redaction policy
-is separate.
+`lapis-agent-redaction` Rust crate, pinned for CI and local builds through
+`scripts/agent-redaction-source.json` at published `0.1.1`
+(`eada2b26c3bf9b41aa6245344479d3941c6f0273` on `lapismd/agent-redaction`). The
+JJ adapter retains domain payload bounds, host cache-path admission and
+canonical observation identities. The library has no JJ or application
+dependencies; the TypeScript redaction policy is separate.
 
 Public builds use released Kingfisher scanner 1.4.0 with rules 1.2.1 and core
 1.0.3. The sanitization policy and compiled-cache namespace include the scanner

@@ -44,8 +44,8 @@
     ],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Reviewed 8a487398..4d660d4c transient CodexSnapshotReader and sanitized observations: bounded immutable physical selection, tentative batches until Complete and no durable ACK/resume. Technical capture manual distinguishes it from unchanged application spool and receipt contracts.",
-      "fingerprint": "7095f99dbe1aefca7d179d9f397e644e088f7dd12535f822489c55ec663c88ed"
+      "reason": "Reviewed sibling agent-redaction pin eada2b26 (0.1.1) with transient CodexSnapshotReader docs: technical capture records the published source pin, keeps tentative batches until Complete without durable ACK/resume, and leaves application spool and receipt contracts unchanged.",
+      "fingerprint": "1213597bbc69a4b9831b55dfb1e5a206286bdb23600f6295cc62cf03c606a837"
     }
   },
   {
@@ -180,8 +180,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed final owner-bound dispatch lease and exact child-command digest fence; original context/deferred queues and prepared/accepted receipts remain unchanged.",
-      "fingerprint": "b026f7e00c471f3798ba5f4359ba59183e7b6a76316f33b02b0c068599fd8292"
+      "reason": "Reviewed published Lapis AI 0.1.1 (e5589b99) and agent-redaction 0.1.1 (eada2b26) CI source pins against unchanged local-compute runbook: sibling checkouts stay source-development only with no launch, credential or publication policy change.",
+      "fingerprint": "ab1cd75decdc6962db9ee3a25a177758f75e7d8306e358c1a73f1b2f14829c50"
     }
   },
   {
@@ -270,8 +270,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed the typed blame method, exact scoped request and selected commit/path receipt checks, generated native schema, full-width integer decoding and unchanged injected transport/close ownership. Local manual and package README describe progressive continuation without implicit polling.",
-      "fingerprint": "4b51f84d3fb09ed978125bb76260ef78b6238d4c5a5fef80907bf227ae5868a3"
+      "reason": "Reviewed @lapismd/jj-history 0.1.0 public publishConfig against unchanged local history manual: admitted heads/open/status/read/blame/close contracts and explicit handle closure remain as documented.",
+      "fingerprint": "cc13ef5d340bb6832d499390f9e4e41bfa6ffdd27779b30905c08702741e733b"
     }
   }
 ]
