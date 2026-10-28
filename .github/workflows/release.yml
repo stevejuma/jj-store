@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup
-      - uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b
+      - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51
         id: changesets
         with:
           version: pnpm release:version
