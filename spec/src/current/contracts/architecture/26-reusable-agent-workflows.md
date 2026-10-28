@@ -393,3 +393,8 @@ M34 native hosts may reuse the explicit Forgejo account helper and generic Git
 basic-auth login constructor. Public account records and injected secret custody
 remain separate from vault history, object authority and UI. Upstream JJ imports
 and default GitHub commands remain unchanged (JST-ARCH-007).
+
+Publishable workspace crates that expose reusable history clients, including
+`jj-history-service`, MUST ship Apache-2.0 `LICENSE.md` and `NOTICE.md` beside
+their README for registry packaging. Those packaging files do not change runtime
+admission, transport or publication authority (JST-ARCH-005).

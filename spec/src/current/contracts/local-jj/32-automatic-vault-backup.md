@@ -198,3 +198,7 @@ block undo. Preview and apply revalidate the original comparison. One safety
 checkpoint and durable per-path progress preserve interruption and exact-request
 recovery. Later edits stop recovery; partial work never reports success. Undo
 creates new retained history and never invokes generic operation undo.
+
+Publishable `jj-vault` packages MUST include Apache-2.0 `LICENSE.md` and
+`NOTICE.md` for crates.io packaging. License files do not alter backup worker
+scheduling, checkpoint authority or AI turn observation contracts (JST-ARCH-005).
