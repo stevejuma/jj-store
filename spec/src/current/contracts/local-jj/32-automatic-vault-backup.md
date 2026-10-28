@@ -201,4 +201,5 @@ creates new retained history and never invokes generic operation undo.
 
 Publishable `jj-vault` packages MUST include Apache-2.0 `LICENSE.md` and
 `NOTICE.md` for crates.io packaging. License files do not alter backup worker
-scheduling, checkpoint authority or AI turn observation contracts (JST-ARCH-005).
+scheduling, checkpoint authority or AI turn observation contracts
+(JST-ARCH-005).
