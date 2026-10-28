@@ -17,12 +17,22 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const source = join(root, "packages/jj-conversations");
-const run = (command, args, cwd = root) =>
-  execFileSync(command, args, {
-    cwd,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+const run = (command, args, cwd = root) => {
+  try {
+    return execFileSync(command, args, {
+      cwd,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch (error) {
+    const detail = [error.stdout, error.stderr]
+      .filter(Boolean)
+      .join("\n")
+      .trim();
+    if (detail) error.message = `${error.message}\n${detail}`;
+    throw error;
+  }
+};
 
 test("conversation package exports only its built independent client boundary", () => {
   const pkg = JSON.parse(readFileSync(join(source, "package.json")));

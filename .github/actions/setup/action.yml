@@ -47,6 +47,9 @@ runs:
         tool: cargo-nextest@0.9.148,mdbook@0.5.4,uv@0.9.28
     - run: pnpm install --frozen-lockfile --ignore-pnpmfile
       shell: bash
+    - name: Provision registry metadata for offline governance installs
+      run: node scripts/ci-provision-offline-governance.mjs
+      shell: bash
     - name: Fetch locked Rust dependencies for offline governance checks
       run: cargo fetch --locked
       shell: bash

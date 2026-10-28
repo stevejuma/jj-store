@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { restorePinnedSources } from "./pins.mjs";
 import { execute } from "./process.mjs";
 import { ensureAiSource } from "../ci-lapis-source.mjs";
@@ -14,19 +12,11 @@ export async function prepareFull(root, input, source, lane) {
   if (lane === "test:governance" || lane === "test") {
     // The aggregate test lane nests the governance suite, so both need the
     // offline clean-install regressions provisioned with registry metadata
-    // as well as locked tarballs.
-    const dependencies = new Set();
-    for (const name of ["jj-conversations", "jj-history"]) {
-      const pkg = JSON.parse(
-        await readFile(join(root, `packages/${name}/package.json`), "utf8"),
-      );
-      for (const [name, range] of Object.entries({
-        ...pkg.dependencies,
-        ...pkg.devDependencies,
-      }))
-        dependencies.add(`${name}@${range}`);
-    }
-    await execute("pnpm", ["store", "add", ...dependencies], { cwd: root });
+    // as well as locked tarballs. Hosted CI mirrors this via
+    // scripts/ci-provision-offline-governance.mjs in .github/actions/setup.
+    await execute("node", ["scripts/ci-provision-offline-governance.mjs"], {
+      cwd: root,
+    });
     await execute("cargo", ["fetch", "--locked"], {
       cwd: root,
     });

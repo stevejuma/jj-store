@@ -265,6 +265,8 @@ test("CI pins the shared local-source package and rejects mutable revisions", ()
     "utf8",
   );
   assert.match(setup, /node scripts\/ci-lapis-source.mjs/);
+  assert.match(setup, /node scripts\/ci-provision-offline-governance\.mjs/);
+  assert.match(setup, /cargo fetch --locked/);
   const cargo = readFileSync(new URL("../Cargo.toml", import.meta.url), "utf8");
   assert.match(
     cargo,
