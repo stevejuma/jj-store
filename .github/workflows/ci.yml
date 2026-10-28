@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  pull_request: null
+  pull_request:
   workflow_dispatch:
     inputs:
       ref:
@@ -59,6 +59,12 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22
+      - name: Materialize pinned shared Rust sources into sibling Cargo paths
+        run: |
+          node scripts/ci-lapis-source.mjs
+          node scripts/ci-redaction-source.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
       - uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f
         with:
           toolchain: 1.99.0
