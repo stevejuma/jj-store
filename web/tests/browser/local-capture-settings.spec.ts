@@ -62,6 +62,27 @@ async function openSettings(page: Page) {
   ).toHaveCount(0);
   await selectTab(page, "Capture");
 }
+
+/**
+ * Background capture refreshes re-toggle Public Button's animated disabled
+ * opacity on their own schedule, so an axe sample inside the 150ms fade reads
+ * a blended foreground and fails color-contrast. Wait until no capture
+ * request has started for a window longer than the refresh latch delay plus
+ * one request burst; sampling then sees the settled enabled view. Disabled
+ * controls stay excluded by axe and settled colors remain fully checked.
+ */
+async function waitForCaptureQuiescence(page: Page, paths: string[]) {
+  const quietMs = 1200;
+  let seen = -1;
+  let stableSince = Date.now();
+  while (Date.now() - stableSince < quietMs) {
+    if (paths.length !== seen) {
+      seen = paths.length;
+      stableSince = Date.now();
+    }
+    await page.waitForTimeout(100);
+  }
+}
 async function bootstrap(page: Page, supported = true) {
   await api(page, { access: "local_trusted" });
   await page.route("**/v1/bootstrap", (r) =>
@@ -265,6 +286,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   await page.screenshot({
     path: test.info().outputPath("agents-settings-desktop.png"),
   });
+  await waitForCaptureQuiescence(page, paths);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.setViewportSize({ width: 390, height: 844 });
   await selectTab(page, "Sources");
@@ -284,6 +306,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await waitForCaptureQuiescence(page, paths);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.getByRole("button", { name: "Open settings sidebar" }).click();
   await page.getByRole("button", { name: "Back to jj-store" }).click();
