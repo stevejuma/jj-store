@@ -25,11 +25,13 @@ policy. Compute and agent process changes respect active work and keep captured
 configuration until their supported replacement boundary. Effective reports
 reflect loaded generations rather than frozen startup copies.
 
-The server and desktop link the sibling `lapis-ai` crates using versioned Cargo
-path dependencies. Development builds use that working tree and stage all four
-helpers from it. CI materializes a recorded source revision at the same sibling
-path. A future crates.io switch removes the path selectors; compute remains a
-verified native helper, without a Mesh dependency in storage/model/WAL.
+The server links `lapis-ai-runtime` and `lapis-ai-config`, capture links
+`lapis-ai-capture`, and desktop repeats `lapis-ai-runtime`, all from the
+`lapismd/lapis-ai` git tag `v0.2.0` at crate version 0.2.0. Development builds
+still stage all four helpers from the sibling working tree. CI materializes a
+recorded source revision at that sibling path for helper staging. A future
+crates.io switch removes the git selectors; compute remains a verified native
+helper, without a Mesh dependency in storage/model/WAL.
 
 Compute commands and ordered events have separate shared client handles. Stop
 and progress remain responsive during active operations. The native-only

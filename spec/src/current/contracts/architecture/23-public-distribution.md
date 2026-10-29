@@ -247,16 +247,18 @@ crate README and portable path-plus-version dependencies. Its minor Changeset
 adds named native factories without publishing packages or changing existing
 manifest/WAL/receipt formats. JST-ARCH-005 release gates remain unchanged.
 
-M33 native privacy source consumption retains immutable sibling-source pins. CI
-materializes Agent Redaction separately from Lapis AI, verifies the declared
-package version and refuses replacement of an existing source checkout. Only the
-exact capture-to-redaction path is admitted. These source-library changes do not
-publish either repository or weaken artifact/qualification gates.
+M33 native privacy source consumption retains the `lapis-agent-redaction` git
+tag `lapis-agent-redaction@0.1.0` at crate version 0.1.0. CI materializes Agent
+Redaction separately from Lapis AI, verifies the declared package version and
+refuses replacement of an existing source checkout. Only the exact
+capture-to-redaction git dependency is admitted. These source-library changes do
+not publish either repository or weaken artifact/qualification gates.
 
 M33 acquisition consumption permits only the exact capture-to-`lapis-ai-capture`
-versioned sibling path. The immutable Lapis AI source pin includes this registry
-crate. Unknown source paths and runtime imports remain refused; JST-ARCH-005
-qualification and publication authority are unchanged.
+git tag `v0.2.0` at crate version 0.2.0. The immutable Lapis AI source pin
+remains the helper-staging checkout and includes this registry crate. Unknown
+source paths and runtime imports remain refused; JST-ARCH-005 qualification and
+publication authority are unchanged.
 
 The additive capture feature split preserves default application APIs while
 allowing independent headless consumers. Package contents include the short

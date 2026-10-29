@@ -3,10 +3,11 @@
 E-LAPIS-AI-001 moves shared native agent/compute implementation to the owning
 Lapis AI repository and links its local public Rust clients. Only server
 composition and desktop resource verification consume those clients. Storage,
-model and WAL have no inference/controller edge. CI admits only the two named
-sibling client paths for the server, retaining fail-closed unknown-dependency
-checks. Current runtime paths use Control V3; historical normalization
-identities and evidence remain retained.
+model and WAL have no inference/controller edge. CI admits only
+`lapis-ai-runtime` and `lapis-ai-config` from the `lapismd/lapis-ai` git tag
+`v0.2.0` for the server, retaining fail-closed unknown-dependency checks.
+Current runtime paths use Control V3; historical normalization identities and
+evidence remain retained.
 
 The duplicated local-agent and compute Cargo roots are retired. Build storage
 tracks the remaining owning roots; the sibling Lapis AI repository maintains its
@@ -24,17 +25,19 @@ M23's historical evidence is retained, while M24/M25 adapter and packaged
 platform qualification remain independently gated. Local source consumption is
 temporary; publication and a future crates.io switch require separate work.
 
-M33 additionally admits only capture-to-`lapis-agent-redaction` at its exact
-versioned sibling path. CI materializes its immutable source pin independently
-of Lapis AI. Core/model/WAL gain no privacy/runtime edge. The shared source
-materializer retains bounded archive requests, package-version checks, atomic
-installation and refusal to replace existing checkouts. This is temporary
-source-library consumption, not publication.
+M33 additionally admits only capture-to-`lapis-agent-redaction` from the
+`lapismd/agent-redaction` git tag `lapis-agent-redaction@0.1.0` at crate version
+0.1.0. CI materializes its immutable source pin independently of Lapis AI for
+helper and package checks. Core/model/WAL gain no privacy/runtime edge. The
+shared source materializer retains bounded archive requests, package-version
+checks, atomic installation and refusal to replace existing checkouts. This is
+temporary source-library consumption, not publication.
 
-M33 permits capture-to-`lapis-ai-capture` at its exact versioned sibling path
-and immutable Lapis AI source pin. Only discovery/header acquisition crosses
-this boundary; core/model/WAL and capture-to-runtime remain refused. Focused
-consumer recovery and complete source-library evidence remain distinct.
+M33 permits capture-to-`lapis-ai-capture` from the `lapismd/lapis-ai` git tag
+`v0.2.0` at crate version 0.2.0. The immutable Lapis AI source pin remains the
+helper-staging checkout. Only discovery/header acquisition crosses this
+boundary; core/model/WAL and capture-to-runtime remain refused. Focused consumer
+recovery and complete source-library evidence remain distinct.
 
 Normal governance checks the headless capture dependency closure and acquisition
 admission. The default application feature retains its original recovery suite;
@@ -92,8 +95,8 @@ full-width integer handling and strict bounded frames. Its source selects web
 checks; native schema equality remains the Rust producer's separate gate.
 
 The explicit conversation `native-privacy` feature also admits an optional edge
-to `lapis-agent-redaction` at the same exact versioned sibling path and
-immutable source pin. The default conversation dependency closure excludes the
+to `lapis-agent-redaction` at the same git tag `lapis-agent-redaction@0.1.0` and
+crate version 0.1.0. The default conversation dependency closure excludes the
 scanner; the opt-in closure retains no execution, Tauri or repository-storage
 edge. Boundary and CI graph checks reject a mandatory conversation edge, any
 other owner and any unapproved source path. This does not broaden core/model/WAL
