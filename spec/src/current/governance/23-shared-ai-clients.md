@@ -101,3 +101,11 @@ scanner; the opt-in closure retains no execution, Tauri or repository-storage
 edge. Boundary and CI graph checks reject a mandatory conversation edge, any
 other owner and any unapproved source path. This does not broaden core/model/WAL
 privacy dependencies or publication authority.
+
+The release package check admits only those exact git tags: `lapis-ai-capture`,
+`lapis-ai-runtime`, and `lapis-ai-config` from `lapismd/lapis-ai` tag `v0.2.0`
+at crate 0.2.0, and `lapis-agent-redaction` from `lapismd/agent-redaction` tag
+`lapis-agent-redaction@0.1.0` at crate 0.1.0. Any other git URL, tag, branch,
+revision, or path-plus-git dependency still fails. Versioned in-repo path
+dependencies stay allowed. This check does not publish jj-store or switch the
+pins to crates.io.
