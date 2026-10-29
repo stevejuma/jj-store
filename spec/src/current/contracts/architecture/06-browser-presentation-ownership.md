@@ -96,7 +96,7 @@ temporary raw-input file participates in the capture boundary.
 
 The TagList adoption and AppShell-attached browser surfaces consume published
 `@lapismd/design-core` `^0.7.0` through the registry lockfile, with Mira
-`~0.1.1` for the qualified composer contract. TagList owns chip layout, overflow
+`~0.1.2` for the qualified composer contract. TagList owns chip layout, overflow
 measurement, native CSS and popup lifecycle; domain label/tone mapping remains
 under `web/src/lib`. Community-derived compositions retain their original
 attribution. No source alias, package patch or local archive participates in
