@@ -2165,7 +2165,8 @@ dependencies = [
 
 [[package]]
 name = "lapis-ai-config"
-version = "0.1.1"
+version = "0.2.0"
+source = "git+https://github.com/lapismd/lapis-ai?tag=v0.2.0#9a98293c26524c9320acdd9767e34e8ffdd7170c"
 dependencies = [
  "serde",
  "serde_json",
@@ -2174,7 +2175,8 @@ dependencies = [
 
 [[package]]
 name = "lapis-ai-runtime"
-version = "0.1.1"
+version = "0.2.0"
+source = "git+https://github.com/lapismd/lapis-ai?tag=v0.2.0#9a98293c26524c9320acdd9767e34e8ffdd7170c"
 dependencies = [
  "lapis-ai-config",
  "nix 0.31.3",

@@ -270,7 +270,7 @@ test("CI pins the shared local-source package and rejects mutable revisions", ()
   const cargo = readFileSync(new URL("../Cargo.toml", import.meta.url), "utf8");
   assert.match(
     cargo,
-    /lapis-ai-runtime = \{ path = "\.\.\/lapis-ai\/crates\/lapis-ai-runtime"/,
+    /lapis-ai-runtime = \{ git = "https:\/\/github.com\/lapismd\/lapis-ai", tag = "v0\.2\.0", version = "0\.2\.0" \}/,
   );
 });
 test("prebuilt CI validates complete resources before accepting the cold fixture", async () => {

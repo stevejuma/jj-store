@@ -15,10 +15,10 @@ homepage = "https://stevejuma.github.io/jj-store/"
 [workspace.dependencies]
 jj-history-service = { path = "crates/jj-history-service", version = "0.1.0" }
 jj-vault = { path = "crates/jj-vault", version = "0.1.0" }
-lapis-agent-redaction = { path = "../agent-redaction/crates/lapis-agent-redaction", version = "0.1.0" }
-lapis-ai-capture = { path = "../lapis-ai/crates/lapis-ai-capture", version = "0.1.1" }
-lapis-ai-runtime = { path = "../lapis-ai/crates/lapis-ai-runtime", version = "0.1.1" }
-lapis-ai-config = { path = "../lapis-ai/crates/lapis-ai-config", version = "0.1.1" }
+lapis-agent-redaction = { git = "https://github.com/lapismd/agent-redaction", tag = "lapis-agent-redaction@0.1.0", version = "0.1.0" }
+lapis-ai-capture = { git = "https://github.com/lapismd/lapis-ai", tag = "v0.2.0", version = "0.2.0" }
+lapis-ai-runtime = { git = "https://github.com/lapismd/lapis-ai", tag = "v0.2.0", version = "0.2.0" }
+lapis-ai-config = { git = "https://github.com/lapismd/lapis-ai", tag = "v0.2.0", version = "0.2.0" }
 jj-store-native = { path = "crates/jj-store-native", version = "0.1.0" }
 jj-store-git = { path = "crates/jj-store-git", version = "0.1.0" }
 jj-store-core = { path = "crates/jj-store-core", version = "0.1.0" }

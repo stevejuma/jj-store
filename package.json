@@ -137,7 +137,7 @@
     "@fontsource-variable/inter": "5.2.8",
     "@lapismd/design-core": "^0.7.0",
     "@lapismd/jj-conversations": "^0.1.0",
-    "@lapismd/mira": "~0.1.1",
+    "@lapismd/mira": "~0.1.2",
     "@lapismd/spec-validator": "^0.1.4",
     "@lapismd/storybook-addon-visual-delta": "^0.1.0",
     "@lezer/highlight": "^1.2.5",

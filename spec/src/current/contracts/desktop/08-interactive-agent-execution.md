@@ -20,14 +20,15 @@ activity, and releases on all agents stopping or application shutdown. Polling
 alone never renews it. The browser capability marker is presentation-only and
 grants no repository access.
 
-Full M25 staging includes `lapis-acp`, `lapis-agent`, `lapis-agent-tools` and
-`lapis-compute`, with source pins, third-party notices and the upstream TOML
-resource manifest verified before launch. Symlink resources, missing helpers,
-mismatched source pins, and modified executable/native runtime bytes refuse
-startup. `--native-runtime-dir` embeds the pinned inference artifact directory;
-otherwise runtime preparation remains an explicit user download. Weights are
-separate explicit downloads/imports. The same resource directory can be staged
-for a headless server installation; no globally installed ACP/helper executable
-is needed. macOS machine identity uses the installation-scoped Keychain;
-headless servers provide `JJ_STORE_COMPUTE_IDENTITY` through operator process
-configuration.
+The desktop crate links `lapis-ai-runtime` from the `lapismd/lapis-ai` git tag
+`v0.2.0` at crate version 0.2.0. Full M25 staging includes `lapis-acp`,
+`lapis-agent`, `lapis-agent-tools` and `lapis-compute`, with source pins,
+third-party notices and the upstream TOML resource manifest verified before
+launch. Symlink resources, missing helpers, mismatched source pins, and modified
+executable/native runtime bytes refuse startup. `--native-runtime-dir` embeds
+the pinned inference artifact directory; otherwise runtime preparation remains
+an explicit user download. Weights are separate explicit downloads/imports. The
+same resource directory can be staged for a headless server installation; no
+globally installed ACP/helper executable is needed. macOS machine identity uses
+the installation-scoped Keychain; headless servers provide
+`JJ_STORE_COMPUTE_IDENTITY` through operator process configuration.
