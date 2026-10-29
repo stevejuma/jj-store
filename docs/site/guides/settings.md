@@ -232,7 +232,9 @@ start explicitly.
 
 Ready runtimes use Community's green success chip and omit Install. Guide links
 and installation confirmation actions use the shared semantic button styling,
-with inline icons. Runtime and capture tabs show only their own controls.
+with inline icons. Settings action rows keep outline button labels on the theme
+foreground so they stay readable beside muted help text. Runtime and capture
+tabs show only their own controls.
 
 ## Reusable agents and chat
 
