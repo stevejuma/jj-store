@@ -44,8 +44,8 @@
     ],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Reviewed sibling agent-redaction pin eada2b26 (0.1.1) with transient CodexSnapshotReader docs: technical capture records the published source pin, keeps tentative batches until Complete without durable ACK/resume, and leaves application spool and receipt contracts unchanged.",
-      "fingerprint": "1213597bbc69a4b9831b55dfb1e5a206286bdb23600f6295cc62cf03c606a837"
+      "reason": "Reviewed the digest 0.11 pending-hook filename. It stays the lowercase hex of the same SHA-256 key, and the capture guides still describe spool, receipts, and source admission without that encoding.",
+      "fingerprint": "0267da2ef4f0b4b95dbe0103bb78b4f644a94586824ec5f95c2eb947f7afb45e"
     }
   },
   {
@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the jj-vault committed indexed read-admission change (bounded five-second publisher wait, pinned committed index generation, explicit Busy under sustained contention, never initializes or repairs projection bytes) against the local topic pages: they keep their architecture-level history and backup statements accurate, and the canonical automatic-vault-backup chapter owns the admission detail.",
-      "fingerprint": "594da2826859232f55e3ad8a4c188fbfdb4455eaf9304d1ea537de7082c7052b"
+      "reason": "Reviewed the jj-lib 0.46 interface updates in jj-store-jj and the vault search digests. The Stacks page now names jj-lib 0.46.0. The recorded macOS Git qualification stays JJ 0.45.1 and is not extended.",
+      "fingerprint": "ad1ca6638727c166317427c67d541b4d0b8ef07f021b2d3372b2ba3591b8cd34"
     }
   },
   {
@@ -79,8 +79,8 @@
     "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
     "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
-      "reason": "Reviewed the hmac 0.13 KeyInit import for search cursor signatures. Rebuildable search authority and bounded paging are unchanged, so the search pages stay accurate.",
-      "fingerprint": "6167651e7e036a7345a361589a4723e54184dd82fe5bd142a9292a00b777061c"
+      "reason": "Reviewed Tantivy 0.27 segment file listing. Existing index components are still copied when the staged files exist, and the search pages do not depend on SegmentMeta list_files.",
+      "fingerprint": "d39d764e6f67db4e785dcb2cc550c87e13627aee94459b45af320ca49371ac62"
     }
   },
   {
@@ -114,8 +114,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed the unchanged local-folder CLI contract now delegated to reusable default-settings JJ discovery; original safe error categories, read-only inspection and metadata reopening remain intact, without new commands or executable configuration.",
-      "fingerprint": "045cf6ded0936340b50e146f3e417b91b7422de7d1feefb0eaf9fd11370dd969"
+      "reason": "Reviewed the CLI against jj-lib 0.46 workspace, bookmark, and settings calls. Commands, errors, and the recorded JJ 0.45.1 install qualification stay the same.",
+      "fingerprint": "cbdca6dcb974cd3d7026189b58e3f3a6666567b8449527d1517e86432592ba16"
     }
   },
   {

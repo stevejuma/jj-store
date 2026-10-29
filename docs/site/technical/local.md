@@ -193,7 +193,7 @@ may be much slower than progress responses.
 ## Local stack workspaces
 
 The Stacks page operates directly on a registered ordinary local JJ folder using
-jj-lib 0.45.1. Setup retains the existing checkout and creates a megamerge from
+jj-lib 0.46.0. Setup retains the existing checkout and creates a megamerge from
 the target plus distinct applied tips, with a WIP child retaining unfinished
 edits. Membership or target changes rewrite that app-owned merge and let native
 JJ descendant rebasing preserve the WIP delta and both change identities.
