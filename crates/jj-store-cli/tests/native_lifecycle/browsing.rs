@@ -57,11 +57,7 @@ impl BrowsingFixture {
             .insert("main".into(), o::RefTarget::normal(head_id.clone()));
         view.local_bookmarks.insert(
             "conflicted".into(),
-            o::RefTarget::from_merge(Merge::from_vec(vec![
-                Some(head_id.clone()),
-                None,
-                Some(base_id.clone()),
-            ])),
+            Merge::from_vec(vec![Some(head_id.clone()), None, Some(base_id.clone())]),
         );
         view.wc_commit_ids.insert("desktop".into(), head_id.clone());
         let view_key = f.objects.put(&view).await.unwrap().0;

@@ -262,9 +262,11 @@ async fn local_preparation_matches_upstream_without_trees_or_source_index_writes
     .unwrap();
     jj(source.path(), &["new", "-m", "Must not enter old index"]);
     let metadata = source.path().join(".jj/repo");
-    let settings =
-        jj_lib::settings::UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())
-            .unwrap();
+    let settings = jj_lib::settings::UserSettings::from_config_and_home_dir(
+        jj_lib::config::StackedConfig::with_defaults(),
+        None,
+    )
+    .unwrap();
     let loader = jj_lib::repo::RepoLoader::init_from_file_system(
         &settings,
         &metadata,
@@ -622,9 +624,11 @@ async fn prepared_local_log_preserves_conflicts_and_filtered_native_edges() {
     // index can order same-timestamp sibling commits differently from a cold
     // index. Require exact cold segment bytes as well as exact graph rows.
     let expected = tempfile::tempdir().unwrap();
-    let settings =
-        jj_lib::settings::UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())
-            .unwrap();
+    let settings = jj_lib::settings::UserSettings::from_config_and_home_dir(
+        jj_lib::config::StackedConfig::with_defaults(),
+        None,
+    )
+    .unwrap();
     let loader = jj_lib::repo::RepoLoader::init_from_file_system(
         &settings,
         &metadata,

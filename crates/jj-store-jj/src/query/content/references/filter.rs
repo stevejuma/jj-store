@@ -39,7 +39,7 @@ pub(super) fn window(
         // for change groups. Indexed predecessor text cannot expose hidden rows.
         for id in bookmark_target
             .into_iter()
-            .flat_map(|target| target.as_merge().iter().flatten().map(|id| id.as_bytes()))
+            .flat_map(|target| target.iter().flatten().map(|id| id.as_bytes()))
             .chain(change_target.into_iter().flat_map(|group| {
                 group
                     .targets

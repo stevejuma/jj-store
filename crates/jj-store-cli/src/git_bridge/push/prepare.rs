@@ -29,7 +29,7 @@ pub(super) async fn prepare(
         .repo()
         .view()
         .remote_bookmarks(RemoteName::new(remote_name))
-        .flat_map(|(_, v)| v.target.added_ids().cloned())
+        .flat_map(|(_, v)| v.target.present_adds().cloned())
         .collect();
     let immutable = workspace
         .attach_revset_evaluator(workspace.env().immutable_heads_expression().clone())

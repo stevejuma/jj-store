@@ -150,7 +150,7 @@ pub(in crate::query) async fn read(
             context.budget.work(group.targets.len())?;
         }
         let count = match &row {
-            Selection::Bookmark(_, target) => target.as_merge().iter().count(),
+            Selection::Bookmark(_, target) => target.iter().count(),
             Selection::Change(group) => group.targets.len(),
         };
         memory.push(crate::query::memory::Lease::reserve(
@@ -158,7 +158,6 @@ pub(in crate::query) async fn read(
         )?);
         let ids: Vec<_> = match &row {
             Selection::Bookmark(_, target) => target
-                .as_merge()
                 .iter()
                 .flatten()
                 .map(|id| m::CommitId::from_slice(id.as_bytes()).map_err(|_| Error::Corrupt))
@@ -193,7 +192,7 @@ pub(in crate::query) async fn read(
                 terms: dto::RefTarget::try_from(target)
                     .map_err(|_| Error::Corrupt)?
                     .0,
-                conflicted: target.has_conflict(),
+                conflicted: !target.is_resolved(),
                 workspaces: targets
                     .iter()
                     .flat_map(|target| target.workspaces.iter().cloned())

@@ -203,12 +203,13 @@ impl NativeStores {
         }
         let store = jj_lib::store::Store::new(
             Box::new(self.backend()?),
-            jj_lib::signing::Signer::from_settings(settings)?,
+            jj_lib::signing_factory::signer_from_settings(settings)?,
             jj_lib::tree_merge::MergeOptions::from_settings(settings)?,
         );
         Ok(RepoLoader::new(
             settings.clone(),
             store,
+            crate::query_workspace::store(),
             Arc::new(self.operations()?),
             Arc::new(self.heads()?),
             index,

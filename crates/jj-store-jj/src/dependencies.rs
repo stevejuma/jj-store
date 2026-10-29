@@ -34,7 +34,7 @@ impl Edges {
         Ok(())
     }
     fn target(&mut self, target: &o::RefTarget) -> Result<(), CodecError> {
-        for id in target.as_merge().iter().flatten() {
+        for id in target.iter().flatten() {
             self.commit(id)?;
         }
         Ok(())

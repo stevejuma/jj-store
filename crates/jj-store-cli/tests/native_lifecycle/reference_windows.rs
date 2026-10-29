@@ -31,11 +31,7 @@ async fn native_prepared_references_select_visible_windows_before_target_reads()
     view.head_ids.insert(divergent.clone());
     view.local_bookmarks.insert(
         "conflicted".into(),
-        o::RefTarget::from_merge(Merge::from_vec(vec![
-            Some(last.clone()),
-            None,
-            Some(divergent.clone()),
-        ])),
+        Merge::from_vec(vec![Some(last.clone()), None, Some(divergent.clone())]),
     );
     for n in 0..256 {
         view.local_bookmarks.insert(

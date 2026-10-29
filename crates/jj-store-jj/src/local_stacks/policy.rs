@@ -70,13 +70,15 @@ pub(super) fn expression(
             workspace_name,
         }),
     };
-    revset::parse(&mut RevsetDiagnostics::new(), text, &context)
+    Ok(revset::parse(&mut RevsetDiagnostics::new(), text, &context)
         .map_err(jj)?
         .resolve_user_expression(
             repo,
             &SymbolResolver::new(repo, extensions.symbol_resolvers()),
         )
-        .map_err(jj)
+        .map_err(jj)?
+        .into_inner()
+        .0)
 }
 pub(super) fn rewritable(
     repo: &ReadonlyRepo,

@@ -14,7 +14,6 @@ use jj_lib::op_heads_store::{OpHeadsStore, OpHeadsStoreError, OpHeadsStoreLock};
 use jj_lib::op_store::{OpStore as _, Operation, OperationId, RootOperationData, View};
 use jj_lib::repo::{Repo as _, StoreFactories};
 use jj_lib::settings::UserSettings;
-use jj_lib::signing::Signer;
 use jj_lib::simple_backend::SimpleBackend;
 use jj_lib::simple_op_store::SimpleOpStore;
 use jj_lib::workspace::Workspace;
@@ -101,12 +100,14 @@ async fn explicit_bounded_reads_preserve_divergent_heads() {
     local
         .run_until(async {
             let dir = tempfile::tempdir().unwrap();
-            let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+            let settings =
+                UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
+                    .unwrap();
             let (workspace, repo) = Workspace::init_with_backend(
                 &settings,
                 dir.path(),
                 &|_, path| Ok(Box::new(SimpleBackend::init(path))),
-                Signer::from_settings(&settings).unwrap(),
+                jj_lib::signing_factory::signer_from_settings(&settings).unwrap(),
             )
             .await
             .unwrap();
@@ -297,7 +298,8 @@ async fn native_factory_preserves_request_context_across_rpc() {
         .connect()
         .await
         .unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let mut handles = Vec::new();
     let dirs = [tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap()];
     for (i, token) in ["Bearer probe-a", "Bearer probe-b"].into_iter().enumerate() {

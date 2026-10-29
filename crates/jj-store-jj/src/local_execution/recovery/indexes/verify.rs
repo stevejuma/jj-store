@@ -10,13 +10,12 @@ use jj_lib::{
     object_id::ObjectId as _,
     revset::ResolvedExpression,
     settings::UserSettings,
-    signing::Signer,
     store::Store,
     tree_merge::MergeOptions,
 };
 use std::{collections::BTreeSet, path::Path};
 pub(super) fn store(recovery: &RecoveredHistory) -> Result<Arc<Store>> {
-    let settings = UserSettings::from_config(StackedConfig::with_defaults())
+    let settings = UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
         .map_err(|_| Error::Unavailable)?;
     let backend = GitBackend::load(&settings, &recovery.access.metadata_path().join("store"))
         .map_err(|_| Error::Unavailable)?;
@@ -25,7 +24,7 @@ pub(super) fn store(recovery: &RecoveredHistory) -> Result<Arc<Store>> {
     }
     Ok(Store::new(
         Box::new(backend),
-        Signer::from_settings(&settings).map_err(|_| Error::Unavailable)?,
+        jj_lib::signing_factory::signer_from_settings(&settings).map_err(|_| Error::Unavailable)?,
         MergeOptions::from_settings(&settings).map_err(|_| Error::Unavailable)?,
     ))
 }

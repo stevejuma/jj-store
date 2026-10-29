@@ -204,8 +204,11 @@ impl GraphExecutor {
                             limits.max_object_bytes,
                             false,
                         )?;
-                        let settings = UserSettings::from_config(StackedConfig::with_defaults())
-                            .map_err(|_| Error::Unavailable)?;
+                        let settings = UserSettings::from_config_and_home_dir(
+                            StackedConfig::with_defaults(),
+                            None,
+                        )
+                        .map_err(|_| Error::Unavailable)?;
                         let loader = stores
                             .resident_loader(
                                 &settings,
@@ -290,8 +293,11 @@ impl GraphExecutor {
                             limits.max_object_bytes,
                             false,
                         )?;
-                        let settings = UserSettings::from_config(StackedConfig::with_defaults())
-                            .map_err(|_| Error::Unavailable)?;
+                        let settings = UserSettings::from_config_and_home_dir(
+                            StackedConfig::with_defaults(),
+                            None,
+                        )
+                        .map_err(|_| Error::Unavailable)?;
                         let loader = stores
                             .resident_loader(&settings, prepared.index.clone())
                             .map_err(|_| Error::Unavailable)?;
@@ -358,8 +364,9 @@ impl GraphExecutor {
                     budget.limits.max_object_bytes,
                     true,
                 )?;
-                let settings = UserSettings::from_config(StackedConfig::with_defaults())
-                    .map_err(|_| Error::Unavailable)?;
+                let settings =
+                    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
+                        .map_err(|_| Error::Unavailable)?;
                 let loader = stores
                     .resident_loader(&settings, prepared.index.clone())
                     .map_err(|_| Error::Unavailable)?;

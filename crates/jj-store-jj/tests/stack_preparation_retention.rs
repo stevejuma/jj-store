@@ -15,7 +15,7 @@ use std::{fs, path::Path, process::Command};
 
 const REPOSITORY: m::RepositoryId = m::RepositoryId::new([71; 16]);
 fn settings() -> UserSettings {
-    UserSettings::from_config(StackedConfig::with_defaults()).unwrap()
+    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap()
 }
 fn stock(path: &Path, args: &[&str]) -> String {
     let output = Command::new("jj")

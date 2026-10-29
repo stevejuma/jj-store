@@ -113,7 +113,7 @@ async fn archive_capture_never_imports_missing_extras_or_creates_nogc_refs() {
     let state = fixture.state();
     assert!(
         local_evidence::capture_operation_archive(
-            &UserSettings::from_config(StackedConfig::with_defaults()).unwrap(),
+            &UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap(),
             &fixture.root().join(".jj/repo"),
             fixture.access().repository(),
             operation,

@@ -99,7 +99,7 @@ pub(super) fn settings(principal: m::PrincipalId) -> Result<UserSettings> {
         layer.set_value(key, value).map_err(|_| Error::Invalid)?;
     }
     config.add_layer(layer);
-    UserSettings::from_config(config).map_err(|_| Error::Invalid)
+    UserSettings::from_config_and_home_dir(config, None).map_err(|_| Error::Invalid)
 }
 async fn prepare(lease: &Foreground, request: Reword) -> Result<PreparedCode> {
     let settings = settings(request.principal)?;

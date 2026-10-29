@@ -166,11 +166,11 @@ impl GitEvidenceCapsuleV1 {
             .chain(view.git_refs.values())
             .chain(view.git_heads.values())
         {
-            ids.extend(target.as_merge().iter().flatten().cloned());
+            ids.extend(target.iter().flatten().cloned());
         }
         for remote in view.remote_views.values() {
             for reference in remote.bookmarks.values().chain(remote.tags.values()) {
-                ids.extend(reference.target.as_merge().iter().flatten().cloned());
+                ids.extend(reference.target.iter().flatten().cloned());
             }
         }
         if let Some(map) = &self.operation.commit_predecessors {

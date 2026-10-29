@@ -102,7 +102,7 @@ pub(super) async fn load(
         graph_bytes.extend_from_slice(&buffer[..n]);
     }
     let hash = digest.finalize();
-    if read != size || segment.file_name().to_str() != Some(&format!("{hash:x}")) {
+    if read != size || segment.file_name().to_str() != Some(&crate::lower_hex(hash)) {
         return Err(Error::Corrupt);
     }
     let link = directory
@@ -503,11 +503,13 @@ impl Executor {
                 )
                 .await?;
                 let raw = loader(context.access.binding.metadata_path())?;
-                let settings = UserSettings::from_config(StackedConfig::with_defaults())
-                    .map_err(|_| Error::Unavailable)?;
+                let settings =
+                    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
+                        .map_err(|_| Error::Unavailable)?;
                 let loader = RepoLoader::new(
                     settings,
                     guard.store(),
+                    raw.workspace_store().clone(),
                     selected.op_store().clone(),
                     raw.op_heads_store().clone(),
                     Arc::new(Index {

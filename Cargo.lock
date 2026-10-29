@@ -2629,7 +2629,6 @@ dependencies = [
  "gix-discover 0.55.0",
  "gix-error 0.3.2",
  "gix-features 0.49.1",
- "gix-filter 0.34.0",
  "gix-fs 0.22.1",
  "gix-glob 0.27.1",
  "gix-hash 0.26.2",
@@ -2643,7 +2642,6 @@ dependencies = [
  "gix-odb 0.84.0",
  "gix-pack 0.74.2",
  "gix-path 0.12.6",
- "gix-pathspec 0.20.0",
  "gix-protocol 0.65.1",
  "gix-quote 0.8.0",
  "gix-ref 0.67.1",
@@ -2704,7 +2702,7 @@ dependencies = [
  "gix-odb 0.85.0",
  "gix-pack 0.75.0",
  "gix-path 0.13.0",
- "gix-pathspec 0.21.0",
+ "gix-pathspec",
  "gix-prompt 0.18.0",
  "gix-protocol 0.66.0",
  "gix-quote 0.9.0",
@@ -3070,7 +3068,7 @@ dependencies = [
  "gix-index 0.56.0",
  "gix-object 0.65.0",
  "gix-path 0.13.0",
- "gix-pathspec 0.21.0",
+ "gix-pathspec",
  "gix-tempfile 25.0.0",
  "gix-trace 0.2.0",
  "gix-traverse 0.62.0",
@@ -3091,7 +3089,7 @@ dependencies = [
  "gix-index 0.56.0",
  "gix-object 0.65.0",
  "gix-path 0.13.0",
- "gix-pathspec 0.21.0",
+ "gix-pathspec",
  "gix-trace 0.2.0",
  "gix-utils 0.4.0",
  "gix-worktree 0.57.0",
@@ -3647,7 +3645,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d199d515cbdcf05f531f3859be9771fc12acac7b7fe0f5b581b2c1ab1c3a61e"
 dependencies = [
  "clru",
- "crossbeam-deque",
  "gix-chunk 0.8.0",
  "gix-error 0.3.2",
  "gix-features 0.49.1",
@@ -3660,7 +3657,6 @@ dependencies = [
  "serde",
  "smallvec",
  "thiserror 2.0.21",
- "uluru",
 ]
 
 [[package]]
@@ -3730,21 +3726,6 @@ dependencies = [
  "gix-error 0.4.0",
  "gix-trace 0.2.0",
  "gix-validate 0.12.0",
-]
-
-[[package]]
-name = "gix-pathspec"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c92e44c63ba53bb55aa88ee48847664beae9446417621582fb14dfc69b2f8c72"
-dependencies = [
- "bitflags 2.13.2",
- "bstr",
- "gix-attributes 0.35.0",
- "gix-config-value 0.19.1",
- "gix-glob 0.27.1",
- "gix-path 0.12.6",
- "thiserror 2.0.21",
 ]
 
 [[package]]
@@ -4053,7 +4034,7 @@ dependencies = [
  "gix-index 0.56.0",
  "gix-object 0.65.0",
  "gix-path 0.13.0",
- "gix-pathspec 0.21.0",
+ "gix-pathspec",
  "gix-worktree 0.57.0",
  "hashbrown 0.16.1",
  "portable-atomic",
@@ -4070,7 +4051,7 @@ dependencies = [
  "gix-config 0.61.0",
  "gix-error 0.4.0",
  "gix-path 0.13.0",
- "gix-pathspec 0.21.0",
+ "gix-pathspec",
  "gix-refspec 0.46.0",
  "gix-url 0.39.0",
 ]
@@ -4262,7 +4243,6 @@ checksum = "3ed36b627476e2072c129900a17c977a38052b5497e27308159bc881fbf4eecf"
 dependencies = [
  "bstr",
  "gix-attributes 0.35.0",
- "gix-features 0.49.1",
  "gix-fs 0.22.1",
  "gix-glob 0.27.1",
  "gix-hash 0.26.2",
@@ -5714,7 +5694,7 @@ dependencies = [
  "async-trait",
  "base64 0.22.1",
  "getrandom 0.4.3",
- "gix 0.87.1",
+ "gix 0.88.0",
  "jj-agent",
  "jj-collab",
  "jj-review",

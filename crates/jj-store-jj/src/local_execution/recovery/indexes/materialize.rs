@@ -130,7 +130,7 @@ pub(super) async fn missing(
                     return Err(Error::Corrupt);
                 }
             }
-        } else if format!("{:x}", Blake2b512::digest(&data.bytes)) != *name {
+        } else if crate::lower_hex(Blake2b512::digest(&data.bytes)) != *name {
             return Err(Error::Corrupt);
         }
     }

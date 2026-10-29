@@ -21,7 +21,17 @@ fn key(profile: CaptureProfile, session: &str, workspace: &Path) -> String {
         hash.update((value.len() as u64).to_be_bytes());
         hash.update(value);
     }
-    format!("{:x}.json", hash.finalize())
+    format!("{}.json", lower_hex(hash.finalize()))
+}
+fn lower_hex(bytes: impl AsRef<[u8]>) -> String {
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    let bytes = bytes.as_ref();
+    let mut out = String::with_capacity(bytes.len() * 2);
+    for byte in bytes {
+        out.push(HEX[(byte >> 4) as usize] as char);
+        out.push(HEX[(byte & 0xf) as usize] as char);
+    }
+    out
 }
 fn directory(root: &Path, create: bool) -> CaptureResult<PathBuf> {
     if !safe(root) || root.canonicalize()? != root {

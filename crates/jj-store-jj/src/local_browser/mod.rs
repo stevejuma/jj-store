@@ -386,7 +386,7 @@ impl Executor {
     }
 }
 pub(crate) fn loader(path: &Path) -> Result<RepoLoader> {
-    let settings = UserSettings::from_config(StackedConfig::with_defaults())
+    let settings = UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
         .map_err(|_| Error::Unavailable)?;
     if std::fs::read_to_string(path.join("store/type"))
         .map_err(|_| Error::Unavailable)?
@@ -398,7 +398,7 @@ pub(crate) fn loader(path: &Path) -> Result<RepoLoader> {
     if std::fs::read_to_string(path.join("op_store/type"))
         .map_err(|_| Error::Unavailable)?
         .trim()
-        != jj_lib::simple_op_store::SimpleOpStore::name()
+        != jj_lib::simple_op_store::SimpleOpStore::NAME
     {
         return Err(Error::Invalid);
     }

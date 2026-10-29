@@ -302,7 +302,7 @@ fn copy_segment(
             .map_err(|_| Error::Unavailable)?;
     }
     if read != size
-        || target.file_name().and_then(|n| n.to_str()) != Some(&format!("{:x}", hash.finalize()))
+        || target.file_name().and_then(|n| n.to_str()) != Some(&crate::lower_hex(hash.finalize()))
     {
         return Err(Error::Corrupt);
     }

@@ -76,9 +76,11 @@ async fn source(
     )
     .parse()
     .unwrap();
-    let settings =
-        jj_lib::settings::UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())
-            .unwrap();
+    let settings = jj_lib::settings::UserSettings::from_config_and_home_dir(
+        jj_lib::config::StackedConfig::with_defaults(),
+        None,
+    )
+    .unwrap();
     let capsule = local_evidence::inspect(&settings, &path.join(".jj/repo"), repository, operation)
         .await
         .unwrap();

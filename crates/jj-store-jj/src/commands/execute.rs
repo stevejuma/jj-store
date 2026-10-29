@@ -20,13 +20,7 @@ fn cid(id: &b::CommitId) -> m::CommitId {
     m::CommitId::from_slice(id.as_bytes()).expect("native commit width")
 }
 pub(super) fn reference(value: &o::RefTarget) -> crate::native_dto::RefTarget {
-    crate::native_dto::RefTarget(
-        value
-            .as_merge()
-            .iter()
-            .map(|id| id.as_ref().map(cid))
-            .collect(),
-    )
+    crate::native_dto::RefTarget(value.iter().map(|id| id.as_ref().map(cid)).collect())
 }
 fn name(value: &str, limit: usize) -> bool {
     !value.is_empty() && value.len() <= limit && !value.chars().any(char::is_control)
@@ -132,7 +126,7 @@ fn settings(principal: m::PrincipalId) -> Result<UserSettings> {
         layer.set_value(key, value).map_err(unavailable)?;
     }
     config.add_layer(layer);
-    UserSettings::from_config(config).map_err(unavailable)
+    UserSettings::from_config_and_home_dir(config, None).map_err(unavailable)
 }
 pub(super) async fn run(
     store: Arc<dyn ObjectStore>,

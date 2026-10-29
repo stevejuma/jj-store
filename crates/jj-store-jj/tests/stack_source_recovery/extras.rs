@@ -156,7 +156,8 @@ async fn exact_missing_extras_restore_after_source_loss_without_import_heads_or_
     drop(recovered);
     let before = extra_state(&f.root());
     assert!(!before.is_empty());
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let backend = GitBackend::load(&settings, &f.root().join(".jj/repo/store")).unwrap();
     for (id, record) in &retained.history.as_ref().unwrap().commits {
         let actual = backend

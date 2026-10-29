@@ -46,13 +46,9 @@ impl Index {
         commit: &str,
         after: Option<&str>,
     ) -> Result<HistoryFiles, String> {
-        let key = format!(
-            "{:x}",
-            Sha256::digest(
-                serde_json::to_vec(&(1, &self.namespace, commit, after))
-                    .map_err(|e| e.to_string())?
-            )
-        );
+        let key = super::lower_hex(Sha256::digest(
+            serde_json::to_vec(&(1, &self.namespace, commit, after)).map_err(|e| e.to_string())?,
+        ));
         let directory = fs::create_dir_all(&self.directory)
             .ok()
             .and_then(|()| fs::canonicalize(&self.directory).ok())

@@ -12,7 +12,7 @@ use sha2::Digest as _;
 use std::{collections::BTreeMap, fs, path::Path, process::Command};
 const REPO: m::RepositoryId = m::RepositoryId::new([71; 16]);
 fn settings() -> UserSettings {
-    UserSettings::from_config(StackedConfig::with_defaults()).unwrap()
+    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap()
 }
 fn stock(path: &Path, args: &[&str]) -> String {
     let output = Command::new("jj")
@@ -288,11 +288,7 @@ async fn source_codec_keeps_conflicted_refs_remote_tags_and_all_operation_fields
         .collect::<Vec<_>>();
     let first = commits[0].clone();
     let zero = b::CommitId::from_bytes(&[0; 20]);
-    let conflict = o::RefTarget::from_merge(Merge::from_vec(vec![
-        Some(first.clone()),
-        Some(zero.clone()),
-        None,
-    ]));
+    let conflict = Merge::from_vec(vec![Some(first.clone()), Some(zero.clone()), None]);
     let remote = o::RemoteRef {
         target: conflict.clone(),
         state: o::RemoteRefState::Tracked,

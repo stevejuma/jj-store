@@ -167,7 +167,8 @@ async fn cold_native_cli_replays_receipts_pins_pages_and_preserves_code_without_
     .unwrap();
     initialization.create().await.unwrap();
     let mut attachment = initialization.attachment().await.unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     attachment.prepare(&settings).await.unwrap();
     attachment.finish(&settings).await.unwrap();
     let client = jj_store_cli::binding::Connection::read(&cache)

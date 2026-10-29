@@ -80,7 +80,8 @@ async fn tokenless_local_cli_initializes_and_attaches_a_physical_workspace() {
     .unwrap();
     initialization.create().await.unwrap();
     let mut attachment = initialization.attachment().await.unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     attachment.prepare(&settings).await.unwrap();
     let attached = attachment.finish(&settings).await.unwrap();
 

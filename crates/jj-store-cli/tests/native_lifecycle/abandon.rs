@@ -95,11 +95,7 @@ pub(super) async fn seed(
         .insert("child".into(), o::RefTarget::normal(native(ids[2])));
     view.local_bookmarks.insert(
         "conflicted".into(),
-        o::RefTarget::from_merge(Merge::from_vec(vec![
-            Some(native(ids[1])),
-            None,
-            Some(native(ids[2])),
-        ])),
+        Merge::from_vec(vec![Some(native(ids[1])), None, Some(native(ids[2]))]),
     );
     let op = stage_view(f, &root, view, "abandon seed").await;
     f.session
@@ -485,9 +481,9 @@ async fn typed_abandon_merge_retains_ordered_parents_and_native_conflicted_bookm
             );
             assert_eq!(rewritten.tree_ids(), child.tree_ids());
             let bookmark = after.view().get_local_bookmark("merge".as_ref());
-            assert!(bookmark.has_conflict());
+            assert!(!bookmark.is_resolved());
             assert_eq!(
-                bookmark.added_ids().cloned().collect::<BTreeSet<_>>(),
+                bookmark.present_adds().cloned().collect::<BTreeSet<_>>(),
                 BTreeSet::from([left.id().clone(), right.id().clone()])
             );
             assert_eq!(receipt.result.abandoned, vec![cid(merge.id())]);

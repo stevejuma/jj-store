@@ -234,5 +234,5 @@ fn settings() -> Result<UserSettings> {
     let mut config = StackedConfig::with_defaults();
     config.add_layer(ConfigLayer::parse(ConfigSource::CommandArg,
         "[user]\nname = 'Lapis Notes'\nemail = 'backup@local.invalid'\n[signing]\nbehavior = 'drop'\n").map_err(jj)?);
-    UserSettings::from_config(config).map_err(jj)
+    UserSettings::from_config_and_home_dir(config, None).map_err(jj)
 }

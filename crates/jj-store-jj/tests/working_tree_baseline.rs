@@ -39,7 +39,8 @@ impl local::Access for Access {
 #[tokio::test(flavor = "multi_thread")]
 async fn baseline_reads_exact_workspace_at_selected_operation_without_publication() {
     let root = tempfile::tempdir().unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let (workspace, repo) =
         Workspace::init_internal_git(&settings, root.path(), gix::hash::Kind::Sha1)
             .await
@@ -161,7 +162,8 @@ async fn baseline_reads_exact_workspace_at_selected_operation_without_publicatio
 #[tokio::test(flavor = "multi_thread")]
 async fn baseline_limits_objects_and_rejects_submodules_without_partial_results() {
     let root = tempfile::tempdir().unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let (workspace, repo) =
         Workspace::init_internal_git(&settings, root.path(), gix::hash::Kind::Sha1)
             .await

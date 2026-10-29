@@ -42,7 +42,7 @@ impl Destination {
         if physical::read(&parent, "type", 64, false, budget)?
             .ok_or(Error::Incomplete)?
             .bytes
-            != jj_lib::simple_op_heads_store::SimpleOpHeadsStore::name().as_bytes()
+            != jj_lib::simple_op_heads_store::SimpleOpHeadsStore::NAME.as_bytes()
         {
             return Err(Error::Invalid);
         }

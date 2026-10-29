@@ -61,7 +61,8 @@ async fn saved_original_and_candidate_indexes_restore_without_future_visibility_
     let extras = extras::extra_state(&f.root());
     let indexes = index_state(&f.root());
     assert!(!indexes.is_empty());
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let loader = jj_lib::repo::RepoLoader::init_from_file_system(
         &settings,
         &f.root().join(".jj/repo"),

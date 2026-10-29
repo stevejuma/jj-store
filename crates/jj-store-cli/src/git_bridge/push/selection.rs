@@ -141,7 +141,10 @@ pub(super) async fn select(
             refs.local_target.is_absent()
         } else {
             matcher.is_match(name.as_str())
-                || refs.local_target.added_ids().any(|id| targets.contains(id))
+                || refs
+                    .local_target
+                    .present_adds()
+                    .any(|id| targets.contains(id))
         };
         if selected {
             names.insert(name.as_str().to_owned());

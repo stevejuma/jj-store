@@ -139,13 +139,9 @@ impl Engine {
         if request.limit == 0 || request.limit > 100 {
             return Err("Invalid history page limit".into());
         }
-        let query_id = format!(
-            "{:x}",
-            Sha256::digest(
-                serde_json::to_vec(&(&request.expression, request.case_sensitive))
-                    .map_err(error)?
-            )
-        );
+        let query_id = super::super::lower_hex(Sha256::digest(
+            serde_json::to_vec(&(&request.expression, request.case_sensitive)).map_err(error)?,
+        ));
         let cursor: Option<Cursor> = request
             .cursor
             .as_ref()

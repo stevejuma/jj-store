@@ -88,7 +88,8 @@ async fn actual_reword_checkout_requires_combination_before_final_acknowledgemen
         .unwrap();
     let (lease, witness) = lease.recovery_witness().await.unwrap();
     drop(lease);
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let source = capture_operation_archive(
         &settings,
         &folder.root().join(".jj/repo"),

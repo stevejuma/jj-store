@@ -158,10 +158,10 @@ async fn typed_reconciliation_recursive_ancestors_and_conflicted_bookmarks_match
                 .await
                 .unwrap();
             assert!(
-                upstream
+                !upstream
                     .view()
                     .get_local_bookmark("topic".as_ref())
-                    .has_conflict()
+                    .is_resolved()
             );
             let input = reconcile(expected.clone(), oid(first.op_id()), 146);
             let Preview::Prepared { preview } =

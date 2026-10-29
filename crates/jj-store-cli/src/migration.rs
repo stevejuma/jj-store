@@ -6,8 +6,9 @@ use jj_lib::{
     object_id::ObjectId as _,
     ref_name::WorkspaceNameBuf,
     settings::UserSettings,
+    simple_workspace_store::SimpleWorkspaceStore,
     workspace::Workspace,
-    workspace_store::{SimpleWorkspaceStore, WorkspaceStore as _},
+    workspace_store::WorkspaceStore as _,
 };
 use jj_store_jj::{
     backend::BackendLimits,

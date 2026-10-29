@@ -1,7 +1,7 @@
 use super::*;
 use crate::query::blame_probe::commit;
 use jj_lib::{
-    config::StackedConfig, settings::UserSettings, signing::Signer, simple_backend::SimpleBackend,
+    config::StackedConfig, settings::UserSettings, simple_backend::SimpleBackend,
     workspace::Workspace,
 };
 fn key(id: &b::CommitId) -> Selection {
@@ -17,7 +17,8 @@ fn key(id: &b::CommitId) -> Selection {
 async fn annotation_matches_jj_merges_repeated_lines_empty_and_missing_newline() {
     for git in [false, true] {
         let dir = tempfile::tempdir().unwrap();
-        let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+        let settings =
+            UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
         let (_, repo) = if git {
             Workspace::init_internal_git(&settings, dir.path(), gix::hash::Kind::Sha1)
                 .await
@@ -27,7 +28,7 @@ async fn annotation_matches_jj_merges_repeated_lines_empty_and_missing_newline()
                 &settings,
                 dir.path(),
                 &|_, p| Ok(Box::new(SimpleBackend::init(p))),
-                Signer::from_settings(&settings).unwrap(),
+                jj_lib::signing_factory::signer_from_settings(&settings).unwrap(),
             )
             .await
             .unwrap()
@@ -123,7 +124,8 @@ async fn annotation_matches_jj_merges_repeated_lines_empty_and_missing_newline()
 #[tokio::test]
 async fn retries_cancellation_reset_and_selection_binding() {
     let dir = tempfile::tempdir().unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let (_, mut repo) = Workspace::init_internal_git(&settings, dir.path(), gix::hash::Kind::Sha1)
         .await
         .unwrap();

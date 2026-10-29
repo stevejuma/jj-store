@@ -10,7 +10,6 @@ use jj_lib::{
     repo_path::{RepoPath, RepoPathComponentBuf},
     revset::{RevsetEvaluationError, RevsetExpression},
     settings::UserSettings,
-    signing::Signer,
     simple_backend::SimpleBackend,
     workspace::Workspace,
 };
@@ -85,7 +84,8 @@ async fn incremental_domains_match_complete_annotation_for_edits_and_merges() {
     // Exercise both native-width and Git-width IDs without adding service APIs.
     for git in [false, true] {
         let directory = tempfile::tempdir().unwrap();
-        let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+        let settings =
+            UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
         let (_workspace, mut repo) = if git {
             Workspace::init_internal_git(&settings, directory.path(), gix::hash::Kind::Sha1)
                 .await
@@ -95,7 +95,7 @@ async fn incremental_domains_match_complete_annotation_for_edits_and_merges() {
                 &settings,
                 directory.path(),
                 &|_, path| Ok(Box::new(SimpleBackend::init(path))),
-                Signer::from_settings(&settings).unwrap(),
+                jj_lib::signing_factory::signer_from_settings(&settings).unwrap(),
             )
             .await
             .unwrap()
@@ -170,12 +170,13 @@ async fn incremental_domains_match_complete_annotation_for_edits_and_merges() {
 #[ignore = "explicit synchronous comparison feasibility measurement"]
 async fn synchronous_comparison_honors_progress_deadline() {
     let directory = tempfile::tempdir().unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let (_workspace, repo) = Workspace::init_with_backend(
         &settings,
         directory.path(),
         &|_, path| Ok(Box::new(SimpleBackend::init(path))),
-        Signer::from_settings(&settings).unwrap(),
+        jj_lib::signing_factory::signer_from_settings(&settings).unwrap(),
     )
     .await
     .unwrap();

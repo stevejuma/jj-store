@@ -511,12 +511,21 @@ pub(crate) fn commit(
         PathBuf::from(".managed.json"),
     ]);
     for segment in metas.segments {
-        names.extend(
-            segment
-                .list_files()
-                .into_iter()
-                .filter(|p| staging.path().join(p).exists()),
-        );
+        for component in [
+            tantivy::index::SegmentComponent::Postings,
+            tantivy::index::SegmentComponent::Positions,
+            tantivy::index::SegmentComponent::FastFields,
+            tantivy::index::SegmentComponent::FieldNorms,
+            tantivy::index::SegmentComponent::Terms,
+            tantivy::index::SegmentComponent::Store,
+            tantivy::index::SegmentComponent::TempStore,
+            tantivy::index::SegmentComponent::Delete,
+        ] {
+            let path = segment.relative_path(component);
+            if staging.path().join(&path).exists() {
+                names.insert(path);
+            }
+        }
     }
     if names.len() > limits.index_files {
         return Err(Error::Limit);

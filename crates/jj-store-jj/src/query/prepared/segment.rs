@@ -182,7 +182,7 @@ pub(super) fn write(
     out.file.get_ref().sync_all().map_err(io_error)?;
     let digest = out.digest.finalize();
     temporary
-        .persist(segments.join(format!("{digest:x}")))
+        .persist(segments.join(crate::lower_hex(digest)))
         .map_err(|e| io_error(e.error))?;
     budget.check()?;
     // SegmentControl field 1, bytes64; changed-path fields absent, as upstream.

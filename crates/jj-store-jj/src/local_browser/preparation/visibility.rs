@@ -134,7 +134,9 @@ impl Visibility {
         }
         // Preserve the upstream prefix index and ordered target offsets. With
         // no heads its bit set has no parent traversal; visibility is overlaid.
-        let changes = index.change_id_index(&mut std::iter::empty());
+        let changes = index
+            .change_id_index(&mut std::iter::empty())
+            .map_err(|_| Error::Unavailable)?;
         source
             .budget
             .work((index.num_commits() as usize).div_ceil(64))?;
@@ -189,8 +191,8 @@ impl Visibility {
         budget.work(1 + wire.0.len() * wire.0.len())?;
         let target = o::RefTarget::try_from(wire.clone()).map_err(|_| Error::Corrupt)?;
         for id in target
-            .added_ids()
-            .chain(target.removed_ids())
+            .present_adds()
+            .chain(target.present_removes())
             .collect::<BTreeSet<_>>()
         {
             budget.work(1)?;
@@ -200,9 +202,9 @@ impl Visibility {
                 .push(Bookmark {
                     name: name.to_owned(),
                     remote: remote.map(str::to_owned),
-                    added: target.added_ids().any(|value| value == id),
-                    removed: target.removed_ids().any(|value| value == id),
-                    conflicted: target.has_conflict(),
+                    added: target.present_adds().any(|value| value == id),
+                    removed: target.present_removes().any(|value| value == id),
+                    conflicted: !target.is_resolved(),
                 });
         }
         Ok(())
@@ -265,12 +267,12 @@ impl ReadonlyIndex for PreparedIndex {
     fn change_id_index(
         &self,
         heads: &mut dyn Iterator<Item = &b::CommitId>,
-    ) -> Box<dyn ChangeIdIndex> {
-        Box::new(Changes {
+    ) -> IndexResult<Box<dyn ChangeIdIndex>> {
+        Ok(Box::new(Changes {
             visibility: self.visibility.clone(),
             budget: self.budget.clone(),
             matches: heads.cloned().collect::<BTreeSet<_>>() == self.visibility.heads,
-        })
+        }))
     }
     fn start_modification(&self) -> Box<dyn MutableIndex> {
         ReadonlyIndex::start_modification(&self.index)

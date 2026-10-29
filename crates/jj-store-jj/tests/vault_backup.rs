@@ -63,7 +63,8 @@ async fn external_capture_retains_edit_bursts_and_never_creates_vault_metadata()
     );
     assert!(!binding.root.join(".jj").exists());
     assert!(!binding.root.join(".git").exists());
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let loader = RepoLoader::init_from_file_system(
         &settings,
         &binding.metadata(),

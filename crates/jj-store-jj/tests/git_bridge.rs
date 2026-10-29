@@ -124,7 +124,7 @@ fn converter(
     let bare = root.join("objects.git");
     gix::init_bare(&bare).unwrap();
     GitConverter::open(
-        &UserSettings::from_config(StackedConfig::with_defaults()).unwrap(),
+        &UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap(),
         &root.join("conversion"),
         &bare,
         native,
@@ -267,7 +267,7 @@ async fn git_domain_keeps_workstore_origins_frozen_and_native_signatures_unsuppo
         ..GitLimits::default()
     };
     let mut bounded = GitConverter::open(
-        &UserSettings::from_config(StackedConfig::with_defaults()).unwrap(),
+        &UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap(),
         &root.path().join("bounded-state"),
         &root.path().join("objects.git"),
         objects,
@@ -623,7 +623,7 @@ async fn git_catalog_rejects_changed_mappings_missing_closure_and_cross_reposito
     assert!(c.stage_git_records(&wrong_repo, &[]).await.is_err());
     assert!(
         GitConverter::open(
-            &UserSettings::from_config(StackedConfig::with_defaults()).unwrap(),
+            &UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap(),
             &cache.path().join("wrong-conversion"),
             &bare,
             objects.clone(),
@@ -639,7 +639,7 @@ async fn git_catalog_rejects_changed_mappings_missing_closure_and_cross_reposito
     .unwrap();
     assert!(
         GitConverter::open(
-            &UserSettings::from_config(StackedConfig::with_defaults()).unwrap(),
+            &UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap(),
             &cache.path().join("sha256-conversion"),
             &bare,
             objects,

@@ -29,7 +29,7 @@ fn verify_files(
         let expected = b"default";
         if files.remove("type").is_none_or(|file| {
             file.bytes != expected.len() as u64
-                || file.digest != format!("{:x}", Blake2b512::digest(expected))
+                || file.digest != crate::lower_hex(Blake2b512::digest(expected))
         }) {
             return Err(Error::Unavailable);
         }
@@ -97,7 +97,7 @@ mod tests {
         fs::create_dir(root.path().join("segments")).unwrap();
         let segment = b"owned format bytes";
         let digest = Blake2b512::digest(segment);
-        let name = format!("{digest:x}");
+        let name = crate::lower_hex(digest);
         let segment_path = root.path().join("segments").join(&name);
         fs::write(&segment_path, segment).unwrap();
         let mut link = vec![0x0a, 64];

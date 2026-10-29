@@ -51,7 +51,10 @@ pub enum CodeArchiveV1 {
     },
 }
 pub fn settings() -> Result<UserSettings> {
-    Ok(UserSettings::from_config(StackedConfig::with_defaults())?)
+    Ok(UserSettings::from_config_and_home_dir(
+        StackedConfig::with_defaults(),
+        None,
+    )?)
 }
 pub async fn archive_local(
     path: &Path,
@@ -595,15 +598,13 @@ impl Transfer {
     }
     async fn target(&mut self, target: &o::RefTarget) -> Result<o::RefTarget> {
         let mut terms = Vec::new();
-        for term in target.as_merge().iter() {
+        for term in target.iter() {
             terms.push(match term {
                 Some(id) => Some(self.commit(id.clone(), 0).await?),
                 None => None,
             })
         }
-        Ok(o::RefTarget::from_merge(jj_lib::merge::Merge::from_vec(
-            terms,
-        )))
+        Ok(jj_lib::merge::Merge::from_vec(terms))
     }
     pub async fn run(&mut self) -> Result<o::View> {
         let operation = self.reader.operation()?;

@@ -612,7 +612,7 @@ impl GraphExecutor {
             OperationLimits::default(),
         )
         .map_err(|_| Error::Unavailable)?;
-        let settings = UserSettings::from_config(StackedConfig::with_defaults())
+        let settings = UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
             .map_err(|_| Error::Unavailable)?;
         let required_filter =
             matches!(&work, Work::References(request, _) if !request.query.is_empty());

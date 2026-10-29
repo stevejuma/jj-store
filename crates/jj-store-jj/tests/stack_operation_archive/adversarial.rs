@@ -15,7 +15,7 @@ pub(super) fn key(fixture: &Fixture) -> StackPreparationKey {
 }
 pub(super) async fn capture(fixture: &Fixture, operation: m::OperationId) -> OperationArchiveV1 {
     local_evidence::capture_operation_archive(
-        &UserSettings::from_config(StackedConfig::with_defaults()).unwrap(),
+        &UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap(),
         &fixture.root().join(".jj/repo"),
         fixture.access().repository(),
         operation,
@@ -175,7 +175,8 @@ async fn nofollow_operation_and_view_reads_reject_links_and_wrong_source_profile
     let archive = capture(&fixture, operation).await;
     let before = fixture.state();
     let metadata = fixture.root().join(".jj/repo");
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let view = archive.operations[&operation].view_id;
     for name in [format!("operations/{operation}"), format!("views/{view}")] {
         let path = metadata.join("op_store").join(name);

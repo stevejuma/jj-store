@@ -105,7 +105,8 @@ fn file_states(f: &Input) -> Vec<(String, jj_lib::local_working_copy::FileState)
         config::StackedConfig, default_backend_factories::default_backend_factories,
         settings::UserSettings,
     };
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let loader = jj_lib::repo::RepoLoader::init_from_file_system(
         &settings,
         &f.folder.root().join(".jj/repo"),

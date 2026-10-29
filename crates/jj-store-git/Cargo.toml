@@ -21,7 +21,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
 sha2 = "0.10"
-gix = { version = "=0.87.1", default-features = false, features = ["sha1", "max-performance-safe"] }
+gix = { version = "=0.88.0", default-features = false, features = ["sha1", "max-performance-safe"] }
 getrandom = "0.4"
 async-trait = "0.1"
 base64 = "0.22"

@@ -58,8 +58,8 @@ impl Storage {
         stored.binding = value.destination.clone();
         record::save(&path, &stored)?;
         use jj_lib::{
-            ref_name::WorkspaceName,
-            workspace_store::{SimpleWorkspaceStore, WorkspaceStore as _},
+            ref_name::WorkspaceName, simple_workspace_store::SimpleWorkspaceStore,
+            workspace_store::WorkspaceStore as _,
         };
         SimpleWorkspaceStore::load(&value.stage.join("repo"))
             .map_err(jj)?

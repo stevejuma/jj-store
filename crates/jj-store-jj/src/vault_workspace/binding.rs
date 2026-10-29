@@ -1,7 +1,7 @@
 use super::*;
 use jj_lib::{
-    ref_name::WorkspaceName,
-    workspace_store::{SimpleWorkspaceStore, WorkspaceStore as _},
+    ref_name::WorkspaceName, simple_workspace_store::SimpleWorkspaceStore,
+    workspace_store::WorkspaceStore as _,
 };
 use std::io::{Read as _, Write as _};
 pub(super) fn saved(binding: &Binding) -> Result<StoredBinding> {

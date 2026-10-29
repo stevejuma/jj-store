@@ -118,17 +118,14 @@ impl Cache {
             }
         }
         static SEQUENCE: AtomicU64 = AtomicU64::new(0);
-        let nonce = format!(
-            "{:x}",
-            Sha256::digest(
-                format!(
-                    "{ALGORITHM}:{key:?}:{:?}:{}",
-                    std::time::SystemTime::now(),
-                    SEQUENCE.fetch_add(1, Ordering::Relaxed)
-                )
-                .as_bytes()
+        let nonce = crate::lower_hex(Sha256::digest(
+            format!(
+                "{ALGORITHM}:{key:?}:{:?}:{}",
+                std::time::SystemTime::now(),
+                SEQUENCE.fetch_add(1, Ordering::Relaxed)
             )
-        );
+            .as_bytes(),
+        ));
         let entry = Arc::new(Entry {
             expires: Mutex::new(Instant::now() + TTL),
             session: tokio::sync::Mutex::new(Session {

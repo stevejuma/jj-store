@@ -26,3 +26,5 @@
   {{#include E-GOV-LINE-LIMIT-001/SUMMARY.nav.md}}
 - [E-HMAC-KEYINIT-001](E-HMAC-KEYINIT-001/index.md)
   {{#include E-HMAC-KEYINIT-001/SUMMARY.nav.md}}
+- [E-JJ46-COMPILE-001](E-JJ46-COMPILE-001/index.md)
+  {{#include E-JJ46-COMPILE-001/SUMMARY.nav.md}}

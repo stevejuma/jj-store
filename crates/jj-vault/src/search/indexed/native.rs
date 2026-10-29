@@ -52,7 +52,7 @@ impl NativeHistory {
     fn engine(&self, read: bool) -> Result<Engine, String> {
         let namespace =
             serde_json::to_string(&(&self.binding.vault_id, &self.exclusions)).map_err(error)?;
-        let key = format!("{:x}", Sha256::digest(namespace.as_bytes()));
+        let key = super::super::lower_hex(Sha256::digest(namespace.as_bytes()));
         let root = self.binding.state.join("history-search-v2").join(key);
         if read {
             Engine::read(&root, &namespace)

@@ -3,11 +3,10 @@
 use super::*;
 use futures::{AsyncRead, stream::BoxStream};
 use jj_lib::{
-    index::Index,
     repo_path::{RepoPath, RepoPathBuf},
     store::Store,
 };
-use std::{pin::Pin as IoPin, sync::Mutex, time::SystemTime};
+use std::{pin::Pin as IoPin, sync::Mutex};
 
 pub(super) struct Guard {
     pub source: Arc<Store>,
@@ -307,9 +306,6 @@ impl b::Backend for Scoped {
         _: b::Commit,
         _: Option<&mut b::SigningFn>,
     ) -> b::BackendResult<(b::CommitId, b::Commit)> {
-        unsupported()
-    }
-    fn gc(&self, _: &dyn Index, _: SystemTime) -> b::BackendResult<()> {
         unsupported()
     }
 }
