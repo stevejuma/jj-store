@@ -14,5 +14,6 @@ and operation-pinned read contracts. Production upstream imports remain inside
 the owning JJ/CLI adapters; application services are absent from this private
 external-host fixture.
 
-
-E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and jj-store-embedded-rustfs stay git-only.
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

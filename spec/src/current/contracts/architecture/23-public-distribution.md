@@ -24,8 +24,8 @@ container distribution. Changesets owns the release version and notes through
 the private npm workspace package; npm publication is disabled. The version PR
 synchronizes every Cargo package and internal registry dependency, the embedded
 RustFS workspace and release metadata. Version tags select immutable qualified
-source. Publication never replaces an existing package, tag or digest.
-crates.io receives the `jj-store` command and the crates that command links.
+source. Publication never replaces an existing package, tag or digest. crates.io
+receives the `jj-store` command and the crates that command links.
 `jj-history-service`, `jj-vault`, `tauri-plugin-jj-store`, and
 `jj-store-embedded-rustfs` stay `publish = false` and are consumed from git.
 Dependabot opens one grouped Cargo pull request for the root workspace and the

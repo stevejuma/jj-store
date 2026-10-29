@@ -196,8 +196,8 @@
       "docs/site/technical/architecture.md"
     ],
     "review": {
-      "reason": "Reviewed Cargo distribution metadata only; read-index source, exact-root fingerprints, posting invariants, bounded retention and native authority separation remain unchanged.",
-      "fingerprint": "6269ce044ebe95a7a454a2c6e0a7f8cdb0c4b2c3b07d0368dd0b9ef8db16f784"
+      "reason": "Read-index Cargo.toml now requires sha2 0.11 and redb 4.4. Exact-root fingerprints, posting invariants, bounded retention and native authority are unchanged, and the manual pages do not pin those crate versions.",
+      "fingerprint": "c460ea7795fae19ba3405603fb53abfa1604596b2d9ab30eb130b1383586943d"
     }
   },
   {

@@ -211,5 +211,6 @@ records the source revisions, borrowed patterns, capability differences and
 remaining acceptance work. Future adapters extend the owned provider boundary;
 GitHub-specific stack membership never becomes the common stack model.
 
-
-E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and jj-store-embedded-rustfs stay git-only.
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

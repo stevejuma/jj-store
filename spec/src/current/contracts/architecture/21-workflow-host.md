@@ -118,5 +118,6 @@ endpoint. Admission remains explicit and independent. Legacy version-1 host JSON
 and journals remain readable. Converting settings preserves an existing matching
 home journal and its state directory.
 
-
-E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and jj-store-embedded-rustfs stay git-only.
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

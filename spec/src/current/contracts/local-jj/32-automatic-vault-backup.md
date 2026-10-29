@@ -204,5 +204,6 @@ Publishable `jj-vault` packages MUST include Apache-2.0 `LICENSE.md` and
 scheduling, checkpoint authority or AI turn observation contracts
 (JST-ARCH-005).
 
-
-E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and jj-store-embedded-rustfs stay git-only.
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

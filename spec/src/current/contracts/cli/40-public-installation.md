@@ -15,5 +15,6 @@ full-reference JJ decoder; structural Git admission alone cannot qualify source
 anchors. Local provenance, review, WorkStore and collaboration command families
 retain their existing request identities, receipts and serialized output.
 
-
-E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and jj-store-embedded-rustfs stay git-only.
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

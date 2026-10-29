@@ -347,5 +347,6 @@ CLI version display and Cargo package naming do not change HTTP/RPC schemas.
 Generated contracts and actual fixture captures remain release gates; cached
 build artifacts never substitute another source revision.
 
-
-E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and jj-store-embedded-rustfs stay git-only.
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

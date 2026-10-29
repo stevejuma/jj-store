@@ -395,6 +395,6 @@ remain separate from vault history, object authority and UI. Upstream JJ imports
 and default GitHub commands remain unchanged (JST-ARCH-007).
 
 `jj-history-service` and `tauri-plugin-jj-store` stay `publish = false` and are
-consumed from git. They still ship Apache-2.0 `LICENSE.md` and `NOTICE.md`.
-That packaging does not change runtime admission, transport, or publication
-authority (JST-ARCH-005, E-CLI-GIT-CRATES-001).
+consumed from git. They still ship Apache-2.0 `LICENSE.md` and `NOTICE.md`. That
+packaging does not change runtime admission, transport, or publication authority
+(JST-ARCH-005, E-CLI-GIT-CRATES-001).
