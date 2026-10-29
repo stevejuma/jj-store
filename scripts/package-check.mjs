@@ -15,7 +15,10 @@ pins={
 }
 for rel in w['workspace']['members']+['runtime/embedded-rustfs']:
  base=root/rel;d=tomllib.loads((base/'Cargo.toml').read_text());p=d['package']
- assert p.get('publish') is not False,rel+' remains private'
+ git_only={'jj-history-service','jj-vault','tauri-plugin-jj-store','jj-store-embedded-rustfs'}
+ if p['name'] in git_only: assert p.get('publish') is False,rel+' must stay git-only'
+ else: assert p.get('publish') is not False,rel+' remains private'
+ assert p['name']!='jj-store' or p.get('publish') is not False
  for name in ['README.md','LICENSE.md','NOTICE.md']:assert (base/name).is_file(),rel+' missing '+name
  for section in ['dependencies','dev-dependencies','build-dependencies']:
   for name,v in d.get(section,{}).items():

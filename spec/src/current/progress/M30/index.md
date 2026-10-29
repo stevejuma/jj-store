@@ -2,7 +2,7 @@
 
 | Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                         | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002,E-UI-CI-003,E-LAPIS-AI-001,E-STORY-PARITY-001,E-STORY-DOC-REVIEW-001,E-CI-SUITES-FIX-002,E-CI-SUITES-FIX-003,E-CI-OFFLINE-GOVERNANCE-001,E-PACKAGE-LICENSE-001,E-PACKAGE-LICENSE-002,E-GIT-CRATE-PINS-001,E-MIRA-012-PIN-001,E-PACKAGE-GIT-PINS-001 |
+| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002,E-UI-CI-003,E-LAPIS-AI-001,E-STORY-PARITY-001,E-STORY-DOC-REVIEW-001,E-CI-SUITES-FIX-002,E-CI-SUITES-FIX-003,E-CI-OFFLINE-GOVERNANCE-001,E-PACKAGE-LICENSE-001,E-PACKAGE-LICENSE-002,E-GIT-CRATE-PINS-001,E-MIRA-012-PIN-001,E-PACKAGE-GIT-PINS-001 ,E-CLI-GIT-CRATES-001 |
 
 E-AUTOMATION-GOVERNANCE-001 qualifies the generated release/dependency PR
 exception. Static spec checks, all planned tests and publication gates remain;
@@ -189,6 +189,12 @@ M30 stays In progress.
 
 E-PACKAGE-GIT-PINS-001 admits those exact published git tags in the release
 package check and still rejects every other git dependency. M30 stays In
+progress.
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the `jj-store` command and
+the crates that command links. `jj-history-service`, `jj-vault`,
+`tauri-plugin-jj-store`, and `jj-store-embedded-rustfs` stay git-only.
+Dependabot's open Cargo updates are combined into one change. M30 stays In
 progress.
 <!-- generated-navigation -->
 

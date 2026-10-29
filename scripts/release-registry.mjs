@@ -1,7 +1,7 @@
 import { readFileSync, appendFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { metadata, orderedPackages, version } from "./release-metadata.mjs";
+import { metadata, publishablePackages, version } from "./release-metadata.mjs";
 const selected = version();
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 export async function existingPackage(
@@ -40,7 +40,7 @@ export async function existingPackage(
   return true;
 }
 const missing = [];
-for (const item of orderedPackages(metadata())) {
+for (const item of publishablePackages(metadata())) {
   const archive = `${item.path === "runtime/embedded-rustfs" ? item.path + "/" : ""}target/package/${item.name}-${selected}.crate`;
   if (await existingPackage(item.name, selected, archive)) continue;
   missing.push(item.name);

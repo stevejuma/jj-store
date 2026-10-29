@@ -8,16 +8,14 @@ updates:
       actions:
         patterns: ["*"]
   - package-ecosystem: cargo
-    directory: /
+    directories:
+      - /
+      - /runtime/embedded-rustfs
     schedule:
       interval: weekly
     groups:
       rust:
         patterns: ["*"]
-  - package-ecosystem: cargo
-    directory: /runtime/embedded-rustfs
-    schedule:
-      interval: weekly
   - package-ecosystem: npm
     directory: /
     schedule:

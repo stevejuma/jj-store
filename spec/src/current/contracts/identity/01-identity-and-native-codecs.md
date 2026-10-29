@@ -10,3 +10,6 @@ codec. Full native values, not generic Serde JSON, determine persistence.
 Preserve invisible intermediate commits needed by evolution. The profile is
 verified in M0 before user data is stored; new-repository compatibility is not a
 promise of Git-backend import compatibility.
+
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and jj-store-embedded-rustfs stay git-only.

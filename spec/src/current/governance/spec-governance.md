@@ -379,7 +379,9 @@ E-AUTOMATION-GOVERNANCE-001 scopes the JST-GOV-002/003/004/011 exception to the
 generated `changeset-release/main` PR and Dependabot-authored `dependabot/`
 dependency PRs. Changeset notes and same-change spec/evidence gates are skipped;
 static validation, ordinary PR governance and publication qualification remain.
-Version automation no longer generates spec or evidence edits.
+Version automation no longer generates spec or evidence edits. A maintainer
+rollup may combine open Dependabot Cargo updates into one change; the release
+registry still publishes only crates that are not marked git-only.
 
 E-CI-STANDARD-001 changes JST-ARCH-005 distribution qualification as explicitly
 requested: standard PR gates remain required, while the complete heavy workflow

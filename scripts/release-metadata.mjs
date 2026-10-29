@@ -19,7 +19,7 @@ for rel in w['workspace']['members']+['runtime/embedded-rustfs']:
   if isinstance(value,dict) and value.get('workspace'):
    v=w['workspace']['dependencies'].get(name,{})
    if isinstance(v,dict) and 'path' in v: deps.append(name)
- items.append(dict(name=p['name'],path=rel,version=w['workspace']['package']['version'] if isinstance(p['version'],dict) else p['version'],dependencies=deps))
+ items.append(dict(name=p['name'],path=rel,version=w['workspace']['package']['version'] if isinstance(p['version'],dict) else p['version'],dependencies=deps,publish=p.get('publish', True) is not False))
 print(json.dumps(dict(version=w['workspace']['package']['version'],packages=items)))
 `,
         root,
@@ -42,6 +42,12 @@ export function orderedPackages(data) {
     }
   }
   return result;
+}
+export function publishablePackages(data) {
+  return orderedPackages({
+    ...data,
+    packages: data.packages.filter((pkg) => pkg.publish !== false),
+  });
 }
 export function validateVersion(data, packageVersion) {
   if (

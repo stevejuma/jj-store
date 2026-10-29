@@ -9,6 +9,7 @@ repository.workspace = true
 homepage.workspace = true
 readme = "README.md"
 description = "Host-admitted read-only local JJ history for Tauri applications"
+publish = false
 
 [features]
 default = []
