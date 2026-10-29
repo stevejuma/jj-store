@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed workspace-store loads for jj-lib 0.46. A stock jj 0.45 checkout is opened from its workspace_store directory, and history discovery does not write the type file. The local guides and the recorded JJ 0.45.1 qualification stay the same.",
-      "fingerprint": "1b62cae4c983a69c634527fcec53bc6c90b0ac533ad95a37fa6d78ade58467de"
+      "reason": "Reviewed history discovery after it opens a stock jj 0.45 checkout without writing workspace_store/type. The local guides and the recorded JJ 0.45.1 qualification stay the same.",
+      "fingerprint": "e2ea48ac445a2e918943304bba08837fcdffa6850d7a0fac62d2722de290fda4"
     }
   },
   {

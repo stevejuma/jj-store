@@ -46,9 +46,7 @@ pub(super) async fn load(
         .map(|path| root_identity(&path).map(|identity| (path, identity)))
         .collect::<Result<Vec<_>>>()?;
     let settings = settings()?;
-    let loader =
-        RepoLoader::init_from_file_system(&settings, &info.metadata, &default_backend_factories())
-            .map_err(jj)?;
+    let loader = crate::local_browser::loader(&info.metadata).map_err(jj)?;
     let operation = if let Some(expected) = expected {
         OperationId::try_from_hex(&expected.operation).ok_or(Error::Binding)?
     } else {
