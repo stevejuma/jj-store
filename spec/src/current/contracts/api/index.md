@@ -51,3 +51,4 @@ Read the owning topic and requirement before implementation.
 - [Conversation metadata API](43-conversation-metadata.md)
 - [Intentional Thread workspace API](44-thread-workspaces.md)
 - [Remote application connections](45-remote-connections-and-agents.md)
+- [Planned thread file transport](46-thread-files-and-attachments.md)

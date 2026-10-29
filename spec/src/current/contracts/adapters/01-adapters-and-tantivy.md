@@ -1,5 +1,10 @@
 # Adapters and Tantivy
 
+The adapter, Tantivy and derived-index crate overviews describe their actual
+source/projection/runner and row/index entry points. E-CRATE-READMES-001 leaves
+JST-ADAPT-001/003/008 selection, checkpoint and rebuildability contracts
+unchanged.
+
 Operation/commit metadata may span retained history; file indexing uses explicit
 configured bookmark/workspace scopes. Conflicted scopes are not assigned an
 arbitrary winner. Source visibility is checked against the selected JJ view.

@@ -2,7 +2,7 @@
 use super::*;
 use jj_store_service::agent_execution::catalog::Catalog;
 use std::{process::Stdio, sync::atomic::Ordering};
-use tokio::{io::BufReader, process::Command};
+use tokio::process::Command;
 
 pub(super) type Cache = BTreeMap<String, (tokio::time::Instant, Catalog)>;
 struct Reservation<'a>(&'a std::sync::atomic::AtomicBool);
@@ -90,7 +90,6 @@ impl Supervisor {
         journal::private_directory(&path)?;
         let paths = std::env::join_paths(self.tooling_paths()?).map_err(|_| Error::Unavailable)?;
         let mut command = Command::new(&self.0.resources.executable);
-        command.arg("serve");
         self.launch_environment_preview(&mut command, &setup, secrets)?;
         self.local_launch(&mut command, &setup, false).await?;
         self.register_launch_secrets(&command, &setup)?;
@@ -99,8 +98,6 @@ impl Supervisor {
         command
             .env("PATH", paths)
             .args([
-                "--control-version",
-                "2",
                 "--runner",
                 &runner,
                 "--max-turn-duration",
@@ -121,26 +118,23 @@ impl Supervisor {
             .kill_on_drop(true);
         #[cfg(unix)]
         command.process_group(0);
-        let mut child = runtime::OwnedChild(command.spawn().map_err(|_| Error::Unavailable)?);
+        let mut child = native_runtime::start(&command).await?;
         drop(guard);
         // Installation checks the reserved slot; Stop/shutdown uses independent signals.
         let result = tokio::time::timeout(Duration::from_secs(28), async {
-            let mut input = child.0.stdin.take().ok_or(Error::Unavailable)?;
-            let mut output = BufReader::new(child.0.stdout.take().ok_or(Error::Unavailable)?);
-            let mut bytes = Vec::new();
+            let input = child.commands();
+            native_runtime::send(&input, json!({"version":3,"type":"warm","requestId":"catalog-warm"})).await?;
             let mut facts = None;
             loop {
                 tokio::select! {
                     _ = tokio::time::sleep(Duration::from_millis(100)) => {
                         if self.0.stopping.load(Ordering::Acquire) { return Err(Error::Unavailable); }
                     },
-                    line = runtime::bounded_line(&mut output, &mut bytes) => {
-                        if !line? { return Err(Error::Unavailable); }
-                        let value: Value = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-                        bytes.clear();
-                        if value["version"] != 2 { return Err(Error::Unavailable); }
+                    frame = child.next(Duration::from_secs(30)) => {
+                        let value = frame.map_err(|_| Error::Unavailable)?;
+                        if value["version"] != 3 { return Err(Error::Unavailable); }
                         match value["type"].as_str() {
-                            Some("ready") => runtime::write(&mut input, json!({"version":2,"type":"open","requestId":"catalog-open"})).await?,
+                            Some("warmed") => native_runtime::send(&input, json!({"version":3,"type":"open","requestId":"catalog-open","sessionId":"catalog","cwd":path})).await?,
                             Some("opened") if value["requestId"] == "catalog-open" && facts.is_none() => {
                                 // Keep only advertised configuration, never transcripts or adapter session IDs.
                                 facts = Some(runtime::safe(&sanitizer, json!({
@@ -148,7 +142,7 @@ impl Supervisor {
                                     "models":value["session"]["models"],
                                     "modes":value["session"]["modes"],
                                 }))?);
-                                runtime::write(&mut input, json!({"version":2,"type":"close","requestId":"catalog-close"})).await?;
+                                native_runtime::send(&input, json!({"version":3,"type":"close","requestId":"catalog-close"})).await?;
                             },
                             Some("closed") if value["requestId"] == "close" && value["confirmedStopped"] == true => return facts.ok_or(Error::Unavailable),
                             Some("permission" | "error" | "started" | "activity") => return Err(Error::Unavailable),
@@ -158,7 +152,7 @@ impl Supervisor {
                 }
             }
         }).await.map_err(|_| Error::Unavailable).and_then(|v| v);
-        child.stop().await;
+        let _ = child.shutdown().await;
         let value = Catalog {
             status: None,
             runner: runner.clone(),

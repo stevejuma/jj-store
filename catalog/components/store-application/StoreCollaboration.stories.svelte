@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
@@ -15,9 +16,10 @@
   const { Story } = defineMeta({
     title: "JJ Store/Collaboration",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: true },
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       jjStoreShell: true,
       docs: { story: { inline: false, iframeHeight: 700 } },
@@ -45,9 +47,7 @@
       canvas.getByRole("list", { name: "Agent sessions" }),
     ).toBeVisible();
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Agent response activity"
@@ -56,9 +56,7 @@
     await Promise.all([views.agentsRecorded(), views.settings()]);
     await agentSidebarPlay(context);
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Revision collaboration context"
@@ -99,7 +97,9 @@
     await expect(
       within(details).getByRole("button", { name: "Add change" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("src/lib.rs") }),
+    );
     await expect(
       canvas.getByText("src/lib.rs", {
         selector: ".store-collaboration__detail-title",
@@ -139,9 +139,7 @@
       ) ?? canvasElement.querySelector('[data-ui-part="diff-line-review"]'),
     ).not.toBeNull();
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Operation collaboration context"
@@ -165,14 +163,14 @@
     await expect(
       canvas.getByRole("button", { name: "Close Review discussion column" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("src/lib.rs") }),
+    );
     await expect(
       canvas.getAllByRole("list", { name: "Review comments" })[0],
     ).toBeVisible();
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Agent activity loading"
@@ -208,9 +206,7 @@
     ).toBeCloseTo(10.4, 0);
     await expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Review discussion empty"
@@ -220,9 +216,7 @@
     const canvas = within(canvasElement);
     await expect(await canvas.findByText("No review threads")).toBeVisible();
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Agent activity unavailable"
@@ -252,9 +246,7 @@
     ).toBeGreaterThan(0);
     await expect(parseFloat(getComputedStyle(alert).borderLeftWidth)).toBe(1);
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Review discussion actions"
@@ -358,9 +350,7 @@
       canvas.queryByRole("textbox", { name: "Markdown editor" }),
     ).not.toBeInTheDocument();
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
   name="Review outcome unknown"
@@ -379,13 +369,12 @@
       canvas.queryByRole("button", { name: "Check status" }),
     ).not.toBeInTheDocument();
   }}
->
-  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
-</Story>
+></Story>
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile agent response preserves its directory"
-  args={{ initialPage: "agents", displayMode: "mobile" }}
+  args={{ initialPage: "agents" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     const row = await c.findByRole("button", { name: /Open Codex ended/ });

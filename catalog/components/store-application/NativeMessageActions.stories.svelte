@@ -5,8 +5,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Native message actions",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   const root = (canvas: HTMLElement) =>
     canvas.querySelector<HTMLElement>(

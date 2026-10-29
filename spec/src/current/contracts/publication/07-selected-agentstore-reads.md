@@ -1,5 +1,12 @@
 # Selected AgentStore reads
 
+The shared immutable reader, catalog and projection engines now live in
+jj-store-core under JST-ARCH-006. Native facades retain their existing audited
+root selection and translate errors at the provider boundary. These engines
+cannot publish a manifest, read an unselected native object or replace native
+authorization; JST-PUB-001/004/005 and existing canonical record bytes retain
+their interpretation.
+
 The WAL layer exposes an audited `AgentStoreSnapshot` for one manifest-selected
 root. Its exact transitive object count is available to higher-layer read-budget
 enforcement together with the already verified immutable object map; this count
@@ -46,3 +53,20 @@ maximum matched `occurred_at_millis` only when they are available within the
 4,096-event read bound; missing, mismatched or over-bound evidence reports no
 timing. The derived fields are service presentation data and add no AgentStore
 object, manifest, WAL or receipt encoding.
+
+M32 moves the pure cross-domain target resolver beside the shared immutable
+engines. JST-PUB-001/004/005/007/009 remain unchanged: native authorization,
+manifest/WAL publication, original receipts, closure admission and unknown
+outcomes stay under the native coordinator. Native missing-object errors retain
+their neutral target-unavailable interpretation across the core boundary.
+
+M32's native store factories delegate publication to this coordinator. A bounded
+receipt-domain lookup verifies the selected receipt and its original transaction
+before returning its accepted immutable root and domain version. It never uses
+current roots to reinterpret historical receipts. Domain mismatch fails
+explicitly. Host-clock variants of typed command publication retain the same
+intent and receipt formats; existing entry points keep their clock defaults.
+Prepared Agent delta adapters preserve actor, request/publication IDs, result
+bytes and accepted Thread binding. JST-PUB-001/004/005/007/009 authority,
+unknown-outcome handling, exact immutable selection and WAL recovery remain
+unchanged.

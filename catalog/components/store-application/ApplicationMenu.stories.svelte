@@ -3,24 +3,26 @@
   import { page } from "vitest/browser";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/RuntimeReloadFixture.svelte";
+  import { expectMobileApplicationToolbar } from "./application-menu-story-assertions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Application menu",
     component: Fixture,
     args: { application: true },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile repository settings retain the toolbar above their body"
-  args={{ displayMode: "mobile", initialPage: "settings" }}
+  args={{ initialPage: "settings" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const menu = await canvas.findByRole("button", {
       name: "Application menu",
     });
-    const toolbar = menu.closest('[data-ui-part="toolbar"]')!;
+    const toolbar = menu.closest('[data-ui-part="topbar"]')!;
     const settings = canvasElement.querySelector(
       '[data-ui-part="body"][aria-label="Repository settings"]',
     )!;
@@ -29,9 +31,7 @@
       toolbar.compareDocumentPosition(settings) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    await expect(
-      canvas.queryByRole("navigation", { name: "Application navigation" }),
-    ).toBeNull();
+    await expectMobileApplicationToolbar(canvasElement);
   }}
 />
 
@@ -84,11 +84,7 @@
     });
     try {
       await page.viewport(390, 844);
-      await waitFor(() =>
-        expect(
-          canvas.queryByRole("navigation", { name: "Application navigation" }),
-        ).toBeNull(),
-      );
+      await expectMobileApplicationToolbar(canvasElement);
       await expect(check).toBeVisible();
       await userEvent.click(check);
       await waitFor(() =>
@@ -144,18 +140,17 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile hides top navigation and locates its one menu in the body"
-  args={{ displayMode: "mobile" }}
+  args={{}}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const menu = await canvas.findByRole("button", {
       name: "Application menu",
     });
-    await expect(
-      canvas.queryByRole("navigation", { name: "Application navigation" }),
-    ).toBeNull();
+    await expectMobileApplicationToolbar(canvasElement);
     await expect(menu.closest('[data-ui-part="main"]')).not.toBeNull();
-    await expect(menu.closest('[data-ui-part="toolbar"]')).not.toBeNull();
+    await expect(menu.closest('[data-ui-part="topbar"]')).not.toBeNull();
     await expect(
       canvas.getByRole("button", { name: "Open navigation sidebar" }),
     ).toBeVisible();
@@ -197,11 +192,7 @@
     });
     try {
       await page.viewport(390, 844);
-      await waitFor(() =>
-        expect(
-          canvas.queryByRole("navigation", { name: "Application navigation" }),
-        ).toBeNull(),
-      );
+      await expectMobileApplicationToolbar(canvasElement);
       await expect(body.getAllByRole("dialog")).toHaveLength(1);
       await waitFor(async () => {
         await expect(dialog).toBeVisible();
@@ -211,6 +202,9 @@
         expect(
           canvas.getByRole("button", { name: "Application menu" }),
         ).toHaveFocus(),
+      );
+      await waitFor(() =>
+        expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
       );
       await expect(
         canvasElement.ownerDocument.documentElement.scrollWidth,
@@ -229,9 +223,10 @@
       body = within(document.body);
     try {
       await page.viewport(390, 844);
-      await userEvent.click(
-        await canvas.findByRole("button", { name: "Application menu" }),
-      );
+      const menu = await canvas.findByRole("button", {
+        name: "Application menu",
+      });
+      await userEvent.click(menu);
       await userEvent.click(
         await body.findByRole("menuitem", { name: "Create change" }),
       );
@@ -252,6 +247,9 @@
           }),
         ).toBeInTheDocument(),
       );
+      await expect(
+        canvas.getByRole("button", { name: "Application menu" }),
+      ).toBe(menu);
       await expect(description).toHaveTextContent(
         "Keep this draft across the breakpoint",
       );

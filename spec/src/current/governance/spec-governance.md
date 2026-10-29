@@ -1,15 +1,15 @@
 # Change map
 
-E-FORGE-STACKS-001 adds JST-FORGE-001/007/M31; CLI/HTTP share contracts.
-jj-store-jj owns JJ; forge adapters stay outside storage/model/WAL.
+E-FORGE-STACKS-001 adds JST-FORGE-001/007/M31; CLI/HTTP share contracts. JJ
+stays in jj-store-jj; core/Git/native stores keep their owned boundaries.
 E-FORGE-PANEL-001/E-FORGE-DETAILS-001/E-FORGE-INLINE-001 retain JST-GOV-008.
 E-FORGE-BRANCH-STATUS-001 adds owned status UI with released controls.
 
-E-CUSTOM-INDEX-001 introduces the isolated derived read-index crate under
-JST-ADAPT-008. The dependency allowlist permits service-to-read-index only;
-native/model/WAL authority remains independent. New crate/manifest boundaries
-require owning architecture, adapter and fresh M29 evidence. Index codecs are
-disposable derived formats, with no native codec or publication changes.
+E-CUSTOM-INDEX-001's JST-ADAPT-008 index crate allows service-to-read-index;
+native/model/WAL stay independent. New crates need architecture, adapter and M29
+evidence. Index codecs are disposable; native codecs/publication are unchanged.
+M33/M34 map `jj-history-service` and standalone `vault-backup` test gates;
+native defaults and separate Tauri/Notes/release gates persist.
 
 E-WORKFLOW-GITHUB-001 adds an owned local YAML executor adapter and typed scoped
 reporting. Forgejo Runner v13.2.0 remains an external MIT-licensed executable
@@ -41,11 +41,11 @@ directory; it adds no Community, catalog or source dependency, repository
 registry or server executor. Version-2 managed configuration and legacy recovery
 compatibility are governed by the owning workflow chapters.
 
-E-CREATE-FORMS-001 adopts the existing JST-UI-016 Settings presentation in
-server-repository and project creation/editing. Icon rows and creation-specific
-layout remain application-owned under JST-GOV-002/008, using maintained local
-compositions and released Design Core primitives. Creation requests, authority,
-draft owners and persistence formats are unchanged.
+E-CREATE-FORMS-001/E-REPOSITORY-DELETION-001 retain JST-GOV-002/008. Creation,
+removal and exact-intent deletion recovery compose owned Settings forms, icon
+rows and released Design Core confirmation/toasts. No Community source or
+catalog runtime dependency is added. Native creation, authority and draft
+contracts remain unchanged; deletion uses its separate installation API.
 
 E-REMOTE-ADMIN-001 adds independent operator agent administration and explicit
 identity/repository access onboarding. Agent management uses freshly loaded
@@ -137,7 +137,7 @@ formats.
 | `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
 | `^crates/jj-store-wal/`                                                                                                                                                                                                                        | `publication.md`     |
 | `^crates/jj-store-replication/`                                                                                                                                                                                                                | `replication.md`     |
-| `^crates/jj-workflow/`                                                                                                                                                                                                                         | `architecture.md`    |
+| `^(?:crates/(?:jj-workflow\|jj-store-(?:core\|git\|native\|conversations)\|tauri-plugin-jj-store)/\|packages/jj-(?:conversations\|history)/)`                                                                                                  | `architecture.md`    |
 | `^crates/jj-work/`                                                                                                                                                                                                                             | `projects.md`        |
 | `^crates/jj-(?:agent\|review\|collab)/`                                                                                                                                                                                                        | `collaboration.md`   |
 | `^crates/jj-store-capture/`                                                                                                                                                                                                                    | `collaboration.md`   |
@@ -150,7 +150,7 @@ formats.
 | `^(?:crates/jj-store-cli/\|bins/\|docs/cli/)`                                                                                                                                                                                                  | `cli.md`             |
 | `^(?:crates/jj-store-testkit/\|runtime/\|fixtures/\|schemas/\|proto/\|docs/upstream-lock\|docs/embedded-rustfs-qualification\|docs/codec\|docs/compatibility\|docs/licenses/\|docs/evidence/\|scripts/.*(?:rustfs\|spike\|upstream)\|deploy/)` | `compatibility.md`   |
 | `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.pnpmfile\.cjs$\|\.prettier)`                                                                                                                       | `spec-governance.md` |
-| `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                                                              | `architecture.md`    |
+| `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-(?:lock\|workspace)\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                                               | `architecture.md`    |
 | `^crates/jj-store-(?:cli\|jj\|wal\|service\|rpc)/(?:src\|tests)/.*git[_-](?:bridge\|interop)`                                                                                                                                                  | `git-interop.md`     |
 
 Git interoperability additionally protects

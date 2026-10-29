@@ -3,9 +3,15 @@
   import { expect, userEvent, within } from "storybook/test";
   import StoreWorkLayoutControls from "../../../web/src/lib/ui/store-work/StoreWorkLayoutControls.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-work/StoreWorkLayoutControls.svelte",
+      },
+    },
     title: "JJ Store/Layout selection",
     component: StoreWorkLayoutControls,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function selection(canvasElement: HTMLElement) {
     const c = within(canvasElement),

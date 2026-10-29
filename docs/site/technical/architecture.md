@@ -40,10 +40,20 @@ object-store operations. `jj-store-wal` owns dependency inventories, selected
 state, durable receipts and publication. Only the provider can select a new
 repository state.
 
-`jj-store-jj` adapts the pinned upstream JJ types and local Git storage.
-Upstream JJ imports stay there and in `jj-store-cli`; services consume owned
-interfaces. `jj-store-service` authorizes reads and applies typed commands. HTTP
-and RPC translate those contracts and retain the same semantic policy.
+`jj-store-core` owns the five injectable collaboration-store interfaces, named
+factories and shared projection/record engines. `jj-store-git` implements the
+companion provider; `jj-store-native` adapts the native WAL coordinator. Hosts
+select Agent, Work, Review, Thread and Reaction implementations independently
+and supply authorization, actor identity and clocks. Cross-domain publication
+requires compatible participants in one provider-owned publication group.
+
+`jj-store-jj` adapts the pinned upstream JJ types and qualified code evidence.
+Its focused `companion` feature can be consumed alongside stock `jj-lib` without
+native storage or application services. Upstream JJ imports stay there and in
+`jj-store-cli`; services consume owned interfaces. `jj-store-service` composes
+the providers, authorizes reads and applies typed commands. HTTP and RPC retain
+the same semantic policy. The source SDK guide is `docs/injectable-stores.md`;
+its independent Cargo example demonstrates embedding and one-store substitution.
 
 The Svelte application owns navigation, selections, drafts and request
 lifetimes. It does not infer commitment from a successful upload. Committed
@@ -233,7 +243,7 @@ manifest authority.
 
 The application separately owns a fixed runtime catalog and explicit tooling
 installer. Its private versioned directories and selected receipt live outside
-repository checkouts; neither jj-acp nor repository services install tooling.
+repository checkouts; neither Lapis ACP nor repository services install tooling.
 Discovery and process launch share that selection. Installation never changes
 AgentStore, starts a session or supplies credentials.
 
@@ -352,3 +362,22 @@ secondary query structures. The service supplies admitted immutable facts and
 retains authorization and native hydration. Storage, model and WAL do not depend
 on this engine. Native host sessions share the bounded source/projection owner;
 conversion to another storage source resets it.
+
+## Shared application and catalog presentation
+
+The browser and application-classified Storybook stories mount the same
+production application root. Hosts own transport creation and disposal; catalog
+adapters provide deterministic local controllers. Component and prototype
+stories identify their narrower scope. A repository spec-validator check rejects
+alternate application shells. Fixture controls sit in labelled padded panels
+with dotted borders and are excluded from product captures. The repository's
+`docs/validation.md` describes Docker and native development checks.
+
+In compact browser layouts, the relocated application toolbar stays inside the
+labelled Application navigation landmark, including Settings. This retains
+assistive-technology navigation while the same controls move between placements.
+
+File refresh keeps immutable identities attached to visible rows until their
+replacement is ready. Selecting a file pins its known commit even while
+reference restoration is pending, so an interrupted refresh can still open the
+source.

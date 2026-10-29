@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import type { Snippet } from "svelte";
   let inputActions = $state<Snippet>();
   import { untrack } from "svelte";
@@ -82,19 +83,20 @@
 </script>
 
 <div class="fixture">
-  <div role="group" aria-label="Fixture controls">
+  <FixtureControls floating={false}>
     <Button
       onclick={() => (view = view === "document" ? "classic" : "document")}
       >Switch renderer</Button
-    ><Button
+    >
+    <Button
       onclick={() => {
         mounted = false;
         setTimeout(() => (mounted = true), 0);
       }}>Remount body</Button
-    ><Button onclick={() => (output += " next 🦀")}>Stream chunk</Button><Button
-      onclick={() => (committed = true)}>Commit capture</Button
     >
-  </div>
+    <Button onclick={() => (output += " next 🦀")}>Stream chunk</Button>
+    <Button onclick={() => (committed = true)}>Commit capture</Button>
+  </FixtureControls>
   {#if mounted}<StoreAgentChatBody
       items={conversation.projection.items}
       commentState={conversation.comments}

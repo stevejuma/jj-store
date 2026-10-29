@@ -186,6 +186,25 @@ async fn capsule_codec_rejects_wrong_profiles_tampering_and_missing_extra_record
         .read_evidence(&selected, REPO, evidence.capsule, evidence.blob)
         .unwrap();
     let bytes = capsule.encode().unwrap();
+    let reference = m::portable::CodeEvidenceRefV1 {
+        repository: REPO,
+        operation: op,
+        profile: m::portable::CodeProfileV1::GitSha1Jj045,
+        capsule: evidence.capsule,
+    };
+    assert_eq!(
+        GitEvidenceCapsuleV1::decode_reference(&reference, &bytes).unwrap(),
+        capsule
+    );
+    let mut wrong = reference.clone();
+    wrong.repository = m::RepositoryId::new([99; 16]);
+    assert!(GitEvidenceCapsuleV1::decode_reference(&wrong, &bytes).is_err());
+    let mut wrong = reference.clone();
+    wrong.operation = m::OperationId::new([99; 64]);
+    assert!(GitEvidenceCapsuleV1::decode_reference(&wrong, &bytes).is_err());
+    let mut wrong = reference;
+    wrong.profile = m::portable::CodeProfileV1::NativeV1;
+    assert!(GitEvidenceCapsuleV1::decode_reference(&wrong, &bytes).is_err());
     assert!(GitEvidenceCapsuleV1::decode(m::CodeCapsuleId::new([1; 32]), &bytes).is_err());
     let mut changed = capsule.clone();
     changed.operation.metadata.description.push_str("changed");

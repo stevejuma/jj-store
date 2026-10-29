@@ -5,8 +5,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stored agent review draft",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", a11y: { test: "error" } },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      a11y: { test: "error" },
+    },
   });
   async function review(canvasElement: HTMLElement) {
     const c = within(canvasElement);

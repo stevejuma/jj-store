@@ -13,8 +13,6 @@
   import ChevronLeftIcon from "@lucide/svelte/icons/chevron-left";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 
-  import { observeShellHeaderGeometry } from "./shell-header-geometry.js";
-  import CommunitySidebarToggleIcon from "./CommunitySidebarToggleIcon.svelte";
   import { untrack, type Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
 
@@ -24,6 +22,9 @@
     mobileBreakpoint = 1024,
     desktopMinMainWidth,
     desktopChrome = false,
+    mainElement,
+    mobileTarget,
+    mobileSidebarName = "navigation",
     canNavigateBack = false,
     canNavigateForward = false,
     onNavigateBack,
@@ -39,6 +40,9 @@
     mobileBreakpoint?: number;
     desktopMinMainWidth?: number;
     desktopChrome?: boolean;
+    mainElement?: HTMLElement | null;
+    mobileTarget?: HTMLElement | null;
+    mobileSidebarName?: string;
     canNavigateBack?: boolean;
     canNavigateForward?: boolean;
     onNavigateBack?: () => void;
@@ -49,19 +53,14 @@
   } = $props();
 
   let shellSurface = $state<HTMLDivElement | null>(null);
-  let headerMainStart = $state(0);
-  let headerMainWidth = $state(0);
+  let measuredMain = $state<HTMLElement | null>(null);
   const mobileMode = $derived(controller.mobile.resolvedMode === "mobile");
-
+  const inBody = $derived(mobileMode && !desktopChrome && !!mobileTarget);
   $effect(() => {
-    const surface = shellSurface;
-    if (!surface || mobileMode) return;
-    const main = surface.querySelector<HTMLElement>('[data-ui-part="main"]');
-    if (!main) return;
-    return observeShellHeaderGeometry(surface, main, (start, width) => {
-      headerMainStart = start;
-      headerMainWidth = width;
-    });
+    measuredMain =
+      mainElement ??
+      shellSurface?.querySelector<HTMLElement>('[data-ui-part="main"]') ??
+      null;
   });
 
   $effect(() => {
@@ -102,81 +101,67 @@
   data-display-mode={controller.mobile.resolvedMode}
   data-desktop-chrome={desktopChrome ? "macos" : undefined}
 >
-  {#if !mobileMode || desktopChrome}
-    <nav
-      class="community-app-shell__header"
-      aria-label="Application navigation"
-      data-tauri-drag-region={desktopChrome ? "deep" : undefined}
-      style={`--community-app-shell-header-main-start: ${headerMainStart}px; --community-app-shell-header-main-width: ${headerMainWidth}px`}
-    >
-      {#if !mobileMode || desktopChrome}
-        <div class="community-app-shell__header-start">
-          <span class="community-app-shell__sidebar-action">
-            <Button
-              type="button"
-              variant="default"
-              size="icon-sm"
-              aria-label={controller.left.collapsed
-                ? "Expand left sidebar"
-                : "Collapse left sidebar"}
-              aria-expanded={!controller.left.collapsed}
-              data-ui-part="sidebar-toggle"
-              data-side="left"
-              data-state={controller.left.collapsed ? "collapsed" : "expanded"}
-              title={controller.left.collapsed
-                ? "Expand left sidebar"
-                : "Collapse left sidebar"}
-              onclick={() => controller.left.toggle()}
-            >
-              <CommunitySidebarToggleIcon
-                expanded={!controller.left.collapsed}
-              />
-            </Button>
-          </span>
-
-          <div
-            class="community-app-shell__history"
-            role="group"
-            aria-label="Navigation history"
+  <AppShell.Topbar
+    {controller}
+    mainElement={measuredMain}
+    mobilePlacement={desktopChrome ? "top" : "body"}
+    {mobileTarget}
+    class="community-app-shell__header"
+    role={inBody ? "toolbar" : "navigation"}
+    aria-label={inBody ? "Application controls" : "Application navigation"}
+    data-tauri-drag-region={desktopChrome ? "deep" : undefined}
+  >
+    {#snippet leading()}
+      <div class="community-app-shell__header-start">
+        <AppShell.Sidebar.Toggle
+          shellController={controller}
+          side="left"
+          sidebarName={mobileSidebarName}
+          label={!mobileMode
+            ? controller.left.collapsed
+              ? "Expand left sidebar"
+              : "Collapse left sidebar"
+            : undefined}
+        />
+        <div
+          class="community-app-shell__history"
+          role="group"
+          aria-label="Navigation history"
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Back"
+            title="Back"
+            disabled={!canNavigateBack}
+            onclick={() => onNavigateBack?.()}
           >
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Back"
-              title="Back"
-              disabled={!canNavigateBack}
-              onclick={() => onNavigateBack?.()}
-            >
-              <ChevronLeftIcon aria-hidden="true" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Forward"
-              title="Forward"
-              disabled={!canNavigateForward}
-              onclick={() => onNavigateForward?.()}
-            >
-              <ChevronRightIcon aria-hidden="true" />
-            </Button>
-          </div>
+            <ChevronLeftIcon aria-hidden="true" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Forward"
+            title="Forward"
+            disabled={!canNavigateForward}
+            onclick={() => onNavigateForward?.()}
+          >
+            <ChevronRightIcon aria-hidden="true" />
+          </Button>
         </div>
-
-        {#if headerCenter}
-          <div class="community-app-shell__header-center">
-            {@render headerCenter()}
-          </div>
-        {/if}
-      {/if}
-      {#if headerEnd}
-        <div class="community-app-shell__header-end">
-          {#if !mobileMode || desktopChrome}{@render headerEnd?.()}{/if}
-        </div>
-      {/if}
-    </nav>
-  {/if}
+      </div>
+    {/snippet}
+    {#snippet center()}
+      <div class="community-app-shell__header-center">
+        {@render headerCenter?.()}
+      </div>
+    {/snippet}
+    {#snippet trailing()}
+      <div class="community-app-shell__header-end">{@render headerEnd?.()}</div>
+    {/snippet}
+  </AppShell.Topbar>
 
   <div class="community-app-shell__stage">
     <AppShell.Root
@@ -195,33 +180,26 @@
 <style>
   .community-app-shell {
     box-sizing: border-box;
-    display: grid;
+    --ui-shell-topbar-height: 2.5rem;
+    --ui-shell-topbar-padding: 0;
+    --ui-shell-topbar-background: var(
+      --store-theme-chrome,
+      var(--sidebar, var(--muted))
+    );
+    display: flex;
+    flex-direction: column;
     width: 100%;
     min-width: 0;
     height: 100%;
     min-height: 0;
-    grid-template-rows: 2.5rem minmax(0, 1fr);
     overflow: hidden;
     color: var(--foreground);
     background: var(--muted);
   }
 
-  .community-app-shell[data-display-mode="mobile"] {
-    grid-template-rows: minmax(0, 1fr);
-  }
-
-  /* Native control geometry must stay fixed when application text scales. */
+  /* Native controls retain fixed geometry when application text scales. */
   .community-app-shell[data-desktop-chrome="macos"] {
-    grid-template-rows: 40px minmax(0, 1fr);
-  }
-
-  .community-app-shell__header {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0;
-    padding-inline-end: 0.75rem;
-    background: var(--store-theme-chrome, var(--sidebar, var(--muted)));
+    --ui-shell-topbar-height: 40px;
   }
 
   .community-app-shell__header-start {
@@ -241,16 +219,10 @@
   }
 
   .community-app-shell__header-center {
-    position: absolute;
-    inset-inline-start: var(--community-app-shell-header-main-start);
     display: flex;
-    width: var(--community-app-shell-header-main-width);
     min-width: 0;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    padding-inline: 1.25rem;
-    overflow: hidden;
   }
 
   .community-app-shell__header-end {
@@ -260,9 +232,11 @@
     align-items: center;
     gap: 0.25rem;
     margin-inline-start: auto;
+    padding-inline-end: 0.75rem;
   }
 
   .community-app-shell__stage {
+    flex: 1;
     position: relative;
     display: flex;
     min-width: 0;
@@ -283,22 +257,6 @@
 
   :global(.community-app-shell__surface [data-ui-part="toolbar"]) {
     padding-inline: 1rem;
-    padding-inline-start: 0.5rem;
-    border-block-end: 0;
-  }
-
-  :global(
-    .community-app-shell__surface
-      [data-ui-part="sidebar"][data-side="right"]
-      > [data-ui-part="sidebar-header"]
-  ) {
-    display: flex;
-    min-height: calc(
-      var(--ui-shell-toolbar-height) - var(--ui-shell-main-block-inset) - 1px
-    );
-    align-items: center;
-    gap: 0.5rem;
-    padding-inline: 0.75rem;
     padding-inline-start: 0.5rem;
     border-block-end: 0;
   }

@@ -214,8 +214,10 @@ pub(super) async fn prepare(
             permission: jj_store_service::auth::Permission::Admin,
         },
         Some(executable),
-    ) = (&http_access, std::env::var_os("JJ_STORE_ACP_EXECUTABLE"))
-    {
+    ) = (
+        &http_access,
+        crate::agent_execution::native_runtime::executable(),
+    ) {
         let jj = std::env::var_os("JJ_STORE_AGENT_JJ_EXECUTABLE")
             .map(std::path::PathBuf::from)
             .or_else(|| {
@@ -227,7 +229,7 @@ pub(super) async fn prepare(
             crate::agent_execution::Supervisor::open(crate::agent_execution::Resources {
                 actor: *principal,
                 root: state.join("agent-execution"),
-                executable: executable.into(),
+                executable,
                 jj_executable: jj.clone(),
                 driver: Arc::new(crate::agent_execution::driver::Driver(
                     jj_store_jj::agent_workspaces::Provider { executable: jj },
@@ -373,10 +375,33 @@ pub(super) async fn prepare(
         local_capture
             .map(|m| Arc::new(m) as Arc<dyn jj_store_service::capture_management::CaptureManager>)
     };
+    let repository_deletion = if matches!(
+        http_access,
+        HttpAccess::LocalTrusted {
+            permission: jj_store_service::auth::Permission::Admin,
+            ..
+        }
+    ) && matches!(
+        config.storage,
+        crate::config::Storage::EmbeddedRustfs { .. }
+    ) {
+        host.clone().zip(storage.as_ref()).map(|(host, storage)| {
+            Arc::new(crate::repository_deletion::Manager::new(
+                &state,
+                identity.clone(),
+                storage.store(),
+                host,
+                registry.clone(),
+            )) as Arc<dyn jj_store_service::repository_deletion::RepositoryDeletion>
+        })
+    } else {
+        None
+    };
     let http = HttpApi::with_search(
         host,
         state.join("native-reads"),
         HttpConfig {
+            repository_deletion,
             workflow_hosts: config.workflow_hosts.clone(),
             workflow_admission: Some(workflow_admission.clone()),
             runtime_reload,

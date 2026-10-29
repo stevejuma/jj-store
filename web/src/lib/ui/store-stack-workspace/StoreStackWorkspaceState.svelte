@@ -2,15 +2,25 @@
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import FolderKanban from "@lucide/svelte/icons/folder-kanban";
-  import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
+  import StoreStackWorkspaceSkeleton from "./StoreStackWorkspaceSkeleton.svelte";
+  import type { StoreStacksView } from "../../controller/store-stacks-navigation.js";
+  import type { StoreRoute } from "../../controller/contracts.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   let {
     controller,
     loading = false,
+    view,
+    route,
+    layoutStorage,
+    navigation = false,
     onRetry,
   }: {
     controller?: StackWorkspaceController;
     loading?: boolean;
+    view?: StoreStacksView;
+    route?: StoreRoute;
+    layoutStorage?: Storage;
+    navigation?: boolean;
     onRetry?: () => void | Promise<void>;
   } = $props();
   const pending = $derived(
@@ -28,11 +38,14 @@
 </script>
 
 {#if pending}
-  <CommunityProjectsRepositorySkeleton
-    layout="graph"
-    label="Loading stack workspace"
-    count={5}
-  />
+  {#key view ?? controller?.page ?? "workspace"}
+    <StoreStackWorkspaceSkeleton
+      view={view ?? controller?.page ?? "workspace"}
+      {route}
+      {layoutStorage}
+      {navigation}
+    />
+  {/key}
 {:else}
   <Empty.Root>
     <Empty.Header>

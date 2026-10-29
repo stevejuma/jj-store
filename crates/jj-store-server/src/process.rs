@@ -180,6 +180,26 @@ pub async fn doctor(
     PolicyFile::new(config.operator_policy.clone())?.read()?;
     let storage = AuthoritativeStorage::start(config).await?;
     let result = async {
+        let (installation, catalog) = match &config.access {
+            Access::Authenticated {
+                installation,
+                catalog,
+            }
+            | Access::LocalTrusted {
+                installation,
+                catalog,
+                ..
+            } => (installation, catalog),
+        };
+        let identity = Identity::load(installation)?;
+        let registry = Registry::new(catalog.clone(), identity.clone())?;
+        crate::repository_deletion::Manager::restore(
+            &config.state_dir,
+            &identity,
+            &storage.store(),
+            &registry,
+        )
+        .await?;
         let session = config
             .host(storage.store())?
             .endpoint(repository)

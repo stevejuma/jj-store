@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createProjectsHub } from "../../web/src/lib/controller/production-projects-hub.svelte.js";
   import { initialStoreRoute } from "../../web/src/lib/controller/store-route-history.svelte.js";
   import type {
@@ -111,54 +112,56 @@
   layoutStorage={createMemoryStoryStorage()}
   initiallyCollapsed={false}
 />
-<aside aria-label="Feedback fixture controls">
-  <output aria-label="Read attempts">{reads}</output>
-  <output aria-label="Hidden review result">{hiddenResult}</output>
-  <Button
-    onclick={() => {
-      failing = false;
-      retry();
-    }}>Recover read</Button
-  >
-  <Button
-    onclick={() => {
-      failing = true;
-      retry();
-    }}>Fail read</Button
-  >
-  <Button
-    onclick={() => {
-      paused = true;
-      gate = new Promise<void>((resolve) => (finish = resolve));
-      retry();
-    }}>Pause read</Button
-  >
-  <Button
-    onclick={() => {
-      paused = false;
-      finish?.();
-    }}>Finish read</Button
-  >
-  <Button
-    onclick={async () => {
-      failing = false;
-      await hub.reviews.load(
-        { ...route, workTab: "reviews" },
-        repositories,
-        true,
-      );
-      hiddenResult = "recovered";
-    }}>Recover hidden reviews</Button
-  >
-  <Button
-    onclick={async () => {
-      failing = true;
-      await hub.reviews.load(
-        { ...route, workTab: "reviews" },
-        repositories,
-        true,
-      );
-      hiddenResult = "failed";
-    }}>Fail hidden reviews</Button
-  >
-</aside>
+<FixtureControls
+  ><aside data-story-controls aria-label="Feedback fixture controls">
+    <output aria-label="Read attempts">{reads}</output>
+    <output aria-label="Hidden review result">{hiddenResult}</output>
+    <Button
+      onclick={() => {
+        failing = false;
+        retry();
+      }}>Recover read</Button
+    >
+    <Button
+      onclick={() => {
+        failing = true;
+        retry();
+      }}>Fail read</Button
+    >
+    <Button
+      onclick={() => {
+        paused = true;
+        gate = new Promise<void>((resolve) => (finish = resolve));
+        retry();
+      }}>Pause read</Button
+    >
+    <Button
+      onclick={() => {
+        paused = false;
+        finish?.();
+      }}>Finish read</Button
+    >
+    <Button
+      onclick={async () => {
+        failing = false;
+        await hub.reviews.load(
+          { ...route, workTab: "reviews" },
+          repositories,
+          true,
+        );
+        hiddenResult = "recovered";
+      }}>Recover hidden reviews</Button
+    >
+    <Button
+      onclick={async () => {
+        failing = true;
+        await hub.reviews.load(
+          { ...route, workTab: "reviews" },
+          repositories,
+          true,
+        );
+        hiddenResult = "failed";
+      }}>Fail hidden reviews</Button
+    >
+  </aside></FixtureControls
+>

@@ -81,10 +81,8 @@ async fn metadata_stale_generation_and_unknown_publication_recover_without_new_i
         .metadata_command(f.actor, publish.clone())
         .await
         .unwrap();
-    assert_eq!(
-        terminal(&reopened, f.actor, publish.request_id).await.state,
-        "completed"
-    );
+    let published = terminal(&reopened, f.actor, publish.request_id).await;
+    assert_eq!(published.state, "completed", "{published:?}");
     let value = reopened.metadata(f.actor, query(&id)).await.unwrap();
     assert_eq!(value.title.as_deref(), Some("Concurrent title survives"));
     assert!(value.value.generated.is_some());
@@ -95,6 +93,18 @@ async fn metadata_stale_generation_and_unknown_publication_recover_without_new_i
         .unwrap()
         .open(value.repository)
         .unwrap();
+    // Publication can retain an older committed source without widening the
+    // public active-snapshot read capability.
+    let source = &value.value.generated.as_ref().unwrap().sources[0];
+    assert!(matches!(
+        local
+            .agent_store()
+            .await
+            .unwrap()
+            .object(source.snapshot)
+            .await,
+        Err(jj_store_service::local_repository::LocalError::Stale)
+    ));
     let selection = local.inbox_selection().await.unwrap();
     let thread = local
         .inbox_thread(selection.snapshot.metadata_commit, value.thread.unwrap())

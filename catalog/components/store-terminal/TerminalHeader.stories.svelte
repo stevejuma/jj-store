@@ -5,8 +5,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Desktop terminal header",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-terminal/StoreTerminalWorkspace.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   async function open(canvasElement: HTMLElement) {
     const ui = within(canvasElement);

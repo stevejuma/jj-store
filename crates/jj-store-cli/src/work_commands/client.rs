@@ -109,10 +109,13 @@ impl Client {
                 serde_json::to_value(client.apply_work_command(request).await.map_err(error)?)
                     .map_err(error)
             }
-            Self::Local(repository) => {
-                serde_json::to_value(repository.apply_work_command(request).map_err(error)?)
-                    .map_err(error)
-            }
+            Self::Local(repository) => serde_json::to_value(
+                repository
+                    .apply_work_command_async(request)
+                    .await
+                    .map_err(error)?,
+            )
+            .map_err(error),
         }
     }
     pub(super) async fn work_command_status(
@@ -125,7 +128,7 @@ impl Client {
                     .map_err(error)
             }
             Self::Local(repository) => {
-                serde_json::to_value(repository.work_command_status(request).map_err(error)?)
+                serde_json::to_value(repository.work_store_status(request).await.map_err(error)?)
                     .map_err(error)
             }
         }

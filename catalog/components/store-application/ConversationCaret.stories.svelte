@@ -6,8 +6,14 @@
   import Thread from "../../fixtures/StoreThreadsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Document caret parity",
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "prototype"],
     parameters: {
+      jjStoreStory: {
+        kind: "prototype",
+        requirement: "JST-UI-015",
+        reason:
+          "Explicit structural or conversation design prototype; does not qualify application parity.",
+      },
       layout: "fullscreen",
       jjStoreShell: true,
       a11y: { test: "error" },
@@ -119,10 +125,16 @@
 >
   {#snippet children()}<Prototype />{/snippet}
 </Story>
-<Story asChild name="Agent document matches the prototype carets" play={parity}>
+<Story
+  parameters={{ jjStoreStory: { kind: "application" } }}
+  asChild
+  name="Agent document matches the prototype carets"
+  play={parity}
+>
   {#snippet children()}<Agent />{/snippet}
 </Story>
 <Story
+  parameters={{ jjStoreStory: { kind: "application" } }}
   asChild
   name="Thread document matches the prototype carets"
   play={parity}

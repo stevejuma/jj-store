@@ -6,12 +6,12 @@ directories belonging to the selected workspace. Independent Cargo roots and
 parallel JJ workspaces MUST retain separate output paths. Development and test
 profiles retain `debug = 0` and incremental compilation.
 
-`pnpm dev:disk` reports the registered JJ workspace family's five Cargo roots
-and explicitly registered temporary targets. `--json` returns version-1 local
-report data. Artifact categories include dependencies/executables, incremental
-data, build-script output and desktop bundles/resources. Protected fixture,
-archive and staged-resource paths are reported separately. Allocated directory
-sizes may share APFS blocks and MUST NOT be presented as guaranteed recovery.
+`pnpm dev:disk` reports the registered JJ workspace family's Cargo roots and
+explicitly registered temporary targets. `--json` returns version-1 local report
+data. Artifact categories include dependencies/executables, incremental data,
+build-script output and desktop bundles/resources. Protected fixture, archive
+and staged-resource paths are reported separately. Allocated directory sizes may
+share APFS blocks and MUST NOT be presented as guaranteed recovery.
 
 Managed builds check storage before and after Cargo, including failed builds.
 Defaults are 40 GiB per target, 80 GiB across managed targets and 30 GiB minimum

@@ -1,0 +1,2319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Contract",
+  "description": "Schema-only inventory for independently generated typed clients.",
+  "type": "object",
+  "properties": {
+    "heads_request": { "$ref": "#/$defs/Frame" },
+    "open_request": { "$ref": "#/$defs/Frame2" },
+    "selection_request": { "$ref": "#/$defs/Frame3" },
+    "read_request": { "$ref": "#/$defs/Frame4" },
+    "blame_request": { "$ref": "#/$defs/Frame5" },
+    "heads_response": { "$ref": "#/$defs/Frame6" },
+    "open_response": { "$ref": "#/$defs/Frame7" },
+    "status_response": { "$ref": "#/$defs/Frame8" },
+    "read_response": { "$ref": "#/$defs/Frame9" },
+    "blame_response": { "$ref": "#/$defs/Frame10" },
+    "close_response": { "$ref": "#/$defs/Frame11" }
+  },
+  "required": [
+    "heads_request",
+    "open_request",
+    "selection_request",
+    "read_request",
+    "blame_request",
+    "heads_response",
+    "open_response",
+    "status_response",
+    "read_response",
+    "blame_response",
+    "close_response"
+  ],
+  "$defs": {
+    "Frame": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/Vault" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Vault": {
+      "type": "object",
+      "properties": { "vault": { "type": "string" } },
+      "additionalProperties": false,
+      "required": ["vault"]
+    },
+    "Frame2": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/Open" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Open": {
+      "type": "object",
+      "properties": {
+        "vault": { "type": "string" },
+        "operation": { "$ref": "#/$defs/OperationId" }
+      },
+      "additionalProperties": false,
+      "required": ["vault", "operation"]
+    },
+    "OperationId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$",
+      "minLength": 128,
+      "maxLength": 128
+    },
+    "Frame3": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/Selection" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Selection": {
+      "type": "object",
+      "properties": {
+        "vault": { "type": "string" },
+        "handle": { "$ref": "#/$defs/Handle" }
+      },
+      "additionalProperties": false,
+      "required": ["vault", "handle"]
+    },
+    "Handle": { "type": "string" },
+    "Frame4": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/Read" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Read": {
+      "type": "object",
+      "properties": {
+        "vault": { "type": "string" },
+        "handle": { "$ref": "#/$defs/Handle" },
+        "query": { "$ref": "#/$defs/LocalCodeQuery" }
+      },
+      "additionalProperties": false,
+      "required": ["vault", "handle", "query"]
+    },
+    "LocalCodeQuery": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "graph" },
+            "query": {
+              "type": "array",
+              "prefixItems": [
+                { "$ref": "#/$defs/LocalGraphRequest" },
+                { "$ref": "#/$defs/LocalGraphPageRequest" }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "stack_history" },
+            "query": { "$ref": "#/$defs/LocalStackHistoryRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": { "kind": { "type": "string", "const": "query_info" } },
+          "required": ["kind"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "commit" },
+            "query": {
+              "type": "object",
+              "properties": { "commit": { "$ref": "#/$defs/GitSha1Id" } },
+              "additionalProperties": false,
+              "required": ["commit"]
+            }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "commit_summary" },
+            "query": {
+              "type": "object",
+              "properties": { "commit": { "$ref": "#/$defs/GitSha1Id" } },
+              "additionalProperties": false,
+              "required": ["commit"]
+            }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "code_summary" },
+            "query": {
+              "type": "object",
+              "properties": {
+                "limit": { "type": "integer", "format": "uint", "minimum": 0 }
+              },
+              "additionalProperties": false,
+              "required": ["limit"]
+            }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "file" },
+            "query": {
+              "type": "object",
+              "properties": { "file": { "$ref": "#/$defs/GitSha1Id" } },
+              "additionalProperties": false,
+              "required": ["file"]
+            }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "file_at" },
+            "query": {
+              "type": "object",
+              "properties": {
+                "commit": { "$ref": "#/$defs/GitSha1Id" },
+                "path": { "type": "string" },
+                "file": { "$ref": "#/$defs/GitSha1Id" }
+              },
+              "additionalProperties": false,
+              "required": ["commit", "path", "file"]
+            }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "paths" },
+            "query": { "$ref": "#/$defs/LocalPathsRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "references" },
+            "query": { "$ref": "#/$defs/LocalReferencesRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation" },
+            "query": {
+              "type": "object",
+              "properties": { "operation": { "$ref": "#/$defs/OperationId" } },
+              "additionalProperties": false,
+              "required": ["operation"]
+            }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation_diff" },
+            "query": { "$ref": "#/$defs/LocalOperationDiffRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation_changes" },
+            "query": { "$ref": "#/$defs/LocalOperationChangesRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "diff" },
+            "query": { "$ref": "#/$defs/LocalFileDiffRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "diff_paths" },
+            "query": { "$ref": "#/$defs/LocalDiffSummaryRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "conflicts" },
+            "query": { "$ref": "#/$defs/LocalConflictRequest" }
+          },
+          "required": ["kind", "query"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "LocalGraphRequest": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "revset": { "type": "string" },
+            "workspace": { "type": ["string", "null"] },
+            "user_email": { "type": "string" },
+            "at_time_millis": { "type": "integer", "format": "int64" },
+            "graph": { "type": "string", "const": "log" }
+          },
+          "additionalProperties": false,
+          "required": ["graph", "revset", "user_email", "at_time_millis"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "graph": { "type": "string", "const": "operations" }
+          },
+          "required": ["graph"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string" },
+            "graph": { "type": "string", "const": "operations_filtered" }
+          },
+          "additionalProperties": false,
+          "required": ["graph", "query"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "commit": { "$ref": "#/$defs/GitSha1Id" },
+            "graph": { "type": "string", "const": "evolution" }
+          },
+          "additionalProperties": false,
+          "required": ["graph", "commit"]
+        }
+      ]
+    },
+    "GitSha1Id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "minLength": 40,
+      "maxLength": 40
+    },
+    "LocalGraphPageRequest": {
+      "type": "object",
+      "properties": {
+        "limit": { "type": "integer", "format": "uint", "minimum": 0 },
+        "after": {
+          "anyOf": [
+            { "$ref": "#/$defs/LocalCodeObjectKey" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": ["limit"]
+    },
+    "LocalCodeObjectKey": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "commit" },
+            "id": { "$ref": "#/$defs/GitSha1Id" }
+          },
+          "required": ["kind", "id"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "tree" },
+            "id": { "$ref": "#/$defs/GitSha1Id" }
+          },
+          "required": ["kind", "id"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "file" },
+            "id": { "$ref": "#/$defs/GitSha1Id" }
+          },
+          "required": ["kind", "id"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "symlink" },
+            "id": { "$ref": "#/$defs/GitSha1Id" }
+          },
+          "required": ["kind", "id"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation" },
+            "id": { "$ref": "#/$defs/OperationId" }
+          },
+          "required": ["kind", "id"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "view" },
+            "id": { "$ref": "#/$defs/ViewId" }
+          },
+          "required": ["kind", "id"]
+        }
+      ]
+    },
+    "ViewId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$",
+      "minLength": 128,
+      "maxLength": 128
+    },
+    "LocalStackHistoryRequest": {
+      "type": "object",
+      "properties": {
+        "head": { "$ref": "#/$defs/GitSha1Id" },
+        "base": {
+          "description": "None means bounded target history. Some excludes all base ancestors.",
+          "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+        },
+        "limit": { "type": "integer", "format": "uint", "minimum": 0 },
+        "after": {
+          "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+        }
+      },
+      "additionalProperties": false,
+      "required": ["head", "limit"]
+    },
+    "LocalPathsRequest": {
+      "type": "object",
+      "properties": {
+        "commit": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "recursive": { "type": "boolean" },
+        "include_last_change": { "type": "boolean", "default": true },
+        "last_change_mode": {
+          "$ref": "#/$defs/LastChangeMode",
+          "default": "quick"
+        },
+        "limit": { "type": "integer", "format": "uint", "minimum": 0 },
+        "anchor": { "type": ["string", "null"] },
+        "direction": { "$ref": "#/$defs/Direction" }
+      },
+      "additionalProperties": false,
+      "required": ["commit", "path", "recursive", "limit", "direction"]
+    },
+    "LastChangeMode": { "type": "string", "enum": ["quick", "history"] },
+    "Direction": { "type": "string", "enum": ["forward", "backward"] },
+    "LocalReferencesRequest": {
+      "type": "object",
+      "properties": {
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "query": { "type": "string" },
+        "exact": { "type": ["string", "null"] },
+        "kind": { "$ref": "#/$defs/LocalReferencesKind" },
+        "limit": { "type": "integer", "format": "uint", "minimum": 0 },
+        "anchor": { "type": ["string", "null"] },
+        "direction": { "$ref": "#/$defs/Direction" }
+      },
+      "additionalProperties": false,
+      "required": ["operation", "query", "kind", "limit", "direction"]
+    },
+    "LocalReferencesKind": {
+      "type": "string",
+      "enum": ["bookmarks", "workspaces", "changes", "all"]
+    },
+    "LocalOperationDiffRequest": {
+      "type": "object",
+      "properties": {
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "parent": {
+          "anyOf": [{ "$ref": "#/$defs/OperationId" }, { "type": "null" }]
+        }
+      },
+      "additionalProperties": false,
+      "required": ["operation"]
+    },
+    "LocalOperationChangesRequest": {
+      "type": "object",
+      "properties": {
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "parent": { "$ref": "#/$defs/OperationId" },
+        "limit": { "type": "integer", "format": "uint", "minimum": 0 },
+        "anchor": { "type": ["string", "null"] },
+        "direction": { "$ref": "#/$defs/Direction" }
+      },
+      "additionalProperties": false,
+      "required": ["operation", "parent", "limit", "direction"]
+    },
+    "LocalFileDiffRequest": {
+      "type": "object",
+      "properties": {
+        "from": { "$ref": "#/$defs/GitSha1Id" },
+        "to": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "content": { "type": "boolean" }
+      },
+      "additionalProperties": false,
+      "required": ["from", "to", "path", "content"]
+    },
+    "LocalDiffSummaryRequest": {
+      "type": "object",
+      "properties": {
+        "from": { "$ref": "#/$defs/GitSha1Id" },
+        "to": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "limit": { "type": "integer", "format": "uint", "minimum": 0 },
+        "anchor": { "type": ["string", "null"] },
+        "direction": { "$ref": "#/$defs/Direction" }
+      },
+      "additionalProperties": false,
+      "required": ["from", "to", "path", "limit", "direction"]
+    },
+    "LocalConflictRequest": {
+      "type": "object",
+      "properties": {
+        "commit": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": false,
+      "required": ["commit", "path"]
+    },
+    "Frame5": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/Blame" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Blame": {
+      "type": "object",
+      "properties": {
+        "vault": { "type": "string" },
+        "handle": { "$ref": "#/$defs/Handle" },
+        "query": { "$ref": "#/$defs/BlameQuery" }
+      },
+      "additionalProperties": false,
+      "required": ["vault", "handle", "query"]
+    },
+    "BlameQuery": {
+      "type": "object",
+      "properties": {
+        "commit": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "continuation": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false,
+      "required": ["commit", "path"]
+    },
+    "Frame6": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/LocalCodeHeads" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "LocalCodeHeads": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "profile": { "type": "string" },
+        "repository": { "$ref": "#/$defs/RepositoryId" },
+        "generation": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "heads": { "type": "array", "items": { "$ref": "#/$defs/OperationId" } }
+      },
+      "required": ["version", "profile", "repository", "generation", "heads"]
+    },
+    "RepositoryId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "Frame7": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/Handle" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Frame8": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/Status" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "Status": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": { "state": { "type": "string", "const": "preparing" } },
+          "required": ["state"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "state": { "type": "string", "const": "ready" },
+            "data": { "$ref": "#/$defs/LocalCodeSnapshot" }
+          },
+          "required": ["state", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "state": { "type": "string", "const": "failed" },
+            "data": { "$ref": "#/$defs/GraphError" }
+          },
+          "required": ["state", "data"]
+        }
+      ]
+    },
+    "LocalCodeSnapshot": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "profile": { "type": "string" },
+        "repository": { "$ref": "#/$defs/RepositoryId" },
+        "generation": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "operation": { "$ref": "#/$defs/OperationId" }
+      },
+      "required": [
+        "version",
+        "profile",
+        "repository",
+        "generation",
+        "operation"
+      ]
+    },
+    "GraphError": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "canceled",
+            "blame_reset",
+            "denied",
+            "not_committed",
+            "epoch_changed",
+            "limit",
+            "busy",
+            "index_budget",
+            "index_rebuild_required",
+            "invalid",
+            "unavailable",
+            "corrupt",
+            "incomplete",
+            "not_found",
+            "not_directory",
+            "range"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": { "invalid_query": { "$ref": "#/$defs/Diagnostic" } },
+          "required": ["invalid_query"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Diagnostic": {
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string" },
+        "message": { "type": "string" }
+      },
+      "required": ["kind", "message"]
+    },
+    "Frame9": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/LocalCodeResponse" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "LocalCodeResponse": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "graph" },
+            "data": { "$ref": "#/$defs/LocalGraphPage" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "stack_history" },
+            "data": { "$ref": "#/$defs/LocalStackHistoryPage" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "query_info" },
+            "data": { "$ref": "#/$defs/QueryInfo" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "commit" },
+            "data": { "$ref": "#/$defs/LocalCommitDetail" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "commit_summary" },
+            "data": { "$ref": "#/$defs/LocalCodeObject" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "code_summary" },
+            "data": { "$ref": "#/$defs/LocalCodeSummary" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "file" },
+            "data": { "$ref": "#/$defs/LocalFileContent" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "file_at" },
+            "data": { "$ref": "#/$defs/LocalFileContent" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "paths" },
+            "data": { "$ref": "#/$defs/LocalPathsPage" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "references" },
+            "data": { "$ref": "#/$defs/LocalReferencesPage" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation" },
+            "data": { "$ref": "#/$defs/LocalOperationDetail" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation_diff" },
+            "data": { "$ref": "#/$defs/LocalOperationDiffResponse" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation_changes" },
+            "data": { "$ref": "#/$defs/LocalOperationChangesPage" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "diff" },
+            "data": { "$ref": "#/$defs/LocalFileDiffResponse" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "diff_paths" },
+            "data": { "$ref": "#/$defs/LocalDiffSummaryPage" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "conflicts" },
+            "data": { "$ref": "#/$defs/LocalConflictResponse" }
+          },
+          "required": ["kind", "data"]
+        }
+      ]
+    },
+    "LocalGraphPage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "data": { "$ref": "#/$defs/LocalGraphNodes" },
+        "next": {
+          "anyOf": [
+            { "$ref": "#/$defs/LocalCodeObjectKey" },
+            { "type": "null" }
+          ]
+        },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "operation", "data", "stats"]
+    },
+    "LocalGraphNodes": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "graph": { "type": "string", "const": "log" },
+            "nodes": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LocalGraphCommitNode" }
+            }
+          },
+          "required": ["graph", "nodes"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "graph": { "type": "string", "const": "operations" },
+            "nodes": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LocalGraphOperationNode" }
+            }
+          },
+          "required": ["graph", "nodes"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "graph": { "type": "string", "const": "evolution" },
+            "nodes": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LocalGraphEvolutionNode" }
+            }
+          },
+          "required": ["graph", "nodes"]
+        }
+      ]
+    },
+    "LocalGraphCommitNode": {
+      "type": "object",
+      "properties": {
+        "commit": { "$ref": "#/$defs/LocalGraphCommit" },
+        "edges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalGraphEdge" }
+        }
+      },
+      "required": ["commit", "edges"]
+    },
+    "LocalGraphCommit": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/GitSha1Id" },
+        "change_id": { "$ref": "#/$defs/ChangeId" },
+        "parents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "description": { "type": "string" },
+        "author": { "$ref": "#/$defs/LocalGraphSignature" },
+        "committer": { "$ref": "#/$defs/LocalGraphSignature" },
+        "tree_terms": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "conflicted": { "type": "boolean" },
+        "bookmarks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalGraphBookmark" }
+        },
+        "workspaces": { "type": "array", "items": { "type": "string" } },
+        "visible": { "type": "boolean" },
+        "divergent": { "type": "boolean" }
+      },
+      "required": [
+        "id",
+        "change_id",
+        "parents",
+        "description",
+        "author",
+        "committer",
+        "tree_terms",
+        "conflicted",
+        "bookmarks",
+        "workspaces",
+        "visible",
+        "divergent"
+      ]
+    },
+    "ChangeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "LocalGraphSignature": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "timestamp": { "$ref": "#/$defs/LocalGraphTimestamp" }
+      },
+      "required": ["name", "email", "timestamp"]
+    },
+    "LocalGraphTimestamp": {
+      "type": "object",
+      "properties": {
+        "millis": { "type": "integer", "format": "int64" },
+        "offset_minutes": { "type": "integer", "format": "int32" }
+      },
+      "required": ["millis", "offset_minutes"]
+    },
+    "LocalGraphBookmark": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "remote": { "type": ["string", "null"] },
+        "added": { "type": "boolean" },
+        "removed": { "type": "boolean" },
+        "conflicted": { "type": "boolean" }
+      },
+      "required": ["name", "added", "removed", "conflicted"]
+    },
+    "LocalGraphEdge": {
+      "type": "object",
+      "properties": {
+        "target": { "$ref": "#/$defs/GitSha1Id" },
+        "kind": { "$ref": "#/$defs/LocalGraphEdgeKind" }
+      },
+      "required": ["target", "kind"]
+    },
+    "LocalGraphEdgeKind": {
+      "type": "string",
+      "enum": ["direct", "indirect", "missing"]
+    },
+    "LocalGraphOperationNode": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/OperationId" },
+        "parents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OperationId" }
+        },
+        "view": { "$ref": "#/$defs/ViewId" },
+        "description": { "type": "string" },
+        "user": { "type": "string" },
+        "host": { "type": "string" },
+        "start": { "$ref": "#/$defs/LocalGraphTimestamp" },
+        "end": { "$ref": "#/$defs/LocalGraphTimestamp" },
+        "is_snapshot": { "type": "boolean" },
+        "workspace": { "type": ["string", "null"] },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "predecessor_data_present": { "type": "boolean" }
+      },
+      "required": [
+        "id",
+        "parents",
+        "view",
+        "description",
+        "user",
+        "host",
+        "start",
+        "end",
+        "is_snapshot",
+        "attributes",
+        "predecessor_data_present"
+      ]
+    },
+    "LocalGraphEvolutionNode": {
+      "type": "object",
+      "properties": {
+        "commit": { "$ref": "#/$defs/LocalGraphCommit" },
+        "operation": {
+          "anyOf": [{ "$ref": "#/$defs/OperationId" }, { "type": "null" }]
+        },
+        "predecessors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "predecessors_known": { "type": "boolean" },
+        "legacy_predecessors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        }
+      },
+      "required": [
+        "commit",
+        "predecessors",
+        "predecessors_known",
+        "legacy_predecessors"
+      ]
+    },
+    "LocalGraphStats": {
+      "type": "object",
+      "properties": {
+        "metadata_nodes": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "predicate_file_bytes": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "predicate_lines": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "object_reads": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "object_bytes": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "work": { "type": "integer", "format": "uint64", "minimum": 0 }
+      },
+      "required": [
+        "metadata_nodes",
+        "predicate_file_bytes",
+        "predicate_lines",
+        "object_reads",
+        "object_bytes",
+        "work"
+      ]
+    },
+    "LocalStackHistoryPage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "head": { "$ref": "#/$defs/GitSha1Id" },
+        "base": {
+          "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+        },
+        "commits": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalGraphCommitNode" }
+        },
+        "next": {
+          "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+        },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "operation", "head", "commits", "stats"]
+    },
+    "QueryInfo": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "jj_version": { "type": "string" },
+        "max_query_bytes": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "callables": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Callable" }
+        },
+        "aliases": { "type": "array", "items": { "type": "string" } },
+        "operators": { "type": "array", "items": { "type": "string" } },
+        "operation_fields": { "type": "array", "items": { "type": "string" } },
+        "unsupported": { "type": "array", "items": { "type": "string" } },
+        "default_user_email": {
+          "description": "Device identity hint, available only in LocalTrusted query metadata.",
+          "type": ["string", "null"]
+        }
+      },
+      "required": [
+        "version",
+        "jj_version",
+        "max_query_bytes",
+        "callables",
+        "aliases",
+        "operators",
+        "operation_fields",
+        "unsupported"
+      ]
+    },
+    "Callable": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "signature": { "type": "string" },
+        "insert_text": { "type": "string" },
+        "description": { "type": "string" },
+        "kind": { "type": "string" }
+      },
+      "required": ["name", "signature", "insert_text", "description", "kind"]
+    },
+    "LocalCommitDetail": {
+      "type": "object",
+      "properties": {
+        "object": { "$ref": "#/$defs/LocalCodeObject" },
+        "commit": { "$ref": "#/$defs/LocalGraphCommit" }
+      },
+      "required": ["object", "commit"]
+    },
+    "LocalCodeObject": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "profile": { "type": "string" },
+        "key": { "$ref": "#/$defs/LocalCodeObjectKey" },
+        "virtual_object": { "type": "boolean" },
+        "data": { "$ref": "#/$defs/LocalCodeObjectData" },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": [
+        "version",
+        "profile",
+        "key",
+        "virtual_object",
+        "data",
+        "stats"
+      ]
+    },
+    "LocalCodeObjectData": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "commit" },
+            "data": { "$ref": "#/$defs/GitSourceCommitV1" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "operation" },
+            "data": { "$ref": "#/$defs/GitSourceOperationV1" }
+          },
+          "required": ["kind", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "view" },
+            "data": { "$ref": "#/$defs/GitSourceViewV1" }
+          },
+          "required": ["kind", "data"]
+        }
+      ]
+    },
+    "GitSourceCommitV1": {
+      "type": "object",
+      "properties": {
+        "parents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "predecessors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "root_tree": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "conflict_labels": { "type": "array", "items": { "type": "string" } },
+        "change_id": { "$ref": "#/$defs/ChangeId" },
+        "description": { "type": "string" },
+        "author": { "$ref": "#/$defs/NativeSignature" },
+        "committer": { "$ref": "#/$defs/NativeSignature" },
+        "secure_sig": {
+          "anyOf": [{ "$ref": "#/$defs/NativeSecureSig" }, { "type": "null" }]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "parents",
+        "predecessors",
+        "root_tree",
+        "conflict_labels",
+        "change_id",
+        "description",
+        "author",
+        "committer"
+      ]
+    },
+    "NativeSignature": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "timestamp": { "$ref": "#/$defs/NativeTimestamp" }
+      },
+      "additionalProperties": false,
+      "required": ["name", "email", "timestamp"]
+    },
+    "NativeTimestamp": {
+      "type": "object",
+      "properties": {
+        "millis": { "type": "integer", "format": "int64" },
+        "offset_minutes": { "type": "integer", "format": "int32" }
+      },
+      "additionalProperties": false,
+      "required": ["millis", "offset_minutes"]
+    },
+    "NativeSecureSig": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "minimum": 0,
+            "maximum": 255
+          }
+        },
+        "sig": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "minimum": 0,
+            "maximum": 255
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": ["data", "sig"]
+    },
+    "GitSourceOperationV1": {
+      "type": "object",
+      "properties": {
+        "view_id": { "$ref": "#/$defs/ViewId" },
+        "parents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OperationId" }
+        },
+        "metadata": { "$ref": "#/$defs/NativeMetadata" },
+        "commit_predecessors": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9a-f]{40}$": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/GitSha1Id" }
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": ["view_id", "parents", "metadata"]
+    },
+    "NativeMetadata": {
+      "type": "object",
+      "properties": {
+        "start": { "$ref": "#/$defs/NativeTimestamp" },
+        "end": { "$ref": "#/$defs/NativeTimestamp" },
+        "description": { "type": "string" },
+        "hostname": { "type": "string" },
+        "username": { "type": "string" },
+        "is_snapshot": { "type": "boolean" },
+        "workspace_name": { "type": ["string", "null"] },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end",
+        "description",
+        "hostname",
+        "username",
+        "is_snapshot",
+        "attributes"
+      ]
+    },
+    "GitSourceViewV1": {
+      "type": "object",
+      "properties": {
+        "head_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "local_bookmarks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+            }
+          }
+        },
+        "local_tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+            }
+          }
+        },
+        "remote_views": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/GitSourceRemoteViewV1" }
+        },
+        "git_refs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+            }
+          }
+        },
+        "git_heads": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+            }
+          }
+        },
+        "wc_commit_ids": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/GitSha1Id" }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "head_ids",
+        "local_bookmarks",
+        "local_tags",
+        "remote_views",
+        "git_refs",
+        "git_heads",
+        "wc_commit_ids"
+      ]
+    },
+    "GitSourceRemoteViewV1": {
+      "type": "object",
+      "properties": {
+        "bookmarks": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/GitSourceRemoteRefV1" }
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/GitSourceRemoteRefV1" }
+        }
+      },
+      "additionalProperties": false,
+      "required": ["bookmarks", "tags"]
+    },
+    "GitSourceRemoteRefV1": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "array",
+          "items": {
+            "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+          }
+        },
+        "state": { "$ref": "#/$defs/NativeRemoteState" }
+      },
+      "additionalProperties": false,
+      "required": ["target", "state"]
+    },
+    "NativeRemoteState": { "type": "string", "enum": ["new", "tracked"] },
+    "LocalCodeSummary": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "commits": { "type": "integer", "format": "uint", "minimum": 0 },
+        "commits_partial": { "type": "boolean" },
+        "latest": {
+          "anyOf": [
+            { "$ref": "#/$defs/LocalCodeSummaryLatest" },
+            { "type": "null" }
+          ]
+        },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "commits", "commits_partial", "stats"]
+    },
+    "LocalCodeSummaryLatest": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/GitSha1Id" },
+        "description": { "type": "string" },
+        "author": { "$ref": "#/$defs/NativeSignature" },
+        "committer": { "$ref": "#/$defs/NativeSignature" }
+      },
+      "required": ["id", "description", "author", "committer"]
+    },
+    "LocalFileContent": {
+      "type": "object",
+      "properties": {
+        "bytes": { "type": "integer", "format": "uint", "minimum": 0 },
+        "text": { "type": ["string", "null"] },
+        "binary": { "type": "boolean" },
+        "too_large": { "type": "boolean" }
+      },
+      "required": ["bytes", "binary", "too_large"]
+    },
+    "LocalPathsPage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "commit": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "recursive": { "type": "boolean" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalPathsEntry" }
+        },
+        "previous": { "type": ["string", "null"] },
+        "next": { "type": ["string", "null"] },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "commit", "path", "recursive", "entries", "stats"]
+    },
+    "LocalPathsEntry": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "terms": {
+          "type": "array",
+          "items": {
+            "anyOf": [{ "$ref": "#/$defs/LocalTreeValue" }, { "type": "null" }]
+          }
+        },
+        "conflicted": { "type": "boolean" },
+        "last_change": { "$ref": "#/$defs/LocalPathsLastChange" }
+      },
+      "required": ["path", "terms", "conflicted", "last_change"]
+    },
+    "LocalTreeValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/$defs/GitSha1Id" },
+            "executable": { "type": "boolean" },
+            "copy": { "$ref": "#/$defs/LocalCopyReference" },
+            "type": { "type": "string", "const": "file" }
+          },
+          "required": ["type", "id", "executable", "copy"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/$defs/GitSha1Id" },
+            "type": { "type": "string", "const": "symlink" }
+          },
+          "required": ["type", "id"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/$defs/GitSha1Id" },
+            "type": { "type": "string", "const": "tree" }
+          },
+          "required": ["type", "id"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "uint8",
+                "minimum": 0,
+                "maximum": 255
+              }
+            },
+            "type": { "type": "string", "const": "submodule" }
+          },
+          "required": ["type", "id"]
+        }
+      ]
+    },
+    "LocalCopyReference": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "placeholder" }
+          },
+          "required": ["kind"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "type": "string", "const": "object" },
+            "id": { "type": "string" }
+          },
+          "required": ["kind", "id"]
+        }
+      ]
+    },
+    "LocalPathsLastChange": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "attribution": { "$ref": "#/$defs/LocalPathsAttribution" },
+            "commit": { "$ref": "#/$defs/GitSha1Id" },
+            "change": { "$ref": "#/$defs/ChangeId" },
+            "description": { "type": "string" },
+            "author": { "$ref": "#/$defs/NativeSignature" },
+            "committer": { "$ref": "#/$defs/NativeSignature" },
+            "status": { "type": "string", "const": "available" }
+          },
+          "required": [
+            "status",
+            "attribution",
+            "commit",
+            "change",
+            "description",
+            "author",
+            "committer"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "reason": { "$ref": "#/$defs/LocalPathsLastChangeUnavailable" },
+            "status": { "type": "string", "const": "unavailable" }
+          },
+          "required": ["status", "reason"]
+        }
+      ]
+    },
+    "LocalPathsAttribution": {
+      "description": "Provenance of the displayed commit, not a claim about all-branch history.",
+      "type": "string",
+      "enum": ["path_change", "snapshot"]
+    },
+    "LocalPathsLastChangeUnavailable": {
+      "type": "string",
+      "enum": ["merge", "budget", "not_requested", "pending", "not_found"]
+    },
+    "LocalReferencesPage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "references": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalReferencesReference" }
+        },
+        "previous": { "type": ["string", "null"] },
+        "next": { "type": ["string", "null"] },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "operation", "references", "stats"]
+    },
+    "LocalReferencesReference": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "targets": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LocalReferencesTarget" }
+            },
+            "kind": { "type": "string", "const": "workspace" }
+          },
+          "required": ["kind", "name", "targets"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "terms": {
+              "type": "array",
+              "items": {
+                "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+              }
+            },
+            "conflicted": { "type": "boolean" },
+            "workspaces": { "type": "array", "items": { "type": "string" } },
+            "targets": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LocalReferencesTarget" }
+            },
+            "kind": { "type": "string", "const": "bookmark" }
+          },
+          "required": [
+            "kind",
+            "name",
+            "terms",
+            "conflicted",
+            "workspaces",
+            "targets"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "change": { "$ref": "#/$defs/ChangeId" },
+            "divergent": { "type": "boolean" },
+            "targets": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LocalReferencesTarget" }
+            },
+            "kind": { "type": "string", "const": "change" }
+          },
+          "required": ["kind", "change", "divergent", "targets"]
+        }
+      ]
+    },
+    "LocalReferencesTarget": {
+      "type": "object",
+      "properties": {
+        "commit": { "$ref": "#/$defs/GitSha1Id" },
+        "change": { "$ref": "#/$defs/ChangeId" },
+        "parents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/GitSha1Id" }
+        },
+        "description": { "type": "string" },
+        "author": { "$ref": "#/$defs/NativeSignature" },
+        "committer": { "$ref": "#/$defs/NativeSignature" },
+        "conflicted": { "type": "boolean" },
+        "workspaces": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": [
+        "commit",
+        "change",
+        "parents",
+        "description",
+        "author",
+        "committer",
+        "conflicted",
+        "workspaces"
+      ]
+    },
+    "LocalOperationDetail": {
+      "type": "object",
+      "properties": {
+        "operation": { "$ref": "#/$defs/LocalCodeObject" },
+        "view": { "$ref": "#/$defs/LocalCodeObject" }
+      },
+      "required": ["operation", "view"]
+    },
+    "LocalOperationDiffResponse": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "data": { "$ref": "#/$defs/LocalOperationDiffData" },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "data", "stats"]
+    },
+    "LocalOperationDiffData": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "operation": { "$ref": "#/$defs/OperationId" },
+            "view": { "$ref": "#/$defs/ViewId" },
+            "status": { "type": "string", "const": "root" }
+          },
+          "required": ["status", "operation", "view"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "operation": { "$ref": "#/$defs/OperationId" },
+            "parents": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/OperationId" }
+            },
+            "status": { "type": "string", "const": "select_parent" }
+          },
+          "required": ["status", "operation", "parents"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "const": "difference" }
+          },
+          "$ref": "#/$defs/LocalOperationDiffDifference",
+          "required": ["status"]
+        }
+      ]
+    },
+    "LocalOperationDiffViewDelta": {
+      "type": "object",
+      "properties": {
+        "heads": { "$ref": "#/$defs/LocalSetDelta_GitSha1Id" },
+        "local_bookmarks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LocalNamedChange_Array_of_Nullable_GitSha1Id"
+          }
+        },
+        "local_tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LocalNamedChange_Array_of_Nullable_GitSha1Id"
+          }
+        },
+        "remote_views": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalNamedChange_GitSourceRemoteViewV1" }
+        },
+        "git_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LocalNamedChange_Array_of_Nullable_GitSha1Id"
+          }
+        },
+        "git_heads": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LocalNamedChange_Array_of_Nullable_GitSha1Id"
+          }
+        },
+        "workspaces": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalNamedChange_GitSha1Id" }
+        }
+      },
+      "required": [
+        "heads",
+        "local_bookmarks",
+        "local_tags",
+        "remote_views",
+        "git_refs",
+        "git_heads",
+        "workspaces"
+      ]
+    },
+    "LocalSetDelta_GitSha1Id": {
+      "type": "object",
+      "properties": {
+        "added": { "type": "array", "items": { "$ref": "#/$defs/GitSha1Id" } },
+        "removed": { "type": "array", "items": { "$ref": "#/$defs/GitSha1Id" } }
+      },
+      "required": ["added", "removed"]
+    },
+    "LocalNamedChange_Array_of_Nullable_GitSha1Id": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "before": {
+          "type": ["array", "null"],
+          "items": {
+            "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+          }
+        },
+        "after": {
+          "type": ["array", "null"],
+          "items": {
+            "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "LocalNamedChange_GitSourceRemoteViewV1": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "before": {
+          "anyOf": [
+            { "$ref": "#/$defs/GitSourceRemoteViewV1" },
+            { "type": "null" }
+          ]
+        },
+        "after": {
+          "anyOf": [
+            { "$ref": "#/$defs/GitSourceRemoteViewV1" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": ["name"]
+    },
+    "LocalNamedChange_GitSha1Id": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "before": {
+          "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+        },
+        "after": {
+          "anyOf": [{ "$ref": "#/$defs/GitSha1Id" }, { "type": "null" }]
+        }
+      },
+      "required": ["name"]
+    },
+    "LocalOperationDiffDifference": {
+      "type": "object",
+      "properties": {
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "parent": { "$ref": "#/$defs/OperationId" },
+        "before_view": { "$ref": "#/$defs/ViewId" },
+        "after_view": { "$ref": "#/$defs/ViewId" },
+        "view": { "$ref": "#/$defs/LocalOperationDiffViewDelta" },
+        "visible_commits": { "$ref": "#/$defs/LocalSetDelta_GitSha1Id" },
+        "commit_predecessors": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9a-f]{40}$": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/GitSha1Id" }
+            }
+          }
+        }
+      },
+      "required": [
+        "operation",
+        "parent",
+        "before_view",
+        "after_view",
+        "view",
+        "visible_commits"
+      ]
+    },
+    "LocalOperationChangesPage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "parent": { "$ref": "#/$defs/OperationId" },
+        "groups": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalOperationChangesGroup" }
+        },
+        "previous": { "type": ["string", "null"] },
+        "next": { "type": ["string", "null"] },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "operation", "parent", "groups", "stats"]
+    },
+    "LocalOperationChangesGroup": {
+      "type": "object",
+      "properties": {
+        "change": { "$ref": "#/$defs/ChangeId" },
+        "before": { "type": "array", "items": { "$ref": "#/$defs/GitSha1Id" } },
+        "after": { "type": "array", "items": { "$ref": "#/$defs/GitSha1Id" } },
+        "comparison": { "$ref": "#/$defs/LocalOperationChangesComparison" }
+      },
+      "required": ["change", "before", "after", "comparison"]
+    },
+    "LocalOperationChangesComparison": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "from": { "$ref": "#/$defs/GitSha1Id" },
+            "to": { "$ref": "#/$defs/GitSha1Id" },
+            "status": { "type": "string", "const": "exact" }
+          },
+          "required": ["status", "from", "to"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "before": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/GitSha1Id" }
+            },
+            "after": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/GitSha1Id" }
+            },
+            "status": { "type": "string", "const": "select" }
+          },
+          "required": ["status", "before", "after"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "const": "unavailable" }
+          },
+          "required": ["status"]
+        }
+      ]
+    },
+    "LocalFileDiffResponse": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "from": { "$ref": "#/$defs/GitSha1Id" },
+        "to": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "changes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalFileDiffChange" }
+        },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "from", "to", "path", "changes", "stats"]
+    },
+    "LocalFileDiffChange": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "before": {
+          "description": "Local values at the target; source annotations never replace these.",
+          "type": "array",
+          "items": {
+            "anyOf": [{ "$ref": "#/$defs/LocalTreeValue" }, { "type": "null" }]
+          }
+        },
+        "after": {
+          "type": "array",
+          "items": {
+            "anyOf": [{ "$ref": "#/$defs/LocalTreeValue" }, { "type": "null" }]
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalFileDiffSource" }
+        },
+        "content": { "$ref": "#/$defs/LocalFileDiffContent" }
+      },
+      "required": ["path", "before", "after", "sources", "content"]
+    },
+    "LocalFileDiffSource": {
+      "type": "object",
+      "properties": {
+        "kind": { "$ref": "#/$defs/LocalFileDiffSourceKind" },
+        "path": { "type": "string" },
+        "terms": {
+          "type": "array",
+          "items": {
+            "anyOf": [{ "$ref": "#/$defs/LocalTreeValue" }, { "type": "null" }]
+          }
+        }
+      },
+      "required": ["kind", "path", "terms"]
+    },
+    "LocalFileDiffSourceKind": {
+      "type": "string",
+      "enum": ["normal", "copy", "rename"]
+    },
+    "LocalFileDiffContent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "hunks": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LocalFileDiffHunk" }
+            },
+            "status": { "type": "string", "const": "text" }
+          },
+          "required": ["status", "hunks"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "reason": { "$ref": "#/$defs/LocalFileDiffUnavailable" },
+            "status": { "type": "string", "const": "unavailable" }
+          },
+          "required": ["status", "reason"]
+        }
+      ]
+    },
+    "LocalFileDiffHunk": {
+      "type": "object",
+      "properties": {
+        "kind": { "$ref": "#/$defs/LocalFileDiffHunkKind" },
+        "before_start": { "type": "integer", "format": "uint", "minimum": 0 },
+        "after_start": { "type": "integer", "format": "uint", "minimum": 0 },
+        "before": { "type": "string" },
+        "after": { "type": "string" }
+      },
+      "required": ["kind", "before_start", "after_start", "before", "after"]
+    },
+    "LocalFileDiffHunkKind": {
+      "type": "string",
+      "enum": ["matching", "different"]
+    },
+    "LocalFileDiffUnavailable": {
+      "type": "string",
+      "enum": [
+        "not_requested",
+        "conflict",
+        "structural",
+        "multiple_sources",
+        "binary",
+        "too_large",
+        "complexity"
+      ]
+    },
+    "LocalDiffSummaryPage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "from": { "$ref": "#/$defs/GitSha1Id" },
+        "to": { "$ref": "#/$defs/GitSha1Id" },
+        "path": { "type": "string" },
+        "changes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalFileDiffChange" }
+        },
+        "previous": { "type": ["string", "null"] },
+        "next": { "type": ["string", "null"] },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "from", "to", "path", "changes", "stats"]
+    },
+    "LocalConflictResponse": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "commit": { "$ref": "#/$defs/GitSha1Id" },
+        "change": { "$ref": "#/$defs/ChangeId" },
+        "conflicts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalConflictDescriptor" }
+        },
+        "stats": { "$ref": "#/$defs/LocalGraphStats" }
+      },
+      "required": ["version", "commit", "change", "conflicts", "stats"]
+    },
+    "LocalConflictDescriptor": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "fingerprint": { "$ref": "#/$defs/ConflictFingerprint" },
+        "terms": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LocalConflictTerm" }
+        },
+        "editor": { "$ref": "#/$defs/LocalConflictEditor" }
+      },
+      "required": ["path", "fingerprint", "terms", "editor"]
+    },
+    "ConflictFingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$",
+      "minLength": 128,
+      "maxLength": 128
+    },
+    "LocalConflictTerm": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "role": { "$ref": "#/$defs/LocalConflictRole" },
+        "label": { "type": ["string", "null"] },
+        "value": {
+          "anyOf": [{ "$ref": "#/$defs/LocalTreeValue" }, { "type": "null" }]
+        }
+      },
+      "required": ["id", "role"]
+    },
+    "LocalConflictRole": { "type": "string", "enum": ["add", "remove"] },
+    "LocalConflictEditor": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "contents": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "executable": { "type": "boolean" },
+            "status": { "type": "string", "const": "text" }
+          },
+          "required": ["status", "contents", "executable"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "reason": { "$ref": "#/$defs/LocalConflictUnsupported" },
+            "status": { "type": "string", "const": "unsupported" }
+          },
+          "required": ["status", "reason"]
+        }
+      ]
+    },
+    "LocalConflictUnsupported": {
+      "type": "string",
+      "enum": [
+        "multiple_sides",
+        "delete_modify",
+        "structural",
+        "executable_mode",
+        "copy_history",
+        "binary",
+        "too_large",
+        "invalid_path"
+      ]
+    },
+    "Frame10": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "$ref": "#/$defs/BlamePage" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    },
+    "BlamePage": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+        "repository": { "$ref": "#/$defs/RepositoryId" },
+        "operation": { "$ref": "#/$defs/OperationId" },
+        "commit": { "type": "string" },
+        "path": { "type": "string" },
+        "file_id": { "type": "string" },
+        "line_count": { "type": "integer", "format": "uint", "minimum": 0 },
+        "ranges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BlameRange" }
+        },
+        "commits": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/BlameCommit" }
+        },
+        "complete": { "type": "boolean" },
+        "continuation": { "type": ["string", "null"] },
+        "history_commits": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "stats": { "$ref": "#/$defs/GraphStats" }
+      },
+      "required": [
+        "version",
+        "repository",
+        "operation",
+        "commit",
+        "path",
+        "file_id",
+        "line_count",
+        "ranges",
+        "commits",
+        "complete",
+        "history_commits",
+        "stats"
+      ]
+    },
+    "BlameRange": {
+      "type": "object",
+      "properties": {
+        "start": { "type": "integer", "format": "uint", "minimum": 0 },
+        "end": { "type": "integer", "format": "uint", "minimum": 0 },
+        "commit_id": { "type": "string" }
+      },
+      "required": ["start", "end", "commit_id"]
+    },
+    "BlameCommit": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "change_id": { "type": "string" },
+        "description": { "type": "string" },
+        "author": { "$ref": "#/$defs/GraphSignature" },
+        "committer": { "$ref": "#/$defs/GraphSignature" }
+      },
+      "required": ["id", "change_id", "description", "author", "committer"]
+    },
+    "GraphSignature": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "timestamp": { "$ref": "#/$defs/GraphTimestamp" }
+      },
+      "required": ["name", "email", "timestamp"]
+    },
+    "GraphTimestamp": {
+      "type": "object",
+      "properties": {
+        "millis": { "type": "integer", "format": "int64" },
+        "offset_minutes": { "type": "integer", "format": "int32" }
+      },
+      "required": ["millis", "offset_minutes"]
+    },
+    "GraphStats": {
+      "type": "object",
+      "properties": {
+        "metadata_nodes": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "predicate_file_bytes": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "predicate_lines": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "object_reads": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "object_bytes": { "type": "integer", "format": "uint64", "minimum": 0 },
+        "work": { "type": "integer", "format": "uint64", "minimum": 0 }
+      },
+      "required": [
+        "metadata_nodes",
+        "predicate_file_bytes",
+        "predicate_lines",
+        "object_reads",
+        "object_bytes",
+        "work"
+      ]
+    },
+    "Frame11": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "data": { "type": "null" }
+      },
+      "additionalProperties": false,
+      "required": ["version", "data"]
+    }
+  }
+}

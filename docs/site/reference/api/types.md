@@ -499,6 +499,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "null"
       ]
     },
+    "local_native_repository_deletion": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
     "local_repository_conversion": {
       "type": [
         "boolean",
@@ -16049,6 +16055,49 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "request_id"
       ]
     }
+  ]
+}
+```
+
+## DeletionOutcome
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "state": {
+      "$ref": "#/components/schemas/DeletionState"
+    }
+  },
+  "required": [
+    "version",
+    "repository",
+    "request_id",
+    "state"
+  ]
+}
+```
+
+## DeletionState
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "pending",
+    "deleted"
   ]
 }
 ```

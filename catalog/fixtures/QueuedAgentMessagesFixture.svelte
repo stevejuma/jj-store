@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack, tick } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import {
@@ -240,7 +241,10 @@
         })}>Switch view</Button
     >
     <Button onclick={() => (mounted = !mounted)}>Toggle chat</Button>
-    <Button onclick={() => void complete()}>Complete active turn</Button>
+    <FixtureControls floating={false}
+      ><Button onclick={() => void complete()}>Complete active turn</Button
+      ></FixtureControls
+    >
     <Button onclick={() => void acknowledge()}>Acknowledge queue</Button>
     <Button onclick={() => void review()}>Add review comment</Button>
     <Button onclick={() => (rejectNext = true)}>Reject next send</Button>

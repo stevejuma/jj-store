@@ -28,3 +28,32 @@ the same mobile body-header composition as Projects, including loading and
 History/detail views. Settings and other hubs retain access to the same menu.
 Viewport changes preserve open dialogs, drafts, original requests and focus
 restoration; moving the trigger must not remount its command owners.
+
+The application adopts the public AppShell topbar with one mounted navigation
+and Application-menu subtree. Browser compact mode relocates that subtree into
+an explicit target before Main's scrollable content; native chrome retains top
+placement and its fixed control geometry. Existing history callbacks, shell
+controllers, panel identities, routes, drafts and pending request owners remain
+application-owned and unchanged.
+
+Body-adjacent right panels opt into the attached Sidebar variant. Visible
+adjacency, joined edges and separators belong to Design Core, while the outer
+repository details rail remains independently controlled and uses shared Sidebar
+sections. Discussion and conflict pages use SurfaceLayer close/footer parts and
+responsive inset tokens; bounded nested editors retain scroll ownership. One
+active layer, coverage, suspension and return focus are retained.
+
+E-SHELL-LAYOUT-001 qualifies local adoption against the explicitly packed,
+unpublished Design Core shell extension archive. Manifests and the tracked
+lockfile retain registry resolution; archive validation is not registry-release
+qualification. The archive also carries Design Core's native accessible names
+for host-supplied file-row snippets: selection stories address the rendered
+filename and metadata while retaining path-identity assertions. A released
+version containing these APIs remains an integration gate before registry-only
+deployment.
+
+The browser compact toolbar target is a labelled Application navigation
+landmark. Its relocated Application controls toolbar remains inside that
+landmark on repository pages and Settings; desktop retains its existing
+navigation subtree. This preserves landmark coverage without remounting
+controls.

@@ -159,6 +159,11 @@ test("cold device appearance restores under the production CSP and propagates ac
   await page
     .getByRole("radio", { name: "Rich", exact: true })
     .scrollIntoViewIfNeeded();
+  await expect(
+    page
+      .getByRole("navigation", { name: "Application navigation", exact: true })
+      .getByRole("toolbar", { name: "Application controls", exact: true }),
+  ).toBeVisible();
   const mobileA11y = await new AxeBuilder({ page }).analyze();
   expect(mobileA11y.violations).toEqual([]);
   await page.screenshot({

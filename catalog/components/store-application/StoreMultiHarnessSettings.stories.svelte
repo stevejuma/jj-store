@@ -3,9 +3,15 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import CaptureSettingsFixture from "../../fixtures/CaptureSettingsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreAgentSettings.svelte",
+      },
+    },
     title: "JJ Store/Settings/Multi harness capture",
     component: CaptureSettingsFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

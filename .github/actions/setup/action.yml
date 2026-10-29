@@ -1,5 +1,5 @@
 name: Release toolchain
-description: Pinned tools and registry-only workspace dependencies
+description: Pinned tools and local-source Rust integration dependencies
 inputs:
   native-dependencies:
     description: Install credential-store headers for native crate builds
@@ -10,6 +10,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Select hosted validation runtime
+      shell: bash
+      run: echo "JJ_STORE_VALIDATION_RUNTIME=native" >> "$GITHUB_ENV"
     - name: Install Linux native credential-store build dependencies
       if: runner.os == 'Linux' && inputs.native-dependencies == 'true'
       shell: bash
@@ -21,6 +24,13 @@ runs:
       with:
         node-version: 22
         cache: pnpm
+    - name: Materialize pinned shared Rust sources into sibling Cargo paths
+      run: |
+        node scripts/ci-lapis-source.mjs
+        node scripts/ci-redaction-source.mjs
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
     - name: Install pinned upstream JJ for repository fixtures
       run: node scripts/ci-setup-jj.mjs
       shell: bash
@@ -36,4 +46,14 @@ runs:
       with:
         tool: cargo-nextest@0.9.148,mdbook@0.5.4,uv@0.9.28
     - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      shell: bash
+    - name: Provision registry metadata for offline governance installs
+      run: node scripts/ci-provision-offline-governance.mjs
+      shell: bash
+    - name: Fetch locked Rust dependencies for offline governance checks
+      run: cargo fetch --locked
+      shell: bash
+    - name: Install shared AI development packaging dependencies
+      run: pnpm install --frozen-lockfile
+      working-directory: ../lapis-ai
       shell: bash

@@ -87,12 +87,14 @@ source checkouts.
 
 ## Optional agent execution
 
-Install a matching
-[jj-acp release](https://github.com/stevejuma/jj-acp/releases) and explicitly
-configure paired executables and admitted agents. Provider tools and credentials
-belong to the execution host. The default image includes no agent runner or
-workflow executor. Live-provider acceptance remains distinct from deterministic
-fixtures.
+Use the sibling [Lapis AI](https://github.com/lapismd/lapis-ai) checkout and run
+`pnpm ai:prepare` to build and stage its agent, tools and compute helpers. Rust
+clients currently use local Cargo path dependencies, with crates.io consumption
+planned after publication. Execution and model discovery require Control V3.
+Configure the verified bundle and admitted agents. Provider tools and
+credentials belong to the execution host. The default image includes no agent
+runner or workflow executor. Live-provider acceptance remains distinct from
+deterministic fixtures.
 
 ## Develop and verify
 
@@ -110,7 +112,7 @@ pnpm web:build
 
 Follow [AGENTS.md](AGENTS.md) for focused verification. PR checks run
 formatting, tooling and governance before standard Rust tests and affected web
-checks. The standard Rust cohort has 17 packages; server, CLI and capture tests,
+checks. The standard Rust cohort has 20 packages; server, CLI and capture tests,
 including their unit tests, run only during qualification (apart from the two
 HTTP fixture captures needed by browser tests). Affected web checks also run
 Storybook interactions, served-browser tests, the static catalog and Help in

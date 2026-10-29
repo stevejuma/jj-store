@@ -1,12 +1,17 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/RepositoryPreparationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Repository feedback",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 
@@ -37,9 +42,7 @@
     await expect(
       await page.findByText("Graph index preparation canceled."),
     ).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Finish preparation" }),
-    );
+    await storyControl(document.body, "Finish preparation");
     await expect(
       await page.findByText("Graph index preparation completed."),
     ).toBeVisible();
@@ -72,9 +75,7 @@
     await expect(page.getAllByText("Preparing the graph index…")).toHaveLength(
       1,
     );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Finish preparation" }),
-    );
+    await storyControl(document.body, "Finish preparation");
     await expect(
       await page.findByText("Graph index preparation completed."),
     ).toBeVisible();
@@ -104,9 +105,7 @@
     await expect(
       page.queryByText("Preparing the graph index…"),
     ).not.toBeInTheDocument();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Finish preparation" }),
-    );
+    await storyControl(document.body, "Finish preparation");
     await expect(
       await page.findByText("Graph index preparation completed."),
     ).toBeVisible();

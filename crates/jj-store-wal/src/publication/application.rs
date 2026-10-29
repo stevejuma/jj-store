@@ -188,3 +188,78 @@ impl Coordinator {
         .map_err(|_| Error::Limit("preview validation timeout"))?
     }
 }
+
+impl Coordinator {
+    /// Exact domain selection accepted by a selected original receipt. This
+    /// bounded historical lookup neither stages records nor follows current roots.
+    pub async fn receipt_domain_at(
+        &self,
+        snapshot: &ManifestSnapshot,
+        receipt: &Receipt,
+        domain: Domain,
+    ) -> Result<DomainState> {
+        if self
+            .receipt_at(snapshot, receipt.principal, receipt.request_id)
+            .await?
+            .as_ref()
+            != Some(receipt)
+        {
+            return Err(Error::IntentConflict);
+        }
+        let after = receipt
+            .accepted
+            .position
+            .0
+            .checked_sub(1)
+            .ok_or(Error::Corrupt("receipt position"))?;
+        let rows = snapshot
+            .selected_records(self.records.store.clone(), WalPosition(after), 1)
+            .await?;
+        let tx = rows
+            .first()
+            .ok_or(Error::Corrupt("receipt transaction missing"))?
+            .transaction();
+        if tx.after != receipt.accepted || tx.repository != self.records.repository {
+            return Err(Error::Corrupt("receipt transaction identity"));
+        }
+        let original: Receipt = self.records.get(tx.receipt, RecordKind::Receipt).await?;
+        if original != *receipt {
+            return Err(Error::Corrupt("receipt transaction binding"));
+        }
+        // The qualified compound native command is Agent capture plus Thread
+        // assignment. Older transactions encode it as DomainsStateChanged.
+        let bound_capture =
+            if tx.kind == SemanticKind::DomainsStateChanged && domain == Domain::Agent {
+                match (tx.before_domains, tx.after_domains) {
+                    (Some(before), Some(after)) => {
+                        let mut expected = before;
+                        expected.agent = after.agent;
+                        expected.thread = after.thread;
+                        expected == after
+                            && before.agent.version.checked_add(1) == Some(after.agent.version)
+                            && after.thread.is_some_and(|thread| {
+                                before.thread.map_or(0, |s| s.version).checked_add(1)
+                                    == Some(thread.version)
+                            })
+                    }
+                    _ => false,
+                }
+            } else {
+                false
+            };
+        if tx.kind != domain.semantic_kind() && !bound_capture {
+            return Err(Error::IntentConflict);
+        }
+        let selected = tx.after_domains.ok_or(Error::Corrupt("receipt domains"))?;
+        match domain {
+            Domain::Agent => Some(selected.agent),
+            Domain::Review => Some(selected.review),
+            Domain::Work => selected.work,
+            Domain::Workflow => selected.workflow,
+            Domain::Git => selected.git,
+            Domain::Thread => selected.thread,
+            Domain::Reaction => selected.reaction,
+        }
+        .ok_or(Error::Corrupt("receipt domain selection"))
+    }
+}

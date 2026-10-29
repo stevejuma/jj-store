@@ -131,7 +131,9 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   await expect(
     page.getByRole("region", { name: "Changed files" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "bin", exact: true }).click();
+  const file = page.locator('button[data-file-path="bin"]');
+  await expect(file).toHaveAccessibleName(/^bin(?:\s|$)/);
+  await file.click();
   await expect(page.getByText("window.sourceExecuted=true")).toBeVisible();
   await page.getByRole("tab", { name: "Overview" }).click();
   await expect(
@@ -440,13 +442,11 @@ test("repository directories load lazily and flat views request recursive paths"
   await expect(
     page.getByRole("button", { name: "src", exact: true }),
   ).toHaveAttribute("aria-expanded", "false");
-  await expect(
-    page.getByRole("button", { name: "src/lib.rs", exact: true }),
-  ).toHaveCount(0);
+  const nestedFile = page.locator('button[data-file-path="src/lib.rs"]');
+  await expect(nestedFile).toHaveCount(0);
   await page.getByRole("button", { name: "src", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "src/lib.rs", exact: true }),
-  ).toBeVisible();
+  await expect(nestedFile).toBeVisible();
+  await expect(nestedFile).toHaveAccessibleName(/^lib\.rs(?:\s|$)/);
   await page.getByRole("radio", { name: "Show files as list" }).click();
   await expect
     .poll(() => queries.some((query) => query.get("recursive") === "true"))
@@ -587,12 +587,17 @@ test("new_file_selection_discards_an_older_inflight_preview", async ({
     .click();
   await page.getByRole("button", { name: "Open file file-0" }).click();
   await started;
-  await page.getByRole("button", { name: "file-1", exact: true }).click();
   const selected = page.getByRole("region", {
     name: "Source preview for file-1",
   });
-  await expect(selected).toContainText("selected-file");
-  finish();
+  try {
+    const nextFile = page.locator('button[data-file-path="file-1"]');
+    await expect(nextFile).toHaveAccessibleName(/^file-1(?:\s|$)/);
+    await nextFile.click();
+    await expect(selected).toContainText("selected-file");
+  } finally {
+    finish();
+  }
   await expect(selected).toContainText("selected-file");
 });
 

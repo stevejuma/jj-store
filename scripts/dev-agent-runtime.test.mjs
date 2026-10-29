@@ -1,34 +1,36 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, rm, writeFile, symlink } from "node:fs/promises";
+import { mkdtemp, rm, writeFile, symlink, realpath } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import test from "node:test";
+import { verifyAiBundle } from "./lapis-ai.mjs";
 import { developmentAgentEnvironment } from "./dev-agent-runtime.mjs";
+import {
+  stubAiBundle,
+  stubAiExecutable as executable,
+} from "./lapis-ai-test-fixture.mjs";
 
-async function executable(path, versions = "1|2|3", context = true) {
-  await mkdir(dirname(path), { recursive: true });
-  await writeFile(
-    path,
-    `#!/bin/sh\nif [ "$1" = "--help" ]; then\nprintf '%s\\n' '--control-version <${versions}>'\nelse\nread -r first\nread -r second\nprintf '%s\\n' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-text-context", code: context ? "session_not_open" : "invalid_request" })}' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-context-only", code: context ? "session_not_open" : "invalid_request" })}'\ncat >/dev/null\nfi\n`,
-    { mode: 0o755 },
-  );
-}
 async function fixture(t) {
-  const root = await mkdtemp(join(tmpdir(), "jj-store-agent-startup-"));
+  const root = await realpath(
+    await mkdtemp(join(tmpdir(), "jj-store-agent-startup-")),
+  );
   t.after(() => rm(root, { recursive: true, force: true }));
-  const acp = join(root, "desktop/resources/jj-acp");
+  const { acp, bundle } = await stubAiBundle(root);
   const jj = join(root, "target/debug/jj-store-jj");
-  await executable(acp);
   await executable(jj);
-  return { root, acp, jj };
+  return { root, acp, jj, bundle };
 }
 
 test("development restart selects bundled ACP without inherited shell configuration", async (t) => {
-  const { root, acp, jj } = await fixture(t);
+  const { root, acp, jj, bundle } = await fixture(t);
   for (let restart = 0; restart < 2; restart++)
     assert.deepEqual(await developmentAgentEnvironment(root, {}), {
       JJ_STORE_ACP_EXECUTABLE: acp,
       JJ_STORE_AGENT_JJ_EXECUTABLE: jj,
+      JJ_STORE_AI_BUNDLE_DIR: bundle,
+      JJ_STORE_LOCAL_AGENT_EXECUTABLE: join(bundle, "lapis-agent"),
+      JJ_STORE_AGENT_TOOLS_EXECUTABLE: join(bundle, "lapis-agent-tools"),
+      JJ_STORE_COMPUTE_EXECUTABLE: join(bundle, "lapis-compute"),
     });
 });
 
@@ -56,20 +58,17 @@ test("missing or stale bundled ACP fails before a service can be replaced", asyn
   await executable(acp, "1|2");
   await assert.rejects(
     developmentAgentEnvironment(root, {}),
-    /control version 3/u,
+    /Invalid Lapis AI bundle/u,
   );
   await rm(acp);
-  await assert.rejects(
-    developmentAgentEnvironment(root, {}),
-    /desktop:prepare/u,
-  );
+  await assert.rejects(developmentAgentEnvironment(root, {}), /ai:prepare/u);
 });
 
 test("version 3 alone does not qualify a helper that rejects prepared context", async (t) => {
   const { root, acp } = await fixture(t);
   await executable(acp, "1|2|3", false);
   await assert.rejects(
-    developmentAgentEnvironment(root, {}),
+    developmentAgentEnvironment(root, { JJ_STORE_ACP_EXECUTABLE: acp }),
     /prepared context/u,
   );
 });
@@ -79,7 +78,7 @@ test("agent preflight refuses symlinks and never silently falls back from an exp
   await rm(acp);
   await symlink(jj, acp);
   await assert.rejects(
-    developmentAgentEnvironment(root, {}),
+    developmentAgentEnvironment(root, { JJ_STORE_ACP_EXECUTABLE: acp }),
     /regular agent runtime/u,
   );
   await assert.rejects(
@@ -87,5 +86,15 @@ test("agent preflight refuses symlinks and never silently falls back from an exp
       JJ_STORE_ACP_EXECUTABLE: join(root, "missing-acp"),
     }),
     /missing-acp/u,
+  );
+});
+
+test("tampering with a non-ACP helper fails before replacing a service", async (t) => {
+  const { root, bundle } = await fixture(t);
+  await writeFile(join(bundle, "lapis-compute"), "tampered");
+  await assert.rejects(verifyAiBundle(bundle), /checksum/);
+  await assert.rejects(
+    developmentAgentEnvironment(root, {}),
+    /Invalid Lapis AI bundle/,
   );
 });

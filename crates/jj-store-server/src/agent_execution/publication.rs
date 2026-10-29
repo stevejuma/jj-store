@@ -34,7 +34,7 @@ impl Supervisor {
             {
                 let _ = self.send(
                     &saved.view.id,
-                    json!({"version":2,"type":"close","requestId":"authorization-changed"}),
+                    json!({"version":3,"type":"close","requestId":"authorization-changed"}),
                 );
                 continue;
             }

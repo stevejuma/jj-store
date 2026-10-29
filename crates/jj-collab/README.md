@@ -1,10 +1,12 @@
 # jj-collab
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Shared models and pure transitions for Threads, human messages, conversation
+metadata, reactions and custom emoji. Exact source references connect these
+records to agent activity, reviews and WorkStore comments.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Apply a `ThreadCommandV1` with `ThreadStateV1`, or a `ReactionCommandV1` with
+`ReactionStateV1`, using a `CollabGraphV1` for immutable objects. The embedding
+provider supplies source admission, actor, time and atomic publication.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [collaboration concepts](../../docs/site/concepts/collaboration.md) and
+[architecture](../../docs/site/technical/architecture.md).

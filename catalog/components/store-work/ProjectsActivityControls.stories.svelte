@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Projects activity controls",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function verifyFilter(canvasElement: HTMLElement) {
     const c = within(canvasElement),

@@ -135,7 +135,11 @@ pub fn association(
     session: &AgentSessionSnapshotV1,
     id: u8,
 ) -> CodeAssociationV2 {
-    let capsule = input.validate().unwrap();
+    let capsule = jj_store_jj::local_evidence::GitEvidenceCapsuleV1::decode_reference(
+        &input.reference,
+        &input.bytes,
+    )
+    .unwrap();
     let commit = *capsule
         .commits
         .keys()

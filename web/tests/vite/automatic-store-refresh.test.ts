@@ -114,3 +114,23 @@ test("a late head cannot replace a newer page selection", async () => {
   expect(f.history.route.snapshotOperationId).toBe(old);
   expect(f.restore).not.toHaveBeenCalled();
 });
+
+test("automatic file refresh retains visible file identities until replacement rows are ready", async () => {
+  const f = fixture();
+  f.history.replace({
+    ...f.history.route,
+    page: "files",
+    commitId: historical,
+  });
+  f.data.fileTerms.set("bin", "66".repeat(64));
+  const replacement = Promise.withResolvers<void>();
+  f.restore.mockImplementation(() => replacement.promise);
+  const updating = f.refresh.refresh(true);
+  try {
+    await expect.poll(() => f.restore.mock.calls.length).toBe(1);
+    expect(f.data.fileTerms.get("bin")).toBe("66".repeat(64));
+  } finally {
+    replacement.resolve();
+    await updating;
+  }
+});

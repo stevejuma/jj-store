@@ -2,6 +2,8 @@
 export type WorkspaceHunk = { id: string; label: string; patch: string };
 export type WorkspaceFile = {
   path: string;
+  /** A net comparison resolved to one exact mutable native commit delta. */
+  selectionSource?: string;
   /** Complete bounded display patch; never selection authority. */
   patch?: string;
   hunks: WorkspaceHunk[];

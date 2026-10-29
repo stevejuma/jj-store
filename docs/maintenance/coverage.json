@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed equivalent atomic inventory counters under Rust 1.99. Immutable object bytes, manifest CAS, WAL candidates and receipt recovery are unchanged.",
-      "fingerprint": "e33458babba3477e7035749eac6cb85a38b2fb5ecc5d284b50110c2e447c7a4f"
+      "reason": "Re-reviewed the publication topic pages against a test-only, clippy-directed collapse of two nested ifs in the jj-store-object S3 deletion test-harness mock server: no product behavior, deletion semantics, storage format or page statement changed, so the pages remain accurate as written.",
+      "fingerprint": "137f83249e308fc8d1e051d2959049cf2e69b5af1f85ce9235c995a2a89c2a04"
     }
   },
   {
@@ -31,30 +31,34 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed enum indirection and equivalent validation guards; canonical native object bytes, identities and public serialized fields remain unchanged.",
-      "fingerprint": "597d91f4c819188f6432089c30654ea7c8a12531ce1f3de123b8a1b72fa58707"
+      "reason": "Reviewed d824a18f..4d660d4c shared settings image normalization: 20 MiB source/decode bounds, aspect ratio and orientation, 512-pixel and 2 MiB retained assets. Collaboration manual now describes the same host-owned admission and publication boundary.",
+      "fingerprint": "c61a57f8c13a7d02368e4bab692114b6dc580813c9326b3ac0dc91585b099f61"
     }
   },
   {
     "id": "capture",
-    "sources": ["crates/jj-store-capture/src"],
+    "sources": [
+      "crates/jj-store-capture/src",
+      "scripts/ci-redaction-source.mjs",
+      "scripts/agent-redaction-source.json"
+    ],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Reviewed released Kingfisher scanner 1.4.0, rules 1.2.1 and core 1.0.3. Updated capture documentation for versioned policy/cache namespaces; privacy failure still withholds publication.",
-      "fingerprint": "8424db9ee354d907033154dc32e960e6bb422bacfd98d624030bc7e1fff95355"
+      "reason": "Reviewed sibling agent-redaction pin eada2b26 (0.1.1) with transient CodexSnapshotReader docs: technical capture records the published source pin, keeps tentative batches until Complete without durable ACK/resume, and leaves application spool and receipt contracts unchanged.",
+      "fingerprint": "1213597bbc69a4b9831b55dfb1e5a206286bdb23600f6295cc62cf03c606a837"
     }
   },
   {
     "id": "local",
-    "sources": ["crates/jj-store-jj/src"],
+    "sources": ["crates/jj-store-jj/src", "crates/jj-vault/src"],
     "pages": [
       "docs/site/technical/local.md",
       "docs/site/guides/git.md",
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed equivalent SCP remote parsing with strip_prefix: accepted hosts, paths, endpoint identities and local repository authority remain unchanged. Existing Git and conversion documentation still describes the supported forge profile.",
-      "fingerprint": "a7a8868c3b78f0b9bc04fbfb0c6f9c78bd1d4da69fd699b610b813e422a66602"
+      "reason": "Reviewed the jj-vault committed indexed read-admission change (bounded five-second publisher wait, pinned committed index generation, explicit Busy under sustained contention, never initializes or repairs projection bytes) against the local topic pages: they keep their architecture-level history and backup statements accurate, and the canonical automatic-vault-backup chapter owns the admission detail.",
+      "fingerprint": "594da2826859232f55e3ad8a4c188fbfdb4455eaf9304d1ea537de7082c7052b"
     }
   },
   {
@@ -66,8 +70,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed ordinary-local forge contracts, contextual CLI help and Stack/Workspace controls: exact submission and recovery, CI and protected merge, explicit Restack. Git guide and transport documentation describe transient tokens and separate live/provider/package gates.",
-      "fingerprint": "b0ae129678c10c67d9fd9a43bc146b809cff228ff491585b192965891c7d5210"
+      "reason": "Reviewed 2a479c74..4d660d4c private working-tree status and observer drain: complete sparse/ignored baseline comparison, bounded private bytes, second witness observation and authorization. Local technical manual preserves read-only scope and no new browser route.",
+      "fingerprint": "299a0b26f9b04695c6573b29624ec1ed396664ae405cafe7c061834ac208e74e"
     }
   },
   {
@@ -97,8 +101,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed capture scheduling fixture setup and body-free timeout diagnostics. The multi-step prefix test now prepares the qualified rule cache before its unchanged scheduling deadline; production capture, storage, configuration schemas and lifecycle behavior are unchanged.",
-      "fingerprint": "377ba41288d1db7dbe6b428ebe2f12e26885103e84affd292e82c217a757d18f"
+      "reason": "Reviewed 165041c2..4d660d4c server delegation to shared bounded image preparation. Configuration reference documents fixed source/decode/asset bounds without inventing new runtime settings or altering stored formats.",
+      "fingerprint": "3d282c0026dad48e2420408eb35f39f3e7f3e1183c0b3443a9ec55ad24546a77"
     }
   },
   {
@@ -110,8 +114,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed stack forge parser/orchestration and explicit CLI automation credential selection. CLI index and Git guide cover PR/submission/recovery/restack families and preserve exact intent and qualification limits.",
-      "fingerprint": "3ada316a70cc49fc47364d1845e94193e97e293e536384f0da87cc7249d9a9aa"
+      "reason": "Reviewed the unchanged local-folder CLI contract now delegated to reusable default-settings JJ discovery; original safe error categories, read-only inspection and metadata reopening remain intact, without new commands or executable configuration.",
+      "fingerprint": "045cf6ded0936340b50e146f3e417b91b7422de7d1feefb0eaf9fd11370dd969"
     }
   },
   {
@@ -123,8 +127,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the exact 202-route inventory including LocalTrusted integrations and repository forge endpoints. The test now explicitly requires both endpoints and retains every method, media, HEAD, operation identity and security assertion; wire contracts are unchanged.",
-      "fingerprint": "4d573e4a75bb8a119496ba834cf9337975be7e1310e98e440e19dad71dd2f918"
+      "reason": "Re-reviewed the http topic pages against a test-only repair that aligns the contract-inventory count pins (202 total/88 local) with the deliberately landed and already-regenerated 204-path openapi surface from the confirmed repository-deletion routes: the transport, security and conversion pages describe behavior, not test pins, and remain accurate without content changes.",
+      "fingerprint": "3734dbafe4b39ec528320d7a11175517655436dd0e82b71c32d4986be63c065c"
     }
   },
   {
@@ -137,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed mapped browsing, editing, settings and conversion guides after the shared chat Jump to end focus/scroll repair. Browsing now explains draft focus before scrolling, full-draft visibility and immediate reduced-motion navigation. Provider setup, draft retention, command authority, conversion and credential contracts remain unchanged.",
-      "fingerprint": "05e85a6080a63c87d89ba635b8cfb56a962c53d5596a9b23002d5b7076933474"
+      "reason": "StoreSettings.css Prettier selector wrap only; outline and ghost action-row labels stay on theme foreground.",
+      "fingerprint": "3bdf5d086acba5755ae2b084157cc4b34fd31cab3ab5808b4b409ebca5d0725b"
     }
   },
   {
@@ -146,8 +150,8 @@
     "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
     "pages": ["docs/site/technical/lifecycle.md"],
     "review": {
-      "reason": "Reviewed the equivalent optional ACP regular-file and symlink guard in Resources::from_root against lifecycle documentation. Fresh desktop Clippy, complete workspace tests, native checking and staged restart acceptance pass; private installation, owner lifetime and independent signed-platform gates remain unchanged.",
-      "fingerprint": "80e70ceb50bf3ea5024a73ae3cedacabb73c8cbf62a5b76c70bb257b69d3b59b"
+      "reason": "Reviewed shared native resource verification, complete Lapis helper staging and unchanged service ownership and paired JJ lifecycle.",
+      "fingerprint": "ad916d5efa57aa8b06d1b31cb9cffb9382ee0043f4f9ca345c5b0527fbb9cfc2"
     }
   },
   {
@@ -155,20 +159,20 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated integration inventory/command schemas and current forge CLI help. Transport and CLI pages document metadata-only account responses, explicit automation credentials and exact-request recovery; generated references remain authoritative.",
-      "fingerprint": "ec7bd8e8c3595c2acac741add4a707773ecef330e35a35483fea20fa2ab9b87b"
+      "reason": "Reviewed the updated executable example path; public HTTP/RPC DTOs and command fields remain unchanged by local AI client adoption.",
+      "fingerprint": "dd01364c68a7d85e1126d388d8d6ffc657b78f448acc758d4d9a77531124ef2f"
     }
   },
   {
     "id": "local-compute",
     "sources": [
-      "runtime/compute/src",
-      "runtime/local-agent/src",
-      "runtime/local-agent/tools/src",
-      "runtime/local-agent/vendor/buzz-agent/src",
+      "crates/jj-store-server/src/agent_execution",
+      "scripts/lapis-ai.mjs",
       "scripts/agent-runtime-resources.mjs",
-      "runtime/compute/Cargo.toml",
-      "scripts/desktop-resources.mjs"
+      "scripts/desktop-resources.mjs",
+      "scripts/ci-lapis-source.mjs",
+      "scripts/lapis-ai-source.json",
+      "scripts/ci-pinned-source.mjs"
     ],
     "pages": [
       "docs/local-compute.md",
@@ -176,8 +180,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed the maintained local-agent hint and bounded catalog simplifications, unchanged item ordering, lexical synthetic request lock and nonempty request-read assertion against the compute, agent and security guides. Permission/cancellation, backend credential custody, single-attempt metadata and uncertain-inference no-replay behavior retain their exact tests and contracts; native GGUF/live-provider/platform gates remain separate.",
-      "fingerprint": "f5cfbd9c2d6a1e666b27ae3315a2aa2998b1fd78839c8a591a6d1a4169d9a03e"
+      "reason": "Reviewed published Lapis AI 0.1.1 (e5589b99) and agent-redaction 0.1.1 (eada2b26) CI source pins against unchanged local-compute runbook: sibling checkouts stay source-development only with no launch, credential or publication policy change.",
+      "fingerprint": "ab1cd75decdc6962db9ee3a25a177758f75e7d8306e358c1a73f1b2f14829c50"
     }
   },
   {
@@ -201,8 +205,73 @@
     "sources": ["crates/jj-forge/src"],
     "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
     "review": {
-      "reason": "Reviewed equivalent forge let-chain guards after strict Rust lint: stale PR identity rejection, retained navigation context and latest-check filtering preserve short-circuit order and documented submission/check/credential semantics.",
-      "fingerprint": "b19a8560984447c3c9e8e06f83185a04dc61f27cbf87bed45861123d113df3fd"
+      "reason": "Reviewed 1a5d8cbc..4d660d4c explicit Forgejo PAT verification, provider-specific authorization header and host-owned secret namespaces. Git manual distinguishes native embedding support from current browser account screens and retains push/permission guards.",
+      "fingerprint": "974a6da232ac41765eb21c4166cb076fdf71577baa2cd8881586459fc7799fa1"
+    }
+  },
+  {
+    "id": "injectable-stores",
+    "sources": [
+      "crates/jj-store-core/src",
+      "crates/jj-store-git/src",
+      "crates/jj-store-native/src"
+    ],
+    "pages": [
+      "docs/injectable-stores.md",
+      "docs/site/technical/architecture.md"
+    ],
+    "review": {
+      "reason": "Reviewed retained-source metadata validation: selected inventory preserves historical source snapshots while public active-closure reads remain pinned; published store interfaces and SDK usage are unchanged.",
+      "fingerprint": "f835f9680ef7237525f2e3780967db6c4932083fbfd4dce5ed66b1dc192059cc"
+    }
+  },
+  {
+    "id": "conversations",
+    "sources": ["crates/jj-store-conversations/src"],
+    "pages": ["docs/site/technical/conversations.md"],
+    "review": {
+      "reason": "Reviewed optional selected Agent/Thread capture, journal-before-IO ordering, retained native preparation, request-aware read-only recovery, exact receipt comparison and host ownership against Git and native-provider fixtures.",
+      "fingerprint": "f976bab65db2953857af4998ddcc6dfa60350db0d42af55f56c2646dc551fa0b"
+    }
+  },
+  {
+    "id": "conversation-client",
+    "sources": [
+      "packages/jj-conversations/src",
+      "packages/jj-conversations/package.json"
+    ],
+    "pages": ["docs/site/technical/conversations.md"],
+    "review": {
+      "reason": "Reviewed public ESM/type archive, scoped exact wire requests, status-only unknown recovery and identity-only restoration; full-width sequences and native authority remain distinct from transport receipt presence.",
+      "fingerprint": "ddd45cdca897f72bb3123cc03c7f0d2fe0207538c17297db041aad824753edd9"
+    }
+  },
+  {
+    "id": "history-bridge",
+    "sources": [
+      "crates/tauri-plugin-jj-store/src",
+      "crates/tauri-plugin-jj-store/build.rs",
+      "crates/tauri-plugin-jj-store/permissions/default.toml",
+      "crates/jj-history-service/src"
+    ],
+    "pages": ["docs/site/technical/local.md"],
+    "review": {
+      "reason": "Reviewed f58b9363..4d660d4c successful drained-scope retirement and direct bounded pinned metadata reads with reference-operation ancestry validation. Local technical manual preserves admission, original pins and failed-shutdown recovery state.",
+      "fingerprint": "041935d8e843a621bfbeec7b2fab0afc797b2148d334800f8ad3fc722d148c3b"
+    }
+  },
+  {
+    "id": "history-client",
+    "sources": [
+      "packages/jj-history/src",
+      "packages/jj-history/package.json",
+      "scripts/history-contracts.mjs",
+      "crates/tauri-plugin-jj-store/schema.json"
+    ],
+    "pages": ["docs/site/technical/local.md"],
+    "review": {
+      "reason": "Reviewed @lapismd/jj-history 0.1.0 public publishConfig against unchanged local history manual: admitted heads/open/status/read/blame/close contracts and explicit handle closure remain as documented.",
+      "fingerprint": "cc13ef5d340bb6832d499390f9e4e41bfa6ffdd27779b30905c08702741e733b"
     }
   }
 ]

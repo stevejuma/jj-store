@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import ProjectsFeedbackFixture from "../../fixtures/ProjectsFeedbackFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Projects feedback",
     component: ProjectsFeedbackFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function feedback(
     canvasElement: HTMLElement,
@@ -28,7 +29,7 @@
       "data-notification-id",
       id!,
     );
-    await userEvent.click(c.getByRole("button", { name: "Recover read" }));
+    await storyControl(document.body, "Recover read");
     await waitFor(() => expect(body.queryByRole("alert")).toBeNull());
   }
 </script>
@@ -140,7 +141,7 @@
         "alert",
       ),
     ).toBeNull();
-    await userEvent.click(c.getByRole("button", { name: "Recover read" }));
+    await storyControl(document.body, "Recover read");
     await waitFor(() => expect(body.queryByRole("alert")).toBeNull());
   }}
 />
@@ -155,24 +156,20 @@
     await userEvent.click(
       within(toast).getByRole("button", { name: /^Dismiss/ }),
     );
-    await userEvent.click(c.getByRole("button", { name: "Pause read" }));
+    await storyControl(document.body, "Pause read");
     await expect(body.queryByRole("alert")).toBeNull();
-    await userEvent.click(c.getByRole("button", { name: "Finish read" }));
+    await storyControl(document.body, "Finish read");
     await userEvent.click(c.getByRole("tab", { name: "Projects" }));
     await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
     await expect(body.queryByRole("alert")).toBeNull();
     await userEvent.click(c.getByRole("tab", { name: "Projects" }));
-    await userEvent.click(
-      c.getByRole("button", { name: "Recover hidden reviews" }),
-    );
+    await storyControl(document.body, "Recover hidden reviews");
     await waitFor(() =>
       expect(c.getByLabelText("Hidden review result")).toHaveTextContent(
         "recovered",
       ),
     );
-    await userEvent.click(
-      c.getByRole("button", { name: "Fail hidden reviews" }),
-    );
+    await storyControl(document.body, "Fail hidden reviews");
     await waitFor(() =>
       expect(c.getByLabelText("Hidden review result")).toHaveTextContent(
         "failed",

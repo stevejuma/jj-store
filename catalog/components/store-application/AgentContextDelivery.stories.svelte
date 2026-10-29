@@ -6,8 +6,16 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent context delivery",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-agent-execution/StoreAgentPromptContent.svelte",
+      },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 

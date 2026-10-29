@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { verifyDraggableHunks } from "../../fixtures/stack-workspace/draggable-hunks-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
@@ -22,8 +23,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stack Workspace/Commands",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -94,7 +95,9 @@
       name: "Staged files for feature/workspace",
     });
     expect(
-      within(staged).getByRole("button", { name: "src/settings.ts" }),
+      within(staged).getByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     ).toBeVisible();
     expect(within(form).getByLabelText("Commit title")).toHaveValue("");
     // A second drop retains both exact staged selections.
@@ -104,7 +107,9 @@
       staged,
     );
     expect(
-      within(staged).getByRole("button", { name: "README.md" }),
+      within(staged).getByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     ).toBeVisible();
     await userEvent.type(
       within(form).getByLabelText("Commit title"),
@@ -142,13 +147,19 @@
         name: "Shortcut and documentation Keep the preference hunk unstaged.",
       }),
     );
-    expect(stack.getByRole("button", { name: "README.md" })).toBeVisible();
+    expect(
+      stack.getByRole("button", { name: workspaceFileName("README.md") }),
+    ).toBeVisible();
     const unstaged = within(
       canvas.getByRole("region", { name: "Unstaged files" }),
     );
-    expect(unstaged.queryByRole("button", { name: "README.md" })).toBeNull();
+    expect(
+      unstaged.queryByRole("button", { name: workspaceFileName("README.md") }),
+    ).toBeNull();
     await userEvent.click(
-      unstaged.getByRole("button", { name: "src/settings.ts" }),
+      unstaged.getByRole("button", {
+        name: workspaceFileName("src/settings.ts"),
+      }),
     );
     expect(
       canvas.queryByRole("checkbox", { name: "add keyboard shortcut" }),
@@ -177,7 +188,7 @@
     );
     await applyPreview(canvasElement);
     await expect(
-      canvas.queryByRole("button", { name: "README.md" }),
+      canvas.queryByRole("button", { name: workspaceFileName("README.md") }),
     ).not.toBeInTheDocument();
     await userEvent.click(
       canvas.getByRole("button", {
@@ -187,7 +198,7 @@
     await expect(
       within(
         canvas.getByRole("region", { name: "Stack feature/workspace" }),
-      ).getByRole("button", { name: "README.md" }),
+      ).getByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeVisible();
   }}
 />
@@ -202,7 +213,9 @@
         name: "Expose repository API",
       }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "src/api.ts" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: workspaceFileName("src/api.ts") }),
+    );
     await userEvent.click(
       canvas.getByRole("checkbox", { name: "query endpoint" }),
     );
@@ -325,7 +338,7 @@
     );
     await applyPreview(canvasElement);
     await expect(
-      canvas.getByRole("button", { name: "src/api.ts" }),
+      canvas.getByRole("button", { name: workspaceFileName("src/api.ts") }),
     ).toBeVisible();
     await commandMenu(
       canvasElement,
@@ -337,7 +350,7 @@
       canvas.queryByRole("region", { name: "Stack feature/local-api" }),
     ).not.toBeInTheDocument();
     await expect(
-      canvas.getByRole("button", { name: "src/api.ts" }),
+      canvas.getByRole("button", { name: workspaceFileName("src/api.ts") }),
     ).toBeVisible();
   }}
 />

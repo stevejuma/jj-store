@@ -3,9 +3,15 @@
   import { expect, userEvent, within } from "storybook/test";
   import SyncSettingsFixture from "../../fixtures/SyncSettingsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreSyncSettings.svelte",
+      },
+    },
     title: "JJ Store/Settings/Sync",
     component: SyncSettingsFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

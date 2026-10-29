@@ -1,5 +1,15 @@
 # Forge-agnostic stack submission
 
+The jj-forge overview introduces its client, planner, engine and journal
+modules. E-CRATE-READMES-001 preserves JST-FORGE-001/003/007 provider gates,
+original external-effect recovery and device-local credential custody.
+
+M34 adds an explicit native-host Forgejo personal-token helper on the same
+injected account manager and OS secret custody. It validates an HTTPS instance
+root at `/api/v1`, retains only public identity and uses Forgejo token headers.
+GitHub OAuth, Enterprise endpoint admission and default server commands stay
+unchanged. Hosts own its explicit caller admission (JST-FORGE-007).
+
 ## Requirements
 
 | ID            | Requirement                                                                                                                                                                                                                                                                                                                                 |
@@ -35,10 +45,14 @@ Global Integrations initially manages GitHub accounts, including device OAuth,
 personal tokens and explicit Enterprise API endpoints. Native OS credential
 facilities own saved tokens and optional OAuth refresh tokens; private atomic
 device metadata contains only account identity, endpoint and credential handles.
-There is no plaintext fallback. Saved secrets and device codes never return to
-the browser. Account operations require LocalTrusted Admin admission. GitHub's
-device interval, slowdown, expiry, cancellation and token refresh are enforced
-by the backend; the public OAuth client ID is operator configured using
+There is no plaintext fallback. Downstream native hosts may inject their own
+private metadata root and `ScopedNativeSecrets` namespace while reusing the
+configured public OAuth client ID. The default jj-store namespace is unchanged.
+Saved secrets and device codes never return to the browser. jj-store service
+account operations require LocalTrusted Admin admission; downstream native hosts
+supply their own explicit installation account admission. GitHub's device
+interval, slowdown, expiry, cancellation and token refresh are enforced by the
+backend; the public OAuth client ID is operator configured using
 `JJ_STORE_GITHUB_OAUTH_CLIENT_ID` or the `github-oauth-client-id` file in the
 private device `forges/integrations` directory. The file contains only the
 public client ID, never a token. Environment configuration takes precedence.

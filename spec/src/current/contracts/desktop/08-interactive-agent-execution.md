@@ -1,12 +1,11 @@
 # Interactive agent execution resources
 
-JST-DESK-001 and JST-DESK-003 extend the paired resource set with an optional
-regular `jj-acp` executable. Explicit `--acp-executable` during staging, or
-trusted `JJ_STORE_ACP_EXECUTABLE`, selects that binary. It is copied alongside
-the paired custom `jj`; the host passes both absolute resource paths to its
-owned service. Missing ACP leaves execution unavailable without affecting
-repository browsing. Installed adapter availability and authentication are
-separate from bundled harness availability.
+JST-DESK-001 and JST-DESK-003 extend the paired resource set with a verified
+Lapis AI bundle. The shared native `ResourceBundle` verifies the complete helper
+inventory, version, target, regular-file paths, hashes and native ABI before any
+resource launch. The host passes the selected absolute paths and paired custom
+`jj` to its owned service. Installed adapters and authentication remain separate
+from bundled helper availability.
 
 Agent execution shares the server owner lifetime. Closing the desktop parent
 pipe closes warm sessions before stopping HTTP/RPC and RustFS. The host allows
@@ -21,14 +20,14 @@ activity, and releases on all agents stopping or application shutdown. Polling
 alone never renews it. The browser capability marker is presentation-only and
 grants no repository access.
 
-Full M25 staging includes `jj-acp`, `jj-store-local-agent`,
-`jj-store-agent-tools` and `jj-store-compute`, with source pins, third-party
-notices and a checksum manifest verified before launch. Symlink resources,
-missing helpers, mismatched source pins, and modified executable/native runtime
-bytes refuse startup. `--native-runtime-dir` embeds the pinned inference
-artifact directory; otherwise runtime preparation remains an explicit user
-download. Weights are separate explicit downloads/imports. The same resource
-directory can be staged for a headless server installation; no globally
-installed ACP/helper executable is needed. macOS machine identity uses the
-installation-scoped Keychain; headless servers provide
-`JJ_STORE_COMPUTE_IDENTITY` through operator process configuration.
+Full M25 staging includes `lapis-acp`, `lapis-agent`, `lapis-agent-tools` and
+`lapis-compute`, with source pins, third-party notices and the upstream TOML
+resource manifest verified before launch. Symlink resources, missing helpers,
+mismatched source pins, and modified executable/native runtime bytes refuse
+startup. `--native-runtime-dir` embeds the pinned inference artifact directory;
+otherwise runtime preparation remains an explicit user download. Weights are
+separate explicit downloads/imports. The same resource directory can be staged
+for a headless server installation; no globally installed ACP/helper executable
+is needed. macOS machine identity uses the installation-scoped Keychain;
+headless servers provide `JJ_STORE_COMPUTE_IDENTITY` through operator process
+configuration.

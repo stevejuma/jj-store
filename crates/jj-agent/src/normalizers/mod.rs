@@ -6,6 +6,7 @@ mod controller;
 mod cursor;
 mod cursor_tool;
 mod cursor_transcript;
+mod native_capture;
 mod opencode;
 mod opencode_snapshot;
 mod opencode_tools;
@@ -25,7 +26,13 @@ pub(crate) fn normalize(
         crate::IntegrationId::Codex => codex::normalize(profile, batch, output, tool_results),
         crate::IntegrationId::Cursor => cursor::normalize(profile, batch, output),
         crate::IntegrationId::OpenCode => opencode::normalize(profile, batch, output),
-        crate::IntegrationId::OwnedController => controller::normalize(batch, output),
+        crate::IntegrationId::OwnedController => {
+            if profile.product_version == "jj-native-capture-1" {
+                native_capture::normalize(batch, output)
+            } else {
+                controller::normalize(batch, output)
+            }
+        }
     }
 }
 

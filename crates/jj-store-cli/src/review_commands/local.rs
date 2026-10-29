@@ -63,7 +63,8 @@ pub(super) async fn run(
             helper,
             format,
             &repository
-                .review_command_status(request_id)
+                .review_store_status(request_id)
+                .await
                 .map_err(error)?,
         ),
         command => {

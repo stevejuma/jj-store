@@ -4,7 +4,6 @@ import { findWorkspaceTarget } from "./local-state.js";
 import { LocalStacksSession } from "./local-session.js";
 import { readIssuedStackHistory } from "./issued-history.js";
 import { stackReadContext } from "./read-context.js";
-import { stackSourceRange } from "./source-range.js";
 import { ApiError, fullId, type Model } from "../../api/client.js";
 import type { StoreDataSource } from "../native-data-source.js";
 import {
@@ -13,6 +12,7 @@ import {
 } from "../repository-profile.js";
 import { LoadedStackRanges } from "./loaded-ranges.js";
 import { CurrentWorkingTreeReads } from "./current-working-tree.js";
+import { ProductionStackFileReads } from "./production-files.js";
 import { stackReferencePage, stackReferenceWindow } from "./reference-pages.js";
 import { StackWorkspaceReads } from "./reads.js";
 import {
@@ -51,6 +51,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
   readonly ranges = new LoadedStackRanges();
   #commits = new Map<string, WorkspaceHistoryPage["commits"][number]>();
   readonly #physical: CurrentWorkingTreeReads;
+  readonly #files: ProductionStackFileReads;
   constructor(
     readonly source: StoreDataSource,
     readonly binding: Model<"LocalBinding">,
@@ -65,6 +66,12 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       () => this.#snapshot,
       () => this.#pin!,
       (state) => this.read(state),
+    );
+    this.#files = new ProductionStackFileReads(
+      () => this.#reads!,
+      (request) => this.#context(request),
+      this.#commits,
+      this.#local,
     );
   }
   get observeWorkingTree() {
@@ -256,29 +263,10 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     request,
     signal,
   ) => this.readTargetHistory(request, signal);
-  async readSourceFiles(request: WorkspaceSourceRequest) {
-    const range = stackSourceRange(
-      this.#context(request),
-      this.#commits,
-      request.source,
-    );
-    const page = await this.#reads!.files(
-      range,
-      request.cursor,
-      request.signal,
-    );
-    this.#context(request);
-    return page;
-  }
-  async readFileDiff(request: WorkspaceSourceRequest & { path: string }) {
-    const file = await this.#reads!.diff(
-      stackSourceRange(this.#context(request), this.#commits, request.source),
-      request.path,
-      request.signal,
-    );
-    this.#context(request);
-    return this.#local.hunks(request.source, file);
-  }
+  readSourceFiles = (request: WorkspaceSourceRequest) =>
+    this.#files.files(request);
+  readFileDiff = (request: WorkspaceSourceRequest & { path: string }) =>
+    this.#files.diff(request);
   async readConflict(
     request: Parameters<NonNullable<StackWorkspaceAdapter["readConflict"]>>[0],
   ) {

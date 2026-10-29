@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import SkeletonFixture from "../../fixtures/AgentsSkeletonFixture.svelte";
@@ -6,8 +7,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent inbox navigation",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -18,9 +19,7 @@
     const c = within(canvasElement);
     const counts = () =>
       JSON.parse(c.getByTestId("inbox-read-counts").textContent ?? "{}");
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await c.findByRole("heading", {
       name: "Fixture conversation",
     });
@@ -35,13 +34,9 @@
     await expect(initial["/v1/local/agents/settings"]).toBe(1);
     await expect(initial["/v1/local/agents/targets"]).toBe(1);
     await expect(initial["/v1/local/agents"]).toBe(1);
-    await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
-    );
+    await storyControl(document.body, "Manage fixture agents");
     await c.findByRole("button", { name: "View sessions" });
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await c.findByRole("heading", {
       name: "Fixture conversation",
     });
@@ -90,9 +85,7 @@
   args={{ status: "Offline" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const chat = await c.findByRole("button", {
       name: /Open session Fixture conversation/,
     });
@@ -127,9 +120,7 @@
   name="Inbox chat list resizes with keyboard and retains width while hidden"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const list = await c.findByRole("complementary", { name: "Session chats" });
     const handle = c.getByRole("button", { name: "Resize session chats" });
     const initial = list.getBoundingClientRect().width;
@@ -148,12 +139,8 @@
       c.getByRole("button", { name: "Toggle session chats" }),
     );
     await waitFor(() => expect(list.getBoundingClientRect().width).toBe(240));
-    await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Manage fixture agents");
+    await storyControl(document.body, "Open fixture conversation");
     const restoredList = await c.findByRole("complementary", {
       name: "Session chats",
     });

@@ -99,3 +99,21 @@ retain their prior interpretation.
 The released custom CLI is named jj-store-jj and preserves upstream JJ handling
 and the existing companion provider. Equivalent Rust 1.99 test iteration does
 not change native graph ordering or repository authority.
+
+## Injectable carrier extraction
+
+M32 extracts the same companion ref, selected descriptors, original receipts and
+canonical immutable record bytes into jj-store-git. JST-LOCAL-001/002/003 remain
+unchanged: publication is the existing expected-old-value ref edit, retained
+history and complete closures remain required, and stock GitBackend remains code
+authority. Anchored commands require an injected qualified JJ evidence validator
+before actor creation or staging. The Git library rejects missing validation.
+Public domain reads admit only current or retained committed metadata
+selections; low-level candidate audits do not grant selected-domain read
+membership.
+
+Conversation metadata publication validates frozen AgentStore source IDs against
+the selected committed record inventory, retaining older captured snapshots when
+the active session advances. Exact kind, identity, session membership, closure
+and evidence checks remain required. This internal validation admits no
+unselected staged data and does not widen public pinned-snapshot reads.

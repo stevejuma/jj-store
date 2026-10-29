@@ -6,8 +6,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/History query",
     component: StoreHistoryQuery,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte",
+      },
       docs: {
         source: {
           language: "tsx",

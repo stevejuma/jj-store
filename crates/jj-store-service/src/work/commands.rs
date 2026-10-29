@@ -5,7 +5,6 @@ use jj_store_wal::{
     self as wal,
     publication::{
         PublishOutcome, Snapshot, WorkCommandRequest as WalRequest, WorkCommandResultV1,
-        WorkCommandV1,
     },
 };
 use serde::{Deserialize, Serialize};
@@ -13,14 +12,7 @@ use sha2::{Digest as _, Sha256};
 use std::sync::Arc;
 
 use super::{Error, Result};
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
-#[schemars(rename = "WorkCommandRequest")]
-#[serde(deny_unknown_fields)]
-pub struct Request {
-    pub version: u32,
-    pub request_id: m::RequestId,
-    pub command: WorkCommandV1,
-}
+pub use jj_store_git::work_api::Request;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "WorkCommandReceipt")]
@@ -133,7 +125,15 @@ impl WorkCommandService {
             request.command.clone(),
         )?;
         let digest = command.intent_digest(session.repository)?;
-        match session.coordinator.publish_work_command(&command).await? {
+        let stores = session.collaboration_stores().await?;
+        let adapted = jj_store_core::StoreRequest::new(request.request_id, request.command.clone())
+            .with_publication_id(publication_id);
+        let outcome = stores
+            .work()
+            .ok_or(jj_store_core::Error::Unsupported("WorkStore disabled"))?
+            .execute(&adapted)
+            .await?;
+        match crate::native::publication_outcome(outcome, publication_id)? {
             PublishOutcome::Committed(receipt) => {
                 session.events.published(session.repository);
                 reauthorize(&session, principal, receipt.accepted.epoch).await?;
@@ -162,10 +162,21 @@ impl WorkCommandService {
         match tokio::time::timeout(session.limits.timeout, async {
             let principal = session.principal(Permission::Write).await?.id();
             let current = session.snapshot().await?;
-            let receipt = session
-                .coordinator
-                .receipt_at(&current, principal, request_id)
+            let stores = session.collaboration_stores().await?;
+            let outcome = stores
+                .work()
+                .ok_or(jj_store_core::Error::Unsupported("store disabled"))?
+                .status(request_id)
                 .await?;
+            let receipt = match outcome {
+                jj_store_core::StoreOutcome::Committed(value) => {
+                    Some(crate::native::native_receipt(value)?)
+                }
+                jj_store_core::StoreOutcome::NotKnown { .. } => None,
+                jj_store_core::StoreOutcome::Unknown { .. } => {
+                    return Ok(Status::OutcomeUnknown { request_id });
+                }
+            };
             reauthorize(&session, principal, current.manifest().epoch).await?;
             Ok(match receipt {
                 Some(receipt) => Status::Committed {

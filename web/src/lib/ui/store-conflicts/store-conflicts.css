@@ -15,12 +15,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.store-conflict-editor__body
-  > [data-ui-part="scroll-area"]
-  > [data-ui-part="scroll-area-viewport"]
-  > div {
-  height: 100%;
-}
 .store-conflict-editor__body-shell {
   --ui-shell-height: 100%;
   --ui-shell-main-block-inset: 0px;

@@ -92,7 +92,7 @@ impl Supervisor {
         {
             return Err(Error::Invalid);
         }
-        let _dispatch = self.0.conversation_dispatch.lock().await;
+        let dispatch = turn_coordination::lease(self).await;
         if let Some(home) = command.origin.home {
             let profile = if self
                 .0
@@ -482,57 +482,33 @@ impl Supervisor {
         for (_, id) in &participants {
             self.link_origin(id).await?;
         }
-        let mut prepared = Vec::new();
-        for (setup, id) in &participants {
-            let child = RequestId::new(publication::identity(&format!(
-                "chat-send/{}/{name}",
-                command.request_id,
-                name = setup.id
-            )));
-            let action = Command {
+        let actions = participants
+            .iter()
+            .map(|(setup, id)| Command {
                 version: 1,
-                request_id: child,
+                request_id: RequestId::new(publication::identity(&format!(
+                    "chat-send/{}/{name}",
+                    command.request_id,
+                    name = setup.id
+                ))),
                 session_id: id.clone(),
                 action: Action::Prompt {
                     comments: None,
                     text: command.text.clone(),
                     max_duration_ms: command.max_duration_ms,
                 },
-            };
-            let preparation = if let Some(submission) = deferred {
-                self.queue_file_prompt(&action, command.request_id, home, &profile, submission)
-            } else {
-                self.prepare_chat_prompt(&action, comment_context.as_ref())
-                    .await
-            };
-            match preparation {
-                Ok(frame) => prepared.push((action, frame)),
-                Err(error) => {
-                    for (action, _) in &prepared {
-                        // These frames have not left the controller. Release
-                        // their reserved bootstrap/reply context for the next
-                        // explicit Send, using the existing no-dispatch fence.
-                        self.update(|s| delivery::observe(s, &action.session_id, &json!({"type":"error", "requestId":action.request_id.to_string(), "code":"dispatch_not_sent"})))?;
-                        self.finish(
-                            action.request_id,
-                            "failed",
-                            Some("chat_context_preparation_failed_no_prompt"),
-                        )?;
-                    }
-                    return Err(error);
-                }
-            }
-        }
-        self.finish(command.request_id, "prepared", None)?;
-        let mut agents = Vec::new();
-        for (action, frame) in prepared {
-            if self.send(&action.session_id, frame).is_err() {
-                self.update(|s| delivery::observe(s, &action.session_id, &json!({"type":"error", "requestId":action.request_id.to_string(), "code":"dispatch_not_sent"})))?;
-                self.finish(action.request_id, "failed", Some("dispatch_not_sent"))?;
-            }
-            agents.push(self.read(|s| Ok(s.intents[&action.request_id].outcome.clone()))?);
-        }
-        self.finish(command.request_id, "accepted", None)?;
+            })
+            .collect::<Vec<_>>();
+        let coordinator = turn_coordination::coordinator(
+            &dispatch,
+            command.request_id,
+            home,
+            profile,
+            comment_context,
+            deferred.map(|submission| submission.as_ref().clone()),
+            &actions,
+        )?;
+        let agents = coordinator.send(&command.request_id, &actions).await?;
         Ok(dto::SendOutcome {
             comment_publication: self.comment_publication(command.request_id)?,
             request_id: command.request_id,

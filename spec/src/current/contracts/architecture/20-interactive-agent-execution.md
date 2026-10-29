@@ -1,11 +1,11 @@
 # Interactive agent execution
 
-The LocalTrusted service owns an optional process supervisor using a configured
-jj-acp binary over inherited stdio. Service interfaces expose execution and
-workspace capabilities without importing ACP implementation. Storage/model/WAL
-stay independent. Saved setups and device lifecycle journals live outside
-checkouts; sanitized repository history remains selected by AgentStore
-authority.
+The LocalTrusted service owns an optional process supervisor using the locally
+linked Lapis AI Rust clients and verified `lapis-acp` helper over inherited
+stdio. Service interfaces expose execution and workspace capabilities without
+importing ACP implementation. Storage/model/WAL stay independent. Saved setups
+and device lifecycle journals live outside checkouts; sanitized repository
+history remains selected by AgentStore authority.
 
 Publication selects at most 128 consecutive observations and four MiB of
 payload. Its end sequence is journaled before spool admission; batch and
@@ -19,7 +19,7 @@ Privacy rules compile on a detached preparation thread that owns no subprocess
 or publication. Service shutdown does not wait for unused scanner preparation;
 the stopping supervisor discards a late result.
 
-The application owns a fixed runtime catalog outside jj-acp. Explicit Codex
+The application owns a fixed runtime catalog outside Lapis ACP. Explicit Codex
 installation runs resolved npm without a shell into a fresh private request
 directory, with exact adapter/CLI versions, fixed public registry, no lifecycle
 scripts, private cache/config and bounded time/disk use. Verified executable and
@@ -62,6 +62,12 @@ dependencies. Metadata creates no exception to the storage/model/WAL boundary.
 
 The controlling application owns ChatGPT-plan OAuth, account metadata and
 Keychain token bundles. A private Unix-domain token broker supplies only access
-tokens to the maintained local-agent fork. jj-acp owns no identity or OAuth
+tokens to the maintained local-agent fork. Lapis ACP owns no identity or OAuth
 implementation. See
 [ChatGPT plans](../collaboration/41-chatgpt-plan-provider.md).
+
+All application execution and model-discovery paths select Control V3, including
+the per-session API. V3 scope IDs remain separate from adapter session IDs.
+Existing normalization profile/cursor identifiers are retained as storage-format
+identities; their historical names do not enable a Control V2 launch. Recovery
+retains exact pending publication ranges and never replays prompts.

@@ -44,3 +44,7 @@ adds a Markdown record and an explicit milestone review.
 - [M29 custom data indexing](M29/index.md)
 - [M30 public release](M30/index.md)
 - [M31 forge-agnostic stack submission](M31/index.md)
+- [M32 injectable collaboration libraries](M32/index.md)
+- [M33 reusable agent workflows and Notes integration](M33/index.md)
+- [M34 automatic vault history and backup](M34/index.md)
+- [M35 persistent attachments and editable thread files](M35/index.md)

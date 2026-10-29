@@ -31,3 +31,11 @@ Read the owning topic and requirement before implementation.
 - [Custom data index ownership](22-custom-data-indexes.md)
 - [Public distribution and release orchestration](23-public-distribution.md)
 - [Forge-agnostic stack submission](24-forge-stacks.md)
+- [Injectable collaboration stores](25-injectable-collaboration-stores.md)
+- [Reusable agent workflows](26-reusable-agent-workflows.md)
+- [Vault history search projection](27-vault-history-search.md)
+
+- [Completed history shutdown](28-completed-history-shutdown.md)
+
+- [Pinned history metadata](29-pinned-history-metadata.md)
+- [Planned thread file storage boundary](30-thread-files-plan.md)

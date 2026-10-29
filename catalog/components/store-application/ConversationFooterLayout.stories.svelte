@@ -6,8 +6,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Conversation footer layout",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", a11y: { test: "error" } },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      a11y: { test: "error" },
+    },
   });
 </script>
 

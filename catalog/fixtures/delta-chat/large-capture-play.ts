@@ -1,3 +1,4 @@
+import { storyControl } from "../story-controls.js";
 import { EditorView } from "@codemirror/view";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { reader, draft, addComment } from "./acceptance-helpers.js";
@@ -50,8 +51,8 @@ export async function largeCaptures({
       .querySelector("blockquote"),
   ).toHaveTextContent("export const line13 = 13;");
   await addComment(canvasElement);
-  await userEvent.click(c.getByRole("button", { name: "Hide body" }));
-  await userEvent.click(c.getByRole("button", { name: "Show body" }));
+  await storyControl(document.body, "Hide body");
+  await storyControl(document.body, "Show body");
   const restored = await reader(canvasElement, "Large captured code");
   const view = EditorView.findFromDOM(restored)!;
   view.dispatch({

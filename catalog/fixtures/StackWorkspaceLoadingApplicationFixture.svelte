@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import type { StoreStacksView } from "../../web/src/lib/controller/store-stacks-navigation.js";
   import type {
@@ -13,7 +14,18 @@
   import { workspaceStoryFixture } from "./stack-workspace/data.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
 
-  let { view = "workspace" }: { view?: StoreStacksView } = $props();
+  import { repositoryColumnCanvasStorageKey } from "../../web/src/lib/ui/layout-storage.js";
+  let {
+    view = "workspace",
+    selectedHistory = false,
+    historyWidth,
+    holdHistory = false,
+  }: {
+    view?: StoreStacksView;
+    selectedHistory?: boolean;
+    historyWidth?: number;
+    holdHistory?: boolean;
+  } = $props();
   const base = untrack(() => createInMemoryStoreController("stacks"));
   untrack(() => void base.actions.selectStacksView(view));
   let phase = $state<
@@ -21,6 +33,7 @@
   >("connecting");
   let stackWorkspace = $state<StackWorkspaceController>();
   let complete: (() => void) | undefined;
+  const histories = new Map<string, () => void>();
   let reject: ((error: Error) => void) | undefined;
   const controller: StoreController = {
     ...base,
@@ -30,6 +43,9 @@
     get state() {
       return {
         ...base.state,
+        route: selectedHistory
+          ? { ...base.state.route, inspectedOperationId: "a".repeat(128) }
+          : base.state.route,
         status: {
           ...base.state.status,
           connection:
@@ -43,7 +59,22 @@
       };
     },
   };
-  const storage = untrack(createMemoryStoryStorage);
+  const storage = untrack(() => {
+    const saved = createMemoryStoryStorage();
+    if (historyWidth)
+      saved.setItem(
+        repositoryColumnCanvasStorageKey(view === "oplog" ? "oplog" : "log"),
+        JSON.stringify({
+          version: 2,
+          columns: {
+            revisions: { collapsed: false, width: historyWidth },
+            diff: { collapsed: false, width: 400 },
+          },
+          pairSplits: [],
+        }),
+      );
+    return saved;
+  });
   function discover() {
     const snapshot = workspaceStoryFixture();
     snapshot.repository = base.state.route.repository;
@@ -54,7 +85,27 @@
       workspaces: [],
       stacks: [],
     };
-    const adapter = new MockStackWorkspaceAdapter(snapshot);
+    const adapter = Object.assign(
+      new MockStackWorkspaceAdapter(snapshot),
+      holdHistory
+        ? {
+            async readStackHistory(
+              request: import("../../web/src/lib/controller/stack-workspace/types.js").WorkspaceStackHistoryRequest,
+            ) {
+              await new Promise<void>((resolve) =>
+                histories.set(request.stack, resolve),
+              );
+              return {
+                commits: [
+                  ...snapshot.stacks.find(
+                    (stack) => stack.id === request.stack,
+                  )!.commits,
+                ].reverse(),
+              };
+            },
+          }
+        : {},
+    );
     adapter.read = async () => {
       await new Promise<void>((resolve, fail) => {
         complete = resolve;
@@ -79,29 +130,41 @@
   });
 </script>
 
-<div style="height: 100vh; min-height: 36rem">
-  <div
-    role="group"
-    aria-label="Loading fixture controls"
-    style="display: flex; gap: 0.25rem"
+<div style="display: flex; flex-direction: column; height: 100vh">
+  <FixtureControls
+    ><div
+      data-story-controls
+      role="group"
+      aria-label="Loading fixture controls"
+      style="display: flex; flex: none; gap: 0.25rem"
+    >
+      <Button onclick={() => (phase = "discovering")}>Connect repository</Button
+      >
+      <Button onclick={discover}>Discover workspace binding</Button>
+      <Button onclick={read} disabled={!stackWorkspace || phase === "reading"}
+        >Start workspace read</Button
+      >
+      <Button onclick={() => complete?.()}>Complete workspace read</Button>
+      {#if holdHistory}<Button
+          onclick={() => {
+            for (const finish of histories.values()) finish();
+            histories.clear();
+          }}>Complete stack histories</Button
+        >{/if}
+      <Button
+        onclick={() =>
+          reject?.(new Error("The workspace read failed. Try again."))}
+        >Fail workspace read</Button
+      >
+    </div></FixtureControls
   >
-    <Button onclick={() => (phase = "discovering")}>Connect repository</Button>
-    <Button onclick={discover}>Discover workspace binding</Button>
-    <Button onclick={read} disabled={!stackWorkspace || phase === "reading"}
-      >Start workspace read</Button
-    >
-    <Button onclick={() => complete?.()}>Complete workspace read</Button>
-    <Button
-      onclick={() =>
-        reject?.(new Error("The workspace read failed. Try again."))}
-      >Fail workspace read</Button
-    >
+  <div style="display: flex; flex: 1; min-height: 0">
+    <StoreRepositoryApplication
+      {controller}
+      {stackWorkspace}
+      layoutStorage={storage}
+      displayMode="auto"
+      initiallyCollapsed={historyWidth !== undefined}
+    />
   </div>
-  <StoreRepositoryApplication
-    {controller}
-    {stackWorkspace}
-    layoutStorage={storage}
-    displayMode="desktop"
-    initiallyCollapsed={false}
-  />
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, untrack } from "svelte";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createProjectsHub } from "../../web/src/lib/controller/production-projects-hub.svelte.js";
   import { initialStoreRoute } from "../../web/src/lib/controller/store-route-history.svelte.js";
   import type {

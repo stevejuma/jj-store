@@ -8,13 +8,18 @@
   const { Story } = defineMeta({
     title: "JJ Store/Components/Native IDs",
     component: CommunityProjectsRevisionGraphIds,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       commitId: demoCommitId,
       changeId: demoChangeId,
       placement: "inline",
     },
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphIds.svelte",
+      },
       docs: {
         source: {
           code: '<script>\n  import CommunityProjectsRevisionGraphIds from "./web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphIds.svelte";\n<\/script>\n<CommunityProjectsRevisionGraphIds {commitId} {changeId} compactLeadingChars={4} expandedLeadingChars={5} placement="inline" />',

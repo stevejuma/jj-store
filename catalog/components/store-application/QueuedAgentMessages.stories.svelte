@@ -9,8 +9,16 @@
   const { Story } = defineMeta({
     title: "JJ Store/Queued agent messages",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", a11y: { test: "error" } },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-agent-execution/StoreAgentConversation.svelte",
+      },
+      layout: "fullscreen",
+      a11y: { test: "error" },
+    },
   });
   const input = (c: ReturnType<typeof within>) => {
     const document = c.queryByRole("group", { name: "Next message draft" });

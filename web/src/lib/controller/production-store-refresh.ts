@@ -126,7 +126,6 @@ export function createProductionRefresh(options: {
       } else {
         data.pathPages.clear();
         data.knownDirectories.clear();
-        data.fileTerms.clear();
       }
       if (automatic && followedHead && followedRef && route.page === "files")
         history.replace({

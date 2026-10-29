@@ -5,6 +5,161 @@ without converting its code into native object storage. Its existing JJ
 operation log and Git backend remain the code authority. An owned companion ref
 selects immutable application metadata.
 
+`jj-store-git` exposes this companion provider through independently named
+AgentStore, WorkStore, ReviewStore, ThreadStore and ReactionStore factories.
+Plain Git embedding needs no JJ or native storage dependency. The focused
+`jj-store-jj` companion feature supplies qualified JJ source evidence when
+needed. Application defaults retain LocalTrusted folder admission and filesystem
+actor provenance. Loading and reading never initialize repository identity or
+publish metadata; factory configuration remains host-owned.
+
+For native hosts, `jj-store-jj::local_repository::inspect_workspace` resolves
+the existing workspace, canonical repository/Git paths and optional companion
+identity. It shares the CLI's existing default-settings discovery, including
+bounded repository links and symlink rejection. `WorkspaceInfo::open_metadata`
+rechecks the observed paths and carrier identity before opening the existing
+store. `default_metadata_store` opens a separately admitted metadata directory
+without exposing upstream settings types. Neither API loads or snapshots a
+working copy, reconciles heads, initializes identity or reads repository-owned
+executable settings. The host must still bind physical sources and current
+window/vault authority; observed paths are data, not an authorization
+capability.
+
+Native and local code readers share storage-independent read limits,
+diagnostics, cancellation and non-queuing worker admission internally. Existing
+public query paths and default budgets remain unchanged. For an embedded history
+reader, select `jj-store-jj` with `default-features = false` and
+`features = ["local-history"]`. This includes the companion adapters and the
+existing `local_browser` history, content and diff API, without native object
+storage, WAL, application services or execution runtimes. The default `native`
+profile retains all existing readers and mutations; `companion` alone remains
+the smaller metadata-only profile.
+
+The embedding host implements `local_browser::Access`, rechecking physical
+source identity and current authorization, and supplies a registration
+generation. Create a bounded `local_browser::Executor`, select an explicit
+operation from `heads`, and reserve a private `query::cache::managed::Namespace`
+with a matching local repository/generation binding.
+`prepare_managed_code_index` builds the private standard JJ index; retain its
+handle for `read_code_index` requests. Cancellation releases owned work after
+worker exit. An external writer may advance the repository while old handles
+retain their original operation; a changed registration generation or withdrawn
+authorization rejects the read. Readers never snapshot dirty working files,
+repair source indexes or reconcile heads. Working-tree inspection and checkout
+remain native-only. The crate README provides an entry-point overview.
+
+## Embedding in Tauri
+
+Automatic saved-file history is separately owned by `jj-vault`. Its injected
+`Repository` and native `Binding` retain checkpoints outside disposable indexes.
+Hosts supply current vault admission, watching and progress, and drain editor
+writes before `try_close`. Failed final capture keeps the same coordinator for
+explicit retry. Guarded file/whole-vault restore retains a safety checkpoint and
+original request receipt; it requires host writer protection. Remote transfer
+and credentials remain host-owned. Ordinary immutable history reads never
+capture files or infer restore authority.
+
+`jj-history-service` owns the transport-independent read service using the
+focused local-history profile. Native hosts construct it directly with admitted
+caller scope/origin, physical vault identity and generation. The retained
+`Context.window` field is an opaque caller scope, not evidence of a WebView.
+Private hosted IPC and HTTP authentication remain the application's
+responsibility.
+
+`tauri-plugin-jj-store` reexports those shared types and provides the optional
+read-only Tauri bridge. Enable its `tauri` feature to register
+`Builder::new(history).build()`. Default plugin permissions are empty. Grant
+`jj-store:local-history` only to intended windows.
+
+Implement `Admission::admit` using the host's actual caller window/URL, live
+vault token and physical root. Return a fresh `local::Access` with current
+identity and generation checks at every entry and completion. The host supplies
+a private absolute cache directory and trusted `Config`; neither roots nor
+generations are renderer inputs. Stored vault/handle strings grant no source
+authority.
+
+The transport accepts `heads`, `open`, `status`, `read`, `blame` and `close`,
+with a strict inner request object carried as a JSON text `request`. Both
+directions use the versioned envelope `{ "version": 1, "data": ... }`. Tauri
+transports this text without parsing inner integers as JavaScript numbers. A
+client must retain unsafe integer tokens without rounding; ordinary `JSON.parse`
+is insufficient. Unknown envelope versions/fields fail closed. Encoded requests
+are limited to 128 KiB and responses to 16 MiB, in addition to the underlying
+read budgets. The crate's `schema` example exports the complete public
+inner/envelope contract. Direct Rust `History` calls remain typed and do not use
+this transport codec. `heads` takes `vault`; `open` adds an exact `operation`
+from the admitted heads or retained selection and returns an opaque handle.
+`status` takes `vault` and `handle`, reporting `preparing`, `ready` with the
+exact snapshot, or a retained failure. `read` adds the existing local query
+object. Close releases only the invoking window's exact vault/handle.
+
+Ready handles support commit history/diffs, unfiltered operation graphs and
+operation-parent deltas. Op Log requests use `graph: "operations"` and
+`kind: "operation_diff"`; their existing DTOs retain full operation identities.
+Historical detail must be in the original pin's ancestry and an explicit parent
+must be a real edge. The reader uses bounded metadata proof without source-index
+repair, source writes or generic advanced-query fallback. Root/multiple-parent
+outcomes remain explicit; unknown or out-of-scope operations fail closed.
+
+File revision history uses the existing log query with a literal fileset, for
+example `all() & files(root-file:"Note.md")`, equivalent to JJ's positional file
+filter. JJ owns ordering, merge, conflict and deletion semantics. Prepared reads
+require complete upstream changed-path metadata under the original work, byte,
+memory and time limits; missing coverage requests private derived preparation
+instead of falling back to file bodies. The Tauri service extends that index in
+bounded batches at the same handle and retries only this typed read condition.
+Current admission, cancellation and generation remain checked throughout. Source
+files, source indexes, heads and refs are preserved. Hosts should expose
+progress for the whole read, including preparation, and retain the selected
+operation. File-content and cross-operation predicates remain unqualified.
+
+`blame` accepts the same vault/handle plus a query containing an exact commit,
+literal path and optional continuation. It reuses the existing native annotation
+algorithm and bounded progress cache; cursor scope is native-owned by the
+retained handle. Every page rechecks window/vault authorization and generation,
+and stays on the blocking worker through completion. Display the returned
+attribution with recorded text from `file_at`, using its native file ID as the
+membership proof. Neither annotation nor text reads snapshot dirty editor bytes.
+
+At most one preparation runs at a time; ordinary reads retain separate worker
+capacity. The service bounds retained handles and window scopes. Cancel/close
+waits for actual owned work to exit. Native `revoke(window)` cancels and drains
+only that window; `shutdown()` fences admission and drains all scopes, including
+cleanup already in progress. Hosts must await these calls before releasing vault
+authority. Destroyed-window/exit transport hooks provide final cleanup. Code and
+companion state remain untouched; conversion, mutation and metadata publication
+have no command here. Service fixtures and compilation do not establish Notes or
+native WebView product acceptance.
+
+### Typed renderer client
+
+`@lapismd/jj-history` supplies generated types and bounded runtime frame checks
+from the native schema. `HistoryClient` binds one opaque vault token to an
+injected text transport; `tauriHistory` from its `/tauri` entry accepts the
+application's public Tauri `invoke` function. Neither entry imports a native
+runtime or chooses source, cache, window or vault policy.
+
+Call `heads()`, select an explicit operation, and retain the handle returned by
+`open(operation)`. The application drives `status(handle)` while preparation is
+pending and calls `read(handle, query)` when ready. Call `close(handle)` when
+finished and retain a failed close for explicit recovery. Transport failures
+propagate; there are no implicit retries or polls. Vault teardown still requires
+the native drain described above.
+
+For attribution, call `blame(handle, { commit, path, continuation: null })` on a
+ready handle. Display partial ranges while `complete` is false and pass its
+opaque continuation to the next call. Keep the operation, commit and path fixed
+through the sequence; no implicit polling or retry is supplied by the client.
+
+Safe integer tokens decode as JavaScript numbers; full-width values decode as
+`bigint`. Large inputs must be supplied as `bigint`; already rounded numbers are
+rejected. The integer-only decoder rejects duplicate keys, fractions, exponent
+tokens, invalid shapes and excess nesting while preserving arbitrary record key
+spelling. Strings retain exact Unicode and escaping. The generated contract and
+independent archive tests cover source drift, runtime imports and TypeScript
+consumption. These checks do not qualify Notes application integration or a
+published package.
+
 ```mermaid
 flowchart TB
   Folder[Registered JJ folder] --> Code[Existing JJ code and operation history]
@@ -706,3 +861,18 @@ no automatic merge, push or cleanup occurs.
 Agent coordination uses a separate checkout bound to the conversation metadata
 home. Native materialization reuse checks both repository ID and LocalTrusted
 socket; local companion checkouts retain the same repository-owned metadata.
+
+## Retiring history scopes and physical status reads
+
+After successful history-service shutdown, drained window scopes are retired
+from the retained registry. Failed shutdown keeps recovery state. Pinned query
+metadata, operation details and unfiltered bookmark/workspace metadata use the
+bounded reader directly; referenced operations still require validation against
+the handle's original pin and caller admission.
+
+The private physical status helper compares the complete sparse/ignored
+working-tree projection with its operation-pinned baseline. It retains bounded
+comparison bytes privately, observes the workspace again after computing counts
+and rejects changed witnesses or revoked admission. Observer drain waits for
+actual worker leases to exit. These helpers grant no new browser route or
+mutation authority.

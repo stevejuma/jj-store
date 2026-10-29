@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as AlertDialog from "@lapismd/design-core/shadcn/alert-dialog";
   import { DialogFrame } from "@lapismd/design-core/forms/dialog";
@@ -48,7 +49,10 @@
           >Secondary text follows the selected app palette.</AlertDialog.Description
         >
       </AlertDialog.Header>
-      <button type="button" onclick={next}>Next palette</button>
+      <FixtureControls floating={false}
+        ><button type="button" onclick={next}>Next palette</button
+        ></FixtureControls
+      >
     </AlertDialog.Content>
   </AlertDialog.Root>
 {:else}
@@ -79,7 +83,10 @@
           />
         </StoreWorkField>
       </Field.Group>
-      <button type="button" onclick={next}>Next palette</button>
+      <FixtureControls floating={false}
+        ><button type="button" onclick={next}>Next palette</button
+        ></FixtureControls
+      >
     </DialogFrame>
   </Dialog.Root>
 {/if}

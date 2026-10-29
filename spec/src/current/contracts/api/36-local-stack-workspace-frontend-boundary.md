@@ -76,3 +76,16 @@ Unstaged pinning uses Design Core's public `fixed` presentation property. Its
 expanded/collapsed position and temporary capacity fallback introduce no new
 workspace adapter, command, transport or persisted layout fields; file/hunk drag
 semantics and adjacent diff origins retain the existing frontend contract.
+
+Production branch file summaries may expose an adapter-owned `selectionSource`
+only after proving a complete loaded linear segment, one changing commit for
+that path and exact equality of ordered native before/after terms, modes and
+provenance with the net comparison. Resolution is bounded to 40 commits and 50
+file-summary pages, loads no patches, and caches only within the exact read key.
+Opening a resolved diff requests native hunk tokens for that concrete commit.
+The controller projects those exact files into the owning commit for existing
+drop validation; drag and keyboard assignment carry only concrete commit/path
+and issued tokens. Missing ancestry, multiple owners, immutability, mismatched
+terms or exhausted bounds remain read-only. This adds no HTTP/RPC schema or
+command; exact operation, configuration, binding, preview/apply and unknown
+outcome guards remain authoritative under JST-API-001/002.

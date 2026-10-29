@@ -3,7 +3,7 @@
   import { LocalClient } from "../../web/src/lib/api/local-client.js";
   import { untrack } from "svelte";
   import { ApiError } from "../../web/src/lib/api/api-error.js";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createThreadsController } from "../../web/src/lib/controller/production-threads.svelte.js";
   import { initialStoreRoute } from "../../web/src/lib/controller/store-route-history.svelte.js";
   import type { StoreController } from "../../web/src/lib/controller/contracts.js";

@@ -1,0 +1,29 @@
+# M33.3 evidence history
+
+Generated from evidence task references and historical mappings. This history is
+not a completion gate selection.
+
+| Evidence                                                                                      | Date       | Original result | Later context    |
+| --------------------------------------------------------------------------------------------- | ---------- | --------------- | ---------------- |
+| [E-REUSABLE-AGENTS-004](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-004/index.md)     | 2026-10-17 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-005](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-005/index.md)     | 2026-10-17 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-006](../../../../../history/2026/10/17/E-REUSABLE-AGENTS-006/index.md)     | 2026-10-17 | pending         | Original outcome |
+| [E-REUSABLE-AGENTS-013](../../../../../history/2026/10/18/E-REUSABLE-AGENTS-013/index.md)     | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-014](../../../../../history/2026/10/18/E-REUSABLE-AGENTS-014/index.md)     | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-015](../../../../../history/2026/10/18/E-REUSABLE-AGENTS-015/index.md)     | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-AGENTS-016](../../../../../history/2026/10/18/E-REUSABLE-AGENTS-016/index.md)     | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-013](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-013/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-014](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-014/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-015](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-015/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-016](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-016/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-017](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-017/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-018](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-018/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-019](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-019/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-021](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-021/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-023](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-023/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-024](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-024/index.md) | 2026-10-18 | pass            | Original outcome |
+| [E-REUSABLE-PROGRESS-026](../../../../../history/2026/10/18/E-REUSABLE-PROGRESS-026/index.md) | 2026-10-18 | pass            | Original outcome |
+
+<!-- generated-navigation -->
+
+## Pages

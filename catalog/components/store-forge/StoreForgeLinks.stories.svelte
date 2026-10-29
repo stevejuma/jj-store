@@ -6,8 +6,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Forge/Inline PR links",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await views.stacks();
     },

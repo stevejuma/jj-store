@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic v2 process fixture for the device supervisor, not runner qualification."""
+"""Deterministic V3 process fixture for the device supervisor, not runner qualification."""
 import json
 import os
 import sys
@@ -7,6 +7,7 @@ from pathlib import Path
 
 workspace = Path(sys.argv[sys.argv.index('--cwd') + 1])
 version = int(sys.argv[sys.argv.index("--control-version")+1])
+assert version == 3
 sequence = 0
 pending = None
 scope = None
@@ -28,6 +29,7 @@ def complete(request, status='completed'):
 emit('ready', runners=[], queueCapacity=16)
 for line in sys.stdin:
     frame = json.loads(line)
+    assert frame['version'] == 3
     request = frame['requestId']
     kind = frame['type']
     if workspace.name == 'catalog':

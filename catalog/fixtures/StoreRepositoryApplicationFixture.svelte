@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { untrack } from "svelte";
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import {
@@ -133,6 +134,10 @@
   {displayMode}
   {layoutStorage}
 />
-{#if deferredBranchSelection}<Button onclick={() => (graphPending = false)}
-    >Finish branch load</Button
-  >{/if}
+<FixtureControls
+  ><div data-story-controls>
+    {#if deferredBranchSelection}<Button onclick={() => (graphPending = false)}
+        >Finish branch load</Button
+      >{/if}
+  </div></FixtureControls
+>

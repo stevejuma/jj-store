@@ -2,20 +2,11 @@
 mod aliases;
 pub mod identity;
 pub mod operations;
+pub use crate::read_support::Diagnostic;
 pub use aliases::standard_aliases;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct Diagnostic {
-    pub kind: String,
-    pub message: String,
-}
-impl std::fmt::Display for Diagnostic {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.message)
-    }
-}
 pub fn invalid(kind: &str, message: impl AsRef<str>) -> super::Error {
     let message: String = message.as_ref().chars().take(1024).collect();
     super::Error::InvalidQuery(Diagnostic {

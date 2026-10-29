@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreAgentSettings from "../../web/src/lib/ui/store-settings/StoreAgentSettings.svelte";
@@ -130,29 +131,37 @@
 
 <StoreAgentSettings runtimes={management} />
 <div class="fixture-controls" aria-label="Fixture controls">
-  <Button
-    variant="outline"
-    onclick={() => {
-      failed = true;
-      void management.refresh();
-    }}>Fail runtime checks</Button
-  >
-  <Button
-    variant="outline"
-    onclick={() => {
-      failed = false;
-      void management.refresh();
-    }}>Recover runtime checks</Button
-  >
-  {#if lost}<Button
+  <FixtureControls floating={false}
+    ><Button
       variant="outline"
       onclick={() => {
-        unresolved = false;
+        failed = true;
         void management.refresh();
-      }}>Complete original installation</Button
+      }}>Fail runtime checks</Button
+    ></FixtureControls
+  >
+  <FixtureControls floating={false}
+    ><Button
+      variant="outline"
+      onclick={() => {
+        failed = false;
+        void management.refresh();
+      }}>Recover runtime checks</Button
+    ></FixtureControls
+  >
+  {#if lost}<FixtureControls floating={false}
+      ><Button
+        variant="outline"
+        onclick={() => {
+          unresolved = false;
+          void management.refresh();
+        }}>Complete original installation</Button
+      ></FixtureControls
     >{/if}
-  {#if loading}<Button variant="outline" onclick={() => release()}
-      >Finish loading</Button
+  {#if loading}<FixtureControls floating={false}
+      ><Button variant="outline" onclick={() => release()}
+        >Finish loading</Button
+      ></FixtureControls
     >{/if}
   <output aria-label="Installation command count">{commands.length}</output>
   <output aria-label="Installation command actions"

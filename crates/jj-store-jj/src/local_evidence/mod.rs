@@ -1,7 +1,10 @@
 //! Exact source context for the pinned ordinary GitBackend profile.
 mod capture;
+#[cfg(feature = "native")]
 mod operation_archive;
+#[cfg(feature = "native")]
 pub(crate) use operation_archive::MAX_ARCHIVE_BYTES;
+#[cfg(feature = "native")]
 pub use operation_archive::{
     OperationArchiveLimits, OperationArchiveV1, capture_operation_archive,
 };
@@ -70,6 +73,21 @@ pub struct GitEvidenceCapsuleV1 {
     pub commits: BTreeMap<m::GitSha1Id, GitCommitV1>,
 }
 impl GitEvidenceCapsuleV1 {
+    /// Decode the full qualified capsule and bind every source reference field.
+    pub fn decode_reference(
+        reference: &m::portable::CodeEvidenceRefV1,
+        bytes: &[u8],
+    ) -> Result<Self> {
+        let value = Self::decode(reference.capsule, bytes)?;
+        if value.repository != reference.repository
+            || value.profile != reference.profile
+            || value.operation_id != reference.operation
+        {
+            return Err(Error::Invalid("capsule reference"));
+        }
+        Ok(value)
+    }
+
     pub fn encode(&self) -> Result<Vec<u8>> {
         self.validate()?;
         let bytes = serde_json::to_vec(self).map_err(Error::other)?;
@@ -164,3 +182,6 @@ impl GitEvidenceCapsuleV1 {
         ids.iter().map(git_commit_id).collect()
     }
 }
+
+mod provider;
+pub use provider::JjEvidenceValidator;

@@ -1,13 +1,15 @@
 use crate::CaptureResult as AuthorityResult;
-use std::{
-    ffi::OsStr,
-    fs::{self, File, OpenOptions},
-    path::Path,
-};
+use std::{fs::File, path::Path};
+
+#[cfg(feature = "application")]
+use std::ffi::OsStr;
+#[cfg(any(test, feature = "application"))]
+use std::fs::{self, OpenOptions};
 
 // Older binaries hold capture.lock exclusively for their entire spool handle.
 // New handles share that legacy gate, then use independent mutation/drain locks.
 // This prevents an older writer bypassing the new short-lock protocol.
+#[cfg(any(test, feature = "application"))]
 pub(crate) fn compatibility_lock(path: &Path) -> AuthorityResult<crate::state_lease::StateLease> {
     let path = crate::path_policy::outside_checkout(path)?;
     if fs::symlink_metadata(&path).is_ok_and(|metadata| !metadata.is_file()) {
@@ -26,6 +28,7 @@ pub(crate) fn compatibility_lock(path: &Path) -> AuthorityResult<crate::state_le
     Ok(crate::state_lease::StateLease::from_locked(file))
 }
 
+#[cfg(feature = "application")]
 pub(crate) fn recover_pending(path: &Path) -> AuthorityResult<()> {
     let mut removed = false;
     for entry in fs::read_dir(path)? {
@@ -52,6 +55,7 @@ pub(crate) fn recover_pending(path: &Path) -> AuthorityResult<()> {
     Ok(())
 }
 
+#[cfg(feature = "application")]
 fn temporary_name(name: &OsStr) -> bool {
     name.to_str().is_some_and(|value| value.starts_with(".tmp"))
 }
@@ -62,6 +66,7 @@ pub fn sync_dir(path: &Path) -> AuthorityResult<()> {
     Ok(())
 }
 
+#[cfg(feature = "application")]
 pub fn restrict_directory(path: &Path) -> AuthorityResult<()> {
     #[cfg(unix)]
     {

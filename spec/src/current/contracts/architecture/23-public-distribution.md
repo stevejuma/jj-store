@@ -1,5 +1,24 @@
 # Public distribution and release orchestration
 
+E-VAULT-BACKUP-021 retains exact source and sibling pins when Docker validation
+runs from a separate Jujutsu workspace. The explicit generic Rust lane uses
+managed Cargo and the existing disk reserve; publication gates are unchanged.
+
+JST-ARCH-006's injectable core is a coordinated library package under the
+existing JST-ARCH-005 release policy. Source extraction and package checks do
+not publish a release. Existing canonical storage formats remain unchanged.
+
+The standalone Git provider is a coordinated package with contained source
+inputs and registry-qualified dependency metadata. Its normal dependency graph
+excludes native object/WAL and application transports. The focused JJ companion
+feature adds qualified source evidence without those native/application modules.
+This source-library qualification does not publish any package or native bundle.
+
+Crate-root READMEs introduce each package's role, actual usage entry points and
+dependency context, with links to detailed documentation under `docs`. Separate
+maintained helper workspaces have the same overview. Documentation coverage and
+package containment do not expand their platform or release qualification.
+
 JST-ARCH-005 governs the coordinated public source, Cargo, native archive and
 container distribution. Changesets owns the release version and notes through
 the private npm workspace package; npm publication is disabled. The version PR
@@ -62,9 +81,9 @@ The embedded runtime builds and passes strict lint on an independent runner;
 storage and cold browser acceptance reuse it. An explicit CI-only prebuilt
 profile validates regular executable files and complete browser/Help manifests
 before replacing any disposable process. Ordinary development retains its build
-path. Cold acceptance uses a fresh isolated fixture, checksum-pinned published
-jj-acp 0.1.0 with control-version-3 prepared-context admission, and the
-collision-safe `jj-store-jj` client. No fixture ACP, installed CLI or
+path. Cold acceptance uses a fresh isolated fixture, Lapis ACP built from the
+recorded Lapis AI source revision with Control V3 prepared-context admission,
+and the collision-safe `jj-store-jj` client. No fixture ACP, installed CLI or
 interactive state may be substituted. Missing resources fail; existing tests and
 acceptance assertions remain required. The complete qualification gate includes
 the runtime producer.
@@ -216,3 +235,111 @@ repaired and qualified in their source repository, then consumed through a
 released registry version. Packed-consumer evidence, released-package acceptance
 and hosted required checks remain distinct. Authorization to publish Design Core
 does not authorize jj-store publication or waive its qualification gates.
+
+E-REPOSITORY-DELETION-001 records a minor Changeset for confirmed local removal
+and managed native object erasure. The note does not publish a release, modify
+installed tools or qualify external S3/shared/platform deployment. Existing
+source ownership, portable dependency metadata and coordinated release authority
+under JST-ARCH-005 remain unchanged.
+
+M32 includes jj-store-native in the coordinated library inventory with a concise
+crate README and portable path-plus-version dependencies. Its minor Changeset
+adds named native factories without publishing packages or changing existing
+manifest/WAL/receipt formats. JST-ARCH-005 release gates remain unchanged.
+
+M33 native privacy source consumption retains immutable sibling-source pins. CI
+materializes Agent Redaction separately from Lapis AI, verifies the declared
+package version and refuses replacement of an existing source checkout. Only the
+exact capture-to-redaction path is admitted. These source-library changes do not
+publish either repository or weaken artifact/qualification gates.
+
+M33 acquisition consumption permits only the exact capture-to-`lapis-ai-capture`
+versioned sibling path. The immutable Lapis AI source pin includes this registry
+crate. Unknown source paths and runtime imports remain refused; JST-ARCH-005
+qualification and publication authority are unchanged.
+
+The additive capture feature split preserves default application APIs while
+allowing independent headless consumers. Package contents include the short
+README and feature contracts; JST-ARCH-005 release qualification remains
+separate from feature-specific source and consumer checks.
+
+M33 registers `jj-store-conversations` in the coordinated library inventory with
+contained compilation inputs, a short README and public feature/dependency
+checks. Its initial stream primitives import no application/runtime/storage
+crate. JST-ARCH-005 publication and complete qualification remain separate.
+
+Shared conversation coordination adds async trait ports without an asynchronous
+runtime or transport dependency. Borrowed host capabilities retain their scoped
+lease; independent crate and native consumer tests qualify the public boundary.
+JST-ARCH-005 release and packaged downstream acceptance remain separate.
+
+The standalone `@lapismd/jj-conversations` archive ships built ESM/declarations,
+license, notice and a short README. Its private owning application uses a normal
+semver workspace dependency on public exports; published SDK metadata contains
+no source aliases or workspace dependencies. Source, archive acceptance and
+registry publication remain distinct under JST-ARCH-005. UI-only client source
+selects the web CI lane; shared root manifests keep their conservative
+selection.
+
+Shared read admission remains contained in the existing JJ crate. Its internal
+modules retain public re-exports and add no feature or dependency requirement.
+Package input checks and native/companion consumer checks remain distinct from
+future independent local-history and Tauri qualification under JST-ARCH-005.
+
+The additive `jj-store-jj/local-history` profile includes local read and shared
+query modules in the existing crate with no native storage or execution runtime
+closure. Default `native` includes it, retains all native integration binaries
+and qualification examples, and preserves wire formats. Feature checks are
+source qualification; independent archive and Tauri release acceptance remain
+separate gates.
+
+The optional `tauri-plugin-jj-store` crate ships its short README, license,
+permission descriptors and contained build inputs. Its default profile is a
+headless local-history service; the explicit `tauri` feature adds only the
+transport. Permissions default empty. Existing native applications explicitly
+select the native JJ profile when workspace dependency defaults are disabled.
+Source checks, native WebView acceptance and public release remain distinct.
+
+Release inventory regression compares the coordinated source metadata against
+Cargo's real workspace plus the embedded runtime, and checks every internal
+publication edge precedes its consumer. It does not assume a fixed crate count
+or last leaf. Standard CI explicitly includes the history bridge and its model
+reverse dependency; heavy/provider/release qualification requirements stay
+intact.
+
+The owned workspace-discovery/default-settings entry points stay within the
+existing JJ crate and introduce no package or dependency edge. Native consumers
+need no upstream settings type. Source, headless and CLI consumer checks remain
+distinct from Notes application and release qualification.
+
+The native history crate exports a contained schema inventory for its versioned
+text-envelope transport. Generated client contracts derive from owned Rust
+frames; no HTTP/server dependency or upstream JJ import is added. Direct Rust
+interfaces and plugin permissions remain unchanged. Source/schema qualification
+is separate from native WebView and artifact acceptance.
+
+The independent history client archive includes built ESM and declarations, its
+generated runtime schema, licenses and a short README. Its main entry has no
+Tauri import; the optional entry injects Tauri invocation without native host
+policy. Generated contracts are checked against the owned native schema and
+independent archives prove runtime and type consumption without source aliases.
+Package checks do not publish the archive or qualify Notes integration.
+
+Local Linux-compatible validation defaults to context-configured Docker with
+fingerprinted reusable UI/full toolchains. Exact source revisions, parent
+history, lockfiles, pinned sibling sources and explicit checksummed package
+archives govern run identity. Missing images are built on demand. Reports are
+retrieved on success/failure; interruption never establishes acceptance. Remote
+runs use source transfer, isolated services, bounded resources and managed Cargo
+storage. Native desktop/provider qualification remains separate. These local
+results do not assert hosted producer provenance or release qualification.
+
+Browser validation builds its preview through managed Cargo before timing server
+readiness, then launches the executable from the selected registered target. App
+and Help suites share this preparation. Build failure prevents startup; existing
+readiness bounds, caller filters and independent native targets are preserved.
+
+Release-governance acceptance follows the declared validation lane through its
+public package command and still requires every release/CI test plus package
+checks. The standard cohort includes history service and vault packages; model
+impact verifies their full reverse dependency closure without reducing coverage.

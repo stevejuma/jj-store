@@ -8,10 +8,16 @@
     selectPrincipal,
   } from "../../fixtures/workflow-host-settings-play.js";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      },
+    },
     title: "JJ Store/Settings/Workflow hosts",
     component: Fixture,
     args: { section: "workflow" },
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function jsonEditor(canvas: ReturnType<typeof within>) {
     await userEvent.click(

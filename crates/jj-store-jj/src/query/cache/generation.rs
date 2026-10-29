@@ -2,7 +2,9 @@
 use super::*;
 
 pub(super) const PIN: &str = "reader-pin";
+#[cfg(any(feature = "native", test))]
 pub(in crate::query) struct Pin(fs::File);
+#[cfg(any(feature = "native", test))]
 impl Pin {
     pub(in crate::query) fn acquire(path: &Path) -> Result<Self> {
         let path = path.join(PIN);
@@ -23,6 +25,7 @@ impl Pin {
         Ok(Self(file))
     }
 }
+#[cfg(any(feature = "native", test))]
 impl Drop for Pin {
     fn drop(&mut self) {
         let _ = self.0.unlock();

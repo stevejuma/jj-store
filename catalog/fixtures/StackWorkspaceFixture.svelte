@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { AppShell, AppShellController } from "@lapismd/design-core/shell";
+  import ApplicationStory from "./ApplicationStory.svelte";
+  import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { onMount, untrack } from "svelte";
-  import StoreStackWorkspaceConflict from "../../web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceConflict.svelte";
-  import StoreStackWorkspace from "../../web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceSnapshot } from "../../web/src/lib/controller/stack-workspace/types.js";
   import {
@@ -11,7 +10,6 @@
   } from "./stack-workspace/adapter.js";
   import { workspaceStoryFixture } from "./stack-workspace/data.js";
   let {
-    showStackActions = true,
     profile = "git_sha1_jj045",
     availability = "ready",
     fault = "none",
@@ -22,7 +20,6 @@
     narrow = false,
     context = false,
   }: {
-    showStackActions?: boolean;
     profile?: WorkspaceSnapshot["profile"];
     availability?: WorkspaceSnapshot["availability"];
     fault?: FixtureFault;
@@ -33,10 +30,12 @@
     narrow?: boolean;
     context?: boolean;
   } = $props();
-  const shell = new AppShellController();
+  const application = untrack(() => createInMemoryStoreController("stacks"));
+  untrack(() => application.actions.selectStacksView(page));
   const controller = untrack(() => {
     const snapshot = workspaceStoryFixture(profile);
     snapshot.availability = availability;
+    snapshot.repository = application.state.route.repository;
     if (context) {
       const lines = Array.from(
         { length: 60 },
@@ -78,28 +77,8 @@
   });
 </script>
 
-<div
-  class="stack-workspace-fixture"
-  style:max-width={narrow ? "390px" : undefined}
->
-  <AppShell.Root
-    controller={shell}
-    desktopMinMainWidth={0}
-    style="--ui-shell-height: 100%; --ui-shell-main-block-inset: 0px"
-  >
-    <AppShell.Main
-      ><StoreStackWorkspace {controller} {showStackActions} /></AppShell.Main
-    >
-    <StoreStackWorkspaceConflict
-      {controller}
-      bind:open={controller.conflictOpen}
-    />
-  </AppShell.Root>
-</div>
-
-<style>
-  .stack-workspace-fixture {
-    height: 48rem;
-    min-height: 30rem;
-  }
-</style>
+<ApplicationStory
+  controller={application}
+  stackWorkspace={controller}
+  initiallyCollapsed={false}
+/>

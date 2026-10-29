@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { workflowHostFixtureController } from "./workflow-host-settings.js";
   import { RuntimeReload } from "../../web/src/lib/controller/runtime-reload.svelte.js";
   import StoreRuntimeReload from "../../web/src/lib/ui/store-settings/StoreRuntimeReload.svelte";
@@ -96,9 +97,14 @@
 </script>
 
 {#if loading}
-  <button onclick={() => finishRead?.()}>Finish loading</button>
-  <button onclick={() => void management.observe()}
-    >Start background refresh</button
+  <FixtureControls floating={false}
+    ><button onclick={() => finishRead?.()}>Finish loading</button
+    ></FixtureControls
+  >
+  <FixtureControls floating={false}
+    ><button onclick={() => void management.observe()}
+      >Start background refresh</button
+    ></FixtureControls
   >
 {/if}
 

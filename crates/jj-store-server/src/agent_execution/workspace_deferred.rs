@@ -65,7 +65,7 @@ impl Supervisor {
             Ok(())
         })?;
         Ok(
-            json!({"version":2,"type":"prompt","requestId":command.request_id,"sessionId":command.session_id,"deferredFiles":true}),
+            json!({"version":3,"type":"prompt","requestId":command.request_id,"sessionId":command.session_id,"deferredFiles":true}),
         )
     }
     pub(super) async fn prepare_file_prompt(&self, frame: Value) -> Result<Value> {

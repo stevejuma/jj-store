@@ -97,7 +97,9 @@ export async function agentSidebarPlay({
     canvas.getByText("Updated the parser and verified the focused contract."),
   ).toBeVisible();
   await userEvent.click(
-    canvas.getByRole("button", { name: "Show details for apply_patch" }),
+    canvas.getByRole("button", {
+      name: "Show details for apply_patch src/lib.rs",
+    }),
   );
   await expect(
     canvas.getByRole("region", { name: "Diff for src/lib.rs" }),
@@ -118,14 +120,14 @@ export async function agentSidebarPlay({
     name: "Agent conversation activity",
   });
   const expandedTool = canvas
-    .getByRole("button", { name: "Hide details for apply_patch" })
+    .getByRole("button", { name: "Hide details for apply_patch src/lib.rs" })
     .closest<HTMLElement>('[data-ui-component="ai-chat-tool-calls"]');
   if (!expandedTool) throw new Error("Expanded tool row was not rendered");
   await expect(expandedTool.getBoundingClientRect().right).toBeLessThanOrEqual(
     transcript.getBoundingClientRect().right,
   );
   const toolReview = canvas
-    .getByRole("button", { name: "Hide details for apply_patch" })
+    .getByRole("button", { name: "Hide details for apply_patch src/lib.rs" })
     .closest<HTMLElement>('[data-ui-part="agent-tool-review"]');
   if (!toolReview) throw new Error("Tool review surface was not rendered");
   await fireEvent.pointerEnter(toolReview);

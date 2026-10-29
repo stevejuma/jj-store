@@ -12,8 +12,12 @@
   import AgentLayout from "../../fixtures/AgentLayoutFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Agent transcript settings",
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", a11y: { test: "error" } },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      a11y: { test: "error" },
+    },
     beforeEach: async () => {
       await Promise.all([
         views.projects(),
@@ -78,6 +82,12 @@
 </Story>
 
 <Story
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject: "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+    },
+  }}
   asChild
   name="Read-only embedded captures have no prompt input or footer"
   play={async ({ canvasElement }) => {
@@ -158,6 +168,12 @@
 </Story>
 
 <Story
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject: "web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte",
+    },
+  }}
   asChild
   name="Legacy captures retain older-message loading and follow the setting"
   play={async ({ canvasElement }) => {
@@ -189,6 +205,12 @@
 </Story>
 
 <Story
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject: "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+    },
+  }}
   asChild
   name="Document recorded responses keep Send inside the panel"
   play={async ({ canvasElement }) => {
@@ -216,6 +238,12 @@
   {#snippet children()}<Captured surface="sidebar" />{/snippet}
 </Story>
 <Story
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject: "web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte",
+    },
+  }}
   asChild
   name="Document captures keep prompt markup readable and inert"
   play={async ({ canvasElement }) => {
@@ -242,6 +270,12 @@
 </Story>
 
 <Story
+  parameters={{
+    jjStoreStory: {
+      kind: "component",
+      subject: "web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte",
+    },
+  }}
   asChild
   name="Document capture actions expose native copy identities"
   play={async ({ canvasElement }) => {

@@ -348,3 +348,81 @@ async fn observation_cancellation_retains_admission_until_scan_worker_exits() {
         }
     }
 }
+
+#[tokio::test(flavor = "multi_thread")]
+#[ignore = "requires explicit existing pinned development JJ binary"]
+async fn status_compares_final_physical_tree_to_parent_without_double_counting_or_writes() {
+    let fixture = Fixture::new();
+    fixture.run(&[
+        "-R",
+        fixture.root.to_str().unwrap(),
+        "new",
+        "-m",
+        "Status working copy",
+    ]);
+    fs::write(fixture.root.join("tracked.tmp"), "recorded edit\n").unwrap();
+    fixture.run(&[
+        "-R",
+        fixture.root.to_str().unwrap(),
+        "describe",
+        "-m",
+        "Recorded change",
+    ]);
+    // Cancel the recorded edit, then add an unsnapshotted file. Summing the two
+    // deltas would incorrectly count tracked.tmp twice.
+    fs::write(fixture.root.join("tracked.tmp"), "before\n").unwrap();
+    fs::write(fixture.root.join("new-note.md"), "alpha\nbeta\n").unwrap();
+    fs::write(fixture.root.join("global-ignore"), "ignored\n").unwrap();
+    fs::write(fixture.root.join("repo-ignore"), "ignored\n").unwrap();
+    let reader = code::Executor::new(1).unwrap();
+    let operation = fixture.operation(&reader).await;
+    let before = files(&fixture.root);
+    let observer = tree::Observer::new(reader, 1).unwrap();
+    let value = observer
+        .status(fixture.access(|_| Ok(())), fixture.root.clone(), operation)
+        .await
+        .unwrap();
+    assert_eq!(value.files, 1);
+    assert_eq!(value.uncounted, 0);
+    let lines = value.lines.unwrap();
+    assert_eq!((lines.additions, lines.deletions), (2, 0));
+    assert_eq!(value.commit.description, "Recorded change\n");
+    assert_eq!(files(&fixture.root), before);
+    fs::write(fixture.root.join("binary"), [0, 0xff]).unwrap();
+    let value = observer
+        .status(fixture.access(|_| Ok(())), fixture.root.clone(), operation)
+        .await
+        .unwrap();
+    assert_eq!(value.files, 2);
+    assert_eq!(value.uncounted, 1);
+    assert!(value.lines.is_none());
+}
+
+#[tokio::test(flavor = "multi_thread")]
+#[ignore = "requires explicit existing pinned development JJ binary"]
+async fn status_rejects_changes_while_counting_instead_of_returning_old_totals() {
+    let fixture = Fixture::new();
+    let reader = code::Executor::new(1).unwrap();
+    let operation = fixture.operation(&reader).await;
+    let observer = tree::Observer::new(reader, 1).unwrap();
+    let access = fixture.access(|_| Ok(()));
+    observer
+        .observe(access.clone(), fixture.root.clone(), operation)
+        .await
+        .unwrap();
+    let calls = access.calls.load(Ordering::SeqCst);
+    let root = fixture.root.clone();
+    let access = fixture.access(move |call| {
+        if call == calls + 3 {
+            fs::write(root.join("tracked.tmp"), "changed during count\n").unwrap();
+        }
+        Ok(())
+    });
+    assert_eq!(
+        observer
+            .status(access, fixture.root.clone(), operation)
+            .await
+            .unwrap_err(),
+        Error::Stale
+    );
+}

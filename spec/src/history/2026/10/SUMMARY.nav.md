@@ -30,3 +30,29 @@
   {{#include 15/SUMMARY.nav.md}}
 - [16](16/index.md)
   {{#include 16/SUMMARY.nav.md}}
+- [17](17/index.md)
+  {{#include 17/SUMMARY.nav.md}}
+- [2026-10-18](18/index.md)
+  {{#include 18/SUMMARY.nav.md}}
+- [2026-10-19](19/index.md)
+  {{#include 19/SUMMARY.nav.md}}
+- [20](20/index.md)
+  {{#include 20/SUMMARY.nav.md}}
+- [21](21/index.md)
+  {{#include 21/SUMMARY.nav.md}}
+- [22](22/index.md)
+  {{#include 22/SUMMARY.nav.md}}
+- [2026-10-23](23/index.md)
+  {{#include 23/SUMMARY.nav.md}}
+- [24](24/index.md)
+  {{#include 24/SUMMARY.nav.md}}
+- [25](25/index.md)
+  {{#include 25/SUMMARY.nav.md}}
+- [26](26/index.md)
+  {{#include 26/SUMMARY.nav.md}}
+- [27](27/index.md)
+  {{#include 27/SUMMARY.nav.md}}
+- [28](28/index.md)
+  {{#include 28/SUMMARY.nav.md}}
+- [29](29/index.md)
+  {{#include 29/SUMMARY.nav.md}}

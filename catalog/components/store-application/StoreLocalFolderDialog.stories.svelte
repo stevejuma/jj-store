@@ -4,9 +4,15 @@
   import StoreLocalFolderDialog from "../../../web/src/lib/ui/store-settings/StoreLocalFolderDialog.svelte";
   import "../../../web/src/lib/ui/store-work/store-work.css";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreLocalFolderDialog.svelte",
+      },
+    },
     title: "JJ Store/Settings/Folder dialog",
     component: StoreLocalFolderDialog,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       open: true,
       reconnect: false,

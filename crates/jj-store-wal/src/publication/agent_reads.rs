@@ -1,47 +1,25 @@
-//! Bounded root-pinned AgentStore catalog, relation and transcript reads.
 use super::*;
-use jj_agent::{
-    AgentCatalogKey, AgentCatalogKind, AgentRelationSubjectV1, SourceInstanceId, TranscriptChunkV1,
-};
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct AgentCatalogPage {
-    pub selections: Vec<(AgentCatalogKey, AgentObjectRef)>,
-    pub next_after: Option<AgentCatalogKey>,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct AgentRelationCursor {
-    pub page: AgentObjectRef,
-    pub offset: u16,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct AgentRelationRange {
-    pub selections: Vec<AgentObjectRef>,
-    pub next: Option<AgentRelationCursor>,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct TranscriptRange {
-    pub chunks: Vec<TranscriptChunkV1>,
-    pub next_after_sequence: Option<u64>,
-}
-
+use jj_agent::{AgentCatalogKey, AgentCatalogKind, AgentRelationSubjectV1, SourceInstanceId};
 impl AgentStoreSnapshot {
     pub async fn list_sessions(
         &self,
         after: Option<AgentCatalogKey>,
         limit: usize,
     ) -> Result<AgentCatalogPage> {
-        AgentReader::new(self).list_sessions(after, limit).await
+        AgentReader::new(self)
+            .list_sessions(after, limit)
+            .await
+            .map_err(Into::into)
     }
     pub async fn list_checkpoints(
         &self,
         after: Option<AgentCatalogKey>,
         limit: usize,
     ) -> Result<AgentCatalogPage> {
-        AgentReader::new(self).list_checkpoints(after, limit).await
+        AgentReader::new(self)
+            .list_checkpoints(after, limit)
+            .await
+            .map_err(Into::into)
     }
     pub async fn list_catalog(
         &self,
@@ -52,6 +30,7 @@ impl AgentStoreSnapshot {
         AgentReader::new(self)
             .list_catalog(catalog, after, limit)
             .await
+            .map_err(Into::into)
     }
     pub async fn relations(
         &self,
@@ -62,6 +41,7 @@ impl AgentStoreSnapshot {
         AgentReader::new(self)
             .relations(subject, cursor, limit)
             .await
+            .map_err(Into::into)
     }
     pub async fn transcript_range(
         &self,
@@ -82,5 +62,6 @@ impl AgentStoreSnapshot {
                 max_bytes,
             )
             .await
+            .map_err(Into::into)
     }
 }

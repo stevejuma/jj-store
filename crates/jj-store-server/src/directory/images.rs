@@ -1,65 +1,19 @@
-//! Image preparation retains bounded raster output, never unbounded source media.
+//! Profile/emoji source normalization is shared with native consumers.
 use super::*;
-use image::{DynamicImage, ImageDecoder, ImageFormat, ImageReader, Limits};
+#[cfg(test)]
+use image::{DynamicImage, ImageFormat};
+#[cfg(test)]
 use jj_collab::ImageAssetV1;
+#[cfg(test)]
 use std::io::Cursor;
 
-pub(super) fn normalize(bytes: &[u8]) -> Result<(ImageAssetV1, ImageAssetV1)> {
-    if bytes.is_empty() {
-        return Err(Error::Invalid);
-    }
-    if bytes.len() > MAX_IMAGE_UPLOAD_BYTES {
-        return Err(Error::Limit);
-    }
-    let mut reader = ImageReader::new(Cursor::new(bytes))
-        .with_guessed_format()
-        .map_err(|_| Error::Invalid)?;
-    let format = reader.format().ok_or(Error::Invalid)?;
-    if !matches!(
-        format,
-        ImageFormat::Png | ImageFormat::Jpeg | ImageFormat::Gif | ImageFormat::WebP
-    ) {
-        return Err(Error::Invalid);
-    }
-    let mut limits = Limits::default();
-    limits.max_image_width = Some(8192);
-    limits.max_image_height = Some(8192);
-    limits.max_alloc = Some(jj_collab::MAX_DECODED_BYTES);
-    reader.limits(limits);
-    let mut decoder = reader.into_decoder().map_err(decode_error)?;
-    let (width, height) = decoder.dimensions();
-    if width == 0
-        || height == 0
-        || u64::from(width) * u64::from(height) * 4 > jj_collab::MAX_DECODED_BYTES
-    {
-        return Err(Error::Limit);
-    }
-    if width <= jj_collab::MAX_IMAGE_DIMENSION
-        && height <= jj_collab::MAX_IMAGE_DIMENSION
-        && bytes.len() <= jj_collab::MAX_IMAGE_BYTES
-    {
-        return ImageAssetV1::ingest(bytes).map_err(|_| Error::Invalid);
-    }
-    let orientation = decoder.orientation().map_err(decode_error)?;
-    let mut photo = DynamicImage::from_decoder(decoder).map_err(decode_error)?;
-    photo.apply_orientation(orientation);
-    let photo = photo.resize(
-        photo.width().min(jj_collab::MAX_IMAGE_DIMENSION),
-        photo.height().min(jj_collab::MAX_IMAGE_DIMENSION),
-        image::imageops::FilterType::Lanczos3,
-    );
-    let mut encoded = Cursor::new(Vec::new());
-    photo
-        .write_to(&mut encoded, ImageFormat::Png)
-        .map_err(decode_error)?;
-    ImageAssetV1::ingest(&encoded.into_inner()).map_err(|_| Error::Invalid)
-}
-fn decode_error(error: image::ImageError) -> Error {
-    if matches!(error, image::ImageError::Limits(_)) {
-        Error::Limit
-    } else {
-        Error::Invalid
-    }
+pub(super) fn normalize(
+    bytes: &[u8],
+) -> Result<(jj_collab::ImageAssetV1, jj_collab::ImageAssetV1)> {
+    jj_collab::normalize_settings_image(bytes).map_err(|error| match error {
+        jj_collab::Error::Limit => Error::Limit,
+        _ => Error::Invalid,
+    })
 }
 
 #[cfg(test)]

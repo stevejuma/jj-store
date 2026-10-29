@@ -352,7 +352,7 @@ impl Manager for Supervisor {
         let request = command.request_id.to_string();
         let mut context_batch = None;
         let mut carries_initial_context = false;
-        let mut frame = json!({"version":2,"requestId":request});
+        let mut frame = json!({"version":3,"requestId":request});
         match &command.action {
             Action::Prompt {
                 text,
@@ -795,7 +795,7 @@ impl Manager for Supervisor {
             .clone();
         for (id, sender) in senders {
             let _ = sender
-                .try_send(json!({"version":2,"type":"close","requestId":format!("shutdown-{id}")}));
+                .try_send(json!({"version":3,"type":"close","requestId":format!("shutdown-{id}")}));
         }
         {
             let mut workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;

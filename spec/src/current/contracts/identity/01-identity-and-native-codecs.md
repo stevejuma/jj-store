@@ -1,5 +1,9 @@
 # Identity and native codecs
 
+The model overview introduces typed identities, portable references and
+integrity framing. E-CRATE-READMES-001 preserves JST-ID-001/002/003 identities,
+codec fields and canonical bytes; no stored representation changes.
+
 The upstream SimpleBackend cannot be adopted wholesale: copies are unsupported
 and submodule serialization panics. Complete these variants in the project
 codec. Full native values, not generic Serde JSON, determine persistence.

@@ -67,3 +67,11 @@
   {{#include M30/SUMMARY.nav.md}}
 - [M31 forge-agnostic stack submission](M31/index.md)
   {{#include M31/SUMMARY.nav.md}}
+- [M32 injectable collaboration libraries](M32/index.md)
+  {{#include M32/SUMMARY.nav.md}}
+- [M33 reusable agent workflows and Notes integration](M33/index.md)
+  {{#include M33/SUMMARY.nav.md}}
+- [M34 automatic vault history and backup](M34/index.md)
+  {{#include M34/SUMMARY.nav.md}}
+- [M35 persistent attachments and editable thread files](M35/index.md)
+  {{#include M35/SUMMARY.nav.md}}

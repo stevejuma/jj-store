@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
@@ -9,8 +10,12 @@
     beforeEach: async () => {
       await views.files();
     },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 
@@ -30,9 +35,7 @@
     await expect(
       canvas.queryByText("This directory does not contain any files."),
     ).not.toBeInTheDocument();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Finish folder load" }),
-    );
+    await storyControl(document.body, "Finish folder load");
     await expect(
       canvas.queryByRole("status", { name: "Loading repository files" }),
     ).not.toBeInTheDocument();

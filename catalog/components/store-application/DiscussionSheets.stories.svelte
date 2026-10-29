@@ -1,12 +1,22 @@
 <script module lang="ts">
+  import { page } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/DiscussionSheetFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Discussion sheets",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "prototype"],
+    parameters: {
+      jjStoreStory: {
+        kind: "prototype",
+        requirement: "JST-UI-010",
+        reason:
+          "Explicit structural or conversation design prototype; does not qualify application parity.",
+      },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 
@@ -76,6 +86,7 @@
 />
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile Focus uses the root sheet"
   args={{ mobile: true }}
   play={async ({ canvasElement }) => {
@@ -108,5 +119,71 @@
         await body.findByRole("region", { name: "Discussion 1" }),
       ).getByRole("textbox"),
     ).toHaveValue("Mobile draft");
+  }}
+/>
+
+<Story
+  name="Attached pane restores its width beside an independent outer rail"
+  play={async ({ canvasElement }) => {
+    await page.viewport(1600, 900);
+    try {
+      const c = within(canvasElement);
+      const main = canvasElement.querySelector<HTMLElement>(
+        '[data-ui-part="main"]',
+      )!;
+      await waitFor(() =>
+        expect(
+          canvasElement.querySelector<HTMLElement>('[data-ui-part="root"]')!
+            .clientWidth,
+        ).toBeGreaterThan(1500),
+      );
+      const pane = c.getByRole("complementary", {
+        name: "Standard right pane",
+      });
+      const rail = c.getByRole("complementary", { name: "Outer details rail" });
+      const railWidth = rail.getBoundingClientRect().width;
+      await expect(pane).toHaveAttribute("data-variant", "attached");
+      await expect(rail).toHaveAttribute("data-variant", "rail");
+      await waitFor(() => expect(main).toHaveAttribute("data-joined-end"));
+      const resize = c.getByRole("slider", { name: "Resize standard pane" });
+      const close = pane.querySelector<HTMLButtonElement>(
+        '[data-ui-part="sidebar-close"]',
+      )!;
+      await expect(close).toHaveAttribute("aria-label", "Close standard pane");
+      const before = resize.getAttribute("aria-valuenow");
+      resize.focus();
+      await userEvent.keyboard("{ArrowLeft}");
+      await waitFor(() =>
+        expect(resize.getAttribute("aria-valuenow")).not.toBe(before),
+      );
+      const width = resize.getAttribute("aria-valuenow");
+      await page
+        .getByRole("button", { name: "Close standard pane", exact: true })
+        .click();
+      await expect(main).toBeInTheDocument();
+      await waitFor(() => expect(main).not.toHaveAttribute("data-joined-end"));
+      await expect(rail).toBeVisible();
+      await expect(rail.getBoundingClientRect().width).toBeCloseTo(
+        railWidth,
+        1,
+      );
+      await expect(
+        c.getByRole("button", {
+          name: "Open standard pane sidebar",
+        }),
+      ).toBeVisible();
+      await page
+        .getByRole("button", {
+          name: "Open standard pane sidebar",
+          exact: true,
+        })
+        .click();
+      await waitFor(() => expect(main).toHaveAttribute("data-joined-end"));
+      await expect(
+        c.getByRole("slider", { name: "Resize standard pane" }),
+      ).toHaveAttribute("aria-valuenow", width!);
+    } finally {
+      await page.viewport(1280, 800);
+    }
   }}
 />

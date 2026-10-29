@@ -1,3 +1,4 @@
+import { fileRowName as workspaceFileName } from "../file-row-name.js";
 import { expect, fireEvent, userEvent, waitFor, within } from "storybook/test";
 
 export function workspaceCanvas(element: HTMLElement) {
@@ -48,7 +49,9 @@ export async function chooseWorkspace(element: HTMLElement, name: string) {
 }
 export async function unassignedFile(element: HTMLElement, path: string) {
   const canvas = workspaceCanvas(element);
-  await userEvent.click(await canvas.findByRole("button", { name: path }));
+  await userEvent.click(
+    await canvas.findByRole("button", { name: workspaceFileName(path) }),
+  );
 }
 export async function messagePreview(element: HTMLElement, message: string) {
   const portal = workspacePortal(element);
@@ -103,3 +106,5 @@ export async function assertCompactColumnToggle(element: HTMLElement) {
     canvas.getByRole("button", { name: "Collapse Unstaged" }),
   ).toHaveAttribute("aria-expanded", "true");
 }
+
+export { fileRowName as workspaceFileName } from "../file-row-name.js";

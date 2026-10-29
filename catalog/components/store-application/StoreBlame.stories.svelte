@@ -42,8 +42,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository/Blame",
     component: StoreBlameFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "padded" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+      },
+      layout: "padded",
+    },
   });
 </script>
 

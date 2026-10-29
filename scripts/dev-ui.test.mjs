@@ -12,15 +12,10 @@ import {
 } from "./dev-ui-config.mjs";
 import { prepareUiDevelopment, runUiDevelopment } from "./dev-ui.mjs";
 import { developmentLayout, writeFixture } from "./dev-demo-state.mjs";
+import { stubAiBundle } from "./lapis-ai-test-fixture.mjs";
 
 async function documentation(root) {
-  const resources = join(root, "desktop/resources");
-  await mkdir(resources, { recursive: true });
-  await writeFile(
-    join(resources, "jj-acp"),
-    `#!/bin/sh\nif [ "$1" = "--help" ]; then\nprintf '%s\\n' '--control-version <1|2|3>'\nelse\nread -r first\nread -r second\nprintf '%s\\n' '{"version":3,"type":"error","requestId":"preflight-text-context","code":"session_not_open"}' '{"version":3,"type":"error","requestId":"preflight-context-only","code":"session_not_open"}'\ncat >/dev/null\nfi\n`,
-    { mode: 0o755 },
-  );
+  await stubAiBundle(root);
   const docs = join(root, "docs/build");
   await mkdir(docs, { recursive: true });
   await writeFile(join(docs, "index.html"), "<h1>Help</h1>");
@@ -156,7 +151,7 @@ test("an occupied backend port leaves the current service and runtime marker int
   );
   assert.doesNotThrow(() => process.kill(running.pid, 0));
   assert.equal(await readFile(layout.runtimeFile, "utf8"), marker);
-  await rm(join(root, "desktop/resources/jj-acp"));
+  await rm(join(root, "desktop/resources/lapis-ai/lapis-acp"));
   await assert.rejects(
     runUiDevelopment(root, {
       JJ_STORE_DEV_PORT: String(uiPort),
@@ -164,7 +159,7 @@ test("an occupied backend port leaves the current service and runtime marker int
       JJ_STORE_DEV_SERVER: process.execPath,
       JJ_STORE_AGENT_JJ_EXECUTABLE: process.execPath,
     }),
-    /Missing regular agent runtime executable/u,
+    /Invalid Lapis AI bundle/u,
   );
   assert.doesNotThrow(() => process.kill(running.pid, 0));
   assert.equal(await readFile(layout.runtimeFile, "utf8"), marker);

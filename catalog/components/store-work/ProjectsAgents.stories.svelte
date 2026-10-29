@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Projects agents",
     component: ProjectsHubFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -141,6 +141,7 @@
 />
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile agent response uses the standard right lane"
   args={{ agents: true, mobile: true }}
   play={async ({ canvasElement }) => {

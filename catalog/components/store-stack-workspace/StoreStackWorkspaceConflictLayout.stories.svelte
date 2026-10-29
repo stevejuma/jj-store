@@ -6,8 +6,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Conflict presentation",
     component: StackWorkspaceConflictApplicationFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await Promise.all([
         applicationViews.stacks(),
@@ -59,10 +63,14 @@
       view.getByRole("button", { name: "Preview resolution" }),
     ).toBeEnabled();
     await userEvent.click(
-      within(browser).getByRole("button", { name: "src/output.ts" }),
+      within(browser).getByRole("button", {
+        name: "output.ts Repository file",
+      }),
     );
     await userEvent.click(
-      within(browser).getByRole("button", { name: "src/settings.ts" }),
+      within(browser).getByRole("button", {
+        name: "settings.ts Repository file",
+      }),
     );
     expect(editor).toHaveValue("// retained workspace merge\n");
     await userEvent.click(

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
@@ -13,8 +14,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stack Workspace/Menus",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function submenu(element: HTMLElement, label: string, item: string) {
     const portal = workspacePortal(element);
@@ -135,7 +136,9 @@
     expect(form.getByLabelText("Commit title")).toHaveValue(
       "Expose repository API",
     );
-    expect(form.getByRole("button", { name: "src/api.ts" })).toBeVisible();
+    expect(
+      form.getByRole("button", { name: workspaceFileName("src/api.ts") }),
+    ).toBeVisible();
     expect(form.getByRole("group", { name: "Commit description" })).toHaveClass(
       "community-chat-composer",
     );
@@ -157,10 +160,12 @@
       canvas.getByRole("region", { name: "Unstaged files" }),
     );
     await dropWorkspaceChange(
-      unstaged.getByRole("button", { name: "README.md" }),
+      unstaged.getByRole("button", { name: workspaceFileName("README.md") }),
       form.getByRole("group", { name: "Staged files for feature/api" }),
     );
-    expect(form.getByRole("button", { name: "README.md" })).toBeVisible();
+    expect(
+      form.getByRole("button", { name: workspaceFileName("README.md") }),
+    ).toBeVisible();
     await userEvent.clear(form.getByLabelText("Commit title"));
     await userEvent.type(
       form.getByLabelText("Commit title"),
@@ -189,9 +194,11 @@
     expect(
       within(
         canvas.getByRole("region", { name: "Stack feature/api" }),
-      ).getByRole("button", { name: "README.md" }),
+      ).getByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeVisible();
-    expect(unstaged.queryByRole("button", { name: "README.md" })).toBeNull();
+    expect(
+      unstaged.queryByRole("button", { name: workspaceFileName("README.md") }),
+    ).toBeNull();
   }}
 />
 

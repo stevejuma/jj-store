@@ -49,6 +49,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   storageReady: boolean;
   nativeRepositoryCreation: boolean;
+  nativeRepositoryDeletion: boolean;
   repositoryConversion: boolean;
   captureSupported: boolean;
   executionSupported: boolean;
@@ -163,6 +164,7 @@ export function createProductionStoreState(): ProductionStoreState {
     accessMode: "bootstrapping",
     storageReady: false,
     nativeRepositoryCreation: false,
+    nativeRepositoryDeletion: false,
     repositoryConversion: false,
     captureSupported: false,
     executionSupported: false,

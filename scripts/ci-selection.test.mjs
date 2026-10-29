@@ -107,12 +107,45 @@ test("empty and documentation selections stay light while force runs all standar
     assert.equal(impact(files, true, graph()).web, true);
   }
   assert.equal(impact(["web/src/new.ts"], false, graph()).web, true);
+  for (const source of [
+    "packages/jj-conversations/src/client.ts",
+    "packages/jj-history/src/index.ts",
+  ]) {
+    const client = impact([source], false, graph());
+    assert.equal(client.web, true);
+    assert.equal(client.rust, false);
+  }
 });
 test("real read-index and model impacts preserve the agreed standard cohort", () => {
   const g = workspaceGraph();
   const inputs = sourceEdges(g);
   assert.deepEqual(inputs.uncertain, []);
-  assert.equal(cohortPackages(g, "ordinary").length, 17);
+  assert.deepEqual(cohortPackages(g, "ordinary"), [
+    "jj-agent",
+    "jj-collab",
+    "jj-forge",
+    "jj-history-service",
+    "jj-review",
+    "jj-store-adapters",
+    "jj-store-conversations",
+    "jj-store-core",
+    "jj-store-git",
+    "jj-store-http",
+    "jj-store-jj",
+    "jj-store-model",
+    "jj-store-native",
+    "jj-store-object",
+    "jj-store-read-index",
+    "jj-store-replication",
+    "jj-store-rpc",
+    "jj-store-service",
+    "jj-store-tantivy",
+    "jj-store-wal",
+    "jj-vault",
+    "jj-work",
+    "jj-workflow",
+    "tauri-plugin-jj-store",
+  ]);
   assert.ok(cohortPackages(g, "ordinary").includes("jj-forge"));
   assert.deepEqual(
     impact(["crates/jj-store-read-index/src/lib.rs"], false, g, inputs)
@@ -126,7 +159,31 @@ test("real read-index and model impacts preserve the agreed standard cohort", ()
     ],
   );
   const core = impact(["crates/jj-store-model/src/lib.rs"], false, g, inputs);
-  assert.equal(core.packages.length, 15);
+  assert.deepEqual(core.packages, [
+    "jj-agent",
+    "jj-collab",
+    "jj-history-service",
+    "jj-review",
+    "jj-store-adapters",
+    "jj-store-conversations",
+    "jj-store-core",
+    "jj-store-git",
+    "jj-store-http",
+    "jj-store-jj",
+    "jj-store-model",
+    "jj-store-native",
+    "jj-store-object",
+    "jj-store-replication",
+    "jj-store-rpc",
+    "jj-store-service",
+    "jj-store-tantivy",
+    "jj-store-wal",
+    "jj-vault",
+    "jj-work",
+    "jj-workflow",
+    "tauri-plugin-jj-store",
+  ]);
+  assert.ok(core.packages.includes("tauri-plugin-jj-store"));
   assert.equal(core.web, true);
 });
 test("invalid metadata and invalid or partial cohort requests fail closed", () => {
@@ -247,4 +304,69 @@ test("Help and preview-tool dependencies select core UI acceptance", () => {
     "crates/jj-store-server/src/lib.rs",
   ])
     assert.equal(impact([path], false, g).web, true, path);
+});
+
+test("only the server may consume the explicitly named sibling AI client crates", () => {
+  const data = metadata(["jj-store-server"]);
+  data.packages[0].dependencies = [
+    { name: "lapis-ai-runtime", path: "/lapis-ai/crates/lapis-ai-runtime" },
+  ];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  data.packages[0].dependencies[0].path = "/untrusted/lapis-ai-runtime";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  data.packages[0].dependencies[0] = {
+    name: "lapis-compute",
+    path: "/lapis-ai/crates/lapis-compute",
+  };
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+});
+
+test("only capture may consume the exact standalone native redaction source", () => {
+  const data = metadata(["jj-store-capture"]);
+  data.packages[0].dependencies = [
+    {
+      name: "lapis-agent-redaction",
+      path: "/agent-redaction/crates/lapis-agent-redaction",
+    },
+  ];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  data.packages[0].dependencies[0].path = "/untrusted/lapis-agent-redaction";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  data.packages[0].dependencies[0].path =
+    "/agent-redaction/crates/lapis-agent-redaction";
+  data.packages[0].name = "jj-store-model";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+});
+
+test("only capture may consume the exact standalone acquisition source", () => {
+  const data = metadata(["jj-store-capture"]);
+  const dependency = {
+    name: "lapis-ai-capture",
+    path: "/lapis-ai/crates/lapis-ai-capture",
+  };
+  data.packages[0].dependencies = [dependency];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  dependency.path = "/untrusted/lapis-ai-capture";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  dependency.path = "/lapis-ai/crates/lapis-ai-capture";
+  for (const name of ["jj-store-server", "jj-store-core", "jj-store-model"]) {
+    data.packages[0].name = name;
+    assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  }
+});
+
+test("conversation native privacy admits only an optional exact sibling source", () => {
+  const data = metadata(["jj-store-conversations"]);
+  const dependency = {
+    name: "lapis-agent-redaction",
+    path: "/agent-redaction/crates/lapis-agent-redaction",
+    optional: true,
+  };
+  data.packages[0].dependencies = [dependency];
+  assert.doesNotThrow(() => packageGraph(data, root));
+  dependency.optional = false;
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
+  dependency.optional = true;
+  dependency.path = "/untrusted/lapis-agent-redaction";
+  assert.throws(() => packageGraph(data, root), /Unmodelled/);
 });

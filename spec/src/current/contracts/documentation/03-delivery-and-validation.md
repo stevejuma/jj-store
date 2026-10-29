@@ -1,5 +1,38 @@
 # Delivery and validation
 
+The M33 delivery checklist under `docs/maintenance` summarizes completed slices,
+current work, previews and remaining gates. Update its stable task IDs after
+verified implementation slices; canonical milestone ledgers retain status
+authority and evidence keeps original qualification failures visible.
+
+E-FILE-HISTORY-001 records exact native file predicates and Notes'
+editor-following sidebar in that checklist. The local manual distinguishes
+private changed-path index preparation from source mutation, and native oracle
+results from consumer UI acceptance. JST-DOC-002/003 source review and
+qualification gates are unchanged.
+
+E-FILE-BLAME-001 documents the additive scoped annotation command and Notes'
+copied blame presentation. README usage remains concise; the manual owns cursor,
+file/line bounds, pinned source and qualification details under JST-DOC-002/003.
+
+M33's crate README and local manual describe independent local-history
+construction, private cache admission and retained read pins. Original query
+budgets and public paths remain unchanged. Source review retains the separate
+companion-only metadata profile, native-only working-copy capabilities and the
+remaining Tauri qualification gate. The local embedding manual and separate
+`jj-history-service` README also document neutral caller scope/origin and the
+Tauri compatibility imports. Service extraction preserves the native schema and
+qualification distinctions; hosted IPC/browser admission remains a separate
+consumer gate.
+
+Native capture documentation MUST distinguish an expected content digest from
+the injected backend's actual durability confirmation. Describe exact native
+bindings/progress, bounded canonical batches, rescanning after projection and
+the stopped-owner rule after uncertainty or cancellation. Every returned safe
+frame, including a deferred prefix, requires ordered delivery. Shared library
+tests do not qualify a Notes journal, native batching adapter, JJ publication or
+conversation restart recovery; those retain separate milestone evidence.
+
 E-UI-CI-001 moves existing Chromium and WebKit Help acceptance into affected
 standard PR checks. JST-DOC-002/003 source-review, generated-reference and
 bundled-manual requirements remain unchanged. Browsing guidance records retained
@@ -288,3 +321,21 @@ merge and explicit Restack in the Git guide and transport semantics. The new
 forge crate is covered by source review, and generated CLI/OpenAPI references
 retain their normal command/schema authority. Fixture acceptance does not
 promote live provider or packaged application qualification.
+
+The history-bridge crate README and local manual document injected admission,
+opaque scoped handles, source/cache ownership, cancellation/draining and empty
+default permissions. Native service checks are distinct from native WebView and
+Notes application qualification; publication remains a separate gate.
+
+The crate README and local manual explain shared read-only workspace discovery,
+existing carrier construction and host-owned physical admission. Observed paths
+and optional identity cannot substitute for a vault/window capability.
+
+Native history documentation distinguishes the typed Rust service from the
+versioned JSON text IPC envelope, its request/output bounds and lossless integer
+requirement. The schema example exports the actual owned contract.
+
+The standalone history client overview and local manual describe injected text
+transport, explicit operation/handle lifetime and exact integer decoding. Source
+coverage includes schema generation and the owned native schema. Independent
+runtime/type archive checks remain separate from Notes and release acceptance.

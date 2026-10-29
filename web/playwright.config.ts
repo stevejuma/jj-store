@@ -1,4 +1,5 @@
 import { defineConfig } from "@playwright/test";
+import { previewCommand } from "../scripts/browser-tests.mjs";
 export default defineConfig({
   testDir: "./tests/browser",
   testIgnore: ["**/help*.spec.ts"],
@@ -29,8 +30,9 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command:
-      process.env.CI === "true" && process.env.JJ_STORE_CI_PREBUILT === "1"
+    command: process.env.JJ_STORE_BROWSER_PREVIEW_EXECUTABLE
+      ? previewCommand(process.env.JJ_STORE_BROWSER_PREVIEW_EXECUTABLE)
+      : process.env.CI === "true" && process.env.JJ_STORE_CI_PREBUILT === "1"
         ? "target/debug/examples/browser_preview"
         : "node scripts/managed-cargo.mjs run --quiet --locked -p jj-store-http --example browser_preview",
     url: "http://127.0.0.1:7458",

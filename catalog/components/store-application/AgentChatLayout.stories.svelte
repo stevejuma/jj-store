@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { page as browser } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
@@ -6,8 +7,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent chat layout",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -16,9 +17,7 @@
   args={{ longHistory: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await c.findByText("Ready to help.");
     const layout = canvasElement.querySelector<HTMLElement>(
       ".chat-body-reading-surface",
@@ -89,9 +88,7 @@
   args={{ longHistory: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     await c.findByText("Ready to help.");
     const viewport = canvasElement.querySelector<HTMLElement>(
       '.chat-body-reading-surface [data-ui-part="scroll-area-viewport"]',
@@ -126,9 +123,7 @@
   args={{ chatFeedback: "completed" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
+    await storyControl(document.body, "Open fixture conversation");
     const first = await c.findByRole("article", { name: "Message from You" });
     const viewport = canvasElement.querySelector<HTMLElement>(
       '.chat-body-reading-surface [data-ui-part="scroll-area-viewport"]',

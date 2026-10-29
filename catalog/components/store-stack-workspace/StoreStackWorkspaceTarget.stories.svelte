@@ -6,8 +6,12 @@
     title: "JJ Store/Stacks/Target branch",
     component: StackWorkspaceApplicationFixture,
     args: { page: "branches" },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 

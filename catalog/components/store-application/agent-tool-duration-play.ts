@@ -11,7 +11,9 @@ export async function agentToolDurationPlay({
   );
 
   await userEvent.click(
-    await c.findByRole("button", { name: "Expand 3 tool calls" }),
+    await c.findByRole("button", {
+      name: /^Expand Read(?: .+)? 3 tool calls$/,
+    }),
   );
   for (const [name, duration, status] of [
     ["apply_patch", "1.25s", "unknown"],
@@ -19,7 +21,7 @@ export async function agentToolDurationPlay({
     ["Read", "0ms", "complete"],
   ]) {
     const trigger = c.getByRole("button", {
-      name: `Show details for ${name}`,
+      name: new RegExp(`^Show details for ${name}(?: |$)`),
     });
     const timing = within(trigger).getByText(duration!, { exact: true });
     const chevron = trigger.querySelector('[data-ui-part="detail-chevron"]')!;
@@ -36,7 +38,7 @@ export async function agentToolDurationPlay({
   }
   await expect(
     c
-      .getByRole("button", { name: "Show details for Search" })
+      .getByRole("button", { name: /^Show details for Search(?: |$)/ })
       .querySelector('[data-ui-part="call-stats"]'),
   ).toBeNull();
 }

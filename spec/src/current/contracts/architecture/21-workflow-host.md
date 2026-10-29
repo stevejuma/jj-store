@@ -1,5 +1,9 @@
 # Lightweight workflow host (M28)
 
+The jj-workflow overview identifies the pure workflow model and supported source
+parser. E-CRATE-READMES-001 preserves JST-WF-001/004 publication and host
+admission; documentation does not dispatch or qualify an executor.
+
 ## Requirements
 
 | ID         | Requirement                                                                                                                                                                                                                                            |

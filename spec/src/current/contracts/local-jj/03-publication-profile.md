@@ -18,3 +18,10 @@ transactions, not one atomic snapshot. Ordinary code undo does not rewind
 collaboration state. Device paths, credentials, access grants and active
 execution journals are not portable metadata. Source actor identities remain
 provenance after conversion.
+
+M32's LocalTrusted application facade composes the five Git store factories with
+the existing filesystem actor and clock capabilities. CLI/browser command and
+status routes use those traits while exact historical readers and synchronous
+WorkStore compatibility remain available. JST-LOCAL-001/003 ref publication,
+original request intent/receipt bytes, explicit identity creation and source
+closure admission are unchanged; folder admission remains application-owned.

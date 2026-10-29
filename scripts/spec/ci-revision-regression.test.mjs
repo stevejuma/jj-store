@@ -1,3 +1,4 @@
+import { classifySpecFirstChanges } from "@lapismd/spec-validator";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -188,4 +189,37 @@ test("Git CI progress retains every merge parent and rejects reused or edited ev
   f.select(edited);
   for (const root of [f.root, f.gitRoot])
     assert.throws(() => run(root, edited), /committed evidence is immutable/);
+});
+
+test("unchanged confirmations cover mapped canonical requirement references only", (t) => {
+  const f = fixture(t);
+  const owner = "spec/src/current/governance/details.md";
+  const decoy = "spec/src/current/governance/unrelated.md";
+  f.write(owner, "JST-GOV-001 retains its detailed contract.\n");
+  f.write(decoy, "JST-GOV-0010 is a different identifier.\n");
+  f.write("spec/src/current/governance/index.md", "JST-GOV-001 navigation.\n");
+  f.write("docs/reference.md", "JST-GOV-001 background only.\n");
+  f.commit("canonical detail chapters");
+  f.write("scripts/selected.mjs", "selected\n");
+  writeEvidence(f.evidence("E-TEST-001", ["scripts/selected.mjs"]), f.root);
+  const head = f.commit("qualified implementation without a contract change");
+  for (const root of [f.root, f.gitRoot]) {
+    const confirmations = changeConfirmations(root, { head });
+    assert.deepEqual(
+      new Set(confirmations[0].chapters),
+      new Set(["spec/src/current/governance/requirements.md", owner]),
+    );
+    const changed = revisionReader(root, head).changed;
+    const classify = (chapter) =>
+      classifySpecFirstChanges(
+        changed,
+        {
+          rules: [{ pattern: "^scripts/", chapters: [chapter] }],
+        },
+        confirmations,
+      );
+    assert.equal(classify(owner).ok, true);
+    assert.equal(classify(decoy).ok, false);
+    assert.equal(classify("docs/reference.md").ok, false);
+  }
 });

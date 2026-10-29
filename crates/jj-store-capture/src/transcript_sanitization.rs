@@ -1,5 +1,4 @@
-//! Sanitization is the only bridge from memory-only native rows to reader intent.
-mod stream_text;
+//! Native privacy adaptation and JJ observation identities.
 use crate::{
     CaptureResult, codex_transcript::CodexTranscriptBatch, reader_progress::ReaderCapture,
 };
@@ -9,16 +8,12 @@ use jj_agent::{
     SanitizedRepresentation, SourceKind, SourceTrust,
 };
 use jj_store_model::RepositoryId;
-use kingfisher_scanner::Scanner;
+pub use lapis_agent_redaction::TRANSCRIPT_POLICY;
 use serde_json::{Value, json};
 use sha2::{Digest as _, Sha256};
 use std::path::Path;
-pub const TRANSCRIPT_POLICY: &str = "kingfisher-scanner@1.4.0/builtin-medium/transcript-paths/v1";
 #[derive(Clone)]
-pub struct TranscriptSanitizer {
-    scanner: std::sync::Arc<Scanner>,
-    replacements: Vec<(String, &'static str)>,
-}
+pub struct TranscriptSanitizer(lapis_agent_redaction::TranscriptSanitizer);
 impl TranscriptSanitizer {
     pub fn new(
         workspace: &Path,
@@ -26,133 +21,33 @@ impl TranscriptSanitizer {
         temporary: &Path,
         cache: &Path,
     ) -> CaptureResult<Self> {
-        let mut replacements = Vec::new();
-        for (path, tag) in [
-            (workspace, "$WORKSPACE"),
-            (home, "$HOME"),
-            (temporary, "$TEMP"),
-        ] {
-            let text = path.to_str().ok_or("invalid transcript privacy root")?;
-            if !path.is_absolute()
-                || path.parent().is_none()
-                || text.contains('\0')
-                || path.components().any(|v| {
-                    matches!(
-                        v,
-                        std::path::Component::ParentDir | std::path::Component::CurDir
-                    )
-                })
-            {
-                return Err("transcript privacy roots must be absolute non-root paths".into());
-            }
-            let text = text.trim_end_matches('/');
-            if replacements.iter().any(|(old, _)| old == text) {
-                return Err("transcript privacy roots must be distinct".into());
-            }
-            replacements.push((text.to_owned(), tag));
-        }
-        replacements.sort_by_key(|(path, _)| std::cmp::Reverse(path.len()));
         let cache = crate::path_policy::outside_checkout(cache)?;
-        Ok(Self {
-            scanner: std::sync::Arc::new(crate::agent_sanitization::scanner(&cache)?),
-            replacements,
-        })
+        Ok(Self(lapis_agent_redaction::TranscriptSanitizer::new(
+            workspace, home, temporary, &cache,
+        )?))
     }
-    /// Rebind only path privacy while reusing the immutable compiled scanner.
     pub fn for_workspace(&self, workspace: &Path) -> CaptureResult<Self> {
-        let text = workspace.to_str().ok_or("invalid transcript workspace")?;
-        if !workspace.is_absolute()
-            || workspace.parent().is_none()
-            || text.contains('\0')
-            || workspace.components().any(|p| {
-                matches!(
-                    p,
-                    std::path::Component::ParentDir | std::path::Component::CurDir
-                )
-            })
-        {
-            return Err("invalid transcript workspace".into());
-        }
-        let mut replacements: Vec<_> = self
-            .replacements
-            .iter()
-            .filter(|(_, tag)| *tag != "$WORKSPACE")
-            .cloned()
-            .collect();
-        let text = text.trim_end_matches('/');
-        if replacements.iter().any(|(path, _)| path == text) {
-            return Err("transcript privacy roots must be distinct".into());
-        }
-        replacements.push((text.to_owned(), "$WORKSPACE"));
-        replacements.sort_by_key(|(p, _)| std::cmp::Reverse(p.len()));
-        Ok(Self {
-            scanner: self.scanner.clone(),
-            replacements,
-        })
+        Ok(Self(self.0.for_workspace(workspace)?))
     }
-    /// Add exact device-resolved credentials before any journal/publication capture.
     pub fn for_secrets(&self, secrets: &[String]) -> CaptureResult<Self> {
-        self.with_secret_limit(secrets, 4096)
+        Ok(Self(self.0.for_secrets(secrets)?))
     }
-    /// Bounded OAuth JWTs can exceed ordinary environment-secret limits.
     pub fn for_oauth_secrets(&self, secrets: &[String]) -> CaptureResult<Self> {
-        self.with_secret_limit(secrets, 16384)
+        Ok(Self(self.0.for_oauth_secrets(secrets)?))
     }
-    fn with_secret_limit(&self, secrets: &[String], limit: usize) -> CaptureResult<Self> {
-        let mut result = self.clone();
-        for secret in secrets {
-            if secret.len() < 8 || secret.len() > limit {
-                return Err("invalid credential redaction length".into());
-            }
-            if !result.replacements.iter().any(|(old, _)| old == secret) {
-                result.replacements.push((secret.clone(), "$SECRET"));
-            }
-        }
-        if result.replacements.len() > 4096 {
-            return Err("credential redaction limit".into());
-        }
-        result
-            .replacements
-            .sort_by_key(|(value, _)| std::cmp::Reverse(value.len()));
-        Ok(result)
+    pub fn sanitize(&self, value: Value) -> Option<SanitizedPayloadV1> {
+        let payload = self.0.sanitize(value)?;
+        SanitizedPayloadV1::new(SanitizedMediaType::Json, payload.bytes()).ok()
     }
-    pub fn sanitize(&self, mut value: Value) -> Option<SanitizedPayloadV1> {
-        scrub(&mut value, &self.replacements)?;
-        crate::agent_sanitization::scan_json(value, &self.scanner)
+    /// Intermediate exact replacement; callers must scan the returned record.
+    pub fn replace_stream_text(
+        &self,
+        pending: &mut String,
+        chunk: &str,
+        complete: bool,
+    ) -> CaptureResult<String> {
+        Ok(self.0.replace_stream_text(pending, chunk, complete)?)
     }
-}
-fn scrub(value: &mut Value, replacements: &[(String, &'static str)]) -> Option<()> {
-    match value {
-        Value::String(text) => {
-            for (path, tag) in replacements {
-                if text.contains(path) {
-                    *text = text.replace(path, tag);
-                }
-            }
-        }
-        Value::Array(values) => {
-            for v in values {
-                scrub(v, replacements)?;
-            }
-        }
-        Value::Object(values) => {
-            let mut replacement = serde_json::Map::new();
-            for (mut key, mut value) in std::mem::take(values) {
-                for (path, tag) in replacements {
-                    if key.contains(path) {
-                        key = key.replace(path, tag);
-                    }
-                }
-                scrub(&mut value, replacements)?;
-                if replacement.insert(key, value).is_some() {
-                    return None;
-                }
-            }
-            *values = replacement;
-        }
-        _ => {}
-    }
-    Some(())
 }
 impl CodexTranscriptBatch {
     pub fn sanitize(
@@ -181,6 +76,31 @@ impl CodexTranscriptBatch {
         profile: &NormalizerProfileV1,
         sanitizer: Option<&TranscriptSanitizer>,
     ) -> CaptureResult<ReaderCapture> {
+        Ok(ReaderCapture {
+            repository,
+            profile: profile.clone(),
+            cursor: self.cursor.clone(),
+            batch: self.observations(profile, sanitizer)?,
+            metadata: self.metadata.clone(),
+            thread_binding: None,
+        })
+    }
+    /// Native-only privacy projection; grants no durable progress or repository authority.
+    pub fn sanitized_observations(
+        &self,
+        profile: &NormalizerProfileV1,
+        sanitizer: &TranscriptSanitizer,
+    ) -> CaptureResult<SanitizedObservationBatchV1> {
+        if self.directory().is_none() {
+            return Err("transcript directory context unavailable".into());
+        }
+        self.observations(profile, Some(sanitizer))
+    }
+    fn observations(
+        &self,
+        profile: &NormalizerProfileV1,
+        sanitizer: Option<&TranscriptSanitizer>,
+    ) -> CaptureResult<SanitizedObservationBatchV1> {
         profile.validate()?;
         self.cursor.validate()?;
         if !matches!(
@@ -264,13 +184,6 @@ impl CodexTranscriptBatch {
             observations,
         };
         batch.validate()?;
-        Ok(ReaderCapture {
-            repository,
-            profile: profile.clone(),
-            cursor: self.cursor.clone(),
-            batch,
-            metadata: self.metadata.clone(),
-            thread_binding: None,
-        })
+        Ok(batch)
     }
 }

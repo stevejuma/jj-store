@@ -1,5 +1,10 @@
 # CLI and server commands (continued 2)
 
+The server's M26 profile/emoji image preparation delegates to the public
+`jj-collab::normalize_settings_image` helper. This source extraction preserves
+JST-CLI-001/002 command registration, HTTP admission, upload receipts and error
+mapping; native consumers receive no server or publication authority.
+
 M13 local agent commands resolve the admitted GitBackend without a native
 connection. Status and session reads do not initialize companion metadata;
 explicit initialization and supported enablement are metadata writes. Existing

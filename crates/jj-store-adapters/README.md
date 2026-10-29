@@ -1,10 +1,13 @@
 # jj-store-adapters
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Infrastructure for rebuildable projections of manifest-selected native history.
+It supplies authorized sources, immutable artifact bundles, checkpoints,
+cancellation and bounded projection runners.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Implement `Projection`, create a `Source` with an `Authorizer`, and compose them
+with `Runner` and explicit limits. Advance the adapter checkpoint only after the
+projection has durably committed its own output. Repository state continues to
+be selected by the native manifest.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [reads and search](../../docs/site/technical/reads.md) and
+[publication](../../docs/site/technical/publication.md).

@@ -6,8 +6,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Workflow editor",
     component: StoreWorkflows,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       docs: {
         source: {

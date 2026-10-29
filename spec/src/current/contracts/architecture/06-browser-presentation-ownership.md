@@ -1,5 +1,12 @@
 # Browser presentation ownership
 
+Visual Delta is a development-only registry dependency of the Storybook host.
+Its public preset, Node CLI and Playwright exports own capture execution and
+profile resolution; jj-store owns its shared/local configuration, catalog
+registration and artifact paths. This tooling adds no dependency to production
+browser components, native storage or the server, and does not replace existing
+interaction/accessibility qualification.
+
 Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3`
 through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
@@ -87,14 +94,23 @@ workspace pins Kingfisher's matching Vectorscan fork because Cargo does not
 inherit a Git dependency's workspace patch. No JavaScript redaction package or
 temporary raw-input file participates in the capture boundary.
 
-The TagList adoption consumes published `@lapismd/design-core` `^0.5.0` through
-the registry lockfile. TagList owns chip layout, overflow measurement, native
-CSS and popup lifecycle; domain label/tone mapping remains under `web/src/lib`.
-Community-derived compositions retain their original attribution. No source
-alias, package patch or local archive participates in this acceptance.
+The TagList adoption and AppShell-attached browser surfaces consume published
+`@lapismd/design-core` `^0.7.0` through the registry lockfile, with Mira
+`~0.1.1` for the qualified composer contract. TagList owns chip layout, overflow
+measurement, native CSS and popup lifecycle; domain label/tone mapping remains
+under `web/src/lib`. Community-derived compositions retain their original
+attribution. No source alias, package patch or local archive participates in
+this acceptance.
 
 jj-store explicitly imports its own Tailwind utilities entry in the web and
 catalog stylesheets. Its existing utility-based application compositions no
 longer depend on a shared package exporting a compiler entry. Design Core
 components continue to import their own native CSS; this adds no source alias,
 upstream override or copied component style.
+
+M33 retains Community-derived UI adapters and legacy presentation field mapping
+under `web/src/lib`. The independently authored setup-ID codec and delivery
+projections move to the headless conversation SDK. Original Community design
+credit remains recorded; no Community UI or Nostr implementation becomes a
+shared dependency. Presentation ownership and attribution requirements remain
+unchanged.

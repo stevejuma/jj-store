@@ -1,3 +1,4 @@
+import { expectSelectedViewTab } from "../../fixtures/view-tabs.js";
 import { expect, userEvent, within, waitFor } from "storybook/test";
 
 export async function playMobileSettings({
@@ -55,9 +56,7 @@ export async function playMobileSettings({
   await userEvent.click(
     canvas.getByRole("button", { name: "Back to jj-store" }),
   );
-  await expect(
-    canvas.getByText("jj-store · Branches", { exact: true }),
-  ).toBeVisible();
+  await expectSelectedViewTab(canvasElement, "Branches");
 }
 
 /** Follow the public More menu when a retained conversation constrains tabs. */

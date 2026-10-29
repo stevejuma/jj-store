@@ -5,8 +5,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Projects and tasks",
     component: StoreWorkFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-work/StoreWork.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 

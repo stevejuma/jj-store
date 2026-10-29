@@ -2,10 +2,9 @@
 
 JST-COMPAT-001, JST-COMPAT-003 and JST-COMPAT-005 retain their JJ 0.45.1,
 manifest-selected authority and embedded-RustFS requirements. Interactive
-execution adds strict installation-local HTTP schemas and control version 2
-without changing native object/manifest identity encodings. The private
-execution journal is installation state; it is not a repository format or
-authority.
+execution uses strict installation-local HTTP schemas and Control V3 without
+changing native object/manifest identity encodings. The private execution
+journal is installation state; it is not a repository format or authority.
 
 Read-only recorded_session_ids, workspace_name and workspace_operation are
 additive local status fields with legacy journal defaults. Stored projections
@@ -39,9 +38,9 @@ remain separate.
 M24 adds explicitly selected control version 3, warm workers, conversation homes
 and additive local status/binding fields with journal defaults. Canonical
 AgentStore and ThreadStore formats and manifest/ref-CAS authority remain
-unchanged. M23 version-2 qualification stays separate. Fleet fixture, installed
-adapters, native materialization and cold built-browser gates are recorded
-independently.
+unchanged. Historical M23 version-2 evidence stays separate; current M23/M24
+execution uses Control V3 exclusively. Fleet fixture, installed adapters, native
+materialization and cold built-browser gates are recorded independently.
 
 Workspace inspection adds strict typed read DTOs and private execution events
 for exact pre-dispatch snapshots. Legacy records missing a start boundary remain
@@ -80,3 +79,35 @@ code-binding status, derived from the existing retained proof. Legacy journals
 remain readable. JST-COMPAT-001/003/005 native identities, source selections and
 publication formats are unchanged. New physical hints use the existing event
 envelope; read caches are session-only and require no migration.
+
+M33 native privacy extraction retains the existing Kingfisher hook/transcript
+policy IDs, canonical Agent payload bytes, public capture adapter signatures and
+Control V3 interpretation. Existing source identities, spool requests and
+publication receipts are not upgraded or rewritten by the new library boundary.
+
+M33 acquisition extraction retains all six serialized capture profiles and
+product versions, bounded complete headers, exact raw-header/device/inode
+witnesses and the Cursor sidecar requirement. JST-COMPAT-001/003/005 repository,
+spool and receipt formats remain unchanged; source discovery grants no
+admission.
+
+The additive capture `application` feature is enabled by default. Disabling it
+omits application spool/publication APIs rather than interpreting their formats.
+Default serialized pending requests, reservation bytes, receipts and exact
+acknowledgements retain JST-COMPAT-001/003/005; no journal migration occurs.
+
+M33 stream extraction preserves Control V3 frame ordering, terminal prefix
+flush, assistant/tool bounds, participant isolation and exact native scanner
+behavior. JST-COMPAT-001/003/005 and journal/publication formats are unchanged;
+only metadata-only private-buffer lifecycle observations become public.
+
+M33 prompt coordination preserves original parent/child request derivation,
+prepared/accepted receipt states, exact context release and deferred file
+queues. No journal field or canonical store encoding changes. Scoped host ports
+retain JST-COMPAT-001/003/005 and uncertain prompts never replay.
+
+M33's TypeScript extraction preserves exact mention token bytes, case/Unicode
+setup IDs, authored prompt stripping and delivery states. SDK sequences retain
+full host width; the existing UI keeps its prior display conversion. Generated
+wire schemas and canonical/native journal formats remain unchanged under
+JST-COMPAT-001/003/005.

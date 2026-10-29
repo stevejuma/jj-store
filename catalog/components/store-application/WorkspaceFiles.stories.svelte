@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, within, waitFor } from "storybook/test";
   import { page as browser, userEvent as browserEvent } from "vitest/browser";
@@ -18,8 +20,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Conversation workspace files",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -71,15 +73,20 @@
     await expect(
       getComputedStyle(rail.getByRole("tab", { name: "Files" })).borderRadius,
     ).toBe("999px");
-    await userEvent.click(
-      await rail.findByRole("button", { name: "src/unchanged.ts" }),
+    const unchanged = await rail.findByRole("button", {
+      name: "unchanged.ts Repository file",
+    });
+    await expect(unchanged).toHaveAttribute(
+      "data-file-path",
+      "src/unchanged.ts",
     );
+    await userEvent.click(unchanged);
     const inspector = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
     );
     await expect(
       await inspector.findByRole("textbox", {
-        name: "src/unchanged.ts",
+        name: fileRowName("src/unchanged.ts"),
       }),
     ).toHaveTextContent("unchanged = true");
     const inspectorElement = c.getByRole("complementary", {
@@ -114,11 +121,11 @@
     ).toHaveTextContent("Branch");
     await waitFor(() =>
       expect(
-        rail.queryByRole("button", { name: "src/unchanged.ts" }),
+        rail.queryByRole("button", { name: "unchanged.ts Repository file" }),
       ).not.toBeInTheDocument(),
     );
     await userEvent.click(
-      await rail.findByRole("button", { name: "src/example.ts" }),
+      await rail.findByRole("button", { name: "example.ts +1 -1" }),
     );
     const diff = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
@@ -128,7 +135,7 @@
     ).toBeVisible();
     await userEvent.click(diff.getByRole("tab", { name: "After" }));
     await expect(
-      await diff.findByRole("textbox", { name: "src/example.ts" }),
+      await diff.findByRole("textbox", { name: fileRowName("src/example.ts") }),
     ).toHaveTextContent("café 🦀");
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(
       window.innerWidth + 1,
@@ -146,14 +153,12 @@
     const panel = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
-    await panel.findByRole("button", { name: "src/unchanged.ts" });
+    await panel.findByRole("button", { name: "unchanged.ts Repository file" });
     const refresh = panel.getByRole("button", {
       name: "Refresh workspace files",
     });
     await waitFor(() => expect(refresh).toBeEnabled());
-    await userEvent.click(
-      c.getByRole("button", { name: "Hold next workspace read" }),
-    );
+    await storyControl(document.body, "Hold next workspace read");
     await userEvent.click(refresh);
     await c.findByRole("button", { name: "Complete workspace read" });
     await expect(refresh).toBeDisabled();
@@ -162,14 +167,12 @@
       "true",
     );
     await expect(
-      panel.getByRole("button", { name: "src/unchanged.ts" }),
+      panel.getByRole("button", { name: "unchanged.ts Repository file" }),
     ).toBeVisible();
     await expect(
       panel.queryByText("Loading more repository files"),
     ).not.toBeInTheDocument();
-    await userEvent.click(
-      c.getByRole("button", { name: "Complete workspace read" }),
-    );
+    await storyControl(document.body, "Complete workspace read");
     await waitFor(() => expect(refresh).toBeEnabled());
     await expect(panel.getByRole("tabpanel")).toHaveAttribute(
       "aria-busy",
@@ -197,7 +200,7 @@
         width: el.getBoundingClientRect().width,
       };
     };
-    await userEvent.click(c.getByRole("button", { name: "Fixture projects" }));
+    await storyControl(document.body, "Fixture projects");
     await expect(
       c.getByRole("button", { name: "Toggle details" }),
     ).toHaveAttribute("aria-expanded", "false");
@@ -205,18 +208,20 @@
     await waitFor(() => expect(originalRail()).toBeVisible());
     const before = appearance(originalRail());
     await expect(originalRail()).toHaveAttribute("data-variant", "rail");
-    await userEvent.click(c.getByRole("button", { name: "Fixture inbox" }));
+    await storyControl(document.body, "Fixture inbox");
     await userEvent.click(await c.findByRole("button", { name: /Workspace:/ }));
     await viewFiles();
     const files = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
     await userEvent.click(
-      await files.findByRole("button", { name: "src/unchanged.ts" }),
+      await files.findByRole("button", {
+        name: "unchanged.ts Repository file",
+      }),
     );
     await within(
       await c.findByRole("complementary", { name: "Workspace file" }),
-    ).findByRole("textbox", { name: "src/unchanged.ts" });
+    ).findByRole("textbox", { name: fileRowName("src/unchanged.ts") });
     for (const destination of ["Fixture projects", "Fixture repository"]) {
       await userEvent.click(c.getByRole("button", { name: destination }));
       await waitFor(() => expect(originalRail()).toBeVisible());
@@ -239,25 +244,23 @@
       ).toHaveAttribute("aria-expanded", "true");
     }
     await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
-    await userEvent.click(c.getByRole("button", { name: "Fixture inbox" }));
+    await storyControl(document.body, "Fixture inbox");
     await expect(
       await c.findByRole("complementary", { name: "Workspace files" }),
     ).toBeVisible();
     await expect(
       await within(
         await c.findByRole("complementary", { name: "Workspace file" }),
-      ).findByRole("textbox", { name: "src/unchanged.ts" }),
+      ).findByRole("textbox", { name: fileRowName("src/unchanged.ts") }),
     ).toHaveTextContent("unchanged = true");
-    await userEvent.click(
-      c.getByRole("button", { name: "Fixture other session" }),
-    );
+    await storyControl(document.body, "Fixture other session");
     await expect(
       c.queryByRole("complementary", { name: "Workspace files", hidden: true }),
     ).not.toBeInTheDocument();
     await expect(
       c.queryByRole("complementary", { name: "Workspace file", hidden: true }),
     ).not.toBeInTheDocument();
-    await userEvent.click(c.getByRole("button", { name: "Fixture projects" }));
+    await storyControl(document.body, "Fixture projects");
     await expect(
       c.getByRole("button", { name: "Toggle details" }),
     ).toHaveAttribute("aria-expanded", "false");
@@ -278,7 +281,7 @@
     const rail = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
-    await rail.findByRole("button", { name: "src/unchanged.ts" });
+    await rail.findByRole("button", { name: "unchanged.ts Repository file" });
     await waitFor(() =>
       expect(
         rail.getByRole("button", { name: "Refresh workspace files" }),
@@ -299,11 +302,13 @@
     const reopened = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
-    await reopened.findByRole("button", { name: "src/unchanged.ts" });
-    await userEvent.click(
-      c.getByRole("button", { name: "Hold next workspace read" }),
-    );
-    await browser.getByRole("button", { name: /^src\/unchanged\.ts$/ }).click();
+    await reopened.findByRole("button", {
+      name: "unchanged.ts Repository file",
+    });
+    await storyControl(document.body, "Hold next workspace read");
+    await browser
+      .getByRole("button", { name: "unchanged.ts Repository file" })
+      .click();
     const inspector = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
     );
@@ -324,11 +329,11 @@
     await expect(
       inspector.getByText("src/unchanged.ts", { selector: "strong" }),
     ).toBeVisible();
-    await userEvent.click(
-      c.getByRole("button", { name: "Complete workspace read" }),
-    );
+    await storyControl(document.body, "Complete workspace read");
     await expect(
-      await inspector.findByRole("textbox", { name: "src/unchanged.ts" }),
+      await inspector.findByRole("textbox", {
+        name: fileRowName("src/unchanged.ts"),
+      }),
     ).toHaveTextContent("unchanged = true");
     await expect(
       inspector.queryByRole("status", { name: "Loading src/unchanged.ts" }),

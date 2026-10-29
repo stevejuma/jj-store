@@ -194,7 +194,8 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
       .click();
     await expectSettledGraph(page);
     await page.getByRole("radio", { name: "Show files as list" }).click();
-    const file = page.getByRole("button", { name: "src/lib.rs", exact: true });
+    const file = page.locator('button[data-file-path="src/lib.rs"]');
+    await expect(file).toHaveAccessibleName(/lib\.rs/);
     await file.focus();
     await file.press("Enter");
     await expect(

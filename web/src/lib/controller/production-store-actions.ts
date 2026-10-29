@@ -246,8 +246,13 @@ export function createProductionStoreActions(options: {
     },
     async selectFile(path) {
       options.invalidate();
+      const route = options.history.route;
       options.history.push({
-        ...options.history.route,
+        ...route,
+        commitId:
+          path && route.page === "files"
+            ? (route.commitId ?? options.data.snapshot?.id ?? null)
+            : route.commitId,
         path,
         fileDisplay: undefined,
       });

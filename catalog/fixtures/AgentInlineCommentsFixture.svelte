@@ -1,11 +1,10 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
-  import { AppShell } from "@lapismd/design-core/shell";
+  import ApplicationStory from "./ApplicationStory.svelte";
+  import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
+  import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
-  import StoreAgentConversation from "../../web/src/lib/ui/store-agent-execution/StoreAgentConversation.svelte";
-  import ChatToolPanel from "../../web/src/lib/ui/store-agent-chat-body/ChatToolPanel.svelte";
-  import { provideConversationInspection } from "../../web/src/lib/conversations/inspection.svelte.js";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
   import {
     createAppearanceStore,
@@ -45,7 +44,6 @@
   const appearance = createAppearanceStore();
   provideAppearance(appearance);
   const { shell } = untrack(fixtureAgentShell);
-  const inspection = provideConversationInspection(shell, () => null);
   let value = $state(
     untrack(() =>
       fixtureExecutionStatus({
@@ -140,83 +138,76 @@
     await manager.ensure();
     await manager.select(inlineSession);
     mounted = true;
+    route = agentsRoute("session", inlineSession);
   }
   onDestroy(() => {
     manager.destroy();
     void shell.dispose();
   });
+  let route = $state(agentsRoute());
+  const base = untrack(() => createInMemoryStoreController("agents"));
+  const application = {
+    ...base,
+    execution: manager,
+    get state() {
+      return { ...base.state, route };
+    },
+    actions: {
+      ...base.actions,
+      async openRoute(
+        next: import("../../web/src/lib/controller/contracts.js").StoreRoute,
+      ) {
+        route = next;
+      },
+    },
+  };
+  manager.onNavigate = (view, id, related) =>
+    (route = agentsRoute(view, id, related));
 </script>
 
-<CommunityAppShell
-  controller={shell}
-  displayMode="desktop"
-  desktopChrome={false}
-  style="height: 100dvh"
->
-  <AppShell.Main>
-    <div class="inline-fixture">
-      <div role="group" aria-label="Fixture controls">
-        <Button onclick={open}>Open fixture conversation</Button>
-        <Button onclick={() => (mounted = false)}
-          >Leave fixture conversation</Button
-        >
-        <Button
-          onclick={() =>
-            appearance.update({
-              conversationView:
-                appearance.live.conversationView === "document"
-                  ? "classic"
-                  : "document",
-            })}>Switch renderer</Button
-        >
-        <Button
-          onclick={async () => {
-            value.sessions[0].state = "idle";
-            await manager.refresh();
-          }}>Complete fixture turn</Button
-        >
-        <Button
-          onclick={() => {
-            transport.failFeedback();
-            void manager.discussions.load(inlineSession);
-          }}>Fail feedback refresh</Button
-        >
-        <Button
-          onclick={() => {
-            transport.recoverFeedback();
-            void manager.discussions.load(inlineSession);
-          }}>Refresh captured feedback</Button
-        >
-        <Button onclick={() => transport.confirm()}
-          >Confirm fixture request</Button
-        >
-      </div>
-      {#if mounted}<StoreAgentConversation {manager} />{/if}
-    </div>
-  </AppShell.Main>
-  {#if inspection.current}<AppShell.Sidebar
-      side="right"
-      sidebarController={shell.right}
+<ApplicationStory controller={application} {appearance} />
+<FixtureControls
+  ><div data-story-controls role="group" aria-label="Fixture controls">
+    <Button onclick={open}>Open fixture conversation</Button>
+    <Button
+      onclick={() => {
+        mounted = false;
+        route = agentsRoute();
+      }}>Leave fixture conversation</Button
     >
-      <ChatToolPanel
-        tool={inspection.current.tool}
-        state={inspection.current.state}
-        onClose={() => void inspection.close()}
-      />
-    </AppShell.Sidebar>{/if}
-</CommunityAppShell>
+    <Button
+      onclick={() =>
+        appearance.update({
+          conversationView:
+            appearance.live.conversationView === "document"
+              ? "classic"
+              : "document",
+        })}>Switch renderer</Button
+    >
+    <Button
+      onclick={async () => {
+        value.sessions[0].state = "idle";
+        await manager.refresh();
+      }}>Complete fixture turn</Button
+    >
+    <Button
+      onclick={() => {
+        transport.failFeedback();
+        void manager.discussions.load(inlineSession);
+      }}>Fail feedback refresh</Button
+    >
+    <Button
+      onclick={() => {
+        transport.recoverFeedback();
+        void manager.discussions.load(inlineSession);
+      }}>Refresh captured feedback</Button
+    >
+    <Button onclick={() => transport.confirm()}>Confirm fixture request</Button>
+  </div></FixtureControls
+>
 <output hidden data-testid="comment-commands">{JSON.stringify(commands)}</output
 >
 <output hidden data-testid="comment-checks">{JSON.stringify(checks)}</output>
 <output hidden data-testid="comment-feedback-error"
   >{manager.discussions.errors[inlineSession] ?? ""}</output
 >
-
-<style>
-  .inline-fixture {
-    height: 100%;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-</style>

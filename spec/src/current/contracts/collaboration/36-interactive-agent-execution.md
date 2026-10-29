@@ -1,7 +1,7 @@
 # Interactive agent execution
 
 JST-COLLAB-031 through JST-COLLAB-033 govern explicit local execution using
-jj-acp control version 2. The application owns authorization, durable intents,
+Lapis ACP Control V3. The application owns authorization, durable intents,
 workspace selection, prompt preparation and evidence publication. The harness
 owns protocol, warm ACP sessions, permission exchange and bounded termination.
 
@@ -151,8 +151,8 @@ feedback actually included; it never infers delivery from transcript text.
 Carried context reserves its revisions until that prompt starts; cancelling the
 first queued prompt keeps initial context eligible for a later explicit Send.
 Legacy journals begin with empty delivery metadata and include currently
-eligible replies once on their next Send. ThreadStore, ReactionStore and jj-acp
-protocol formats remain unchanged.
+eligible replies once on their next Send. ThreadStore, ReactionStore and Lapis
+ACP protocol formats remain unchanged.
 
 The inbox retains the existing native code-repository Thread/Reaction refusal
 until reducer 3 is qualified. The supported native write profile is a WorkStore

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { provideTerminalControls } from "../../web/src/lib/terminal/controls.svelte.js";
   import StoreTerminalToggle from "../../web/src/lib/ui/store-terminal/StoreTerminalToggle.svelte";
   provideTerminalControls();
@@ -30,8 +31,12 @@
   style="height: 650px; display: flex; flex-direction: column; color: var(--foreground); background: var(--background)"
 >
   <nav aria-label="Fixture repositories">
-    <button onclick={() => (repository = "repo-a")}>Repository A</button><button
-      onclick={() => (repository = "repo-b")}>Repository B</button
+    <FixtureControls floating={false}
+      ><button onclick={() => (repository = "repo-a")}>Repository A</button
+      ></FixtureControls
+    ><FixtureControls floating={false}
+      ><button onclick={() => (repository = "repo-b")}>Repository B</button
+      ></FixtureControls
     >
     <StoreTerminalToggle />
   </nav>

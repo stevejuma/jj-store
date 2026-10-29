@@ -1,5 +1,9 @@
 # Compatibility and release
 
+E-CRATE-READMES-001 adds maintained runtime-helper overviews with links to
+existing detailed guidance. JST-COMPAT-001/003 pins, separate dependency graphs
+and qualification gates remain unchanged; documentation is not runtime proof.
+
 The additive Blame V1 response and native/local routes use pinned jj-lib 0.45.1
 same-path, all-parent annotation semantics. Source URLs retain their behavior;
 `file_view=blame` opts into attribution. Continuations are process-local and

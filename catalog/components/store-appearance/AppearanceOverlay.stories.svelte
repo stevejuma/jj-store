@@ -6,8 +6,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Appearance/Overlay tokens",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-search-command/CommunitySearchCommand.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   async function verifyScopeStates(canvasElement: HTMLElement) {
     const p = within(canvasElement.ownerDocument.body);

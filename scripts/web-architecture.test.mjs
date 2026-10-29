@@ -47,3 +47,24 @@ test("allows stories to consume production presentation modules", () => {
   });
   assert.deepEqual(architectureErrors(root, { files: {} }), []);
 });
+
+test("headless package sources share the production size boundary", () => {
+  const root = fixture({
+    "packages/jj-conversations/src/large.ts": "const value = 1;\n".repeat(301),
+  });
+  assert.match(
+    architectureErrors(root, { files: {} }).join("\n"),
+    /packages\/jj-conversations\/src\/large.ts: 301 counted lines exceeds 300/,
+  );
+});
+
+test("only the exact generated history contract is exempt from authored size limits", () => {
+  const root = fixture({
+    "packages/jj-history/src/generated.ts":
+      "export type Wire = string;\n".repeat(301),
+    "packages/jj-history/src/handwritten.ts": "const value = 1;\n".repeat(301),
+  });
+  const errors = architectureErrors(root, { files: {} });
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /handwritten\.ts: 301 counted lines exceeds 300/);
+});

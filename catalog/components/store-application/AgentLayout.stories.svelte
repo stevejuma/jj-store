@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { selectViewTab } from "../../fixtures/view-tabs.js";
   import { selectSettingsSubtab } from "./settings-shell-play.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
@@ -14,15 +15,17 @@
         views.projects(),
       ]);
     },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function agentRows(canvasElement: HTMLElement, project = false) {
     const c = within(canvasElement);
     if (project) await c.findByRole("button", { name: "Edit project" });
-    const agents = await c.findByRole("tab", { name: "Agents" });
-    if (agents.getAttribute("aria-selected") !== "true")
-      await userEvent.click(agents);
+    await selectViewTab(canvasElement, "Agents");
     await c.findByRole("button", { name: /Open Codex ended/ });
     return c;
   }
@@ -240,11 +243,13 @@
   play={focused}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile Projects agents follow Focus layout"
   args={{ mobile: true }}
   play={focused}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile repository agents follow Focus layout"
   args={{ repository: true, mobile: true }}
   play={focused}

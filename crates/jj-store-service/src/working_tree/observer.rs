@@ -6,7 +6,8 @@ use tokio::sync::Semaphore;
 
 #[derive(Clone)]
 pub struct Observer {
-    reader: code::Executor,
+    pub(super) reader: code::Executor,
+    concurrency: u32,
     pub(super) capacity: Arc<Semaphore>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -27,8 +28,19 @@ impl Observer {
         }
         Ok(Self {
             reader,
+            concurrency: concurrency as u32,
             capacity: Arc::new(Semaphore::new(concurrency)),
         })
+    }
+    /// Waits for canceled blocking scans to release their actual worker leases.
+    pub async fn drain(&self) -> Result<()> {
+        let _permit = self
+            .capacity
+            .clone()
+            .acquire_many_owned(self.concurrency)
+            .await
+            .map_err(|_| Error::Unavailable)?;
+        Ok(())
     }
     /// Trusted composition supplies the registered canonical root and access owner.
     pub async fn observe(

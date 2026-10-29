@@ -75,6 +75,15 @@ categories and actions depend on that repository's type, capabilities and your
 permissions. Local folders lists only this repository's registration or links.
 General identifies Local JJ or Server Hosted repositories.
 
+General also offers repository removal for an admitted LocalTrusted
+administrator. **Remove repository** unregisters a local JJ folder while keeping
+its files and history; the folder can be added again. **Delete repository**
+permanently erases a supported server-hosted repository's code, history and
+collaboration data after confirmation. Independent backups and local folders
+remain. Finish pending edits or recovery before using either action. An
+interrupted native deletion retains its original request on this device; use
+**Continue deletion** from its notification to check or resume that request.
+
 Category and subtab selections are part of the repository URL. Both navigation
 rows stay visible while the content scrolls. Back returns to the view you
 entered from and restores its Details panel. Conversation and workspace
@@ -223,7 +232,9 @@ start explicitly.
 
 Ready runtimes use Community's green success chip and omit Install. Guide links
 and installation confirmation actions use the shared semantic button styling,
-with inline icons. Runtime and capture tabs show only their own controls.
+with inline icons. Settings action rows keep outline button labels on the theme
+foreground so they stay readable beside muted help text. Runtime and capture
+tabs show only their own controls.
 
 ## Reusable agents and chat
 

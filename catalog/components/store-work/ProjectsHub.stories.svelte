@@ -14,8 +14,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Projects hub",
     component: ProjectsHubFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -221,6 +221,7 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile task detail"
   args={{ detail: true, mobile: true }}
   play={async ({ canvasElement }) => {

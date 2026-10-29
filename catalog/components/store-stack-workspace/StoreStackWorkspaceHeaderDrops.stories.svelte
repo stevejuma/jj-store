@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
     expect,
@@ -17,8 +18,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Header drops",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   function header(element: HTMLElement, name: string) {
     return workspaceCanvas(element)
@@ -160,7 +161,9 @@
   name="Drop guides have an opaque foreground background"
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
-    const file = await canvas.findByRole("button", { name: "README.md" });
+    const file = await canvas.findByRole("button", {
+      name: workspaceFileName("README.md"),
+    });
     const stage = canvas.getByRole("group", {
       name: "Commit composer for feature/api",
     });

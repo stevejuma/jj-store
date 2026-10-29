@@ -1,8 +1,8 @@
 # M30 public release
 
-| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                         | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002,E-UI-CI-003 |
+| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                         | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002,E-UI-CI-003,E-LAPIS-AI-001,E-STORY-PARITY-001,E-STORY-DOC-REVIEW-001,E-CI-SUITES-FIX-002,E-CI-SUITES-FIX-003,E-CI-OFFLINE-GOVERNANCE-001,E-PACKAGE-LICENSE-001,E-PACKAGE-LICENSE-002 |
 
 E-AUTOMATION-GOVERNANCE-001 qualifies the generated release/dependency PR
 exception. Static spec checks, all planned tests and publication gates remain;
@@ -142,6 +142,41 @@ selection. Its source repair and authorized package release retain protected
 source/version checks and provenance verification. Fresh required CI on the
 updated jj-store head remains mandatory; this dependency repair does not qualify
 heavy hosted release, other platforms or jj-store publication.
+
+E-LAPIS-AI-001 records local Lapis AI client/helper adoption and Control V3-only
+execution, with exact recovery, bundle and cold compute evidence. This review
+retains the current milestone status and its independent qualification gates.
+E-STORY-DOC-REVIEW-001 reviews the documentation fingerprints and manuals
+against their owning committed source changes. M30 remains In progress; this
+maintenance does not promote any provider, release or visual gate.
+
+E-CI-SUITES-FIX-002 restores the documented bounded Storybook sharding for
+nested and native validation dispatch, so the unfiltered suite inside aggregate
+lanes runs four sequential fresh-browser shards and every shard runs even when
+an earlier one fails. Explicit targets and caller-selected shards stay exact.
+M30 remains In progress; no hosted-qualification, release or publication gate
+changes.
+
+E-CI-SUITES-FIX-003 provisions the protocol compiler in the full local
+validation image through its existing apt line, exactly mirroring the hosted CI
+embedded-runtime producer, so the aggregate Docker lanes can compile the
+Pulsar-dependent embedded runtime. M30 remains In progress; validation-image Git
+2.55.0 provisioning for the macOS-qualified native_git family stays a separate
+owner decision.
+
+E-CI-OFFLINE-GOVERNANCE-001 mirrors the Docker offline `pnpm store add`
+provision onto hosted GitHub Actions setup so the conversation and history
+clean-install regressions resolve without network on ubuntu runners. M30 remains
+In progress; no publication gate changes.
+
+E-PACKAGE-LICENSE-001 adds the required Apache-2.0 LICENSE.md and NOTICE.md
+files for jj-history-service and jj-vault, and refreshes capture, local-compute
+and history-client documentation reviews for published sibling pins and the
+jj-history publishConfig so Pages and package-check can pass.
+
+E-PACKAGE-LICENSE-002 records the mapped architecture and vault-backup chapter
+updates that require LICENSE.md/NOTICE.md on publishable history-service and
+vault crates so Spec-first covers E-PACKAGE-LICENSE-001 packaging files.
 
 <!-- generated-navigation -->
 

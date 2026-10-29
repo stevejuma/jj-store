@@ -1,5 +1,18 @@
 # Bounded application graphs
 
+M33 moves shared errors, accounting, budgets and worker admission into internal
+storage-independent modules. Existing query, content, admission, predicate and
+language public paths re-export the same owned types. Default allowances,
+diagnostic/error schemas, cancellation and shared worker slots are unchanged;
+source pins and current authorization remain with their existing adapters.
+
+The additive `local-history` feature reuses these algorithms for filesystem
+repositories without native object/WAL or service dependencies. Private caches,
+retained operation membership, cancellation, registration generations and
+completion authorization keep the same requirements. Native-only integration and
+qualification examples remain enabled by default and explicitly gated in
+headless builds.
+
 Core browsing uses the pinned `jj-lib::DefaultIndexStore` and its standard
 incremental builder in server-owned storage. One repository/profile/authority
 namespace contains JJ's per-operation associations; bookmarks share its graph.
@@ -128,3 +141,21 @@ load a placeholder object. The application diff layer treats placeholders as
 lineage boundaries, retaining complete structural deltas and all source choices.
 It does not invoke the pinned experimental copy-history diff helper, whose graph
 walker requires every parent (including placeholders) to be a stored history.
+
+The Tauri adapter consumes only owned filesystem reader interfaces and retains
+one non-queued preparation admission across cache acquisition and actual worker
+exit. Cache acquisition runs on a blocking worker. Per-window and per-handle
+leases reject canceled completion and drain active reads before cleanup returns.
+No new upstream JJ import or repository write method is exposed.
+
+Default-settings workspace discovery and existing metadata-carrier construction
+are exposed through owned JJ interfaces for native hosts. The CLI consumes the
+same read-only resolver and preserves its existing error categories. No working
+copy, head reconciliation, source initialization or executable configuration is
+loaded. Physical admission remains the caller's responsibility.
+
+Prepared local standard-index handles also admit basic operation graphs, exact
+parent deltas and grouped revision changes. They preserve the original pin and
+prove historical membership through bounded operation parents. Their scoped
+metadata reader never loads or repairs source indexes or traverses trees for
+these queries; other advanced variants retain explicit preparation.

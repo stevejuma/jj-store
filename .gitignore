@@ -1,5 +1,5 @@
 /target/
-/runtime/embedded-rustfs/target/
+/runtime/*/target/
 /node_modules
 
 /spec/book/
@@ -22,6 +22,11 @@
 /web/playwright-report/
 /storybook-static/
 /catalog/test-results/
+.visual-delta/artifacts/
+.visual-delta/cache/
+.visual-delta/config.local.json
+/test-results/
+/playwright-report/
 
 /desktop/target/
 /desktop/resources/
@@ -37,7 +42,9 @@
 spec/.generated/
 .qmd/index.sqlite*
 
-/runtime/local-agent/target/
-/runtime/compute/target/
-
 .release/
+
+/packages/jj-conversations/dist/
+/packages/jj-conversations/node_modules/
+/packages/jj-history/dist/
+/packages/jj-history/node_modules/

@@ -1,5 +1,25 @@
 # Verification scope
 
+Crate overview documentation checks the complete tracked Cargo-root inventory,
+first-party relative links, actual public entry points and Markdown formatting.
+The standalone desktop runbook maps to documentation and desktop chapters. The
+injectable-store SDK guide maps to documentation and architecture; its
+independent Cargo workspace is registered for managed target maintenance.
+Qualification retires its isolated target and preserves the existing dev
+fixture. E-CRATE-READMES-001 keeps all runtime and release qualification gates
+unchanged.
+
+JST-ARCH-006's library boundaries admit core and Git engines independently of
+native object/WAL and application packages. Verify their dependency closure,
+exact source-identity and receipt regressions, and affected direct consumers.
+Keep incomplete cross-domain substitution and native/external-provider gates in
+M32; passing an extraction family cannot complete those separate gates. Native
+factory consumer migration runs the affected service, CLI, capture and transport
+families, exact original-request/receipt regressions and strict package checks.
+Cold embedded RustFS evidence reopens all five domains independently of
+fake-store fault tests. JST-GOV-002 keeps that evidence and explicit M32 review
+in the same change; unrelated UI and root aggregate lanes remain out of scope.
+
 E-CI-BROWSER-001 runs the complete affected UI unit and cold-browser surfaces
 because fixture selection/sharding and shared freshness owners affect
 independent consumers. Every cold shard owns fresh storage/server state; profile
@@ -229,15 +249,16 @@ HMR, backend restart and state preservation; built-bundle CSP qualification is
 retained separately. No development workflow publishes a package or replaces the
 installed CLI.
 
-Development startup supplies the bundled `desktop/resources/jj-acp` and the
-custom `jj` paired with the selected backend by default. The full restart builds
-its development binaries before preflight so clean checkouts remain supported.
-Full, HMR and backend-only restarts resolve these resources on every invocation,
-preserving explicit trusted environment overrides. Preflight rejects missing,
-non-regular, non-executable or pre-version-3 ACP resources before stopping an
-existing service. This inspection never launches an adapter or sends a prompt.
-The shared launcher regression includes a cold API capability/status check
-before and after backend-only and full restarts, without inherited ACP
+Development startup supplies `lapis-acp` from the verified Lapis AI bundle and
+the custom `jj` paired with the selected backend by default. The full restart
+builds its development binaries before preflight so clean checkouts remain
+supported. Full, HMR and backend-only restarts resolve these resources on every
+invocation, preserving explicit trusted environment overrides. Preflight rejects
+missing, non-regular, non-executable or pre-version-3 ACP resources before
+stopping an existing service. This inspection never launches an adapter or sends
+a prompt. HMR readiness allows bounded native bundle verification before
+serving. The shared launcher regression includes a cold API capability/status
+check before and after backend-only and full restarts, without inherited ACP
 configuration.
 
 The HMR preflight also validates the generated Help bundle before replacing a

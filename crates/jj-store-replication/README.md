@@ -1,10 +1,13 @@
 # jj-store-replication
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Bounded, transport-neutral exchange between writable jj-store replicas. Closure
+transfer, peer checkpoints and worker state preserve the separation between
+received objects and accepted repository publication.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Implement `ReplicationEndpoint` and `PeerCheckpointStore` for the host's
+transport and durable checkpoint location. Configure transfer/worker limits and
+use `ReplicationWorker` to drive admitted synchronization. The receiving native
+coordinator still validates and publishes accepted state.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [replication](../../docs/site/technical/replication.md) and
+[synchronization controls](../../docs/site/guides/sync.md).

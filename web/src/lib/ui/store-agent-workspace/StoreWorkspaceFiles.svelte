@@ -99,6 +99,7 @@
       hidden={!visible}
       {...props}
       side="right"
+      variant="attached"
       data-conversation-workspace
       {sidebarController}
       constraintPriority={100}

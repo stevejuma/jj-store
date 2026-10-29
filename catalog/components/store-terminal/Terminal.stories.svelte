@@ -11,8 +11,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Desktop terminal",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-terminal/StoreTerminalWorkspace.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 

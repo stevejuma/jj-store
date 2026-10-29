@@ -297,3 +297,16 @@ object archive. The integration boundary translates all selected code references
 and ancestry/evolution dependencies into fresh destination identities, retaining
 optional predecessor-map semantics. It never reconciles source heads or
 snapshots physical checkout files. Native codecs and envelopes remain unchanged.
+
+M32 preserves JST-JJ-001/002/003/004/005 while the optional companion feature
+retains stock JJ capsule identity and closure validation above the generic Git
+carrier. Operation archives and stack retention remain in the default native
+feature. Shared timestamp/signature conversions retain their exact bytes; no JJ
+operation, backend factory, working copy or index authority moves into the
+carrier.
+
+The companion evidence adapter exposes a single full-reference decoder for typed
+consumers. Structural/hash admission in the generic Git carrier is insufficient
+for source-file access: the JJ decoder also verifies canonical capsule bytes,
+operation/view identities, complete closure, repository, operation and qualified
+profile binding before a source anchor is used.

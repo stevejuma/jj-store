@@ -16,6 +16,7 @@
 <StoreDiscussionSheet
   open={open && !!controller.threads && !!controller.state.route.replyId}
   title="Replies"
+  scrollable={false}
   onClose={close}
 >
   {#if controller.threads && controller.state.route.replyId}

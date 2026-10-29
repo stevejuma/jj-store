@@ -13,12 +13,14 @@
     controller,
     stackWorkspace,
     initiallyCollapsed = true,
+    desktopChrome,
     displayMode = "auto",
     layoutStorage,
   }: {
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
     initiallyCollapsed?: boolean;
+    desktopChrome?: boolean;
     displayMode?: AppShellDisplayMode;
     layoutStorage?: Storage;
   } = $props();
@@ -46,6 +48,7 @@
   {stackWorkspace}
   {initiallyCollapsed}
   {displayMode}
+  {desktopChrome}
   {layoutStorage}
 >
   {#snippet children(page)}

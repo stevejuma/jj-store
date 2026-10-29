@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount, untrack } from "svelte";
-  import { AppShell, AppShellController } from "@lapismd/design-core/shell";
+  import ApplicationStory from "./ApplicationStory.svelte";
+  import FixtureControls from "./FixtureControls.svelte";
+  import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreStackWorkspace from "../../web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import { projectStackTopology } from "../../web/src/lib/controller/stack-workspace/topology-projection.js";
   import { localStacksCommand } from "../../web/src/lib/controller/stack-workspace/local-state.js";
@@ -154,23 +155,26 @@
   };
   let executed = $state("");
   const controller = new StackWorkspaceController(adapter);
-  const shell = new AppShellController();
+  const application = untrack(() => createInMemoryStoreController("stacks"));
+  snapshot.repository = application.state.route.repository;
   onMount(() => {
     void controller.refresh();
     return () => controller.close();
   });
 </script>
 
-<output aria-label="Executed membership command">{executed}</output>
-<Button
-  disabled={!loading}
-  onclick={() => {
-    loading = false;
-    release();
-  }}>Finish loading fixture history</Button
->
-<div style="height: 850px">
-  <AppShell.Root controller={shell} displayMode="desktop">
-    <AppShell.Main><StoreStackWorkspace {controller} /></AppShell.Main>
-  </AppShell.Root>
-</div>
+<ApplicationStory
+  controller={application}
+  stackWorkspace={controller}
+  initiallyCollapsed={false}
+/>
+<FixtureControls>
+  <output aria-label="Executed membership command">{executed}</output>
+  <Button
+    disabled={!loading}
+    onclick={() => {
+      loading = false;
+      release();
+    }}>Finish loading fixture history</Button
+  >
+</FixtureControls>

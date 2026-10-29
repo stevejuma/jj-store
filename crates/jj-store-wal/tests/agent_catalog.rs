@@ -918,10 +918,10 @@ impl jj_store_wal::publication::AgentSnapshotRead for CountedAgentSnapshot<'_> {
         &self,
         kind: AgentCatalogKind,
         key: AgentCatalogKey,
-    ) -> jj_store_wal::Result<Option<AgentObjectRef>> {
-        self.inner.lookup(kind, key).await
+    ) -> jj_store_core::Result<Option<AgentObjectRef>> {
+        self.inner.lookup(kind, key).await.map_err(Into::into)
     }
-    async fn read_object(&self, reference: AgentObjectRef) -> jj_store_wal::Result<AgentObjectV1> {
+    async fn read_object(&self, reference: AgentObjectRef) -> jj_store_core::Result<AgentObjectV1> {
         use std::sync::atomic::Ordering::Relaxed;
         match reference.kind {
             jj_agent::AgentObjectKind::TranscriptPage => {
@@ -932,7 +932,7 @@ impl jj_store_wal::publication::AgentSnapshotRead for CountedAgentSnapshot<'_> {
             }
             _ => {}
         }
-        self.inner.read_object(reference).await
+        self.inner.read_object(reference).await.map_err(Into::into)
     }
 }
 

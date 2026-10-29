@@ -5,8 +5,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Components/Chip",
     component: CommunityChip,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/community-chip/CommunityChip.svelte",
+      },
       docs: {
         source: {
           code: '<script>\n  import { CommunityChip } from "./catalog/index.js";\n<\/script>\n<CommunityChip tone="accent">main</CommunityChip>',

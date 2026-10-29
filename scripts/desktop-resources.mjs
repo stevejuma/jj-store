@@ -1,20 +1,21 @@
 import { cp, mkdir, readFile, rm, stat } from "node:fs/promises";
 import { constants } from "node:fs";
 import { resolve, join } from "node:path";
+import { stageAgentResources } from "./agent-runtime-resources.mjs";
+import { replaceGeneratedDirectory } from "./lapis-ai.mjs";
 import { helpAssets } from "./docs/assets.mjs";
 export async function stageDesktopResources({
   target,
   runtime,
   web,
   destination,
-  acp,
+  aiBundle,
 }) {
   const binaries = [
     [join(target, "jj-store"), "jj-store"],
     [join(target, "jj-store-jj"), "jj-store-jj"],
     [runtime, "jj-store-rustfs"],
   ];
-  if (acp) binaries.push([acp, "jj-acp"]);
   const manifest = JSON.parse(
     await readFile(join(web, "asset-manifest.json"), "utf8"),
   );
@@ -40,6 +41,8 @@ export async function stageDesktopResources({
     if (!(await stat(join(web, file))).isFile())
       throw Error(`Missing browser asset: ${file}`);
   }
+  const finalDestination = destination;
+  destination += `.pending-${process.pid}`;
   await rm(destination, { recursive: true, force: true });
   await mkdir(join(destination, "web"), { recursive: true });
   for (const [source, name] of binaries)
@@ -55,7 +58,9 @@ export async function stageDesktopResources({
     await mkdir(resolve(destination, "web", file, ".."), { recursive: true });
     await cp(join(web, file), join(destination, "web", file));
   }
+  if (aiBundle) await stageAgentResources(destination, aiBundle);
+  await replaceGeneratedDirectory(destination, finalDestination);
   console.log(
-    `Staged paired runtime and ${manifest.files.length} production browser assets at ${destination}`,
+    `Staged paired runtime and ${manifest.files.length} production browser assets at ${finalDestination}`,
   );
 }

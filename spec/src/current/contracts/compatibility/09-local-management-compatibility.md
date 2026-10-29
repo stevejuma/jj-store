@@ -49,3 +49,19 @@ ARM64 using descriptor-relative no-follow traversal and atomic private-file
 rename. It preserves executable mode and excludes hard-linked/symlink files and
 metadata paths. Save changes no JJ IDs, bookmarks, operation heads or companion
 refs; recorded-state commands and conversion remain separate gates.
+
+Explicit native repository deletion is qualified separately on macOS ARM64 with
+the existing pinned managed embedded RustFS executable. Isolated acceptance
+proves epoch refusal, original-session/write fencing, restart restoration,
+idempotent completion, catalog replay denial and actual namespace erasure while
+preserving a neighbour repository. Socket fault tests prove admitted PUT drain,
+foreign-list rejection and refusal to erase after an unknown PUT outcome. An
+unknown write requires a cold owned storage restart before the original deletion
+can continue. External S3, versioned buckets, independent backups, remote/shared
+administration and other platforms remain outside this gate. Local removal
+continues to unregister only and never deletes source folders.
+
+Updated servers read legacy V2 discovery catalogs with the deleted-ID set
+omitted. Once deletion is admitted into that set, older binaries reject the
+unknown field; downgrade serving is not qualified. Native object and publication
+formats are unchanged.

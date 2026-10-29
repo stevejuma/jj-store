@@ -35,6 +35,7 @@ mod registry_catalog;
 mod registry_persistence;
 pub mod remote_agents;
 mod replication;
+pub mod repository_deletion;
 pub mod search;
 mod search_config;
 pub mod server_settings;

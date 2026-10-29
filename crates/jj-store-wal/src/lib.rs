@@ -35,3 +35,49 @@ pub enum Error {
     Contended,
 }
 pub type Result<T> = std::result::Result<T, Error>;
+
+impl From<jj_store_core::Error> for Error {
+    fn from(value: jj_store_core::Error) -> Self {
+        use jj_store_core::Error as E;
+        match value {
+            E::Corrupt(v) | E::Invalid(v) => Self::Corrupt(v),
+            E::Unsupported(v) => Self::Unsupported(v),
+            E::ThreadResolved | E::ThreadOpen => {
+                Self::Corrupt("unexpected review state error at raw publication boundary")
+            }
+            E::ReplicationUnsupported => Self::Unsupported("WorkStore origin replication"),
+            E::Limit(v) => Self::Limit(v),
+            E::OutcomeUnknown => Self::OutcomeUnknown,
+            E::Stale => Self::Stale,
+            E::IntentConflict => Self::IntentConflict,
+            E::Denied => Self::Denied,
+            E::Contended => Self::Contended,
+            E::Json(v) => Self::Json(v),
+            E::NotFound => Self::Storage(jj_store_object::Error::NotFound),
+            E::Unavailable(_) => Self::Storage(jj_store_object::Error::Transport),
+        }
+    }
+}
+impl From<Error> for jj_store_core::Error {
+    fn from(value: Error) -> Self {
+        match value {
+            Error::Corrupt(v) => Self::Corrupt(v),
+            Error::Unsupported(v) => Self::Unsupported(v),
+            Error::Limit(v) => Self::Limit(v),
+            Error::Stale => Self::Stale,
+            Error::IntentConflict => Self::IntentConflict,
+            Error::Denied => Self::Denied,
+            Error::Contended => Self::Contended,
+            Error::OutcomeUnknown => Self::OutcomeUnknown,
+            Error::Json(v) => Self::Json(v),
+            Error::Storage(jj_store_object::Error::NotFound) => Self::NotFound,
+            other => Self::Unavailable(other.to_string()),
+        }
+    }
+}
+
+impl From<Error> for jj_store_core::engine::ReviewCommandError {
+    fn from(value: Error) -> Self {
+        Self::Publication(value.into())
+    }
+}

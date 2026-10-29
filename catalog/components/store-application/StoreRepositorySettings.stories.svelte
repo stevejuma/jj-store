@@ -1,11 +1,18 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/RepositorySettingsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreRepositorySettingsView.svelte",
+      },
+    },
     title: "JJ Store/Settings/Repository",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 
@@ -38,6 +45,34 @@
       "data-chip-tone",
       "accent",
     );
+  }}
+/>
+<Story
+  name="General local removal requires confirmation and cancellation preserves the repository"
+  args={{ local: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const remove = c.getByRole("button", {
+      name: "Remove repository",
+    });
+    await expect(remove).toHaveAttribute("data-variant", "destructive");
+    await userEvent.click(remove);
+    const dialog = await page.findByRole("alertdialog", {
+      name: "Remove Folder repository?",
+    });
+    await expect(dialog).toHaveTextContent(
+      "Your folder, files and repository history will remain on disk.",
+    );
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Cancel" }),
+    );
+    await waitFor(() =>
+      expect(page.queryByRole("alertdialog")).not.toBeInTheDocument(),
+    );
+    await expect(
+      c.getByRole("heading", { name: "Identity and snapshot" }),
+    ).toBeVisible();
   }}
 />
 <Story
@@ -159,6 +194,7 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Narrow folder layout retains full input and bottom actions"
   args={{ section: "folders", narrow: true }}
   play={async ({ canvasElement }) => {

@@ -10,6 +10,7 @@ import {
 import { MockStackWorkspaceAdapter } from "../../../catalog/fixtures/stack-workspace/adapter.js";
 import { workspaceFixture } from "../../../catalog/fixtures/stack-workspace/data.js";
 import { workspaceBranchSource } from "../../src/lib/controller/stack-workspace/files.js";
+import { workspaceHunkSelection } from "../../src/lib/controller/stack-workspace/files.js";
 import { workspaceDropFeedback } from "../../src/lib/controller/stack-workspace/drag.js";
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -421,5 +422,56 @@ test("accepted lazy native file rows can drag whole files before patches are loa
     ),
   );
   expect(net.fileDraggable?.({ path: file.path } as never)).toBe(false);
+  controller.close();
+});
+
+test("resolved native branch diffs drag their concrete owner into stacks and commits", async () => {
+  const { controller, adapter } = await setup();
+  const stack = controller.snapshot!.stacks[0]!,
+    owner = stack.commits[0]!,
+    source = workspaceBranchSource(stack.id, stack.name),
+    token = "native:" + "a".repeat(64);
+  owner.immutable = false;
+  controller.snapshot!.capabilities = ["transfer", "create_commit"];
+  const file = {
+    path: "src/owned.ts",
+    selectionSource: owner.id,
+    hunks: [{ id: token, label: "owned", patch: "-old\n+new\n" }],
+  };
+  adapter.readSourceFiles = async () => ({ files: [file] });
+  await controller.details.loadFiles(source);
+  const bindings = workspaceFileDrag(controller, () => source);
+  expect(bindings.fileDraggable?.({ path: file.path } as never)).toBe(true);
+  const setData = vi.fn();
+  bindings.onFileDragStart?.(
+    { dataTransfer: { setData }, stopPropagation: vi.fn() } as never,
+    { path: file.path } as never,
+  );
+  expect(JSON.parse(setData.mock.calls[0]![1]).selection).toEqual({
+    source: owner.id,
+    path: file.path,
+  });
+  expect(
+    workspaceDropFeedback(
+      controller.snapshot,
+      JSON.stringify({
+        kind: "selection",
+        selection: { source: owner.id, path: file.path, hunks: [token] },
+      }),
+      { kind: "working" },
+    ).state,
+  ).toBe("valid");
+  controller.snapshot!.stacks.push({
+    ...stack,
+    id: "dependent-alias",
+    commits: [owner],
+  });
+  expect(
+    workspaceHunkSelection(controller.snapshot!, owner.id, file.path, token),
+  ).toEqual({ source: owner.id, path: file.path, hunks: [token] });
+  owner.immutable = true;
+  expect(
+    workspaceHunkSelection(controller.snapshot!, owner.id, file.path, token),
+  ).toBeNull();
   controller.close();
 });

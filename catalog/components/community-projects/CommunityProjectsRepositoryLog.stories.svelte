@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import CommunityProjectsRepositoryLog from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte";
@@ -7,8 +8,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository",
     component: CommunityProjectsRepositoryLog,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      },
       layout: "fullscreen",
       docs: {
         source: {
@@ -30,7 +36,7 @@
       within(files).getByRole("radio", { name: "Show files as list" }),
     );
     await userEvent.click(
-      within(files).getByRole("button", { name: "src/lib.rs" }),
+      within(files).getByRole("button", { name: fileRowName("src/lib.rs") }),
     );
     await waitFor(() =>
       expect(
@@ -59,7 +65,7 @@
       canvas.queryByRole("button", { name: "Wrap text" }),
     ).not.toBeInTheDocument();
     await userEvent.click(
-      within(files).getByRole("button", { name: "src/lib.rs" }),
+      within(files).getByRole("button", { name: fileRowName("src/lib.rs") }),
     );
     await expect(
       canvas.getByRole("button", { name: "Wrap text" }),
@@ -236,7 +242,7 @@
       "This file contains binary or invalid UTF-8 data.",
     );
     await userEvent.click(
-      within(files).getByRole("button", { name: "src/lib.rs" }),
+      within(files).getByRole("button", { name: fileRowName("src/lib.rs") }),
     );
     await waitFor(() =>
       expect(

@@ -1,12 +1,13 @@
 <script module lang="ts">
+  import { selectViewTab } from "../../fixtures/view-tabs.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/ProjectsHubFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Projects header filters",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function expectCircle(button: HTMLElement) {
     const bounds = button.getBoundingClientRect();
@@ -22,7 +23,7 @@
   async function verifyHeaders(canvasElement: HTMLElement) {
     const c = within(canvasElement),
       body = within(document.body);
-    await c.findByRole("tab", { name: "Projects" });
+    await selectViewTab(canvasElement, "Projects");
     for (const name of [
       "Projects",
       "Tasks",
@@ -32,7 +33,7 @@
       "Activity",
     ]) {
       const tab = name.toLowerCase();
-      await userEvent.click(c.getByRole("tab", { name }));
+      await selectViewTab(canvasElement, name);
       if (name !== "Repositories") {
         const trigger = await c.findByRole("button", {
           name: `Filters for ${tab}`,
@@ -146,7 +147,12 @@
       await waitFor(() =>
         expect(c.getByRole("button", { name: `Search ${tab}` })).toHaveFocus(),
       );
-      await expect(c.getByRole("tablist")).toBeVisible();
+      await waitFor(() =>
+        expect(
+          c.queryByRole("tablist") ??
+            c.queryByRole("button", { name: /^More projects views$/i }),
+        ).toBeVisible(),
+      );
       await userEvent.click(c.getByRole("button", { name: `Search ${tab}` }));
       await userEvent.keyboard("{Escape}");
       await waitFor(() =>
@@ -164,6 +170,7 @@
   play={async ({ canvasElement }) => verifyHeaders(canvasElement)}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile header filters"
   args={{ mobile: true }}
   play={async ({ canvasElement }) => verifyHeaders(canvasElement)}

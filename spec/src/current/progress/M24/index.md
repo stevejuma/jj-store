@@ -1,10 +1,11 @@
 # M24 reusable ACP agents and contextual conversations
 
-| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006,E-CHAT-BODY-007,E-CHAT-METADATA-001,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-THREADS-001,E-THREADS-002,E-INBOX-CONTROLS-001,E-CHAT-CARET-001,E-AGENT-TRANSCRIPT-VIEW-001,E-CHAT-FOOTER-003,E-UI-FAVICON-001,E-UI-VIEW-LOADING-001,E-UI-VIEW-READINESS-001,E-AGENT-STATE-001,E-AGENT-RESUME-001,E-TEST-REPAIR-001,E-TEST-REPAIR-002,E-TEST-REPAIR-LAND-001,E-CHAT-INSPECTOR-001,E-UI-SKELETONS-001,E-CHAT-QUEUE-001,E-CHAT-QUEUE-LAND-001,E-WORKSPACE-RETIRE-001,E-DOCUMENT-SEND-001,E-UI-UNAVAILABLE-001,E-PROJECT-AGENTS-001,E-APP-RELOAD-001 |
+| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006,E-CHAT-BODY-007,E-CHAT-METADATA-001,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-THREADS-001,E-THREADS-002,E-INBOX-CONTROLS-001,E-CHAT-CARET-001,E-AGENT-TRANSCRIPT-VIEW-001,E-CHAT-FOOTER-003,E-UI-FAVICON-001,E-UI-VIEW-LOADING-001,E-UI-VIEW-READINESS-001,E-AGENT-STATE-001,E-AGENT-RESUME-001,E-TEST-REPAIR-001,E-TEST-REPAIR-002,E-TEST-REPAIR-LAND-001,E-CHAT-INSPECTOR-001,E-UI-SKELETONS-001,E-CHAT-QUEUE-001,E-CHAT-QUEUE-LAND-001,E-WORKSPACE-RETIRE-001,E-DOCUMENT-SEND-001,E-UI-UNAVAILABLE-001,E-PROJECT-AGENTS-001,E-APP-RELOAD-001,E-LAPIS-AI-001 |
 
-M23 keeps version-2 qualification; fixtures cannot close M24 production gates.
+M23's historical qualification remains recorded; current execution requires
+Control V3. Fixtures cannot close M24 production gates.
 
 Installed Codex 1.13.1 on macOS ARM64 now passes warm/general chat, two
 registered native materializations, isolated edits/snapshots, canonical
@@ -379,20 +380,21 @@ publication qualification and visual approval are unchanged. Existing
 architecture oversizes and ResizeObserver diagnostics remain recorded; native
 publication/GC and installed-harness gates are not closed. See the
 [agents presentation review](agents-presentation-review.md) for common menu
-presentation and related review links.
+presentation and related review links. E-LAPIS-AI-001 records
+[Lapis AI integration](lapis-ai-review.md); M24 stays In progress.
+
 <!-- generated-navigation -->
 
 ## Pages
 
-- [Runtime reload review](../M27/runtime-reload-review.md)
 - [Agents presentation review](agents-presentation-review.md)
 - [Conversation footer review](footer-review.md)
 - [Inbox read lifecycle review](inbox-freshness-review.md)
 - [Intentional Threads review](intentional-threads-review.md)
+- [Main local qualification review](main-local-qualification.md)
 - [Conversation metadata review](metadata-review.md)
 - [Queued agent message review](queued-messages-review.md)
 - [Bounded test repair review](test-repairs-review.md)
 - [View loading review](view-loading-review.md)
 - [Workspace inspector and historical turn review](workspace-inspector-review.md)
 - [history](history/index.md)
-- [Main local qualification review](main-local-qualification.md)

@@ -3,9 +3,15 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import WorkspaceSettingsFixture from "../../fixtures/WorkspaceSettingsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      },
+    },
     title: "JJ Store/Settings/Local folders",
     component: WorkspaceSettingsFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

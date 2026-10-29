@@ -5,11 +5,69 @@ import { fileURLToPath } from "node:url";
 
 export function dependencyErrors(packages) {
   const errors = [];
+  for (const pkg of packages)
+    for (const dependency of pkg.dependencies ?? []) {
+      if (
+        pkg.name === "jj-store-conversations" &&
+        ["jj-store-core", "jj-store-model", "jj-agent", "jj-collab"].includes(
+          dependency.name,
+        ) &&
+        dependency.kind !== "dev" &&
+        dependency.optional !== true
+      )
+        errors.push(
+          `${pkg.name}: store capture interfaces must remain optional`,
+        );
+      if (
+        /^lapis-(?:ai-|acp|agent|compute)/.test(dependency.name) &&
+        !(
+          (pkg.name === "jj-store-server" &&
+            ["lapis-ai-runtime", "lapis-ai-config"].includes(
+              dependency.name,
+            )) ||
+          (pkg.name === "jj-store-conversations" &&
+            dependency.name === "lapis-agent-redaction" &&
+            dependency.optional === true) ||
+          (pkg.name === "jj-store-capture" &&
+            ["lapis-agent-redaction", "lapis-ai-capture"].includes(
+              dependency.name,
+            ))
+        )
+      )
+        errors.push(`${pkg.name} cannot depend on ${dependency.name}`);
+    }
+
   const native = new Set(["jj-store-jj", "jj-store"]);
   const layers = {
     "jj-forge": [],
+    "jj-vault": ["jj-store-jj"],
     "jj-store-read-index": [],
     "jj-store-model": [],
+    "jj-store-core": [
+      "jj-store-model",
+      "jj-agent",
+      "jj-review",
+      "jj-work",
+      "jj-collab",
+    ],
+    "jj-store-native": [
+      "jj-store-core",
+      "jj-store-model",
+      "jj-store-wal",
+      "jj-agent",
+      "jj-review",
+      "jj-work",
+      "jj-collab",
+      "jj-store-object",
+    ],
+    "jj-store-git": [
+      "jj-store-core",
+      "jj-store-model",
+      "jj-agent",
+      "jj-review",
+      "jj-work",
+      "jj-collab",
+    ],
     "jj-work": ["jj-store-model"],
     "jj-workflow": ["jj-store-model", "jj-collab"],
     "jj-agent": ["jj-store-model"],
@@ -17,6 +75,7 @@ export function dependencyErrors(packages) {
     "jj-collab": ["jj-agent", "jj-review", "jj-work", "jj-store-model"],
     "jj-store-object": ["jj-store-model"],
     "jj-store-wal": [
+      "jj-store-core",
       "jj-workflow",
       "jj-collab",
       "jj-work",
@@ -33,12 +92,16 @@ export function dependencyErrors(packages) {
       "jj-store-wal",
     ],
     "jj-store-jj": [
+      "jj-store-git",
       "jj-forge",
       "jj-store-model",
       "jj-store-object",
       "jj-store-wal",
     ],
     "jj-store-service": [
+      "jj-store-native",
+      "jj-store-git",
+      "jj-store-core",
       "jj-forge",
       "jj-store-read-index",
       "jj-workflow",
@@ -51,6 +114,14 @@ export function dependencyErrors(packages) {
       "jj-store-wal",
     ],
     "jj-store-rpc": ["jj-store-model", "jj-store-object", "jj-store-service"],
+    "jj-store-conversations": [
+      "jj-store-core",
+      "jj-store-model",
+      "jj-agent",
+      "jj-collab",
+    ],
+    "jj-history-service": ["jj-store-jj", "jj-store-model"],
+    "tauri-plugin-jj-store": ["jj-history-service"],
     "jj-store-capture": [
       "jj-agent",
       "jj-collab",
@@ -60,6 +131,7 @@ export function dependencyErrors(packages) {
       "jj-store-rpc",
     ],
     "jj-store-server": [
+      "jj-store-conversations",
       "jj-workflow",
       "jj-agent",
       "jj-collab",

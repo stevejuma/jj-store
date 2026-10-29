@@ -222,16 +222,19 @@ impl Supervisor {
                 }
                 let local = folders.open(repository).map_err(|_| Error::Unavailable)?;
                 if !matches!(
-                    local.apply_work_command(&work).map_err(|error| {
-                        let _ = self.update(|s| {
-                            s.personal_home
-                                .as_mut()
-                                .ok_or(Error::Unavailable)?
-                                .provisioning_error = Some(format!("work_home: {error}"));
-                            Ok(())
-                        });
-                        Error::Unavailable
-                    })?,
+                    local
+                        .apply_work_command_async(&work)
+                        .await
+                        .map_err(|error| {
+                            let _ = self.update(|s| {
+                                s.personal_home
+                                    .as_mut()
+                                    .ok_or(Error::Unavailable)?
+                                    .provisioning_error = Some(format!("work_home: {error}"));
+                                Ok(())
+                            });
+                            Error::Unavailable
+                        })?,
                     jj_store_service::local_repository::LocalWorkOutcome::Committed { .. }
                 ) {
                     return Err(Error::Unavailable);

@@ -15,6 +15,7 @@ use std::{
 };
 use tokio::io::{AsyncRead, ReadBuf};
 use tokio_util::io::{ReaderStream, StreamReader};
+mod deletion;
 
 pub struct Credentials {
     pub access_key: String,
@@ -41,6 +42,10 @@ pub struct S3Store {
     endpoint: Url,
     config: Config,
     runtime: std::sync::RwLock<(u64, Duration)>,
+    lifecycle: std::sync::Arc<tokio::sync::RwLock<()>>,
+    deleted: std::sync::RwLock<std::collections::BTreeSet<jj_store_model::RepositoryId>>,
+    uncertain:
+        std::sync::Arc<std::sync::RwLock<std::collections::BTreeSet<jj_store_model::RepositoryId>>>,
 }
 impl S3Store {
     pub fn new(config: Config) -> Result<Self> {
@@ -102,6 +107,9 @@ impl S3Store {
             endpoint,
             runtime: std::sync::RwLock::new((config.max_object_bytes, config.timeout)),
             config,
+            lifecycle: Default::default(),
+            deleted: Default::default(),
+            uncertain: Default::default(),
         })
     }
     pub fn reload_limits(&self, max_object_bytes: u64, timeout: Duration) -> Result<()> {
@@ -228,6 +236,7 @@ fn read_status(response: &Response, expected: StatusCode) -> Result<()> {
 #[async_trait]
 impl ObjectStore for S3Store {
     async fn head(&self, key: &Key) -> Result<Metadata> {
+        let _admission = self.admit_repository(key).await?;
         let max_object_bytes = self.runtime_limits().0;
         let response = self
             .request(
@@ -243,6 +252,7 @@ impl ObjectStore for S3Store {
         self.metadata(&response, max_object_bytes)
     }
     async fn get(&self, key: &Key, range: Option<ByteRange>) -> Result<Download> {
+        let _admission = self.admit_repository(key).await?;
         let max_object_bytes = self.runtime_limits().0;
         let mut headers = BTreeMap::new();
         if let Some(r) = range {
@@ -298,6 +308,7 @@ impl ObjectStore for S3Store {
         condition: Condition,
         upload: &StagedUpload,
     ) -> Result<WriteOutcome> {
+        let admission = self.admit_repository(key).await?;
         if upload.len() > self.runtime_limits().0 {
             return Err(Error::Limit);
         }
@@ -321,24 +332,54 @@ impl ObjectStore for S3Store {
         let request = self
             .request(Method::PUT, key, *upload.sha256(), headers)?
             .body(body);
-        let response = match request.send().await {
-            Ok(r) => r,
-            Err(_) => return Ok(WriteOutcome::Unknown),
-        };
-        match response.status() {
-            StatusCode::OK | StatusCode::CREATED | StatusCode::NO_CONTENT => {
-                Ok(match version(&response) {
-                    Ok(v) => WriteOutcome::Applied(v),
-                    Err(_) => WriteOutcome::Unknown,
-                })
+        // The owned task retains admission through storage acknowledgement even
+        // when its caller is cancelled. Deletion waits for these writes to drain.
+        let repository = key
+            .as_str()
+            .strip_prefix("repos/")
+            .and_then(|s| s.split('/').next())
+            .and_then(|s| s.parse::<jj_store_model::RepositoryId>().ok());
+        let uncertain = self.uncertain.clone();
+        tokio::spawn(async move {
+            let _admission = admission;
+            let response = match request.send().await {
+                Ok(r) => r,
+                Err(_) => {
+                    if let Some(repository) = repository {
+                        uncertain
+                            .write()
+                            .expect("storage uncertainty lock")
+                            .insert(repository);
+                    }
+                    return Ok(WriteOutcome::Unknown);
+                }
+            };
+            let outcome = match response.status() {
+                StatusCode::OK | StatusCode::CREATED | StatusCode::NO_CONTENT => {
+                    Ok(match version(&response) {
+                        Ok(v) => WriteOutcome::Applied(v),
+                        Err(_) => WriteOutcome::Unknown,
+                    })
+                }
+                StatusCode::PRECONDITION_FAILED => Ok(WriteOutcome::PreconditionFailed),
+                StatusCode::BAD_REQUEST
+                | StatusCode::UNAUTHORIZED
+                | StatusCode::FORBIDDEN
+                | StatusCode::NOT_FOUND => Err(Error::Rejected(response.status().as_u16())),
+                _ => Ok(WriteOutcome::Unknown),
+            };
+            if matches!(outcome, Ok(WriteOutcome::Unknown))
+                && let Some(repository) = repository
+            {
+                uncertain
+                    .write()
+                    .expect("storage uncertainty lock")
+                    .insert(repository);
             }
-            StatusCode::PRECONDITION_FAILED => Ok(WriteOutcome::PreconditionFailed),
-            StatusCode::BAD_REQUEST
-            | StatusCode::UNAUTHORIZED
-            | StatusCode::FORBIDDEN
-            | StatusCode::NOT_FOUND => Err(Error::Rejected(response.status().as_u16())),
-            _ => Ok(WriteOutcome::Unknown),
-        }
+            outcome
+        })
+        .await
+        .map_err(|_| Error::Transport)?
     }
 }
 fn sign(
@@ -371,9 +412,10 @@ fn sign(
         .map(|(k, v)| format!("{k}:{v}\n"))
         .collect::<String>();
     let canonical = format!(
-        "{}\n{}\n\n{canonical_headers}\n{names}\n{}",
+        "{}\n{}\n{}\n{canonical_headers}\n{names}\n{}",
         method.as_str(),
         url.path(),
+        url.query().unwrap_or(""),
         hex::encode(payload)
     );
     let scope = format!("{date}/{region}/s3/aws4_request");

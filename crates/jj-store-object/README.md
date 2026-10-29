@@ -1,10 +1,13 @@
 # jj-store-object
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Bounded object storage, immutable staging and conditional writes. The common
+`ObjectStore` interface has a memory implementation for fixtures and an S3
+implementation used with configured RustFS or compatible storage.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Implement `ObjectStore` for another transport, or use the `memory` and `s3`
+modules. Supply explicit keys, byte limits and write conditions, and preserve
+`WriteOutcome::Unknown` as an unresolved outcome. Repository publication is
+performed by the WAL coordinator after object staging.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [object storage and identity](../../docs/site/technical/storage.md) and
+[publication and recovery](../../docs/site/technical/publication.md).

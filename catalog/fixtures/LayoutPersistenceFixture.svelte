@@ -1,6 +1,7 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { tick, untrack } from "svelte";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   import { repositoryShellStorageKey } from "../../web/src/lib/ui/layout-storage.js";
@@ -26,10 +27,14 @@
   data-mount-version={mountVersion}
   data-saved-shell-layout={savedShellLayout}
 >
-  <button
-    type="button"
-    class="layout-persistence-fixture__remount"
-    onclick={remount}>Remount application</button
+  <FixtureControls
+    ><div data-story-controls>
+      <button
+        type="button"
+        class="layout-persistence-fixture__remount"
+        onclick={remount}>Remount application</button
+      >
+    </div></FixtureControls
   >
   {#if mounted}<StoreRepositoryApplication
       {controller}
@@ -41,17 +46,5 @@
 <style>
   .layout-persistence-fixture {
     height: 100vh;
-  }
-  .layout-persistence-fixture__remount {
-    position: fixed;
-    z-index: 100;
-    inset-block-end: 0.5rem;
-    inset-inline-end: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.35rem 0.6rem;
-    background: var(--background);
-    color: var(--foreground);
-    font: inherit;
   }
 </style>

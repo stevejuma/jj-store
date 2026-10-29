@@ -37,6 +37,7 @@
 {#if inspection?.file}<AppShell.Sidebar
     hidden={!visible}
     side="right"
+    variant="attached"
     sidebarController={inspection.workspaceInspector}
     label="Workspace file"
     resizeLabel="Resize workspace file"
@@ -54,6 +55,7 @@
 {#if inspection?.current}<AppShell.Sidebar
     hidden={!visible}
     side="right"
+    variant="attached"
     label="Read tool details"
     resizeLabel="Resize read tool details"
     constrainedPresentation="replace-main"

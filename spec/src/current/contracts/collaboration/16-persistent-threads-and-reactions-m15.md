@@ -68,6 +68,12 @@ Limits are 2 MiB encoded, 512 by 512 pixels, 100 frames and 64 MiB aggregate
 decoded pixels. SVG/executable content and external URL dependencies are
 rejected.
 
+`jj-collab::normalize_settings_image` also exposes M26's bounded raster
+preparation for installation-owned native settings. It returns the existing
+asset/static-preview types, without selecting a Thread/Reaction root, writing
+storage or granting access. Server uploads and native callers share these same
+limits; retained message/reaction snapshots and canonical bytes are unchanged.
+
 Custom library commands use an exact observed definition version. A new reaction
 selects the current non-retired definition; editing or retiring a definition
 does not rewrite historical reactions or discard their source/preview bytes.

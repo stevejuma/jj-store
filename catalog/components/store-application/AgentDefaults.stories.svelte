@@ -6,8 +6,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Agent defaults",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
     beforeEach: async () => {
       await views.settings();
     },

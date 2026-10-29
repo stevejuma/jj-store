@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Projects review detail",
     component: ProjectsHubFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function openReviewPage(canvasElement: HTMLElement, project = false) {
     const c = within(canvasElement);

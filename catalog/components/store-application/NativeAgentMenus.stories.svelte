@@ -6,9 +6,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Native agent actions",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { repository: true, focus: false, conversationView: "classic" },
-    parameters: { layout: "fullscreen" },
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function openCopy() {
     const menu = within(document.body);

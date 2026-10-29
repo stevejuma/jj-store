@@ -62,14 +62,18 @@ metadata is application-authored enrichment, independent of agent answer tags.
 
 Publication freezes the metadata revision, preserves concurrent title changes
 and retains source snapshots even when newer capture makes the result stale.
-Completed receipts remain bounded; the journal retains at most 4096 requests. At
-most eight inference jobs may be active/queued, serialized through one worker.
-Cancellation has its own identity and cannot retract publishing/committed state.
-An unavailable or malformed generation preserves prior repository metadata. The
-version-1 helper performs exactly one HTTP attempt; unknown inference is never
-retried by the provider transport or host. Explicit retained-result publication
-after a known stale refusal uses current metadata preconditions and keeps the
-newer custom title. Unknown publication uses its original receipt.
+Local publication validates those exact sources against the selected committed
+AgentStore inventory, including retained snapshots outside the active session
+closure. Unselected staged objects remain inadmissible; public snapshot reads
+retain their pinned-closure checks. Completed receipts remain bounded; the
+journal retains at most 4096 requests. At most eight inference jobs may be
+active/queued, serialized through one worker. Cancellation has its own identity
+and cannot retract publishing/committed state. An unavailable or malformed
+generation preserves prior repository metadata. The version-1 helper performs
+exactly one HTTP attempt; unknown inference is never retried by the provider
+transport or host. Explicit retained-result publication after a known stale
+refusal uses current metadata preconditions and keeps the newer custom title.
+Unknown publication uses its original receipt.
 
 See [Metadata API](../api/43-conversation-metadata.md),
 [Details UI](../ui/38-conversation-metadata.md) and

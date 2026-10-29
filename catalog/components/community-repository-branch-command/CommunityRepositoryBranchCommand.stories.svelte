@@ -1,12 +1,19 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, fn, userEvent, within } from "storybook/test";
+  import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import CommunityRepositoryBranchCommand from "../../../web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
   import { bookmarks, NOW, workingCopies } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      },
+    },
     title: "JJ Store/Components/Branch cards",
     component: CommunityRepositoryBranchCommand,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       bookmarks,
       workingCopies,
@@ -40,6 +47,10 @@
     ).toBe("0px");
     await expect(getComputedStyle(root).borderBottomLeftRadius).toBe("0px");
     await expect(getComputedStyle(root).borderBottomRightRadius).toBe("0px");
+    if (import.meta.env.MODE === "test") {
+      const { userEvent: pointer } = await import("vitest/browser");
+      await pointer.hover(filters);
+    }
     const unselectedBranch = canvas.getByRole("option", {
       name: "feature/native-objects",
     });
@@ -58,12 +69,33 @@
     const selectedBranch = canvas.getByRole("option", {
       name: "feature/publication",
     });
-    const selectedBackground = getComputedStyle(selectedBranch).backgroundColor;
+    const selectedCursor = selectedBranch.getAttribute("aria-selected");
     await userEvent.hover(selectedBranch);
-    await expect(getComputedStyle(selectedBranch).backgroundColor).toBe(
-      selectedBackground,
+    await expect(selectedBranch.getAttribute("aria-selected")).toBe(
+      selectedCursor,
     );
     await userEvent.unhover(selectedBranch);
+    if (import.meta.env.MODE === "test") {
+      const { userEvent: pointer } = await import("vitest/browser");
+      await pointer.hover(filters);
+      const selectedBackground =
+        getComputedStyle(selectedBranch).backgroundColor;
+      await pointer.hover(selectedBranch);
+      await waitFor(() =>
+        expect(getComputedStyle(selectedBranch).backgroundColor).not.toBe(
+          selectedBackground,
+        ),
+      );
+      await expect(selectedBranch.getAttribute("aria-selected")).toBe(
+        selectedCursor,
+      );
+      await pointer.hover(filters);
+      await waitFor(() =>
+        expect(getComputedStyle(selectedBranch).backgroundColor).toBe(
+          selectedBackground,
+        ),
+      );
+    }
     await userEvent.click(canvas.getByPlaceholderText("Search branches"));
     await userEvent.keyboard("{ArrowDown}{Enter}");
     await expect(args.onSelect).toHaveBeenLastCalledWith(

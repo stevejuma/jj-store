@@ -296,3 +296,11 @@ links resolve job source IDs and exact revisions. Private host recovery, the
 paired JJ executable, 1000-ms polling and local service owner identities provide
 defaults; Advanced overrides are optional. Host admission remains explicit.
 Legacy version-1 settings and journals remain supported.
+
+## Settings image bounds
+
+Settings image preparation accepts supported raster sources up to 20 MiB, checks
+decode bounds and normalizes oversized images to the shared 512-pixel asset
+boundary. Native hosts and HTTP handlers share this preparation; stored asset
+and preview validation remains unchanged. These are fixed safety bounds, not new
+runtime configuration fields.

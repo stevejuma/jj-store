@@ -1,0 +1,48 @@
+{
+  "name": "@lapismd/jj-history",
+  "version": "0.1.0",
+  "description": "Lossless typed clients for host-admitted operation-pinned JJ history",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevejuma/jj-store.git",
+    "directory": "packages/jj-history"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE.md",
+    "NOTICE.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tauri": {
+      "types": "./dist/tauri.d.ts",
+      "import": "./dist/tauri.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "pnpm build && tsc -p tsconfig.test.json --noEmit && node --test tests/*.test.mjs",
+    "prepare": "pnpm build"
+  },
+  "dependencies": {
+    "lossless-json": "^4.3.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

@@ -14,6 +14,7 @@ default = ["native"]
 native = ["dep:tauri", "dep:tauri-build", "dep:tauri-plugin-single-instance", "dep:tauri-plugin-window-state", "dep:tauri-plugin-opener", "dep:tauri-plugin-dialog", "dep:window-vibrancy", "dep:objc2", "dep:block2", "dep:objc2-app-kit", "dep:objc2-foundation"]
 
 [dependencies]
+lapis-ai-runtime = { path = "../../lapis-ai/crates/lapis-ai-runtime", version = "0.1.1" }
 sha2 = "0.10"
 jj-store-terminal-engine = { path = "crates/terminal-engine" }
 portable-pty = "0.9"

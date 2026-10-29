@@ -1,0 +1,29 @@
+@import "./community-typography.css";
+@import "../appearance/theme-palettes.css";
+@import "../appearance/appearance.css";
+@import "../appearance/native-glass.css";
+
+:root {
+  --jj-store-row-background: color-mix(
+    in srgb,
+    var(--background) 95%,
+    var(--color-black, #000000)
+  );
+  --jj-store-info-row-background: color-mix(
+    in srgb,
+    var(--background) 97%,
+    var(--color-black, #000000)
+  );
+  --jj-store-warning-foreground: var(--warning, oklch(55% 0.16 70));
+  --jj-store-warning-background: color-mix(
+    in srgb,
+    var(--jj-store-warning-foreground) 12%,
+    var(--background)
+  );
+}
+
+[data-ui-component="column-canvas"][data-ui-part="column-header"] {
+  --ui-column-canvas-padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--jj-store-row-background);
+}

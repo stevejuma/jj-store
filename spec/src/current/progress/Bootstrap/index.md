@@ -37,3 +37,9 @@ all other audit failures and external prerequisites remain explicit.
 ## Pages
 
 - [history](history/index.md)
+
+E-CONFIRMATION-CHAPTERS-001 qualifies unchanged-contract lookup across canonical
+requirement definitions and mapped detail chapters. Bootstrap remains Done;
+evidence freshness, exact owner coverage, validation and all product gates
+remain unchanged. No owning-topic mapping or in-progress user documentation is
+edited.

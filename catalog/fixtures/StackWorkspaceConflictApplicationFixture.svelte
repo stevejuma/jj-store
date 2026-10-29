@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onMount, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
@@ -137,20 +138,23 @@
 </script>
 
 <div class="stack-conflict-application-fixture">
-  <div>
-    <Button variant="ghost" onclick={recover}>Simulate conflict recovery</Button
-    >
-    {#if deferredConflict}<Button
-        variant="ghost"
-        disabled={!completeRead}
-        onclick={() => completeRead?.()}>Complete conflict read</Button
-      >{/if}
-  </div>
+  <FixtureControls
+    ><div data-story-controls>
+      <Button variant="ghost" onclick={recover}
+        >Simulate conflict recovery</Button
+      >
+      {#if deferredConflict}<Button
+          variant="ghost"
+          disabled={!completeRead}
+          onclick={() => completeRead?.()}>Complete conflict read</Button
+        >{/if}
+    </div></FixtureControls
+  >
   <StoreRepositoryApplication
     {controller}
     {stackWorkspace}
     {layoutStorage}
-    displayMode="desktop"
+    displayMode="auto"
     initiallyCollapsed={false}
   />
 </div>
@@ -158,7 +162,5 @@
 <style>
   .stack-conflict-application-fixture {
     height: 100vh;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
   }
 </style>

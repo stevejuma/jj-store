@@ -6,6 +6,11 @@
     title: "Application/ChatGPT accounts",
     component: Fixture,
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreAgentChatGptAccounts.svelte",
+      },
       layout: "padded",
       a11y: { test: "error" },
       visualDelta: { status: "visual-pending" },

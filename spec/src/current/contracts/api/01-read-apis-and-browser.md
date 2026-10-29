@@ -1,5 +1,16 @@
 # Read APIs and browser
 
+E-STORY-PARITY-001 retains JST-API-001/002 admission, DTO and immutable read
+contracts. Browser refresh keeps the identities attached to visible file rows
+until replacement publication; selecting a row records its known commit before
+reference restoration completes. Source reads still use the admitted operation,
+commit and file identities. The shared application root, catalog adapters and
+Docker browser preparation add no endpoint, authorization or storage format.
+
+E-CRATE-READMES-001 documents HttpApi composition and links the detailed API
+manual. JST-API-001/002 DTO, admission, snapshot, cursor and event contracts are
+unchanged; the README adds no endpoint or browser behavior.
+
 E-CI-BROWSER-001 confirms JST-API-001/004 read admission, operation pinning,
 mutation receipts and native formats remain unchanged. Browser qualification
 follows the advertised application feed, waits for the final CLI operation after

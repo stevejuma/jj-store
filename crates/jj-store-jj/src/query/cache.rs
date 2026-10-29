@@ -1,12 +1,16 @@
 //! Disposable bounded cache slots. Only verified native objects are authority.
+#[cfg(feature = "native")]
 pub(super) mod constructed;
 pub(in crate::query) mod generation;
 pub mod managed;
+#[cfg(feature = "native")]
 mod proof;
-#[cfg(all(test, unix))]
+#[cfg(all(test, unix, feature = "native"))]
 mod proof_tests;
+#[cfg(feature = "native")]
 mod recovery;
 mod reservation;
+#[cfg(feature = "native")]
 pub(super) mod resident;
 use super::*;
 use blake2::{Blake2b512, Digest as _};
@@ -43,6 +47,7 @@ impl Default for Policy {
     }
 }
 impl Policy {
+    #[cfg(feature = "native")]
     pub(in crate::query) fn reference_filters(self) -> bool {
         self.max_entry_bytes >= 32 * 1024 * 1024 && self.max_entries >= 2 && self.max_files >= 64
     }
@@ -107,6 +112,7 @@ pub(super) struct Cache {
     evicted: usize,
     damaged: bool,
 }
+#[cfg(feature = "native")]
 pub(super) struct Entry {
     pub path: PathBuf,
     pub initialize: bool,
@@ -120,6 +126,7 @@ pub(super) struct Entry {
     retain: bool,
     pub resident: Option<Arc<resident::Saved>>,
 }
+#[cfg(feature = "native")]
 impl Drop for Entry {
     fn drop(&mut self) {
         if !self.retain {
@@ -129,6 +136,7 @@ impl Drop for Entry {
         }
     }
 }
+#[cfg(feature = "native")]
 impl Entry {
     pub fn private(&self) -> bool {
         self.staging.is_some() || self.pin.is_some()
@@ -217,7 +225,7 @@ fn inventory(
                     continue;
                 }
                 let digest = if hash {
-                    #[cfg(all(test, unix))]
+                    #[cfg(all(test, unix, feature = "native"))]
                     proof_tests::during_hash(root);
                     let mut input = fs::File::open(&path).map_err(|_| Error::Unavailable)?;
                     let mut buffer = [0; 64 * 1024];
@@ -250,6 +258,7 @@ fn inventory(
     }
     Ok((files, total))
 }
+#[cfg(feature = "native")]
 pub(super) fn construction_bytes(path: &Path, policy: Policy, budget: &Budget) -> Result<u64> {
     let (_, bytes) = inventory(path, policy, budget, false)?;
     // Leave room for a small receipt. Larger receipts are admitted against the
@@ -260,6 +269,7 @@ pub(super) fn construction_bytes(path: &Path, policy: Policy, budget: &Budget) -
         .ok_or(Error::Limit)
 }
 impl Cache {
+    #[cfg(feature = "native")]
     pub async fn reopen(root: &Path, policy: Policy, budget: &Budget) -> Result<Self> {
         loop {
             budget.work(1)?;
@@ -273,6 +283,7 @@ impl Cache {
             }
         }
     }
+    #[cfg(feature = "native")]
     pub fn can_use_reserved_fallback(&self) -> bool {
         // A live reservation may temporarily remove a valid disk generation.
         // Detected cache damage must still take its normal recovery path.
@@ -451,6 +462,7 @@ impl Cache {
         }
         Ok(())
     }
+    #[cfg(feature = "native")]
     pub fn prepare(
         &mut self,
         access: &dyn ReadAccess,
@@ -524,10 +536,12 @@ impl Cache {
         }
         self.fresh(access)
     }
+    #[cfg(feature = "native")]
     pub fn rebuild(&mut self, access: &dyn ReadAccess) -> Result<Entry> {
         self.damaged = true;
         self.fresh(access)
     }
+    #[cfg(feature = "native")]
     fn fresh(&mut self, access: &dyn ReadAccess) -> Result<Entry> {
         let staging = Reservation::within(self, access.repository())?;
         let path = staging.path().join("generation");
@@ -550,6 +564,7 @@ impl Cache {
             resident: None,
         })
     }
+    #[cfg(feature = "native")]
     pub fn finish(
         &mut self,
         mut entry: Entry,
@@ -704,7 +719,7 @@ impl Cache {
     }
 }
 
-#[cfg(all(test, unix))]
+#[cfg(all(test, unix, feature = "native"))]
 mod tests {
     use super::*;
 

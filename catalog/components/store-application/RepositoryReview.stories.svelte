@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { expectRepositoryDirectoryLayout } from "./repository-directory-story-assertions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -7,9 +8,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Review refinements",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false },
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 
@@ -30,7 +35,7 @@
     const details = canvas.getByRole("button", { name: "Toggle details" });
     await expect(
       details.querySelector(
-        '[data-ui-part="sidebar-toggle-icon"][data-side="right"]',
+        '[data-ui-component="panel-toggle"][data-ui-part="icon"][data-side="right"]',
       ),
     ).not.toBeNull();
     const group = canvasElement.querySelector(
@@ -110,7 +115,9 @@
     await userEvent.click(
       canvas.getByRole("radio", { name: "Show files as list" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: fileRowName("src/lib.rs") }),
+    );
     const headers = canvasElement.querySelectorAll(
       '[data-ui-part="column-header"]',
     );
@@ -216,7 +223,9 @@
       await within(diffColumn).findByRole("status"),
     ).toHaveTextContent("No text diff is available for this comparison.");
     await userEvent.click(
-      within(operationFiles).getByRole("button", { name: "src/lib.rs" }),
+      within(operationFiles).getByRole("button", {
+        name: fileRowName("src/lib.rs"),
+      }),
     );
     await waitFor(() =>
       expect(
@@ -283,8 +292,8 @@
       const collapsed = canvas.getByRole("button", {
         name:
           label === "Branches"
-            ? "Expand Branches column"
-            : "Expand revisions column",
+            ? /^Expand Branches column(?:: Branches \d+)?$/
+            : /^Expand revisions column(?:: revisions \d+)?$/,
       }).parentElement!;
       const canvasRoot = collapsed.closest(
         '[data-ui-component="column-canvas"][data-ui-part="root"]',
@@ -307,8 +316,8 @@
         canvas.getByRole("button", {
           name:
             label === "Branches"
-              ? "Expand Branches column"
-              : "Expand revisions column",
+              ? /^Expand Branches column(?:: Branches \d+)?$/
+              : /^Expand revisions column(?:: revisions \d+)?$/,
         }),
       );
     }

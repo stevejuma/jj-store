@@ -27,14 +27,23 @@ const preview: Preview = {
     colorMode: {
       toolbar: {
         icon: "circlehollow",
-        items: ["light", "dark"],
+        items: ["system", "light", "dark"],
         dynamicTitle: true,
       },
     },
   },
-  initialGlobals: { theme: "default", colorMode: "light" },
+  initialGlobals: { theme: "default", colorMode: "system" },
   parameters: {
     layout: "padded",
+    viewport: {
+      options: {
+        mobile390: {
+          name: "Mobile 390",
+          styles: { width: "390px", height: "844px" },
+          type: "mobile",
+        },
+      },
+    },
     docs: { toc: true },
     a11y: { test: "error" },
     backgrounds: { disable: true },
@@ -48,12 +57,20 @@ const preview: Preview = {
     }),
     (story, context) => {
       if (typeof document !== "undefined") {
+        if (context.parameters.jjStoreStory?.kind === "application") {
+          context.parameters.layout = "fullscreen";
+          document.documentElement.dataset.storyColorMode =
+            context.globals.colorMode;
+          window.dispatchEvent(new Event("jj-store:story-appearance"));
+        }
         syncCatalogStoryLayout(document, context);
         if (
           context.viewMode === "story" &&
-          context.parameters.jjStoreShell === true
+          (context.parameters.jjStoreStory?.kind === "application" ||
+            context.parameters.jjStoreShell === true)
         )
           document.body.setAttribute("data-ui-catalog-full-viewport", "");
+        else document.body.removeAttribute("data-ui-catalog-full-viewport");
         preparePortableApplicationCanvas(
           document,
           context.canvasElement,

@@ -23,7 +23,7 @@ impl Transport for Http {
         }
         .header("Accept", "application/json");
         if let Some(token) = token {
-            request = request.bearer_auth(token);
+            request = authorize(request, url, token);
         }
         let response = request.send().await.map_err(|_| Error::Unknown)?;
         let status = response.status().as_u16();
@@ -46,5 +46,38 @@ impl Transport for Http {
             bytes.extend_from_slice(&chunk);
         }
         serde_json::from_slice(&bytes).map_err(|_| Error::Invalid)
+    }
+}
+
+fn authorize(request: reqwest::RequestBuilder, url: &str, token: &str) -> reqwest::RequestBuilder {
+    if url::Url::parse(url).is_ok_and(|url| url.path().starts_with("/api/v1/")) {
+        request.header(reqwest::header::AUTHORIZATION, format!("token {token}"))
+    } else {
+        request.bearer_auth(token)
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn provider_requests_use_their_own_token_header_without_network_or_redirects() {
+        let client = reqwest::Client::new();
+        for (url, expected) in [
+            ("https://forge.example/api/v1/user", "token synthetic"),
+            ("https://api.github.com/user", "Bearer synthetic"),
+            ("https://enterprise.example/api/v3/user", "Bearer synthetic"),
+        ] {
+            let request = authorize(client.get(url), url, "synthetic")
+                .build()
+                .unwrap();
+            assert_eq!(
+                request
+                    .headers()
+                    .get(reqwest::header::AUTHORIZATION)
+                    .unwrap(),
+                expected
+            );
+            assert!(request.url().username().is_empty());
+        }
     }
 }

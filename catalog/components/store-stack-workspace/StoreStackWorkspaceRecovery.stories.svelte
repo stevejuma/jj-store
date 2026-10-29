@@ -12,8 +12,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stack Workspace/Recovery",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function createPreview(element: HTMLElement) {
     const canvas = workspaceCanvas(element);

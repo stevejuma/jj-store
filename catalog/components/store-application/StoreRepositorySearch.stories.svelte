@@ -6,9 +6,10 @@
   const { Story } = defineMeta({
     title: "JJ Store/Connected application/Search",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false },
     parameters: {
+      jjStoreStory: { kind: "application" },
       layout: "fullscreen",
       jjStoreShell: true,
       docs: { story: { inline: false, iframeHeight: 700 } },

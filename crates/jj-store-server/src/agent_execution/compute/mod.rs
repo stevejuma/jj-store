@@ -8,8 +8,7 @@ pub(super) struct Runtime {
     pub sender: Option<mpsc::Sender<Value>>,
     pub stop: Option<tokio::sync::watch::Sender<bool>>,
     pub state: String,
-    pub endpoint: Option<String>,
-    pub token: Option<zeroize::Zeroizing<String>>,
+    pub connection: Option<lapis_ai_runtime::ComputeConnection>,
     pub invitation: Option<Value>,
     pub identity: Option<String>,
     pub progress: Option<Value>,
@@ -35,6 +34,14 @@ impl Supervisor {
     pub(super) fn companion(&self, name: &str, environment: &str) -> Result<PathBuf> {
         let selected = std::env::var_os(environment)
             .map(PathBuf::from)
+            .or_else(|| {
+                self.0.ai_bundle.as_ref().and_then(|bundle| match name {
+                    "lapis-agent" => bundle.runtime.agent.clone(),
+                    "lapis-agent-tools" => bundle.runtime.tools.clone(),
+                    "lapis-compute" => bundle.runtime.compute.clone(),
+                    _ => None,
+                })
+            })
             .unwrap_or_else(|| self.0.resources.executable.with_file_name(name));
         let path = selected.canonicalize().map_err(|_| Error::Unavailable)?;
         if !path.is_file() {
@@ -69,7 +76,7 @@ impl Supervisor {
             hardware: hardware::facts(),
             model_file_picker: false, // The HTTP host owns OS picker composition.
             supported: self
-                .companion("jj-store-compute", "JJ_STORE_COMPUTE_EXECUTABLE")
+                .companion("lapis-compute", "JJ_STORE_COMPUTE_EXECUTABLE")
                 .is_ok(),
             state: if runtime.state.is_empty() {
                 "off".into()

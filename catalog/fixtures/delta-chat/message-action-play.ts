@@ -1,3 +1,4 @@
+import { storyControl } from "../story-controls.js";
 import { expect, userEvent, within } from "storybook/test";
 import { reader } from "./acceptance-helpers.js";
 export async function messageActions({
@@ -21,16 +22,20 @@ export async function messageActions({
   await userEvent.click(
     await within(document.body).findByRole("button", { name: "React 👍" }),
   );
-  const reaction = await c.findByRole("button", { name: "1 reaction with 👍" });
+  const reaction = await c.findByRole("button", {
+    name: "1 reaction with 👍: 1",
+  });
   await expect(reaction).toHaveAttribute("aria-pressed", "true");
-  await userEvent.click(c.getByRole("button", { name: "Hide body" }));
-  await userEvent.click(c.getByRole("button", { name: "Show body" }));
+  await storyControl(document.body, "Hide body");
+  await storyControl(document.body, "Show body");
   await expect(
-    c.getByRole("button", { name: "1 reaction with 👍" }),
+    c.getByRole("button", { name: "1 reaction with 👍: 1" }),
   ).toHaveAttribute("aria-pressed", "true");
-  await userEvent.click(c.getByRole("button", { name: "1 reaction with 👍" }));
+  await userEvent.click(
+    c.getByRole("button", { name: "1 reaction with 👍: 1" }),
+  );
   await expect(
-    c.queryByRole("button", { name: "1 reaction with 👍" }),
+    c.queryByRole("button", { name: "1 reaction with 👍: 1" }),
   ).toBeNull();
   await userEvent.click(
     c.getByRole("button", { name: "Agent response · Synthetic review" }),

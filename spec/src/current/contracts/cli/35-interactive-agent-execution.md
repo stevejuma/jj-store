@@ -140,3 +140,32 @@ adapter with no acknowledged turn is opened with retained context instead of
 loading a nonexistent rollout. Development preflight checks prepared-context
 parsing without starting an agent; current jj-acp resources are rebuilt and
 staged only for the default demo, preserving its fixture and installed tools.
+
+M33 shared stream extraction retains JST-CLI-004 executable custody and existing
+Control V3 interpretation. No CLI parser, installed helper, process admission or
+prompt replay behavior changes. Native streaming privacy tests exercise the
+admitted host adapter before and after extraction.
+
+M33 prompt coordination leaves JST-CLI-004 helper selection and CLI parsing
+unchanged. Existing real-JJ controlled-harness conversation tests qualify
+original child receipts, context/deferred queues and no-replay behavior; live
+provider and installer download evidence remains separate.
+
+M33 history-bridge packaging preserves the CLI's native JJ feature explicitly
+when workspace defaults are disabled for selective embeddings. Helper custody,
+execution, parsing and command/publication contracts are unchanged.
+
+M33 moves the CLI's read-only folder resolver into the existing JJ library. Its
+native local provider maps the same invalid/unsupported/unavailable/limit and
+identity-change categories; default-only settings and
+no-init/no-snapshot/no-head reconciliation behavior remain unchanged.
+
+## Planned thread file commands
+
+[M35 thread files](../collaboration/45-thread-files-and-attachments.md) plans
+`jj agent thread file` list/read/download, create/upload/edit, rename/remove,
+history/restore and existing receipt/status recovery through the verified
+coordination home. JST-COLLAB-037 through JST-COLLAB-039 and JST-CLI-004 retain
+shared authorization, bounded input/output, observed revisions, stable request
+identities and paired executable custody. These commands are planned and are not
+current CLI capabilities.

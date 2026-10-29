@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
+  import { retainedDetails } from "./application-layout-story-actions.js";
   import { views as applicationViews } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -11,8 +13,12 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Application",
     component: StackWorkspaceApplicationFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
     beforeEach: async () => {
       await Promise.all([
         applicationViews.stacks(),
@@ -20,10 +26,17 @@
         applicationViews.log(),
         applicationViews.stackDetails(),
         applicationViews.stackConflicts(),
+        applicationViews.repositorySettings(),
       ]);
     },
   });
 </script>
+
+<Story
+  name="Closed Details stays absent after repository Settings"
+  args={{ initialPage: "files" }}
+  play={retainedDetails}
+/>
 
 <Story
   name="Workspace in app shell"
@@ -198,7 +211,9 @@
       within(api).getByRole("button", { name: "Expose repository API" }),
     );
     await userEvent.click(
-      await within(api).findByRole("button", { name: "src/api.ts" }),
+      await within(api).findByRole("button", {
+        name: workspaceFileName("src/api.ts"),
+      }),
     );
     const apiDiff = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
@@ -217,7 +232,9 @@
         await userEvent.click(commit);
     }
     await userEvent.click(
-      await within(ui).findByRole("button", { name: "src/toolbar.ts" }),
+      await within(ui).findByRole("button", {
+        name: workspaceFileName("src/toolbar.ts"),
+      }),
     );
     const uiDiff = await canvas.findByRole("region", {
       name: "Selected changes from stack-ui",
@@ -226,7 +243,9 @@
       name: "Unstaged files",
     });
     await userEvent.click(
-      within(working).getByRole("button", { name: "README.md" }),
+      within(working).getByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     );
     await canvas.findByRole("region", {
       name: "Selected changes from working",
@@ -297,7 +316,9 @@
         await userEvent.click(commit);
     }
     await userEvent.click(
-      await within(ui).findByRole("button", { name: "src/toolbar.ts" }),
+      await within(ui).findByRole("button", {
+        name: workspaceFileName("src/toolbar.ts"),
+      }),
     );
     await canvas.findByRole("region", {
       name: "Selected changes from stack-ui",

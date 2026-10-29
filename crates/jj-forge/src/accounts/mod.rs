@@ -1,4 +1,6 @@
 //! Device-global forge accounts. Only opaque account references cross into UI.
+mod forgejo;
+pub use forgejo::forgejo_api_root;
 pub mod http;
 mod oauth;
 pub mod store;

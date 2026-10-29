@@ -292,7 +292,7 @@ impl Backend {
                     )?
                 }
                 ThreadCliCommand::Status { request_id } => {
-                    value(&repo.collab_command_status(*request_id).map_err(error)?)?
+                    value(&repo.collab_store_status(*request_id).await.map_err(error)?)?
                 }
                 _ => return Err(error("collaboration intent dispatch failed")),
             },
@@ -329,7 +329,7 @@ impl Backend {
                     value(&store.emojis(*after, *limit).map_err(error)?)?
                 }
                 ReactionCliCommand::Status { request_id } => {
-                    value(&repo.collab_command_status(*request_id).map_err(error)?)?
+                    value(&repo.collab_store_status(*request_id).await.map_err(error)?)?
                 }
                 _ => return Err(error("collaboration intent dispatch failed")),
             },

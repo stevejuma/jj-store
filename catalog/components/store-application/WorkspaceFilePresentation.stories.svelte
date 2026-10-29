@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { fileRowName } from "../../fixtures/file-row-name.js";
   import { verifyWorkspaceRailHeader } from "../../fixtures/workspace-rail-header-play.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
@@ -28,8 +29,8 @@
         views.workspaceInspector(),
       ]);
     },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -57,12 +58,16 @@
         name: "Workspace files",
       });
       await userEvent.click(
-        await within(panel).findByRole("button", { name: "README.md" }),
+        await within(panel).findByRole("button", {
+          name: fileRowName("README.md"),
+        }),
       );
       const inspector = await c.findByRole("complementary", {
         name: "Workspace file",
       });
-      await within(inspector).findByRole("textbox", { name: "README.md" });
+      await within(inspector).findByRole("textbox", {
+        name: fileRowName("README.md"),
+      });
       for (const [width, presentation] of [
         [1800, "inline"],
         [1070, "replace-main"],
@@ -113,13 +118,13 @@
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
     await userEvent.click(
-      await rail.findByRole("button", { name: "README.md" }),
+      await rail.findByRole("button", { name: fileRowName("README.md") }),
     );
     const panel = await c.findByRole("complementary", {
       name: "Workspace file",
     });
     const inspector = within(panel);
-    await inspector.findByRole("textbox", { name: "README.md" });
+    await inspector.findByRole("textbox", { name: fileRowName("README.md") });
     await expect({
       headerBorder: getComputedStyle(
         panel.querySelector('[data-ui-part="sidebar-header"]')!,
@@ -138,9 +143,11 @@
       background: "rgba(0, 0, 0, 0)",
       extraCommentRow: false,
     });
-    await userEvent.click(rail.getByRole("button", { name: "src/example.ts" }));
+    await userEvent.click(
+      rail.getByRole("button", { name: fileRowName("src/example.ts") }),
+    );
     const source = await inspector.findByRole("textbox", {
-      name: "src/example.ts",
+      name: fileRowName("src/example.ts"),
     });
     await waitFor(() =>
       expect(panel.querySelector(".cm-keyword")).not.toBeNull(),
@@ -381,7 +388,7 @@
       await c.findByRole("complementary", { name: "Workspace files" }),
     ).toBeVisible();
     await expect(
-      await c.findByRole("button", { name: "src/unchanged.ts" }),
+      await c.findByRole("button", { name: fileRowName("src/unchanged.ts") }),
     ).toBeVisible();
   }}
 />

@@ -5,9 +5,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository navigation",
     component: StoreRepositoryApplication,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { initialPage: "files", initiallyCollapsed: false },
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   const labels = [
     "Overview",

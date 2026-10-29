@@ -75,3 +75,45 @@ export function fixtureNativeHistory(dependent: boolean) {
 }
 
 export { base, topic, signature, pin, commit, nodes, reference };
+
+export function fixtureStackDiff(
+  query: any,
+  editing: boolean,
+  dragRead: string,
+) {
+  const q = query.query;
+  return {
+    version: 1,
+    from: q.from,
+    to: q.to,
+    ...(query.kind === "diff" ? { path: q.path } : {}),
+    changes:
+      editing && dragRead !== "ambiguous" && q.to === topic && q.from !== base
+        ? []
+        : [
+            {
+              path: "src/topic.ts",
+              before: [{ type: "file", id: base, executable: false }],
+              after: [{ type: "file", id: topic, executable: false }],
+              sources: [],
+              content:
+                query.kind === "diff"
+                  ? {
+                      status: "text",
+                      hunks: [
+                        {
+                          kind: "different",
+                          before_start: 0,
+                          after_start: 0,
+                          before: "old\n",
+                          after: "new\n",
+                        },
+                      ],
+                    }
+                  : { status: "unavailable", reason: "not_requested" },
+            },
+          ],
+    next: null,
+    previous: null,
+  };
+}

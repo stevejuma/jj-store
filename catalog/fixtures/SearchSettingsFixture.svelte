@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { untrack } from "svelte";
   import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreSearchConfiguration from "../../web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte";
@@ -40,11 +41,15 @@
 </script>
 
 {#if loading}
-  <button onclick={() => (settings = structuredClone(loaded))}
-    >Finish loading</button
+  <FixtureControls floating={false}
+    ><button onclick={() => (settings = structuredClone(loaded))}
+      >Finish loading</button
+    ></FixtureControls
   >
-  <button onclick={() => (settings.state = "refreshing")}
-    >Start background refresh</button
+  <FixtureControls floating={false}
+    ><button onclick={() => (settings.state = "refreshing")}
+      >Start background refresh</button
+    ></FixtureControls
   >
 {/if}
 

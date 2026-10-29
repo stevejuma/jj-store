@@ -68,6 +68,13 @@ original contracts. Shared screen models use explicit native/local snapshot
 unions; local data cannot fabricate native epoch, WAL positions or graph cache
 reports.
 
+The General settings removal confirmation uses the existing V1 remove endpoint
+with its captured device registry revision. A retry retains that exact revision;
+observing an absent binding resolves removal without another write. It never
+refreshes the expected revision to remove a replacement registration. This
+changes browser presentation only; removal still preserves every folder and
+repository object and requires LocalTrusted Admin installation admission.
+
 Admitted local requests wait within the existing HTTP request/deadline bound for
 a local worker. Parallel startup code and project reads cannot fail merely
 because the bounded worker pool is briefly occupied. Cancellation before
@@ -78,3 +85,18 @@ repository Add menu and folder controls alongside files, prepared history and
 AgentStore reads. It preserves the source JJ operation, working files and
 companion selection; menu presentation changes do not grant native authority to
 a filesystem-only installation.
+
+LocalTrusted Admin native deletion uses POST
+`/v1/local/repositories/{repo}/delete` with V1 request ID and expected epoch.
+Responses distinguish pending erasure from deleted. Repeating the exact POST
+continues bounded erasure; GET
+`/v1/local/repositories/{repo}/deletions/{request_id}` reports only the retained
+outcome. Capability `local_native_repository_deletion` is installation-gated.
+Deletion is unavailable to authenticated shared serving and never dispatches the
+folder removal endpoint.
+
+M32's local command and status handlers use the library store factories inside
+the existing bounded blocking-worker admission. Request identities, original
+receipts, route schemas, origin/protocol checks, deadline handling and folder
+admission under JST-API-001/002 remain unchanged. No UI behavior changes with
+this Rust composition refactor.

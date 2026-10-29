@@ -1,12 +1,17 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import StackWorkspaceProductionFixture from "../../fixtures/StackWorkspaceProductionFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Production reads",
     component: StackWorkspaceProductionFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
   async function browse(canvasElement: HTMLElement) {
     const canvas = within(canvasElement),
@@ -22,7 +27,9 @@
       await within(stack).findByRole("button", { name: "Topic ancestor" }),
     );
     await userEvent.click(
-      await within(stack).findByRole("button", { name: "src/topic.ts" }),
+      await within(stack).findByRole("button", {
+        name: workspaceFileName("src/topic.ts"),
+      }),
     );
     const diff = await canvas.findByRole("region", {
       name: /^Selected changes from/,
@@ -104,7 +111,7 @@
       within(stack).getByRole("region", {
         name: "Changed files in branch topic",
       }),
-    ).findByRole("button", { name: "src/topic.ts" });
+    ).findByRole("button", { name: workspaceFileName("src/topic.ts") });
     await userEvent.click(
       within(stack).getByRole("button", {
         name: "Show all changes in foundation",
@@ -119,6 +126,6 @@
       within(stack).getByRole("region", {
         name: "Changed files in branch foundation",
       }),
-    ).findByRole("button", { name: "src/topic.ts" });
+    ).findByRole("button", { name: workspaceFileName("src/topic.ts") });
   }}
 />

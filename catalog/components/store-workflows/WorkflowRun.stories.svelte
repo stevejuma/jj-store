@@ -11,8 +11,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Workflow run",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-workflows/WorkflowRunDialog.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
   async function choose(label: string, option: string) {
     const body = within(document.body);
@@ -149,6 +155,7 @@
 />
 
 <Story
+  parameters={{ jjStoreStory: { kind: "application" } }}
   name="Overview menu icons and width keep action labels on one line"
   play={async ({ canvasElement }) => {
     const body = within(document.body),

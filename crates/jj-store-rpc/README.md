@@ -1,10 +1,13 @@
 # jj-store-rpc
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Native repository RPC client, server and wire adapters. It carries object,
+operation, collaboration and administration requests through the shared
+application services, including owner-only local socket access.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Use `client::NativeClient` and its connection options for a native service, or
+compose the `server` module around an authorized service. Keep authentication,
+repository binding and original mutation identities with the request; wire
+adapters preserve the owned service contracts.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [transport semantics](../../docs/site/reference/transport.md) and
+[native repository setup](../../docs/site/getting-started/native.md).

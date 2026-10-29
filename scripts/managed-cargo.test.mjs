@@ -196,3 +196,34 @@ test("repository Rust build entry points use the managed wrapper", async () => {
       /cargoCommand/,
     );
 });
+
+test("independent store consumer has a managed target and cannot share the main target", async (t) => {
+  const context = await workspace(t);
+  const relative = "crates/jj-store-jj/tests/fixtures/store-consumer";
+  await mkdir(join(context.root, relative), { recursive: true });
+  await writeFile(
+    join(context.root, relative, "Cargo.toml"),
+    '[workspace]\n[package]\nname="embedding-proof"\nversion="0.1.0"\nedition="2024"\n',
+  );
+  const selection = await cargoSelection(
+    context,
+    ["check", "--manifest-path", `${relative}/Cargo.toml`],
+    {},
+  );
+  assert.equal(selection.path, join(context.root, relative, "target"));
+  assert.equal(selection.manifest, join(context.root, relative, "Cargo.toml"));
+  await assert.rejects(
+    cargoSelection(
+      context,
+      [
+        "check",
+        "--manifest-path",
+        `${relative}/Cargo.toml`,
+        "--target-dir",
+        "target",
+      ],
+      {},
+    ),
+    /Independent Cargo workspaces require their own target directory/,
+  );
+});

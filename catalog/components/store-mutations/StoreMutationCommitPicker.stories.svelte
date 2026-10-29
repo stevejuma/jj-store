@@ -3,9 +3,16 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/StoreMutationCommitPickerFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-mutations/StoreMutationCommitPicker.svelte",
+      },
+    },
     title: "JJ Store/Mutations/Commit picker",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 
   function center(element: Element) {

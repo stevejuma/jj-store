@@ -17,6 +17,12 @@ pub struct Registry {
 }
 
 impl Registry {
+    pub fn remove_repository(&self, repository: RepositoryId) -> Result<()> {
+        let _lock = lock(&self.path)?;
+        let mut catalog = Catalog::load(&self.path, &self.identity)?;
+        catalog.remove_entry(repository)?;
+        persist(&self.path, &catalog)
+    }
     pub fn new(path: PathBuf, identity: Identity) -> Result<Self> {
         Catalog::load(&path, &identity)?;
         Ok(Self { path, identity })

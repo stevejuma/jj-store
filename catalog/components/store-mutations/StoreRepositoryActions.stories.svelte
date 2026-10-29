@@ -5,9 +5,15 @@
   import StoreRepositoryActionsFixture from "../../fixtures/StoreRepositoryActionsFixture.svelte";
 
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
+      },
+    },
     title: "JJ Store/Mutations/Repository actions",
     component: StoreRepositoryActions,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 
   async function waitUntilInteractive(document: Document) {

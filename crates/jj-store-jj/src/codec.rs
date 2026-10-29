@@ -183,42 +183,6 @@ fn sorted_unique<T: Ord>(items: &[T]) -> Result<()> {
     Ok(())
 }
 
-impl From<b::Timestamp> for Timestamp {
-    fn from(t: b::Timestamp) -> Self {
-        Self {
-            millis: t.timestamp.0,
-            offset_minutes: t.tz_offset,
-        }
-    }
-}
-impl From<Timestamp> for b::Timestamp {
-    fn from(t: Timestamp) -> Self {
-        Self {
-            timestamp: b::MillisSinceEpoch(t.millis),
-            tz_offset: t.offset_minutes,
-        }
-    }
-}
-
-impl From<&b::Signature> for Signature {
-    fn from(s: &b::Signature) -> Self {
-        Self {
-            name: s.name.clone(),
-            email: s.email.clone(),
-            timestamp: s.timestamp.into(),
-        }
-    }
-}
-impl From<Signature> for b::Signature {
-    fn from(s: Signature) -> Self {
-        Self {
-            name: s.name,
-            email: s.email,
-            timestamp: s.timestamp.into(),
-        }
-    }
-}
-
 impl TryFrom<&b::Commit> for Commit {
     type Error = CodecError;
     fn try_from(c: &b::Commit) -> Result<Self> {

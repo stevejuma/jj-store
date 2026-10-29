@@ -25,7 +25,7 @@ impl LocalRepository {
             .await
             .map_err(|_| Error::Unavailable)?;
         let result =
-            crate::agent_feedback::project(&agents, &threads.state, &threads.graph, rows).await?;
+            crate::agent_feedback::project(&agents, &threads.state, threads.graph(), rows).await?;
         if self.ensure_actor().map_err(|_| Error::Denied)? != actor {
             return Err(Error::Denied);
         }
@@ -60,7 +60,7 @@ impl LocalRepository {
         let result = crate::agent_execution::context::collect(
             &agents,
             &threads.state,
-            &threads.graph,
+            threads.graph(),
             rows,
             sessions,
             excluded,
@@ -107,7 +107,7 @@ impl LocalRepository {
             .map_err(|_| Error::Unavailable)?;
         let reader = CollabTargetReaderV1::new(
             repository,
-            Some((threads.state.root.clone(), &threads.graph)),
+            Some((threads.state.root.clone(), threads.graph())),
             Some(&agents),
             Some(&reviews),
         )

@@ -7,9 +7,10 @@
   import { mergeEditorSettingsKey } from "../../../web/src/lib/ui/store-conflicts/merge-editor-settings.js";
 
   const { Story } = defineMeta({
+    parameters: { jjStoreStory: { kind: "application" } },
     title: "JJ Store/Mutations/Conflict editor",
     component: StoreConflictEditor,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     beforeEach: () => {
       const prior = localStorage.getItem(mergeEditorSettingsKey);
       localStorage.removeItem(mergeEditorSettingsKey);
@@ -22,14 +23,21 @@
 
   async function sheetFor(canvasElement: HTMLElement) {
     const page = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      page.getByRole("button", { name: "Application menu" }),
+    const menu = await page.findByRole("button", {
+      name: "Application menu",
+    });
+    await userEvent.click(menu);
+    const resolve = await page.findByRole("menuitem", {
+      name: "Resolve conflicts",
+    });
+    await userEvent.click(resolve);
+    const dialog = await page.findByRole(
+      "region",
+      { name: "Resolve native conflicts" },
+      { timeout: 10_000 },
     );
-    await userEvent.click(
-      page.getByRole("menuitem", { name: "Resolve conflicts" }),
-    );
-    const dialog = await page.findByRole("region", {
-      name: "Resolve native conflicts",
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
     });
     return { page, dialog, view: within(dialog) };
   }
@@ -41,7 +49,7 @@
       }),
     );
     await userEvent.click(
-      view.getByRole("button", { name: "assets/logo.bin" }),
+      view.getByRole("button", { name: "logo.bin Repository file" }),
     );
     await userEvent.click(
       view.getByRole("button", { name: "Use publication" }),
@@ -180,7 +188,9 @@
       within(sidebar).getByRole("radio", { name: "Show files as list" }),
     );
     await userEvent.click(
-      await within(sidebar).findByRole("button", { name: "assets/logo.bin" }),
+      await within(sidebar).findByRole("button", {
+        name: "assets/logo.bin Repository file",
+      }),
     );
     await expect(
       view.queryByRole("button", { name: "Stage merged file" }),
@@ -189,7 +199,9 @@
       within(header).getByRole("button", { name: "Delete path" }),
     ).toBeVisible();
     await userEvent.click(
-      await within(sidebar).findByRole("button", { name: "src/lib.rs" }),
+      await within(sidebar).findByRole("button", {
+        name: "src/lib.rs Repository file",
+      }),
     );
     await expect(editor).toHaveValue("// retained merge draft\n");
   }}
@@ -206,7 +218,7 @@
     );
     await expect(view.getByText(/Merged file staged/u)).toBeVisible();
     await userEvent.click(
-      view.getByRole("button", { name: "assets/logo.bin" }),
+      view.getByRole("button", { name: "logo.bin Repository file" }),
     );
     await userEvent.click(view.getByRole("button", { name: "Delete path" }));
     await userEvent.click(view.getByRole("button", { name: "Preview 2/2" }));

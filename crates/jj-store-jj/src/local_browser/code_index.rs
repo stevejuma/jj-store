@@ -1,6 +1,7 @@
 //! Owned standard JJ code-index handle; advanced preparation remains separate.
 #[cfg(test)]
 mod blame_probe;
+mod operation_reads;
 mod source;
 use super::*;
 use crate::query::{Cancellation, code_index as standard};
@@ -299,6 +300,9 @@ impl Executor {
         if !matches!(
             request,
             Request::Graph(GraphRequest::Log { .. }, _)
+                | Request::Graph(GraphRequest::Operations, _)
+                | Request::OperationDiff(_)
+                | Request::OperationChanges(_)
                 | Request::StackHistory(_)
                 | Request::Commit { .. }
                 | Request::CommitSummary { .. }
@@ -339,6 +343,14 @@ impl Executor {
                 Arc::get_mut(&mut context.access)
                     .ok_or(Error::Unavailable)?
                     .code_index = Some(prepared.clone());
+                if matches!(
+                    request,
+                    Request::Graph(GraphRequest::Operations, _)
+                        | Request::OperationDiff(_)
+                        | Request::OperationChanges(_)
+                ) {
+                    return operation_reads::read(context, operation, request).await;
+                }
                 let source = context
                     .scoped
                     .as_ref()

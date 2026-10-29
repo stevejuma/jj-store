@@ -72,3 +72,6 @@ pub(crate) fn schema(version: u32) -> Result<()> {
 
 mod workspace_comments;
 pub use workspace_comments::*;
+
+mod normalize_image;
+pub use normalize_image::{MAX_IMAGE_UPLOAD_BYTES, normalize_settings_image};

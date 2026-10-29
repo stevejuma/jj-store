@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from "svelte";
-  import StoreApplication from "../../web/src/lib/ui/store-application/StoreApplication.svelte";
+  import StoreApplication from "./ApplicationStory.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   const base = untrack(() => createInMemoryStoreController("files"));

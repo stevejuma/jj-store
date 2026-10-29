@@ -1,7 +1,8 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { ApplicationFreshness } from "../../web/src/lib/controller/application-freshness.js";
   import { onDestroy, untrack } from "svelte";
-  import StoreApplication from "../../web/src/lib/ui/store-application/StoreApplication.svelte";
+  import StoreApplication from "./ApplicationStory.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
   import type { MetadataView } from "../../web/src/lib/controller/conversation-metadata.svelte.js";
@@ -248,33 +249,42 @@
   >{inspectionReads}</output
 >
 
-{#if routeNavigation}
-  <nav aria-label="Fixture pages">
-    <Button
-      onclick={() => (route = agentsRoute("session", status.sessions[0].id))}
-      >Fixture inbox</Button
-    >
-    <Button
-      onclick={() =>
-        (route = { ...base.state.route, page: "projects", agentsHub: false })}
-      >Fixture projects</Button
-    >
-    <Button
-      onclick={() =>
-        (route = { ...base.state.route, page: "files", agentsHub: false })}
-      >Fixture repository</Button
-    >
-    <Button onclick={() => (route = agentsRoute("session", "ff".repeat(16)))}
-      >Fixture other session</Button
-    >
-  </nav>
-{/if}
-{#if controlReads}
-  {#if releaseRead}<Button onclick={() => releaseRead?.()}
-      >Complete workspace read</Button
-    >
-  {:else}<Button onclick={() => (holdNextRead = true)}
-      >Hold next workspace read</Button
-    >{/if}
-{/if}
+<FixtureControls
+  ><div data-story-controls>
+    {#if routeNavigation}
+      <nav aria-label="Fixture pages">
+        <Button
+          onclick={() =>
+            (route = agentsRoute("session", status.sessions[0].id))}
+          >Fixture inbox</Button
+        >
+        <Button
+          onclick={() =>
+            (route = {
+              ...base.state.route,
+              page: "projects",
+              agentsHub: false,
+            })}>Fixture projects</Button
+        >
+        <Button
+          onclick={() =>
+            (route = { ...base.state.route, page: "files", agentsHub: false })}
+          >Fixture repository</Button
+        >
+        <Button
+          onclick={() => (route = agentsRoute("session", "ff".repeat(16)))}
+          >Fixture other session</Button
+        >
+      </nav>
+    {/if}
+    {#if controlReads}
+      {#if releaseRead}<Button onclick={() => releaseRead?.()}
+          >Complete workspace read</Button
+        >
+      {:else}<Button onclick={() => (holdNextRead = true)}
+          >Hold next workspace read</Button
+        >{/if}
+    {/if}
+  </div></FixtureControls
+>
 <StoreApplication {controller} layoutStorage={storage} initiallyCollapsed />

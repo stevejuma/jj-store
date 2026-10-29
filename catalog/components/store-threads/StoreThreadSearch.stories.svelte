@@ -5,9 +5,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Thread inbox search",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { searchable: true },
-    parameters: { layout: "fullscreen" },
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function search({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
@@ -49,8 +49,9 @@
   play={search}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Mobile search keeps the repository groups accessible"
-  args={{ displayMode: "mobile" }}
+  args={{}}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(

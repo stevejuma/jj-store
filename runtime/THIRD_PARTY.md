@@ -1,24 +1,26 @@
-# Agent runtime notices
+# Agent and compute runtime notices
 
-The bundled local agent includes Buzz agent source from
-https://github.com/block/buzz, revision
-ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be, under Apache-2.0. Its license and
-modification record are retained in
-runtime/local-agent/vendor/buzz-agent/LICENSE and
-runtime/local-agent/UPSTREAM.md. The distribution must retain this notice and
-Apache-2.0 license.
+The supervised `lapis-acp`, `lapis-agent`, `lapis-agent-tools` and
+`lapis-compute` helpers come from
+[Lapis AI](https://github.com/lapismd/lapis-ai). The consumer source revision is
+recorded in `scripts/lapis-ai-source.json`. Their maintained implementation and
+third-party source records live in that package; jj-store no longer carries
+duplicate local-agent or compute sources.
 
-The compute helper uses MeshLLM SDK and host runtime from
-https://github.com/Mesh-LLM/mesh-llm, revision
-9f192c9d821991ba43d79bb15fd2f2f12e597571 (0.76.0-rc9). The workspace is MIT OR
-Apache-2.0; SDK/host runtime packages are Apache-2.0. Native inference archives
-retain their upstream manifests, ABI versions and license files. Models are
-downloaded or imported separately and retain their respective licenses.
+Every staged Lapis AI bundle retains its `LICENSE.md`, `LICENSE.agent`,
+`NOTICE.acp.md`, `notices/` attribution and `runtime-manifest.toml`.
+Distributions must preserve those files, including the full license texts under
+`notices/licenses/`. The manifest pins the ACP import, Buzz agent and MeshLLM
+source revisions and verifies the helper/native artifact inventory.
+
+The maintained agent derives from [Buzz](https://github.com/block/buzz) revision
+`ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be` (Apache-2.0). Compute uses
+[MeshLLM](https://github.com/Mesh-LLM/mesh-llm) revision
+`9f192c9d821991ba43d79bb15fd2f2f12e597571` (0.76.0-rc9). Native inference
+archives retain their manifests, ABI versions and licenses, including the
+llama.cpp/ggml MIT notice. Models are downloaded or imported separately and
+retain their respective licenses.
 
 Iroh supplies encrypted, identity-authenticated transport for explicitly paired
-machines. The owned admission layer does not enable public discovery or default
-relays.
-
-jj-acp is bundled as a separately supervised process, under Apache-2.0. Its
-boundary remains protocol, session and process ownership; device configuration,
-credential custody, compute and repository authority belong to jj-store.
+machines. The application owns admission, device configuration, credential
+custody, durable receipts and repository publication authority.

@@ -3,9 +3,16 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentMentionPreferenceFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-chat-composer/CommunityChatComposer.svelte",
+      },
+    },
     title: "JJ Store/Settings/Agent mention recovery",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

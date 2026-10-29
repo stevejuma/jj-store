@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { tick, untrack } from "svelte";
   import Projects from "./ProjectsHubFixture.svelte";
   import Repository from "./StoreRepositoryApplicationFixture.svelte";
@@ -23,7 +24,11 @@
   }
 </script>
 
-<button onclick={remount}>Remount page</button>
+<FixtureControls
+  ><div data-story-controls>
+    <button onclick={remount}>Remount page</button>
+  </div></FixtureControls
+>
 {#if mounted}
   {#if repository}<Repository
       initialPage={opLog ? "oplog" : review ? "reviews" : "agents"}

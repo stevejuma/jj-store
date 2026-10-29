@@ -124,12 +124,15 @@ impl Context {
 pub(super) fn admit_revset(
     expression: &jj_lib::revset::UserRevsetExpression,
     budget: &Budget,
-) -> Result<()> {
+    indexed_files: bool,
+) -> Result<bool> {
     use jj_lib::revset::{RevsetExpression as E, RevsetFilterPredicate as F};
     let mut stack = vec![expression];
+    let mut files = false;
     while let Some(expression) = stack.pop() {
         budget.work(1)?;
         match expression {
+            E::Filter(F::File(_)) if indexed_files => files = true,
             E::Filter(F::File(_) | F::DiffLines { .. }) | E::AtOperation { .. } => {
                 return Err(crate::query::language::invalid(
                     "unsupported_predicate",
@@ -166,5 +169,5 @@ pub(super) fn admit_revset(
             _ => {}
         }
     }
-    Ok(())
+    Ok(files)
 }

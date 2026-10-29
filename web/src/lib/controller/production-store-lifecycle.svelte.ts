@@ -135,6 +135,8 @@ export async function initializeProductionStore(options: {
     options.data.storageReady = bootstrap.storage.ready;
     options.data.repositoryConversion =
       bootstrap.capabilities.local_repository_conversion === true;
+    options.data.nativeRepositoryDeletion =
+      bootstrap.capabilities.local_native_repository_deletion === true;
     options.data.nativeRepositoryCreation =
       bootstrap.capabilities.local_native_repository_creation === true;
     options.data.directorySupported =

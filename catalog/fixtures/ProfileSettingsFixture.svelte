@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onMount, untrack } from "svelte";
   import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreProfileSettings from "../../web/src/lib/ui/store-settings/StoreProfileSettings.svelte";
@@ -105,7 +106,9 @@
 </script>
 
 <StoreSettingsPage {section}>
-  {#if section === "profile"}<StoreProfileSettings {management} />{:else}<button
-      onclick={preview}>Select fixture image</button
+  {#if section === "profile"}<StoreProfileSettings
+      {management}
+    />{:else}<FixtureControls floating={false}
+      ><button onclick={preview}>Select fixture image</button></FixtureControls
     ><StoreCustomEmojiSettings {management} />{/if}
 </StoreSettingsPage>

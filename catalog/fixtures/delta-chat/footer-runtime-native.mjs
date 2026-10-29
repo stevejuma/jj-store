@@ -77,20 +77,22 @@ export async function footerRuntimeAcceptance(page, base) {
   async function menuFits(rem) {
     await expect
       .poll(() =>
-        page.getByRole("menu").evaluate((node, rem) => {
-          const rootSize = parseFloat(
-            getComputedStyle(document.documentElement).fontSize,
-          );
-          const viewport = document.documentElement.clientWidth;
-          const rect = node.getBoundingClientRect();
-          return (
-            rect.width >=
-              Math.min(rem * rootSize, viewport - 2 * rootSize) - 1 &&
-            rect.left >= 0 &&
-            rect.right <= viewport &&
-            node.scrollWidth <= node.clientWidth
-          );
-        }, rem),
+        page
+          .locator('[role="menu"][data-state="open"]')
+          .evaluate((node, rem) => {
+            const rootSize = parseFloat(
+              getComputedStyle(document.documentElement).fontSize,
+            );
+            const viewport = document.documentElement.clientWidth;
+            const rect = node.getBoundingClientRect();
+            return (
+              rect.width >=
+                Math.min(rem * rootSize, viewport - 2 * rootSize) - 1 &&
+              rect.left >= 0 &&
+              rect.right <= viewport &&
+              node.scrollWidth <= node.clientWidth
+            );
+          }, rem),
       )
       .toBe(true);
   }

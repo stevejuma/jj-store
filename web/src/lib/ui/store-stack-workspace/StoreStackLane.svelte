@@ -8,7 +8,7 @@
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
   import StoreStackCommitComposer from "./StoreStackCommitComposer.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
-  import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
+  import StoreStackHistorySkeleton from "./StoreStackHistorySkeleton.svelte";
   import Trash from "@lucide/svelte/icons/trash-2";
   import GitBranch from "@lucide/svelte/icons/git-branch";
   import LogIn from "@lucide/svelte/icons/log-in";
@@ -174,11 +174,12 @@
       {/each}
     {/if}
     {#if preparing}
-      <CommunityProjectsRepositorySkeleton
-        layout="graph"
-        label={`Loading history for ${stack.name}`}
-        count={5}
-      />
+      <div class="stack-workspace__bookmarks">
+        <StoreStackHistorySkeleton
+          label={`Loading history for ${stack.name}`}
+          count={5}
+        />
+      </div>
       {#if !history.loading && !history.error}
         <Button
           variant="outline"
@@ -204,8 +205,7 @@
               /></svg
             >{/if}
           {#if group.unloaded}
-            <CommunityProjectsRepositorySkeleton
-              layout="graph"
+            <StoreStackHistorySkeleton
               label={`Loading history for ${group.head.name}`}
               count={3}
             />

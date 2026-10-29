@@ -2,8 +2,9 @@
 
 The installation owns agent defaults, environment references, model storage and
 paired-machine inference. Repository metadata remains independent of these
-runtimes. The local agent is a maintained Buzz agent fork speaking ACP; `jj-acp`
-remains a separately supervised, bundled process.
+runtimes. The maintained Buzz-derived agent, coding tools and compute
+implementation come from Lapis AI. Its ACP helper uses Control V3; jj-store owns
+admission, credentials, settings and durable history.
 
 ## Configure an agent
 
@@ -72,21 +73,34 @@ installation-scoped Keychain identity.
 
 ## Bundle the installation
 
-Build `runtime/local-agent` and `runtime/compute` with their committed
-lockfiles. Stage with
-`pnpm desktop:prepare -- --acp-executable /absolute/path/jj-acp`. The ACP build
-must include this change's trusted tool declarations. Optional
-`--native-runtime-dir /absolute/path/pinned-runtime` embeds the version/ABI
-manifest and native libraries; weights remain separate.
+Keep the `lapis-ai` checkout beside `jj-store`. `pnpm ai:prepare` builds its
+current source and stages a verified local bundle. Both Rust workspaces use
+versioned Cargo path dependencies on that checkout. A future release can replace
+the path selectors with crates.io dependencies; no library code is copied here.
 
-For a headless resource directory, use
-`node scripts/desktop.mjs stage --destination /absolute/output --acp-executable /absolute/path/jj-acp`
-after the binaries and web assets are built. The staged directory includes the
-custom `jj`, server, storage helper, ACP, local agent, coding helper, compute
-helper, web assets and source/checksum notices. Configure the server with
-explicit paths from that directory rather than installing helpers globally.
-Source/fixture checks are separate from real local model, transport and platform
-distribution acceptance.
+Native privacy also consumes the sibling `agent-redaction` Rust crate. Keep that
+checkout available during source development. CI materializes independently
+pinned Lapis AI and Agent Redaction sources before Cargo resolution; it refuses
+to replace an existing checkout. This changes no runtime launch or credential
+policy and performs no package publication.
+
+`pnpm desktop:prepare` builds the app and stages `lapis-acp`, `lapis-agent`,
+`lapis-agent-tools` and `lapis-compute` with licenses and the upstream TOML
+manifest. Pass `--ai-bundle /absolute/path/to/bundle` to select an already built
+bundle, or `--native-runtime-dir /absolute/path/to/pinned-runtime` to embed the
+native ABI assets. Model weights remain explicit downloads/imports.
+
+A headless service can select the same bundle with `JJ_STORE_AI_BUNDLE_DIR`.
+Existing explicit executable overrides remain available for trusted native
+configuration. All execution and discovery use Control V3. The native verifier
+rejects missing, modified, symlinked, wrong-version or wrong-target resources
+before launch. Existing identity, pairings, settings, model indexes and caches
+remain in their original installation directories.
+
+For UI development, `pnpm dev:ui` reuses prepared binaries. After native edits,
+`pnpm dev:backend:build` rebuilds the local AI helpers and backend; restart with
+`pnpm dev:backend:restart`. None of these commands resets installation state.
+Source/fixture checks remain separate from native model and platform acceptance.
 
 ## Inspect message context
 
@@ -96,3 +110,16 @@ Delivery is distinguished as prepared, queued, sent, failed or unknown.
 Historical context uses its captured content and pinned identities. Old messages
 without snapshots are not reconstructed, and adapter-internal context is outside
 this disclosure.
+
+The shared `jj-store-conversations` library handles in-memory Control V3 privacy
+framing and per-participant assistant/tool projections. The server supplies the
+same admitted native sanitizer and retains bounded payload construction, private
+journal ordering, publication and runtime ownership. This extraction does not
+change credentials, process admission, provider acknowledgement or capture
+policy IDs. See `docs/site/technical/conversations.md` for host embedding.
+
+Prompt coordination also uses the shared library's typed admission, context,
+journal and runtime ports. The server retains the same exclusive conversation
+lease, home/workspace/store preparation, stable child requests and prepared/
+accepted receipts. Queue acceptance remains separate from provider execution;
+uncertain prompts keep their original identity and do not replay.

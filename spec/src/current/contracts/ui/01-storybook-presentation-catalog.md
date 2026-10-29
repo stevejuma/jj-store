@@ -1,5 +1,29 @@
 # Storybook presentation catalog
 
+JST-UI-001 includes Visual Delta's released Storybook addon and portable
+Playwright suite. Native capture MUST use installed project browsers with actual
+macOS/Linux host provenance and OS/architecture-separated PNG paths. An ignored
+`.visual-delta/config.local.json` MAY select native capture for this Mac without
+changing shared Docker defaults or CI configuration. Compare-only verification
+MUST preserve baseline files; baseline creation and approval remain explicit.
+
+The native macOS ARM64 Chromium PNG reference set lives under
+`tests/visual/storybook.spec.ts-snapshots/profiles/native/darwin-arm64`. The
+public preset discovers these files and injects image parameters at build time;
+generated image wiring need not be persisted in component stories.
+E-VISUAL-BASELINES-MACOS-001 records the exact captured set and missing stories.
+Baseline presence does not qualify interaction/accessibility gates or promote
+visual-pending stories to reviewed status.
+
+Native verification MUST support the same checksum-verified capture-set reuse,
+affected passing exclusions and fresh-capture controls as Docker. Complete
+measured host font and runtime evidence MUST govern reuse; a changed or
+incomplete profile MUST recapture conservatively. Native baseline namespaces,
+browser/mode/interaction identities, thresholds and review tags remain
+unchanged. E-VISUAL-NATIVE-PARITY-001 records the upstream patch archive, local
+baseline regeneration and verification independently of registry publication and
+visual review.
+
 E-CI-SUITES-001 preserves JST-UI-001: qualification retains every existing
 interaction, accessibility and browser scenario with isolated fixtures. Heavy
 runners collect remaining failures and JUnit reports instead of stopping after

@@ -297,13 +297,13 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
   await expect(panel.getByText("+40", { exact: true })).toBeVisible();
   await expect(panel.getByText("-20", { exact: true })).toBeVisible();
   await expect(
-    panel.getByRole("button", { name: /^src\/example-\d+\.ts$/ }),
+    panel.getByRole("button", { name: /^src\/example-\d+\.ts(?:\s|$)/ }),
   ).toHaveCount(3);
   await panel
     .getByRole("button", { name: "Show 17 more files", exact: true })
     .click();
   await expect(
-    panel.getByRole("button", { name: /^src\/example-\d+\.ts$/ }),
+    panel.getByRole("button", { name: /^src\/example-\d+\.ts(?:\s|$)/ }),
   ).toHaveCount(20);
   await panel
     .getByRole("button", { name: "Show fewer files", exact: true })
@@ -357,12 +357,9 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
   await page.screenshot({
     path: "/tmp/jj-store-agent-changes-cold-sidebar.png",
   });
-  await panel
-    .getByRole("button", {
-      name: "src/example-2.ts",
-      exact: true,
-    })
-    .click();
+  const savedFile = panel.locator('button[data-file-path="src/example-2.ts"]');
+  await expect(savedFile).toHaveAccessibleName(/^src\/example-2\.ts(?:\s|$)/);
+  await savedFile.click();
   const inspector = page.getByRole("complementary", {
     name: "Workspace file",
     exact: true,

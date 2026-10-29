@@ -5,8 +5,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Commit panel spacing",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 

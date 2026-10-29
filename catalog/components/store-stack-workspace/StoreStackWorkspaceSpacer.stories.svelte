@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
     expect,
@@ -15,8 +16,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Trailing spacer",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function spacer(element: HTMLElement) {
     const prompt = await within(element).findByRole("group", {
@@ -90,7 +91,9 @@
   play={async ({ canvasElement }) => {
     const prompt = await spacer(canvasElement);
     const canvas = within(canvasElement);
-    const source = canvas.getByRole("button", { name: "README.md" });
+    const source = canvas.getByRole("button", {
+      name: workspaceFileName("README.md"),
+    });
     const transfer = new DataTransfer();
     await fireEvent(
       source,
@@ -142,7 +145,7 @@
     expect(
       within(canvas.getByRole("region", { name: "Unstaged files" })).getByRole(
         "button",
-        { name: "README.md" },
+        { name: workspaceFileName("README.md") },
       ),
     ).toBeVisible();
     await userEvent.type(
@@ -159,12 +162,13 @@
     expect(
       within(
         canvas.getByRole("region", { name: "Unstaged files" }),
-      ).queryByRole("button", { name: "README.md" }),
+      ).queryByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeNull();
   }}
 />
 
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Empty workspace keeps its branch prompt centered"
   args={{ empty: true, narrow: true }}
   play={async ({ canvasElement }) => {

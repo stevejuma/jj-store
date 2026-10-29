@@ -5,8 +5,15 @@
   const { Story } = defineMeta({
     title: "JJ Store/Native activity",
     component: NativeActivityFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-collaboration/StoreRepositoryActivity.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 

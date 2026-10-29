@@ -1,0 +1,8 @@
+[default]
+description = "No history access by default. Hosts explicitly grant admitted local history."
+permissions = []
+
+[[set]]
+identifier = "local-history"
+description = "Read-only local JJ history scoped to the invoking window and native vault admission."
+permissions = ["allow-heads", "allow-open", "allow-status", "allow-read", "allow-blame", "allow-close"]

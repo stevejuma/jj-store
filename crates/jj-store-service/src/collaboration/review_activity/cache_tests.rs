@@ -2,7 +2,7 @@ use super::Error;
 use super::*;
 use crate::collaboration::review_activity::tests::{REPO, Store, fixture, reference};
 use jj_review::*;
-use jj_store_wal::{self as wal, publication::ReviewSnapshotRead};
+use jj_store_wal::publication::ReviewSnapshotRead;
 use std::{future::Future, task::Poll};
 
 const ROOT: Option<m::RecordDigest> = Some(m::RecordDigest::new([86; 32]));
@@ -338,10 +338,13 @@ impl ReviewSnapshotRead for GatedStore {
         &self,
         _: ReviewCatalogKind,
         _: ReviewCatalogKey,
-    ) -> wal::Result<Option<ReviewObjectRef>> {
+    ) -> jj_store_core::Result<Option<ReviewObjectRef>> {
         unreachable!()
     }
-    async fn read_object(&self, reference: ReviewObjectRef) -> wal::Result<ReviewObjectV1> {
+    async fn read_object(
+        &self,
+        reference: ReviewObjectRef,
+    ) -> jj_store_core::Result<ReviewObjectV1> {
         if reference == self.thread {
             self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
             self.release.acquire().await.unwrap().forget();

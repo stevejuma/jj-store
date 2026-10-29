@@ -72,6 +72,20 @@ export default defineConfig({
       rules: [
         {
           pattern:
+            "^(?:scripts/validation(?:/|\\.mjs$|\\.test\\.mjs$)|docs/validation\\.md$)",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/23-public-distribution\\.md$",
+          ],
+        },
+        {
+          pattern:
+            "^scripts/(?:check-storybook-parity\\.mjs$|storybook-parity(?:/|\\.test\\.mjs$))",
+          chapterPatterns: [
+            "^spec/src/current/contracts/ui/42-application-story-parity\\.md$",
+          ],
+        },
+        {
+          pattern:
             "^(?:\\.github/|\\.changeset/|\\.config/nextest|Dockerfile$|\\.dockerignore$|docs/releases\\.md$)",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/23-public-distribution\\.md$",
@@ -107,6 +121,20 @@ export default defineConfig({
         {
           pattern: "^desktop/",
           chapterPatterns: [
+            "^spec/src/current/contracts/desktop/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
+        {
+          pattern: "^docs/injectable-stores\\.md$",
+          chapterPatterns: [
+            "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+            "^spec/src/current/contracts/architecture/25-injectable-collaboration-stores\\.md$",
+          ],
+        },
+        {
+          pattern: "^docs/desktop-development\\.md$",
+          chapterPatterns: [
+            "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
             "^spec/src/current/contracts/desktop/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
           ],
         },
@@ -177,6 +205,12 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^crates/jj-store-(?:core|git|native)/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/25-injectable-collaboration-stores\\.md$",
+          ],
+        },
+        {
           pattern: "^crates/jj-store-wal/",
           chapterPatterns: [
             "^spec/src/current/contracts/publication/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
@@ -186,6 +220,12 @@ export default defineConfig({
           pattern: "^crates/jj-store-replication/",
           chapterPatterns: [
             "^spec/src/current/contracts/replication/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
+        {
+          pattern: "^crates/jj-vault/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/local-jj/32-automatic-vault-backup\\.md$",
           ],
         },
         {
@@ -210,6 +250,13 @@ export default defineConfig({
           pattern: "^crates/jj-(?:agent|review|collab)/",
           chapterPatterns: [
             "^spec/src/current/contracts/collaboration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
+        {
+          pattern:
+            "^(?:crates/(?:jj-store-conversations|jj-history-service|tauri-plugin-jj-store)/|packages/jj-(?:conversations|history)/)",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/26-reusable-agent-workflows\\.md$",
           ],
         },
         {
@@ -276,14 +323,14 @@ export default defineConfig({
         },
         {
           pattern:
-            "^(?:Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|docs/implementation-plan\\.md$|docs/reference/)",
+            "^(?:Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-(?:lock|workspace)\\.yaml$|README\\.md$|LICENSE\\.md$|docs/implementation-plan\\.md$|docs/reference/)",
           chapterPatterns: [
             "^spec/src/current/contracts/architecture/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
           ],
         },
       ],
       protected: [
-        "^(?:mkdocs\\.yml$|pyproject\\.toml$|uv\\.lock$|rustfmt\\.toml$|desktop/|catalog/|\\.storybook/|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
+        "^(?:mkdocs\\.yml$|pyproject\\.toml$|uv\\.lock$|rustfmt\\.toml$|desktop/|catalog/|\\.storybook/|crates/|packages/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-(?:lock|workspace)\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
       ],
     },
   },
@@ -378,15 +425,18 @@ export default defineConfig({
       },
       {
         name: "rust-tests",
-        command: "cargo",
-        args: ["test", "--workspace", "--locked"],
+        command: "pnpm",
+        args: ["dev:cargo", "--", "test", "--workspace", "--locked"],
       },
     ],
     build: true,
     first: true,
   },
   name: "jj-store",
-  plugins: ["scripts/check-ui-ownership.mjs"],
+  plugins: [
+    "scripts/check-ui-ownership.mjs",
+    "scripts/check-storybook-parity.mjs",
+  ],
   idPattern: "^JST-[A-Z]+-\\d{3}$",
   tableSection: "Requirements",
   documentRoles: [

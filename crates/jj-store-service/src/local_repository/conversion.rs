@@ -41,36 +41,39 @@ impl LocalRepository {
                 archive_review(&self.review_store_at(Some(&pin), repository).await?).await?;
             let thread = self.thread_store_at(Some(&pin)).await?;
             let reaction = self.reaction_store_at(Some(&pin), repository).await?;
-            let mut graph = thread.graph.objects.clone();
-            graph.extend(reaction.graph.objects.clone());
-            let mut agents = thread.external.agent.clone();
-            agents.extend(reaction.external.agent.clone());
-            let mut reviews = thread.external.review.clone();
-            reviews.extend(reaction.external.review.clone());
+            let mut graph = thread.graph().objects.clone();
+            graph.extend(reaction.graph().objects.clone());
+            let mut agents = thread.external().agent.clone();
+            agents.extend(reaction.external().agent.clone());
+            let mut reviews = thread.external().review.clone();
+            reviews.extend(reaction.external().review.clone());
             let mut evidence = BTreeMap::new();
             for entry in thread
-                .external
+                .external()
                 .evidence
                 .iter()
-                .chain(&reaction.external.evidence)
+                .chain(&reaction.external().evidence)
             {
                 evidence.insert(entry.reference.capsule, entry.clone());
             }
             let agent_io = super::agent_io::AgentIo::new(
                 Arc::new(super::records::GitRecords::new(
                     repository,
-                    self.metadata.clone(),
+                    self.metadata.carrier().clone(),
                     agents,
                 )?),
                 super::agent_evidence::EvidenceIo::new(
-                    self.metadata.clone(),
+                    self.metadata.carrier().clone(),
                     Some(&pin),
                     evidence.into_values().collect(),
                 )?,
             );
-            let review_io = super::review_io::ReviewIo::new(Arc::new(
-                super::records::GitRecords::new(repository, self.metadata.clone(), reviews)?,
-            ));
+            let review_io =
+                super::review_io::ReviewIo::new(Arc::new(super::records::GitRecords::new(
+                    repository,
+                    self.metadata.carrier().clone(),
+                    reviews,
+                )?));
             crate::conversion::history::include_external(
                 &mut agent,
                 &mut review,
@@ -98,8 +101,12 @@ impl LocalRepository {
                 agent,
                 review,
                 collab: CollabGraphArchiveV1 {
-                    thread: pin.selection(Domain::Thread).map(|_| thread.state.root),
-                    reaction: pin.selection(Domain::Reaction).map(|_| reaction.state.root),
+                    thread: pin
+                        .selection(Domain::Thread)
+                        .map(|_| thread.state.root.clone()),
+                    reaction: pin
+                        .selection(Domain::Reaction)
+                        .map(|_| reaction.state().root.clone()),
                     objects: graph.into_iter().collect(),
                 },
             };

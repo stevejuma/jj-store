@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
@@ -9,8 +10,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Presentation",
     component: StackWorkspaceFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
 </script>
 
@@ -34,7 +35,9 @@
       name: "Changed files in branch feature/api",
     });
     await userEvent.click(
-      within(files).getByRole("button", { name: "src/api.ts" }),
+      within(files).getByRole("button", {
+        name: workspaceFileName("src/api.ts"),
+      }),
     );
     await canvas.findByRole("region", { name: /Selected changes from stack-/ });
     const viewport = canvasElement.querySelector<HTMLElement>(
@@ -73,7 +76,7 @@
       within(branches).getByRole("button", { name: /Collapse Branches/ }),
     );
     const expand = await canvas.findByRole("button", {
-      name: "Expand Branches column",
+      name: /^Expand Branches column(?:: Branches \d+)?$/,
     });
     const rail = expand.closest<HTMLElement>(
       '[data-ui-part="collapsed-column"]',
@@ -120,7 +123,9 @@
       body.querySelector('[data-ui-component="file-listing-view-mode-toggle"]'),
     ).toBeNull();
     expect(
-      await within(body).findByRole("button", { name: "README.md" }),
+      await within(body).findByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     ).toBeVisible();
     expect(body.querySelector("p")).toBeNull();
     expect(
@@ -128,7 +133,9 @@
     ).toBeNull();
     expect(column).toHaveAttribute("data-fixed", "true");
     await userEvent.click(
-      within(body).getByRole("button", { name: "README.md" }),
+      within(body).getByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     );
     await canvas.findByRole("region", {
       name: "Selected changes from working",
@@ -191,7 +198,7 @@
       canvasElement.querySelector('[data-sticky-for="working"]'),
     ).toBeNull();
     const source = await within(column).findByRole("button", {
-      name: "README.md",
+      name: workspaceFileName("README.md"),
     });
     expect(source).toBeVisible();
     // Files stay clickable while the later stacks are in view and their diff
@@ -214,7 +221,9 @@
       name: "Create commit in feature/workspace",
     });
     expect(
-      await within(form).findByRole("button", { name: "README.md" }),
+      await within(form).findByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     ).toBeVisible();
     await userEvent.click(within(form).getByRole("button", { name: "Cancel" }));
     await userEvent.click(
@@ -238,7 +247,9 @@
     await assertPinned(expanded);
     expect(expanded.getBoundingClientRect().width).toBe(width);
     expect(
-      await within(expanded).findByRole("button", { name: "README.md" }),
+      await within(expanded).findByRole("button", {
+        name: workspaceFileName("README.md"),
+      }),
     ).toBeVisible();
     for (const area of canvasElement.querySelectorAll<HTMLElement>(
       ".stack-workspace__canvas-scroll [data-scroll-strategy]",

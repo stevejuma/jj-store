@@ -17,7 +17,7 @@ import { impact } from "./ci-plan.mjs";
 import { jjArtifact, verifyJj, jjArchiveMember } from "./ci-setup-jj.mjs";
 import { createHash } from "node:crypto";
 import { prebuiltBrowserResources } from "./ci-prebuilt.mjs";
-import { acpArtifact, verifyAcp } from "./ci-setup-acp.mjs";
+import { validateAiSourcePin } from "./ci-lapis-source.mjs";
 import { parse as parseYaml } from "yaml";
 function coldHarness(t) {
   const root = mkdtempSync(join(tmpdir(), "jj-store-ci-selection-"));
@@ -247,21 +247,31 @@ require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(p
     ["exec", "playwright", "test", "--config", "web/playwright.docs.config.ts"],
   ]);
 });
-test("CI pins published ACP and rejects unsupported or corrupt artifacts", () => {
-  for (const platform of ["linux", "darwin"])
-    for (const arch of ["arm64", "x64"]) {
-      const artifact = acpArtifact(platform, arch);
-      assert.equal(
-        artifact.name,
-        artifact.member.replace("/jj-acp", ".tar.gz"),
-      );
-      assert.match(artifact.digest, /^[a-f0-9]{64}$/);
-    }
-  assert.throws(() => acpArtifact("win32", "x64"), /Unsupported/);
-  const bytes = Buffer.from("verified ACP fixture");
-  const digest = createHash("sha256").update(bytes).digest("hex");
-  verifyAcp(bytes, digest);
-  assert.throws(() => verifyAcp(Buffer.from("corrupt"), digest), /checksum/);
+test("CI pins the shared local-source package and rejects mutable revisions", () => {
+  const pin = JSON.parse(
+    readFileSync(new URL("./lapis-ai-source.json", import.meta.url)),
+  );
+  assert.equal(validateAiSourcePin(pin), pin);
+  assert.throws(
+    () => validateAiSourcePin({ ...pin, revision: "main" }),
+    /Invalid/,
+  );
+  assert.throws(
+    () => validateAiSourcePin({ ...pin, repository: "untrusted/repo" }),
+    /Invalid/,
+  );
+  const setup = readFileSync(
+    new URL("../.github/actions/setup/action.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(setup, /node scripts\/ci-lapis-source.mjs/);
+  assert.match(setup, /node scripts\/ci-provision-offline-governance\.mjs/);
+  assert.match(setup, /cargo fetch --locked/);
+  const cargo = readFileSync(new URL("../Cargo.toml", import.meta.url), "utf8");
+  assert.match(
+    cargo,
+    /lapis-ai-runtime = \{ path = "\.\.\/lapis-ai\/crates\/lapis-ai-runtime"/,
+  );
 });
 test("prebuilt CI validates complete resources before accepting the cold fixture", async () => {
   const root = mkdtempSync(join(tmpdir(), "jj-store-prebuilt-"));

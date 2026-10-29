@@ -116,9 +116,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Components/Revision graph",
     component: CommunityProjectsRevisionGraph,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: { ...fixtureGraph(), now: NOW },
     parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+      },
       docs: {
         source: {
           code: '<script>\n  import { CommunityProjectsRevisionGraph } from "./catalog/index.js";\n<\/script>\n<CommunityProjectsRevisionGraph {revisions} {devices} {selectedId} {now} {onSelect} />',

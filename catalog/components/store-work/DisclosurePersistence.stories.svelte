@@ -1,15 +1,16 @@
 <script module lang="ts">
+  import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/DisclosurePersistenceFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Page disclosure persistence",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function remount(c: ReturnType<typeof within>) {
-    await userEvent.click(c.getByRole("button", { name: "Remount page" }));
+    await storyControl(document.body, "Remount page");
   }
   async function transparency(button: HTMLElement) {
     await userEvent.unhover(button);
@@ -159,7 +160,7 @@
       );
       return within(
         await c.findByRole("region", { name: "Selected operation" }),
-      ).getByRole("button", { name: "describe: native object history" });
+      ).findByRole("button", { name: "describe: native object history" });
     }
     await userEvent.click(await select());
     await remount(c);

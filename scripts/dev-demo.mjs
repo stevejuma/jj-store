@@ -142,8 +142,10 @@ async function initializeFixture(origin, logHandle) {
 
 async function restart({ reset = false } = {}) {
   const prebuilt = await prebuiltBrowserResources(repositoryRoot);
-  if (!prebuilt)
+  if (!prebuilt) {
+    await run("pnpm", ["ai:prepare"]);
     await run("cargo", ["build", "-p", "jj-store", "--bins", "--locked"]);
+  }
   Object.assign(
     developmentEnvironment,
     await developmentAgentEnvironment(repositoryRoot),

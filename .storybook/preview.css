@@ -1,6 +1,4 @@
-@import "../web/src/lib/ui/community-typography.css";
-@import "../web/src/lib/appearance/theme-palettes.css";
-@import "../web/src/lib/appearance/appearance.css";
+@import "../web/src/lib/ui/application-base.css";
 html,
 body,
 #storybook-root {
@@ -25,28 +23,20 @@ body {
   font-size: var(--community-text-body);
 }
 
-:root,
-[data-ui-theme] {
-  --jj-store-row-background: color-mix(
-    in srgb,
-    var(--background) 95%,
-    var(--color-black, #000000)
-  );
-  --jj-store-info-row-background: color-mix(
-    in srgb,
-    var(--background) 97%,
-    var(--color-black, #000000)
-  );
-  --jj-store-warning-foreground: var(--warning, oklch(55% 0.16 70));
-  --jj-store-warning-background: color-mix(
-    in srgb,
-    var(--jj-store-warning-foreground) 12%,
-    var(--background)
-  );
+/* Application stories use the same viewport and scroll owners as the browser app. */
+body.sb-show-main[data-ui-catalog-full-viewport] {
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
 }
-
-[data-ui-component="column-canvas"][data-ui-part="column-header"] {
-  --ui-column-canvas-padding: 0.5rem;
-  background: var(--jj-store-row-background);
-  border-bottom: 1px solid var(--border);
+body[data-ui-catalog-full-viewport] #storybook-root {
+  width: 100%;
+  height: 100vh;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+html[data-fixture-controls-capture] [data-fixture-controls] {
+  display: none !important;
 }

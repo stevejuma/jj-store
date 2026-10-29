@@ -1,8 +1,11 @@
 //! Cursor-ready recursive file rows with bounded last-change metadata.
+#[cfg(feature = "native")]
 use super::native::{map_backend, path as native_path, terms};
 use super::*;
+#[cfg(feature = "native")]
 use jj_lib::{matchers::PrefixMatcher, object_id::ObjectId as _, tree::TreeMergeExt as _};
 use serde::Deserialize;
+#[cfg(feature = "native")]
 use std::collections::VecDeque;
 
 #[derive(
@@ -15,13 +18,16 @@ pub enum LastChangeMode {
     History,
 }
 
+#[cfg(feature = "native")]
 const LAST_CHANGE_VISITS: usize = 64;
+#[cfg(feature = "native")]
 fn include_metadata() -> bool {
     true
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[cfg(feature = "native")]
 pub struct Request {
     pub commit: m::CommitId,
     pub path: String,
@@ -37,12 +43,14 @@ pub struct Request {
 /// Provenance of the displayed commit, not a claim about all-branch history.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg(feature = "native")]
 pub enum Attribution {
     PathChange,
     Snapshot,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
+#[cfg(feature = "native")]
 pub enum LastChange {
     Available {
         attribution: Attribution,
@@ -58,6 +66,7 @@ pub enum LastChange {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg(feature = "native")]
 pub enum LastChangeUnavailable {
     Merge,
     Budget,
@@ -66,6 +75,7 @@ pub enum LastChangeUnavailable {
     NotFound,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[cfg(feature = "native")]
 pub struct Entry {
     pub path: String,
     pub terms: Vec<Option<dto::TreeValue>>,
@@ -73,6 +83,7 @@ pub struct Entry {
     pub last_change: LastChange,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[cfg(feature = "native")]
 pub struct Page {
     pub version: u32,
     pub commit: m::CommitId,
@@ -83,6 +94,7 @@ pub struct Page {
     pub next: Option<String>,
     pub stats: Stats,
 }
+#[cfg(feature = "native")]
 pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     if request.limit == 0
         || request.limit > context.limits.max_page
@@ -205,9 +217,11 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     context.budget.complete_output(&result)?;
     Ok(result)
 }
+#[cfg(feature = "native")]
 fn parent(path: &str) -> &str {
     path.rsplit_once('/').map_or("", |(parent, _)| parent)
 }
+#[cfg(feature = "native")]
 impl Context {
     async fn last_changes(
         &self,

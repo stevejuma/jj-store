@@ -87,13 +87,24 @@ impl Coordinator {
         request: &CollabCommandRequestV1,
         qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
     ) -> std::result::Result<PublishOutcome, CollabCommandError> {
-        let intent = request.intent_digest(self.records.repository)?;
         let at = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_err(|_| Error::Corrupt("collaboration command time"))?
             .as_millis()
             .try_into()
             .map_err(|_| Error::Limit("collaboration command time"))?;
+        self.publish_collab_command_at(request, at, qualified).await
+    }
+    pub async fn publish_collab_command_at(
+        &self,
+        request: &CollabCommandRequestV1,
+        at: i64,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> std::result::Result<PublishOutcome, CollabCommandError> {
+        if at < 0 {
+            return Err(Error::Corrupt("collaboration command time").into());
+        }
+        let intent = request.intent_digest(self.records.repository)?;
         match tokio::time::timeout(
             self.limits.timeout,
             self.publish_collab_command_inner(request, intent, at, qualified),
@@ -190,47 +201,71 @@ impl Coordinator {
                     )
                 }
                 CollabCommandV1::Reaction { intent: command } => {
-                    let thread_state = self.collab_domain_state(&base, Domain::Thread).await?;
-                    let threads = self.native_thread_store(thread_state.root).await?;
-                    let agents = self
-                        .agent_store(
-                            base.manifest
-                                .agent_root
-                                .ok_or(Error::Corrupt("agent source root"))?,
+                    use jj_store_core::{StoreKind, reaction_source_store};
+                    let source = reaction_source_store(command.target());
+                    let threads = if source == Some(StoreKind::Thread) {
+                        let selected = self.collab_domain_state(&base, Domain::Thread).await?;
+                        Some(self.native_thread_store(selected.root).await?)
+                    } else {
+                        None
+                    };
+                    let agents = if source == Some(StoreKind::Agent) {
+                        Some(
+                            self.agent_store(
+                                base.manifest
+                                    .agent_root
+                                    .ok_or(Error::Corrupt("agent source root"))?,
+                            )
+                            .await?,
                         )
-                        .await?;
-                    let reviews = self
-                        .review_store(
-                            base.manifest
-                                .review_root
-                                .ok_or(Error::Corrupt("review source root"))?,
+                    } else {
+                        None
+                    };
+                    let reviews = if source == Some(StoreKind::Review) {
+                        Some(
+                            self.review_store(
+                                base.manifest
+                                    .review_root
+                                    .ok_or(Error::Corrupt("review source root"))?,
+                            )
+                            .await?,
                         )
-                        .await?;
-                    let work = match base.manifest.work_root {
-                        Some(root) => Some(self.work_store(root).await?),
-                        None => None,
+                    } else {
+                        None
+                    };
+                    let work = if source == Some(StoreKind::Work) {
+                        match base.manifest.work_root {
+                            Some(root) => Some(self.work_store(root).await?),
+                            None => None,
+                        }
+                    } else {
+                        None
                     };
                     let mut reader = CollabTargetReaderV1::new(
                         self.records.repository,
-                        Some((threads.state.root, &threads.graph)),
-                        Some(&agents),
-                        Some(&reviews),
-                    )?;
+                        threads.as_ref().map(|s| (s.state.root.clone(), &s.graph)),
+                        agents.as_ref().map(|s| s as &dyn AgentSnapshotRead),
+                        reviews.as_ref().map(|s| s as &dyn ReviewSnapshotRead),
+                    )?
+                    .with_qualified_reviews(qualified);
                     if let Some(work) = &work {
                         reader = reader.with_work(self.records.repository, work.state())?;
                     }
                     resolve_reaction_target(&reader, command.target()).await?;
                     let mut reactions = self.native_reaction_store(expected.root).await?;
-                    for reference in threads
-                        .graph
-                        .closure(command.target().collab_dependencies())?
-                    {
-                        if reactions
-                            .graph
-                            .stage(threads.graph.get(reference)?.clone())?
-                            != reference
-                        {
-                            return Err(Error::Corrupt("reaction target identity").into());
+                    let dependencies = command.target().collab_dependencies();
+                    if !dependencies.is_empty() {
+                        let threads = threads
+                            .as_ref()
+                            .ok_or(Error::Corrupt("reaction Thread source"))?;
+                        for reference in threads.graph.closure(dependencies)? {
+                            if reactions
+                                .graph
+                                .stage(threads.graph.get(reference)?.clone())?
+                                != reference
+                            {
+                                return Err(Error::Corrupt("reaction target identity").into());
+                            }
                         }
                     }
                     let state = ReactionStateV1::read(
@@ -324,13 +359,18 @@ impl Coordinator {
         if !command.conversation_sources().is_empty() || !command.comment_references().is_empty() {
             let selected = self.collab_domain_state(base, Domain::Thread).await?;
             let threads = self.native_thread_store(selected.root).await?;
+            let sources = jj_store_core::thread_source_stores(command);
             let agents = match base.manifest.agent_root {
-                Some(root) => Some(self.agent_store(root).await?),
-                None => None,
+                Some(root) if sources.contains(&jj_store_core::StoreKind::Agent) => {
+                    Some(self.agent_store(root).await?)
+                }
+                _ => None,
             };
             let reviews = match base.manifest.review_root {
-                Some(root) => Some(self.review_store(root).await?),
-                None => None,
+                Some(root) if sources.contains(&jj_store_core::StoreKind::Review) => {
+                    Some(self.review_store(root).await?)
+                }
+                _ => None,
             };
             let reader = CollabTargetReaderV1::new(
                 self.records.repository,
@@ -495,5 +535,11 @@ impl Coordinator {
             }
         }
         Ok(())
+    }
+}
+
+impl From<jj_store_core::Error> for CollabCommandError {
+    fn from(value: jj_store_core::Error) -> Self {
+        Self::Publication(value.into())
     }
 }

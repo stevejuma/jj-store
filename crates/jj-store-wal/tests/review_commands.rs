@@ -240,7 +240,9 @@ async fn create_thread_is_atomic_replayable_and_preserves_sibling_roots() {
     );
     assert!(matches!(
         coordinator.publish_review_command(&changed).await,
-        Err(ReviewCommandError::Publication(wal::Error::IntentConflict))
+        Err(ReviewCommandError::Publication(
+            jj_store_core::Error::IntentConflict
+        ))
     ));
 }
 

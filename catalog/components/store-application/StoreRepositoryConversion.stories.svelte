@@ -5,9 +5,16 @@
   import "../../../web/src/lib/ui/store-work/store-work.css";
   const op = "22".repeat(64);
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/store-settings/StoreRepositoryConversionDialog.svelte",
+      },
+    },
     title: "JJ Store/Settings/Repository conversion",
     component: StoreRepositoryConversionDialog,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
     args: {
       open: true,
       operation: op,

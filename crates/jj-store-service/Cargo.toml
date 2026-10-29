@@ -10,6 +10,9 @@ homepage.workspace = true
 readme = "README.md"
 
 [dependencies]
+jj-store-native.workspace = true
+jj-store-core.workspace = true
+jj-store-git.workspace = true
 jj-forge.workspace = true
 jj-store-read-index.workspace = true
 url = "2"
@@ -21,7 +24,7 @@ schemars.workspace = true
 jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-wal.workspace = true
-jj-store-jj.workspace = true
+jj-store-jj = { workspace = true, features = ["native"] }
 tokio = { version = "1", features = ["time", "sync", "rt"] }
 async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }

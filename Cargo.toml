@@ -1,6 +1,6 @@
 [workspace]
-exclude = ["desktop", "runtime/local-agent", "runtime/compute"]
-members = ["crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
+exclude = ["desktop"]
+members = ["crates/jj-history-service", "crates/jj-vault", "crates/tauri-plugin-jj-store", "crates/jj-store-conversations", "crates/jj-store-native", "crates/jj-store-git", "crates/jj-store-core", "crates/jj-forge", "crates/jj-store-read-index", "crates/jj-workflow", "crates/jj-store-capture", "crates/jj-collab", "crates/jj-work", "crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-replication", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
 resolver = "2"
 
 [workspace.package]
@@ -13,9 +13,19 @@ repository = "https://github.com/stevejuma/jj-store"
 homepage = "https://stevejuma.github.io/jj-store/"
 
 [workspace.dependencies]
+jj-history-service = { path = "crates/jj-history-service", version = "0.1.0" }
+jj-vault = { path = "crates/jj-vault", version = "0.1.0" }
+lapis-agent-redaction = { path = "../agent-redaction/crates/lapis-agent-redaction", version = "0.1.0" }
+lapis-ai-capture = { path = "../lapis-ai/crates/lapis-ai-capture", version = "0.1.1" }
+lapis-ai-runtime = { path = "../lapis-ai/crates/lapis-ai-runtime", version = "0.1.1" }
+lapis-ai-config = { path = "../lapis-ai/crates/lapis-ai-config", version = "0.1.1" }
+jj-store-native = { path = "crates/jj-store-native", version = "0.1.0" }
+jj-store-git = { path = "crates/jj-store-git", version = "0.1.0" }
+jj-store-core = { path = "crates/jj-store-core", version = "0.1.0" }
 jj-forge = { path = "crates/jj-forge", version = "0.1.0" }
 jj-store-read-index = { path = "crates/jj-store-read-index", version = "0.1.0" }
 jj-workflow = { path = "crates/jj-workflow", version = "0.1.0" }
+jj-store-conversations = { path = "crates/jj-store-conversations", version = "0.1.0" }
 jj-store-capture = { path = "crates/jj-store-capture", version = "0.1.0" }
 jj-collab = { path = "crates/jj-collab", version = "0.1.0" }
 jj-work = { path = "crates/jj-work", version = "0.1.0" }
@@ -30,7 +40,7 @@ jj-store-wal = { path = "crates/jj-store-wal", version = "0.1.0" }
 jj-store-replication = { path = "crates/jj-store-replication", version = "0.1.0" }
 jj-store-service = { path = "crates/jj-store-service", version = "0.1.0" }
 jj-store-rpc = { path = "crates/jj-store-rpc", version = "0.1.0" }
-jj-store-jj = { path = "crates/jj-store-jj", version = "0.1.0" }
+jj-store-jj = { path = "crates/jj-store-jj", version = "0.1.0", default-features = false }
 jj-store-server = { path = "crates/jj-store-server", version = "0.1.0" }
 jj-store-http = { path = "crates/jj-store-http", version = "0.1.0" }
 jj-lib = "=0.45.1"

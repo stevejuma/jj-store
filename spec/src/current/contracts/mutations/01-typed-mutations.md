@@ -1,5 +1,9 @@
 # Typed mutations
 
+The service overview explains NativeSession and admitted LocalRepository
+composition. E-CRATE-READMES-001 preserves JST-MUT-001 intent, permission,
+precondition and durable receipt semantics; runtime implementation is unchanged.
+
 Blame reuses read-only operation-pinned stores. Its separate file-byte admission
 and data-only continuation cache grant no mutation authority, source writes,
 working-copy snapshot or publication. Existing predicate comparison limits and
@@ -305,3 +309,14 @@ selects their roots; stale observed Thread/assignment preconditions select
 neither. Matching receipt replay retains the original result before entity
 preconditions. Empty bindings preserve unlinked capture behavior and do not
 launch a runner.
+
+Explicit LocalTrusted Admin repository deletion is installation lifecycle
+administration under the API/security/object-storage contracts. It adds no typed
+native mutation, head transition, object-store deletion port or manifest
+publication bypass. The installation durably fences and erases one complete
+namespace, including its manifest, rather than publishing replacement history.
+
+Working-copy status is a read-only private composition. Its physical fingerprint
+and complete path/line totals grant no mutation, checkout, receipt,
+content-token or publication authority. Existing typed mutation requirements
+remain unchanged (JST-MUT-001; E-WORKING-COPY-STATUS-001).

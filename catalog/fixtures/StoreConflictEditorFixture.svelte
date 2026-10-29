@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from "svelte";
-  import StoreApplication from "../../web/src/lib/ui/store-application/StoreApplication.svelte";
+  import StoreApplication from "./ApplicationStory.svelte";
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { conflictCommit } from "./conflicts.js";
@@ -8,7 +8,7 @@
   let {
     outcome = "committed",
     failure,
-    displayMode = "desktop",
+    displayMode = "auto",
   }: {
     outcome?: "committed" | "unknown";
     failure?: string;
@@ -24,14 +24,12 @@
 </script>
 
 <div class="store-conflict-editor-fixture">
-  <StoreApplication {controller} {displayMode} initiallyCollapsed={false}>
-    {#snippet children()}<p>Repository content</p>{/snippet}
-  </StoreApplication>
+  <StoreApplication {controller} {displayMode} initiallyCollapsed={false} />
 </div>
 
 <style>
   .store-conflict-editor-fixture {
-    height: 44rem;
+    height: 100vh;
     background: var(--background);
   }
 </style>

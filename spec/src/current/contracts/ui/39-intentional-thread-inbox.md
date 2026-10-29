@@ -91,3 +91,14 @@ separate Thread/session namespaces, bounded to 1024 pins and 1024 archives each;
 no captured content or drafts are saved. Storage events update other tabs,
 malformed or unavailable storage falls back without disabling the controls, and
 no polling or service write is introduced.
+
+## Planned shared file library
+
+[M35 thread files](../collaboration/45-thread-files-and-attachments.md), under
+JST-COLLAB-038/039, plans the same flat Files library in standalone chats and
+intentional Threads, distinct from repository Files/Changes. It includes static
+composer uploads, explicit Markdown/text Save, original-version message cards,
+history/restore and draft-safe stale-save recovery. Existing owned Community,
+released Design Core/Mira, notification and accessibility rules apply; Storybook
+review precedes live adoption. This is planned presentation, with no current
+runtime or visual-baseline qualification.

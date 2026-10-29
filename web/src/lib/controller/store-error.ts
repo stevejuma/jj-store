@@ -7,6 +7,18 @@ export function storeErrorMessage(cause: unknown): string {
     return (
       (
         {
+          repository_deletion_restart_required:
+            "A storage write has an unknown outcome. Restart this local service, then continue the original deletion request.",
+          repository_deletion_unavailable:
+            "Deletion could not finish. Retry the retained original request.",
+          repository_deletion_unsupported:
+            "This storage bucket keeps object versions. Permanent deletion is unavailable for this bucket.",
+          repository_deletion_snapshot_changed:
+            "The repository changed before deletion began. Review it again before deleting.",
+          repository_deletion_conflict:
+            "This deletion does not match the request retained by this installation. Continue with the original request.",
+          repository_deletion_pending:
+            "Finish the retained repository deletion before deleting another repository.",
           local_folder_unavailable:
             "The local folder is unavailable. Reconnect it in Service settings.",
           local_identity_changed:

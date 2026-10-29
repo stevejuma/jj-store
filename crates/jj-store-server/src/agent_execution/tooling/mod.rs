@@ -71,15 +71,15 @@ impl Supervisor {
         Ok([
             ("codex", "Codex", "codex-acp"),
             ("cursor", "Cursor", "cursor-agent"),
-            ("local", "JJ Agent", "jj-store-local-agent"),
+            ("local", "JJ Agent", "lapis-agent"),
         ]
         .into_iter()
         .map(|(id, label, bin)| {
             let available = if id == "local" {
-                self.companion("jj-store-local-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")
+                self.companion("lapis-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")
                     .is_ok()
                     && self
-                        .companion("jj-store-agent-tools", "JJ_STORE_AGENT_TOOLS_EXECUTABLE")
+                        .companion("lapis-agent-tools", "JJ_STORE_AGENT_TOOLS_EXECUTABLE")
                         .is_ok()
             } else {
                 paths::resolve(&paths, bin).is_some()

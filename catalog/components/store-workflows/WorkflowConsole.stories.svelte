@@ -6,8 +6,8 @@
   const { Story } = defineMeta({
     title: "JJ Store/Workflow console",
     component: WorkflowsFixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "application"],
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function closeMenu() {
     await userEvent.keyboard("{Escape}");

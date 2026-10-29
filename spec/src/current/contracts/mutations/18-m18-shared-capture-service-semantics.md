@@ -1,5 +1,10 @@
 # M18 shared capture service semantics
 
+Shared AgentStore and ReviewStore engines are library-owned under JST-ARCH-006.
+Service adapters consume their neutral immutable I/O interfaces and preserve the
+existing actor, admission, receipt and unknown-outcome mappings. Extraction does
+not authorize execution or introduce a new mutation publication path.
+
 The owned rescan command binds version, policy generation and expected revision,
 with an actor supplied independently by transport. Its response separates
 transient discovery-hint acceptance from observed status. It changes neither
@@ -116,3 +121,26 @@ Status/retry recovers that same destination after unknown outcomes; changed
 intent conflicts. Discovery is finalized only after verifying the published
 repository identity. It does not mutate a source repository, project links or
 checkout files.
+
+M32's Git library owns the existing local command projectors and receipt-backed
+publication loops. The application retains folder admission and browser policy.
+Bound capture through injectable interfaces requires both selected
+implementations to share a real runtime publication participant; matching scope
+strings alone cannot authorize a compound publication. Reject unsupported
+composition before actor creation or staging. Existing intent serialization and
+domain receipts are unchanged; provider-neutral envelopes retain each exact
+provider receipt.
+
+M32 routes native Work, Review, Thread, Reaction and prepared Agent commands
+through named library factories. The service supplies the currently admitted
+principal, repository epoch and original native publication identity; factory
+selection never grants access. Policy is rechecked at the existing coordinator
+boundary and before returning results. Existing native Agent preparation retains
+its session-clock acceptance time; other typed commands retain system-clock
+millisecond precision. Existing serialized AgentDeltaRequest and receipt bytes
+are adapted verbatim, including opaque results and atomic Thread bindings.
+LocalTrusted command facades compose the standalone Git factories with existing
+folder admission and device actor provenance. Synchronous local WorkStore
+compatibility and exact historical read APIs remain available. JST-MUT-001 and
+existing domain semantic failures, request identities and wire contracts retain
+their interpretation.

@@ -19,4 +19,8 @@
 - [Stack workspace UI-first boundary](20-stack-workspace-ui-first-boundary.md)
 - [Local Stacks main-workspace integration](21-local-stacks-main-workspace-integration.md)
 - [Interactive agent execution qualification](22-interactive-agent-execution.md)
+- [Shared AI client integration](23-shared-ai-clients.md)
+- [Reusable capture boundaries](reusable-capture-boundaries.md)
 - [Change map](spec-governance.md)
+
+- [Unchanged-contract chapter lookup](24-unchanged-contract-chapters.md)

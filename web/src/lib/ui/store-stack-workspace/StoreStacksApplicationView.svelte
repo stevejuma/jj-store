@@ -7,11 +7,13 @@
   let {
     controller,
     workspace,
+    layoutStorage,
     history,
     onRepositorySettings,
   }: {
     controller: StoreController;
     workspace: StackWorkspaceController;
+    layoutStorage?: Storage;
     history: Snippet;
     onRepositorySettings?: () => void;
   } = $props();
@@ -39,6 +41,8 @@
   controller={workspace}
   showPicker={false}
   focusedView={view}
+  {route}
+  {layoutStorage}
   historyMode={route.stackHistory ?? "live"}
   onHistoryMode={view === "log" || view === "oplog"
     ? (mode) => {

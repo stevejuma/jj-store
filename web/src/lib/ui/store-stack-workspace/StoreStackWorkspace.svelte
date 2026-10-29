@@ -1,18 +1,15 @@
 <script lang="ts">
+  import StoreStackWorkspaceFooter from "./StoreStackWorkspaceFooter.svelte";
   import { connectForgeView } from "../../controller/forge/view-lifecycle.js";
   import { untrack } from "svelte";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
+  import type { StoreRoute } from "../../controller/contracts.js";
   import type { Snippet } from "svelte";
   import type { StoreStacksView } from "../../controller/store-stacks-navigation.js";
   import StoreRepositorySettingsButton from "../store-settings/StoreRepositorySettingsButton.svelte";
   import StoreStacksNavigation from "./StoreStacksNavigation.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreStackFolderCopy from "./StoreStackFolderCopy.svelte";
   import FolderKanban from "@lucide/svelte/icons/folder-kanban";
-  import GitBranch from "@lucide/svelte/icons/git-branch";
-  import GitBranchPlus from "@lucide/svelte/icons/git-branch-plus";
-  import File from "@lucide/svelte/icons/file";
-  import Pencil from "@lucide/svelte/icons/pencil";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import StoreStackWorkspaceState from "./StoreStackWorkspaceState.svelte";
@@ -44,6 +41,8 @@
     onSettings,
     onRepositorySettings,
     focusedView,
+    route,
+    layoutStorage,
     onSelectView,
     historyMode,
     onHistoryMode,
@@ -56,6 +55,8 @@
     onSettings?: () => void;
     onRepositorySettings?: () => void;
     focusedView?: StoreStacksView;
+    route?: StoreRoute;
+    layoutStorage?: Storage;
     onSelectView?: (view: StoreStacksView) => void;
     historyMode?: "live" | "pinned";
     onHistoryMode?: (mode: "live" | "pinned") => void;
@@ -176,7 +177,12 @@
         />{/if}{/snippet}
   </StoreStacksNavigation>
   {#if !snapshot || !controller.snapshotLoaded || !eligible}
-    <StoreStackWorkspaceState {controller} />
+    <StoreStackWorkspaceState
+      {controller}
+      view={focusedView ?? controller.page}
+      {route}
+      {layoutStorage}
+    />
   {:else}
     {#if (focusedView ?? controller.page) === "workspace" && snapshot.conflicts.length}<CommunityProjectsColumnAlert
         inline
@@ -242,52 +248,11 @@
               onCommand={command}
             />{/if}
         </div>
-        <footer class="stack-workspace__footer">
-          <div class="stack-workspace__footer-items">
-            {#if snapshot.folder}<StoreStackFolderCopy
-                path={snapshot.folder}
-              />{/if}
-            <CommunityChip variant="muted" shape="square">
-              {#snippet leading()}<FolderKanban
-                  size={14}
-                  aria-hidden="true"
-                />{/snippet}
-              {workspace?.name ?? "No stack workspace"}
-            </CommunityChip>
-            <CommunityChip variant="muted" shape="square">
-              {#snippet leading()}<GitBranch
-                  size={14}
-                  aria-hidden="true"
-                />{/snippet}
-              {snapshot.base ?? "Choose target branch"}
-            </CommunityChip>
-            <CommunityChip variant="muted" shape="square">
-              {#snippet leading()}<GitBranchPlus
-                  size={14}
-                  aria-hidden="true"
-                />{/snippet}
-              {workspace?.applied.length ?? 0} applied stacks
-            </CommunityChip>
-            <CommunityChip variant="muted" shape="square">
-              {#snippet leading()}<File
-                  size={14}
-                  aria-hidden="true"
-                />{/snippet}
-              {controller.filesFor("unassigned")
-                .length}{controller.details.fileState("unassigned").nextCursor
-                ? "+"
-                : ""} unstaged files
-            </CommunityChip>
-          </div>
-          <span role="status">{controller.outcome}</span
-          >{#if formCommand && !controller.locked}<CommunityChip
-              variant="muted"
-              shape="square"
-              onclick={() => (formOpen = true)}
-              >{#snippet leading()}<Pencil aria-hidden="true" />{/snippet}Edit
-              retained draft</CommunityChip
-            >{/if}
-        </footer>
+        <StoreStackWorkspaceFooter
+          {controller}
+          retainedDraft={!!formCommand}
+          onEdit={() => (formOpen = true)}
+        />
       </div>
       {#if !showCanvas}{@render history?.()}{/if}
     </div>

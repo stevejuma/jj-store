@@ -1,10 +1,12 @@
 # jj-store-tantivy
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Local Tantivy search projection for native repository content. Search readers
+pin immutable index generations qualified by the selected source; indexes can be
+rebuilt from repository history.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Implement `Extractor`, open a `TantivyProjection` with explicit limits and drive
+it through the `jj-store-adapters` runner. Use the returned `Search` handle for
+bounded, pinned queries, while the service rechecks current access.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See the [search guide](../../docs/site/guides/search.md) and
+[read/index architecture](../../docs/site/technical/reads.md).

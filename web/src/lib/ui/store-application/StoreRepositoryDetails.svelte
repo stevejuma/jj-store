@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { AppShell } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
   import type { StorePage } from "../community-navigation/model.js";
   import StoreRepositoryActions from "../store-mutations/StoreRepositoryActions.svelte";
@@ -24,44 +25,36 @@
   }
 </script>
 
-<div class="store-repository-details">
-  <div class="store-repository-details__context-heading">
-    <strong>{contextTitle}</strong>
+<AppShell.Sidebar.Section class="store-repository-details">
+  {#snippet heading()}<strong>{contextTitle}</strong>{/snippet}
+  {#snippet actions()}
     {#if primaryAction}<StoreRepositoryActions
         {controller}
         presentation="primary"
         primaryAction={primaryAction.action}
         primaryLabel={primaryAction.label}
       />{/if}
-  </div>
-</div>
+  {/snippet}
+</AppShell.Sidebar.Section>
 
 <style>
-  .store-repository-details {
-    width: 100%;
-    padding: 0.85rem 0.75rem 0;
-    box-sizing: border-box;
-  }
-  .store-repository-details__context-heading {
-    display: grid;
-    min-height: 2rem;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0 0.4rem 0.55rem;
+  :global(.store-repository-details) {
     font-size: var(--community-text-secondary);
     font-weight: 500;
   }
 
-  .store-repository-details__context-heading strong {
+  strong {
     overflow: hidden;
     font-weight: 500;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .store-repository-details__context-heading
-    :global(> [data-ui-component="button"]) {
+  :global(
+    .store-repository-details
+      [data-ui-part="sidebar-section-actions"]
+      > [data-ui-component="button"]
+  ) {
     width: 1.75rem;
     min-width: 1.75rem;
     height: 1.75rem;
@@ -69,8 +62,11 @@
     margin-inline-end: -0.4rem;
   }
 
-  .store-repository-details__context-heading
-    :global(> [data-ui-component="button"]:is(:hover, :focus-visible)) {
+  :global(
+    .store-repository-details
+      [data-ui-part="sidebar-section-actions"]
+      > [data-ui-component="button"]:is(:hover, :focus-visible)
+  ) {
     color: var(--foreground);
     background: var(--muted);
   }

@@ -25,16 +25,16 @@ impl LocalRepository {
             let base = self.metadata.read()?;
             let agents = Arc::new(records::GitRecords::new(
                 repository,
-                self.metadata.clone(),
+                self.metadata.carrier().clone(),
                 BTreeMap::new(),
             )?);
             let agent = agent_io::AgentIo::new(
                 agents.clone(),
-                agent_evidence::EvidenceIo::new(self.metadata.clone(), None, Vec::new())?,
+                agent_evidence::EvidenceIo::new(self.metadata.carrier().clone(), None, Vec::new())?,
             );
             let reviews = Arc::new(records::GitRecords::new(
                 repository,
-                self.metadata.clone(),
+                self.metadata.carrier().clone(),
                 BTreeMap::new(),
             )?);
             let review = review_io::ReviewIo::new(reviews.clone());
@@ -86,16 +86,28 @@ impl LocalRepository {
                 evidence: Vec::new(),
             };
             if let Some(root) = collab.thread {
-                let (value, refs) =
-                    collab_graph::stage(self, base.as_ref(), repository, root, &graph, &external)
-                        .await?;
+                let (value, refs) = collab_graph::stage(
+                    self.carrier(),
+                    base.as_ref(),
+                    repository,
+                    root,
+                    &graph,
+                    &external,
+                )
+                .await?;
                 bytes.insert(Domain::Thread, value);
                 retained.extend(refs);
             }
             if let Some(root) = collab.reaction {
-                let (value, refs) =
-                    collab_graph::stage(self, base.as_ref(), repository, root, &graph, &external)
-                        .await?;
+                let (value, refs) = collab_graph::stage(
+                    self.carrier(),
+                    base.as_ref(),
+                    repository,
+                    root,
+                    &graph,
+                    &external,
+                )
+                .await?;
                 bytes.insert(Domain::Reaction, value);
                 retained.extend(refs);
             }

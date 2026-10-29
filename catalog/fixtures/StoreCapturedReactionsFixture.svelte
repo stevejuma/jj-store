@@ -1,5 +1,5 @@
 <script lang="ts">
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   import { untrack } from "svelte";
   import StoreAgentTranscript from "../../web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte";

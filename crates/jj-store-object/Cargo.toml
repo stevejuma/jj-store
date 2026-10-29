@@ -19,6 +19,8 @@ futures = "0.3"
 hex = "0.4"
 hmac = "0.12"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream"] }
+quick-xml = { version = "0.38", features = ["serialize"] }
+serde = { version = "1", features = ["derive"] }
 sha2 = "0.10"
 tempfile = "3"
 thiserror = "2"

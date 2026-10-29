@@ -122,6 +122,8 @@ pub struct Config {
     pub directory: Option<Arc<dyn jj_store_service::directory::Directory>>,
     pub directory_operators: Option<Arc<dyn jj_store_service::administration::OperatorPolicies>>,
     pub local_repositories: Option<Arc<dyn jj_store_service::local_browser::LocalRepositories>>,
+    pub repository_deletion:
+        Option<Arc<dyn jj_store_service::repository_deletion::RepositoryDeletion>>,
     pub local_search: Option<Arc<dyn jj_store_service::search_management::SearchManager>>,
     pub local_storage: Option<Arc<dyn jj_store_service::storage_management::StorageManager>>,
     pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
@@ -172,6 +174,7 @@ impl Default for Config {
             local_settings: None,
             local_search: None,
             local_folder_picker: None,
+            repository_deletion: None,
             storage_ready: true,
             native_authority: true,
             backups: Vec::new(),

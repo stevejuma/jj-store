@@ -394,3 +394,7 @@ browser; responses contain no authorization URL or tokens. Account references
 are additive runtime options; legacy options default to no account. The separate
 temporary OAuth callback is state/PKCE-bound and is not a relaxation of API
 admission. See [ChatGPT plans](../collaboration/41-chatgpt-plan-provider.md).
+
+M33 retains JST-API-001/006: generated DTOs, routes, request identities and
+receipts are unchanged. The headless client injects transport/encoding; unknown
+outcomes require status reads without implicit prompt resubmission.

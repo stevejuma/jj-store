@@ -4,6 +4,7 @@
   import StoreApplicationAgents from "./StoreApplicationAgents.svelte";
   import StoreApplicationOverlays from "./StoreApplicationOverlays.svelte";
   import { provideConversationInspection } from "../../conversations/inspection.svelte.js";
+  import StoreRepositoryDeletionRecovery from "../store-settings/StoreRepositoryDeletionRecovery.svelte";
   import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
   import StoreConnectionFooter from "../store-connections/StoreConnectionFooter.svelte";
@@ -173,6 +174,8 @@
   }
   const notifications = ownApplicationNotifications(() => controller);
   let applicationMenu = $state<Snippet>();
+  let mainElement = $state<HTMLElement | null>(null);
+  let mobileTarget = $state<HTMLElement | null>(null);
   provideAgentExecution(() => controller.execution);
 </script>
 
@@ -182,6 +185,9 @@
   controller={shell}
   {displayMode}
   {desktopChrome}
+  {mainElement}
+  {mobileTarget}
+  mobileSidebarName={settingsOpen ? "settings" : "navigation"}
   canNavigateBack={controller.state.canNavigateBack && !editorOpen}
   canNavigateForward={controller.state.canNavigateForward && !editorOpen}
   onNavigateBack={() => navigate(-1)}
@@ -198,12 +204,10 @@
       {controller}
       hidden={repositorySettingsOpen || settingsOpen}
       disabled={editorOpen}
-      menu={shell.mobile.resolvedMode === "desktop"
-        ? applicationMenu
-        : undefined}
-      detailsOpen={!detailsRail.closed}
-      toggleDetails={() =>
-        detailsRail.closed ? detailsRail.open() : detailsRail.close()}
+      menu={applicationMenu}
+      {shell}
+      {detailsRail}
+      compact={shell.mobile.resolvedMode === "mobile" && !desktopChrome}
     />{/snippet}
   <AppShell.Sidebar
     side="left"
@@ -244,9 +248,11 @@
       </StoreApplicationNavigation>{/if}
   </AppShell.Sidebar>
   <StoreApplicationMain
+    bind:mainElement
+    bind:mobileTarget
+    layoutStorage={storage}
     {controller}
     {stackWorkspace}
-    {shell}
     {current}
     {settingsOpen}
     settingsSection={current.globalSettings?.section ?? "service"}
@@ -254,14 +260,10 @@
     {closeSettings}
     conflictOpen={editorOpen}
     {workspaceBlocked}
-    canNavigateBack={controller.state.canNavigateBack}
-    canNavigateForward={controller.state.canNavigateForward}
-    {navigate}
     {detailsRail}
     {selectPage}
     {children}
     {agents}
-    {applicationMenu}
     linkFolder={() => settingsGuard.open("folders")}
   />
   <StoreApplicationRightPanels
@@ -288,6 +290,7 @@
   />
 </CommunityAppShell>
 
+<StoreRepositoryDeletionRecovery {controller} />
 <StoreIndexPreparationNotice {controller} />
 <StoreNotificationHost owner={notifications} />
 {#if controller.execution}<StoreAgentExecutionNotice

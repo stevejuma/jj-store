@@ -18,9 +18,15 @@
     truncated: false,
   };
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/store-search/StoreSearchCommand.svelte",
+      },
+    },
     title: "JJ Store/Search/Repository search command",
     component: StoreSearchCommand,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
 </script>
 

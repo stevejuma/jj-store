@@ -32,6 +32,13 @@ pub(super) async fn prepare(
         let storage = AuthoritativeStorage::start(config)
             .await?
             .with_state_lock(state_lock.take())?;
+        crate::repository_deletion::Manager::restore(
+            state,
+            &Identity::load(installation)?,
+            &storage.store(),
+            &registry,
+        )
+        .await?;
         let host = config.host(storage.store())?;
         let rpc_limits = Limits {
             concurrent: config.limits.concurrent_requests,

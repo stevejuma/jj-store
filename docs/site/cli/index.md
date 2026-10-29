@@ -80,12 +80,12 @@ capture commands.
 
 ## Reusable conversation execution
 
-The paired jj-acp executable must support explicitly selected control version 3
-for reusable-agent conversations. The application exposes Start/Stop and
-contextual Send; legacy version-2 session controls remain supported. The paired
-custom JJ provisions personal companion homes or materializes registered native
-attachments within app-managed paths. Development validation uses explicit
-binary paths and does not replace installed CLIs.
+The paired lapis-acp executable must support explicitly selected control version
+3 for reusable-agent conversations. The application exposes Start/Stop and
+contextual Send; per-session controls and model discovery also use Control V3.
+The paired custom JJ provisions personal companion homes or materializes
+registered native attachments within app-managed paths. Development validation
+uses explicit binary paths and does not replace installed CLIs.
 
 `jj-store conversation-metadata --endpoint http://127.0.0.1:PORT/` reads
 authorized conversation details, submits a bounded typed command file or
@@ -96,3 +96,9 @@ reference for arguments.
 The [workflow guide](jj-workflow.md) explains metadata homes, operator
 admission, source export, CLI reporting and execution recovery. The small host
 profile does not implement remote Forgejo runner registration or polling.
+
+Local folder inspection uses the same library-owned default-settings workspace
+resolver available to embedded hosts. It observes existing repository links and
+metadata without loading a working copy, initializing identity or reconciling
+heads. This extraction adds no CLI command or repository configuration
+authority.

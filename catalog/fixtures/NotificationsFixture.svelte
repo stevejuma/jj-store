@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import { ownNotifications } from "../../web/src/lib/notifications/notification-context.svelte.js";
@@ -17,16 +18,18 @@
 <Button onclick={fail}>Fail request</Button>
 <Button onclick={() => (error = "")}>Recover</Button>
 <Button onclick={() => (visible = !visible)}>Toggle page</Button>
-<Button
-  onclick={() =>
-    context.service.publish({
-      scope: "application",
-      key: "acknowledge",
-      title: "Attention required",
-      message: "Review the completed operation.",
-      severity: "warning",
-      lifetime: "dismiss",
-    })}>Show sticky warning</Button
+<FixtureControls floating={false}
+  ><Button
+    onclick={() =>
+      context.service.publish({
+        scope: "application",
+        key: "acknowledge",
+        title: "Attention required",
+        message: "Review the completed operation.",
+        severity: "warning",
+        lifetime: "dismiss",
+      })}>Show sticky warning</Button
+  ></FixtureControls
 >
 <Button
   onclick={() =>

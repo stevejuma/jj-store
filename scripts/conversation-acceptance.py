@@ -125,7 +125,7 @@ with tempfile.TemporaryDirectory(prefix='jj-conversation-', dir='/private/tmp') 
                 wait(origin, lambda v: any(s['id'] == session and s['state'] == 'idle' and s['published_sequence'] == s['last_sequence'] for s in v['sessions']))
                 subprocess.run(['node', str(checkout / 'scripts/conversation-browser.mjs'), origin, session, setup['id'], profile, 'send'], check=True, timeout=150)
                 sessions.append((session, setup['id'], profile))
-                # Standalone version-2 sessions deliberately permit one runtime.
+                # Standalone per-session execution deliberately permits one runtime.
                 # End participation before qualifying the next storage profile.
                 request(origin, '/local/agents/command', dict(version=1, request_id=uuid.uuid4().hex, session_id=session, action=dict(action='end')))
                 wait(origin, lambda v: any(s['id'] == session and not s['connected'] for s in v['sessions']))

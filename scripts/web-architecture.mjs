@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { extname, join, relative, resolve } from "node:path";
 
 export const limits = {
@@ -71,9 +71,20 @@ export function sourceFiles(root) {
         found.push(relative(root, absolute).replaceAll("\\", "/"));
     }
   };
-  for (const directory of ["catalog", "scripts", "web/src"])
+  for (const directory of [
+    "catalog",
+    "scripts",
+    "web/src",
+    ...(existsSync(join(root, "packages")) ? ["packages"] : []),
+  ])
     visit(join(root, directory));
-  return found.filter((path) => path !== "web/src/lib/api/generated.ts");
+  return found.filter(
+    (path) =>
+      ![
+        "web/src/lib/api/generated.ts",
+        "packages/jj-history/src/generated.ts",
+      ].includes(path),
+  );
 }
 
 export function architectureErrors(root, baseline) {

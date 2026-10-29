@@ -1,7 +1,7 @@
 //! Sidecar ownership, identity custody and bounded stdio control.
 use super::*;
 use std::process::Stdio;
-use tokio::{io::BufReader, process::Command};
+use tokio::process::Command;
 pub(super) fn validate(settings: &dto::Settings) -> Result<()> {
     if settings.peers.len() > 16
         || settings.relay_urls.len() > 8
@@ -151,7 +151,7 @@ impl Supervisor {
             port
         };
         let mut command =
-            Command::new(self.companion("jj-store-compute", "JJ_STORE_COMPUTE_EXECUTABLE")?);
+            Command::new(self.companion("lapis-compute", "JJ_STORE_COMPUTE_EXECUTABLE")?);
         command
             .env_clear()
             .env("HOME", &root)
@@ -169,37 +169,37 @@ impl Supervisor {
             .stdout(Stdio::piped())
             .stderr(Stdio::null())
             .kill_on_drop(true);
-        if let Some(bundle) = std::env::var_os("JJ_STORE_COMPUTE_NATIVE_RUNTIME_DIR") {
+        if let Some(bundle) = std::env::var_os("JJ_STORE_COMPUTE_NATIVE_RUNTIME_DIR")
+            .map(PathBuf::from)
+            .or_else(|| {
+                self.0
+                    .ai_bundle
+                    .as_ref()
+                    .and_then(|config| config.compute.native_runtime.clone())
+            })
+        {
             command.env("MESH_LLM_NATIVE_RUNTIME_BUNDLE_DIR", bundle);
         }
         #[cfg(unix)]
         command.process_group(0);
-        let mut child = runtime::OwnedChild(command.spawn().map_err(|_| Error::Unavailable)?);
-        let input = child.0.stdin.take().ok_or(Error::Unavailable)?;
-        let mut output = BufReader::new(child.0.stdout.take().ok_or(Error::Unavailable)?);
-        let mut bytes = Vec::new();
-        tokio::time::timeout(
-            Duration::from_secs(15),
-            runtime::bounded_line(&mut output, &mut bytes),
+        let plan = lapis_ai_runtime::PreparedLaunch::from_command(command.as_std())
+            .map_err(|_| Error::Invalid)?;
+        let mut child = lapis_ai_runtime::ComputeClient::start_prepared(
+            plan,
+            native_runtime::limits(1024 * 1024),
         )
         .await
-        .map_err(|_| Error::Unavailable)??;
-        let ready: Value = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-        let endpoint = ready["endpoint"].as_str().ok_or(Error::Unavailable)?;
-        let url = url::Url::parse(endpoint).map_err(|_| Error::Unavailable)?;
-        if ready["type"] != "ready"
-            || url.scheme() != "http"
-            || url.host_str() != Some("127.0.0.1")
-            || url.path() != "/v1"
-        {
-            return Err(Error::Unavailable);
-        }
+        .map_err(|_| Error::Unavailable)?;
+        let ready = child
+            .next_event(Duration::from_secs(1))
+            .await
+            .map_err(|_| Error::Unavailable)?;
+        let input = child.commands();
         let (sender, mut frames) = mpsc::channel(16);
         let (stop, mut stopping) = tokio::sync::watch::channel(false);
         runtime.sender = Some(sender);
         runtime.stop = Some(stop);
-        runtime.endpoint = Some(endpoint.into());
-        runtime.token = Some(zeroize::Zeroizing::new(token));
+        runtime.connection = Some(child.connection().clone());
         self.update(|s| {
             s.compute_identity = ready["identity"].as_str().map(str::to_owned);
             Ok(())
@@ -209,27 +209,21 @@ impl Supervisor {
         runtime.state = "ready".into();
         let this = self.clone();
         runtime.task = Some(tokio::spawn(async move {
-            let mut input = input;
-            bytes.clear();
             let result:Result<()>=async {loop {
                 tokio::select! {
-                    _=stopping.changed()=>{let _=runtime::write(&mut input,json!({"action":"stop"})).await;break;},
-                    frame=frames.recv()=>{let Some(frame)=frame else{break};runtime::write(&mut input,frame).await?;},
-                    read=runtime::bounded_line(&mut output,&mut bytes)=>{
-                        if !read?{break;}
-                        let frame:Value=serde_json::from_slice(&bytes).map_err(|_|Error::Unavailable)?;bytes.clear();
+                    _=stopping.changed()=>{break;},
+                    frame=frames.recv()=>{let Some(frame)=frame else{break};input.send_frame(&frame).await.map_err(|_|Error::Unavailable)?;},
+                    event=child.next_event(Duration::from_secs(86400))=>{
+                        let frame=event.map_err(|_|Error::Unavailable)?;
                         this.compute_frame(frame).await?;
                     }
                 }
             }Ok(())}.await;
-            drop(input);
-            let _ = tokio::time::timeout(Duration::from_secs(15), child.0.wait()).await;
-            child.stop().await;
+            let result = result.and(child.shutdown().await.map_err(|_| Error::Unavailable));
             let mut state = this.0.compute.lock().await;
             state.sender = None;
             state.stop = None;
-            state.endpoint = None;
-            state.token = None;
+            state.connection = None;
             state.state = if result.is_ok() && *stopping.borrow() {
                 "off"
             } else {

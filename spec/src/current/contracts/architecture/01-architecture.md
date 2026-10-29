@@ -307,3 +307,24 @@ leases coordinate disposable outputs across JJ workspaces. Managed Cargo pins
 each independent workspace target; application state and staged resources stay
 outside cleanup. E-BUILD-STORAGE-001 retains the architecture and installed-tool
 boundaries while adding bounded development-cache maintenance under JST-CLI-004.
+
+Explicit repository lifecycle administration keeps the ordinary ObjectStore port
+unchanged. Only the separate S3 administrator path performs bounded namespace
+erasure; `quick-xml` parses bounded storage maintenance responses.
+Installation-owned journals, fences and discovery guards remain server-owned. UI
+and transport consume owned deletion DTOs, without upstream JJ or storage client
+imports. JST-ARCH-001 layer independence remains unchanged.
+
+M33's `tauri-plugin-jj-store` composes owned local-history readers behind
+injected physical-vault/window admission. Its optional transport derives caller
+identity from Tauri and its default service depends on no Tauri or native object
+store. Workspace dependency defaults are disabled for selective embeddings;
+existing CLI, RPC, service and server consumers explicitly enable their native
+profile.
+
+`jj-history-service` owns the same bounded local-history service independently
+of its optional Tauri adapter. `tauri-plugin-jj-store` composes and reexports
+the owned service types for existing native consumers and owns only WebView
+command admission, permissions and delivery. Shared readers acquire no Tauri,
+HTTP, credential, Notes or publication dependency. JST-ARCH-001/007 boundaries
+and the versioned history schema remain unchanged.

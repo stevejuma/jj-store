@@ -393,7 +393,11 @@ async fn portable_review_diff_sides_and_whole_files_require_exact_capsules_paths
         .is_err()
     );
     assert_eq!(repo.metadata_store().read().unwrap().unwrap().commit(), pin);
-    let capsule = before_evidence.validate().unwrap();
+    let capsule = jj_store_jj::local_evidence::GitEvidenceCapsuleV1::decode_reference(
+        &before_evidence.reference,
+        &before_evidence.bytes,
+    )
+    .unwrap();
     let CodeCommitIdV1::GitSha1Jj045(commit) = before.revision.commit else {
         panic!()
     };
@@ -414,10 +418,15 @@ async fn portable_review_diff_sides_and_whole_files_require_exact_capsules_paths
     let CodeCommitIdV1::GitSha1Jj045(after_commit) = after.revision.commit else {
         panic!()
     };
-    forged.commits.get_mut(&commit).unwrap().root_tree = after_evidence.validate().unwrap().commits
-        [&after_commit]
-        .root_tree
-        .clone();
+    forged.commits.get_mut(&commit).unwrap().root_tree =
+        jj_store_jj::local_evidence::GitEvidenceCapsuleV1::decode_reference(
+            &after_evidence.reference,
+            &after_evidence.bytes,
+        )
+        .unwrap()
+        .commits[&after_commit]
+            .root_tree
+            .clone();
     assert!(
         repo.metadata_store()
             .read_capsule_file(&forged, commit, "code.txt")

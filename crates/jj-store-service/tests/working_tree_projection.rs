@@ -39,6 +39,7 @@ fn baseline(physical: &tree::WorkingTree) -> baseline::Baseline {
                 path: e.path.clone(),
                 bytes: e.bytes,
                 content: e.content,
+                data: e.data.clone(),
                 kind: match e.kind {
                     tree::Kind::File { executable } => baseline::Kind::File { executable },
                     tree::Kind::Symlink => baseline::Kind::Symlink,

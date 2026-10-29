@@ -116,3 +116,43 @@ following symlinks and ignore access events. At most 128 session/repository
 watches are retained per controller; session cleanup and shutdown release them.
 Matching hints invalidate current UI reads through the existing application
 feed, without periodic browser requests or changes to publication authority.
+
+Independent hosts may select `jj-store-jj/local-history` with defaults disabled
+to consume these same pinned filesystem readers. The feature neither registers a
+folder nor grants source or cache authority. The host owns fresh physical
+admission, generation changes, private cache reservations and worker lifetime.
+Source indexes and dirty files stay unchanged, and reads require completion
+reauthorization. Native working-tree inspection and mutation remain separately
+gated; Tauri admission and application integration need their own qualification.
+
+The optional Tauri bridge retains these read-only contracts through host-owned
+window/vault/generation admission and explicit operation handles. Preparation
+and read cancellation drain owned work before scope release. Source fixtures
+accept only stock JJ 0.45.1 or the exact already-pinned official release commit
+suffix; this does not qualify another JJ profile or a native WebView
+application.
+
+Reusable workspace discovery shares the original CLI resolver, including bounded
+shared-repository link resolution and explicit symlink rejection. The owned
+result adds the observed Git directory for host binding, with no new source
+authority. Reopening rechecks paths and optional carrier identity. Physical
+vault and source-generation checks remain required for subsequent reads.
+
+Native history transport preserves full-width operation fields through a bounded
+versioned JSON text envelope. JavaScript consumers must retain unsafe integers
+without rounding. This boundary changes no native identities or store encoding;
+existing Rust readers, current physical admission and operation pins remain
+exact.
+
+Ready standard-index handles MAY also serve unfiltered operation-graph pages and
+exact operation-parent deltas/grouped revision changes. The original
+operation/view fingerprint, repository, physical metadata binding and generation
+MUST remain checked. A requested historical operation requires a bounded
+parent-edge proof from that original pin; raw object existence, newer heads and
+cache presence grant no membership. Parent comparisons admit only actual
+parents, with explicit root and multi-parent results. Read only bounded
+operation/view and commit-parent metadata needed for the delta, never source
+index loading/repair, tree traversal or a broad fallback. Existing interactive
+budgets, completion authorization and cancellation/drain ownership remain
+mandatory. Other advanced query variants retain their separately qualified
+preparation path.

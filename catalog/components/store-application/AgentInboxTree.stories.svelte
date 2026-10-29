@@ -5,8 +5,14 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent inbox repository tree",
     component: Fixture,
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    tags: ["visual-pending", "component"],
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject: "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      },
+      layout: "fullscreen",
+    },
   });
 </script>
 

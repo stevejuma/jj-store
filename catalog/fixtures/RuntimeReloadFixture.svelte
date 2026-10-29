@@ -1,6 +1,7 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
-  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "./ApplicationStory.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
@@ -12,7 +13,7 @@
     deferred = false,
     denied = false,
     application = false,
-    displayMode = "desktop",
+    displayMode = "auto",
     initialPage = "workflows",
   }: {
     lost?: boolean;
@@ -98,20 +99,15 @@
       {controller}
       {displayMode}
     />{:else}<StoreRuntimeReload {manager} menu />{/if}
-  <p>Submitted {posts} · Checked {checks}</p>
+  <FixtureControls
+    ><p data-story-controls>
+      Submitted {posts} · Checked {checks}
+    </p></FixtureControls
+  >
 </div>
 
 <style>
-  .review {
-    padding: 1rem;
-  }
   .review.application {
     height: 100vh;
-    padding: 0;
-  }
-  .application > p {
-    position: fixed;
-    bottom: 0;
-    margin: 0;
   }
 </style>

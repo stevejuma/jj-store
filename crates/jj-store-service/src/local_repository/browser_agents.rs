@@ -100,7 +100,7 @@ impl LocalRepository {
         let selected = self.selected_metadata(commit)?;
         let threads = self.thread_store_at(Some(&selected)).await?;
         let feedback =
-            crate::agent_feedback::recorded(&store, &threads.state, &threads.graph, &activity)
+            crate::agent_feedback::recorded(&store, &threads.state, threads.graph(), &activity)
                 .await;
         let (conversation_feedback, conversation_unavailable) = match feedback {
             Ok(value) => (Some(value), None),

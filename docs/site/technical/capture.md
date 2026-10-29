@@ -94,7 +94,53 @@ rotated tokens and JSON object keys. Provider replay state is not part of
 canonical transcript serialization. This preserves the existing Kingfisher scan
 and publication boundary.
 
+Native scanning and prefix replacement are owned by the independently reusable
+`lapis-agent-redaction` Rust crate, pinned for CI and local builds through
+`scripts/agent-redaction-source.json` at published `0.1.1`
+(`eada2b26c3bf9b41aa6245344479d3941c6f0273` on `lapismd/agent-redaction`). The
+JJ adapter retains domain payload bounds, host cache-path admission and
+canonical observation identities. The library has no JJ or application
+dependencies; the TypeScript redaction policy is separate.
+
 Public builds use released Kingfisher scanner 1.4.0 with rules 1.2.1 and core
 1.0.3. The sanitization policy and compiled-cache namespace include the scanner
 version, so earlier caches cannot silently stand in for this rule set. A scan
 failure still withholds publication; distribution never bypasses sanitization.
+
+Read-only root selection, bounded metadata discovery and Codex header inspection
+are provided by `lapis-ai-capture`. JJ preserves exact profile versions,
+raw-header witnesses, Cursor sidecar admission and acknowledged progress.
+Discovery does not authorize ingestion. Automatic capture for ordinary local
+Git-backed folders still requires separate qualification.
+
+The `jj-store-capture` default `application` feature provides the original
+private spool and native/local publication recovery. A headless Rust host can
+select `default-features = false` to use bounded source readers, privacy,
+leases, progress types and exact acknowledgements without service, RPC, WAL,
+object-store or upstream JJ dependencies. The host supplies admission, durable
+sanitized journaling and publication. A reader acknowledgement follows durable
+acceptance of the exact batch and cursor; it is not a publication receipt.
+Existing application spools require the application feature and keep their
+original schemas, identities, reservations and unknown-outcome behavior.
+
+## Native managed capture evidence
+
+`NormalizerProfileV1::native_capture_v1()` accepts the exact sanitized schema-1
+batch emitted by `jj-store-conversations` as one AgentStore observation.
+`NativeCaptureEnvelopeV1` checks the native binding, policy, processing ordinal
+and bounded complete frame group. The processing ordinal orders observations;
+publication cursors and original frame sequences stay unchanged in the retained
+envelope. Projection reuses controller session/turn/message/tool identities,
+including one final assistant message. Native closure and uncertain errors stay
+distinct. This profile does not provide a durable journal or select a backend;
+hosts must retain exact requests and verify publication receipts separately.
+
+## Transient native snapshots
+
+A native host can use `CodexSnapshotReader` for a physically bound, immutable
+Codex JSONL selection of at most 64 MiB. Ready batches remain tentative until
+`Complete`; a changed source, partial final record or failed identity check
+rejects the snapshot. This mode provides no acknowledgement, persisted cursor or
+resume API. Its sanitized observations retain the selected source and policy
+identities; hosts separately own durability and publication. The ordinary
+application spool and exact durable acknowledgement contracts remain unchanged.

@@ -1,10 +1,12 @@
 # jj-workflow
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Workflow definitions, event filters, evaluations, run state and evidence,
+independent of storage and executors. The `github` module handles the supported
+GitHub-style workflow source format.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Use the exported command and state types to validate definitions and apply
+workflow transitions. An admitted application host supplies events and performs
+allowed actions; the domain model itself does not dispatch commands or agents.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See the [workflow command reference](../../docs/site/cli/jj-workflow.md) and
+[workflow API](../../docs/site/reference/api/workflows.md).

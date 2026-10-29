@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "./FixtureControls.svelte";
   import { onDestroy, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreAgentChatGptAccounts from "../../web/src/lib/ui/store-settings/StoreAgentChatGptAccounts.svelte";
@@ -84,6 +85,10 @@
 
 <StoreAgentChatGptAccounts accounts={controller} />
 <div class="fixture-controls" aria-label="Fixture controls">
-  <Button variant="outline" onclick={complete}>Complete fixture sign-in</Button>
+  <FixtureControls floating={false}
+    ><Button variant="outline" onclick={complete}
+      >Complete fixture sign-in</Button
+    ></FixtureControls
+  >
   <output aria-label="Account commands">{commands.join(", ")}</output>
 </div>

@@ -8,6 +8,7 @@ mod diff_copies;
 pub mod diff_summary;
 mod dispatch;
 pub mod dto;
+mod file_predicates;
 pub(crate) mod git_read;
 mod graph_types;
 mod graphs;
@@ -21,6 +22,7 @@ pub mod preparation;
 pub mod references;
 mod scoped;
 pub mod stacks;
+#[cfg(feature = "native")]
 pub mod working_tree;
 pub use crate::query::Error;
 pub use crate::query::content::{Direction, Limits};

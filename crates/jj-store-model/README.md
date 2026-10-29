@@ -1,10 +1,13 @@
 # jj-store-model
 
-A library component of jj-store. Native repository authority remains in
-manifest-selected objects and durable publication receipts.
+Storage-independent identities and integrity framing shared by native JJ objects
+and collaboration records. Distinct types preserve repository, operation, view,
+commit, object and request identities without remapping them.
 
-[Repository](https://github.com/stevejuma/jj-store) ·
-[Specification](https://stevejuma.github.io/jj-store/)
+Use the exported ID types at library boundaries, `portable` for qualified
+cross-provider references and `envelope` for bounded object framing and
+integrity checks. Domain-specific commands and persistence belong in their
+owning crates.
 
-Experimental 0.1 releases; consult the capability and milestone ledger. Licensed
-under Apache-2.0.
+See [object storage and identity](../../docs/site/technical/storage.md) and
+[codec coverage](../../docs/codec-coverage.md).

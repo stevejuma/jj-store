@@ -1,5 +1,6 @@
 //! Standard JJ graph only. No custom visibility, operation or filter projection.
 pub(crate) mod merge_files;
+#[cfg(feature = "native")]
 mod native;
 pub(crate) mod path_history;
 mod path_index;
@@ -10,6 +11,7 @@ use jj_lib::{
     operation::Operation,
     store::Store,
 };
+#[cfg(feature = "native")]
 pub use native::Prepared;
 use std::{
     fs,

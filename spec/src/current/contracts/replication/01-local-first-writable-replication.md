@@ -1,5 +1,9 @@
 # Local-first writable replication
 
+The replication overview introduces endpoint, checkpoint and bounded worker
+composition. E-CRATE-READMES-001 preserves JST-REPL-001/002/003 local authority,
+origin identity and receiving-coordinator publication semantics.
+
 Every writable checkout uses a complete local `jj-store` and local object
 authority. Ordinary native JJ, AgentStore and ReviewStore reads and writes end
 at that local authority. A bounded background worker exchanges immutable objects

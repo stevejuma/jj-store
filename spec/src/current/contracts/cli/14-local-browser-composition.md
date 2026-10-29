@@ -44,3 +44,12 @@ The local browser physical-file Save is independent from CLI code commands. CLI
 `--ignore-working-copy` reads must observe unchanged operations, bookmarks and
 companion selections after Save; later explicit foreground Snapshot remains the
 only way those physical edits enter recorded code state.
+
+LocalTrusted native server composition restores the owner-only V1 deletion
+journal before constructing native hosts, search, replication or RPC. The
+separate installation deletion manager retains exact request/epoch identity,
+fences the shared storage client, removes discovery, and performs bounded
+idempotent erasure. Interrupted work stays pending for explicit continuation.
+The V2 discovery catalog adds an optional sorted deleted-repository ID set;
+legacy catalogs omit it unchanged. No local folder is removed by server
+deletion.

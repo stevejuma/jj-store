@@ -3,9 +3,16 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentRichToolsFixture.svelte";
   const { Story } = defineMeta({
+    parameters: {
+      jjStoreStory: {
+        kind: "component",
+        subject:
+          "web/src/lib/ui/community-agent-activity/CommunityAgentTranscriptTools.svelte",
+      },
+    },
     title: "JJ Store/Rich agent tools",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "component"],
   });
   async function open(canvasElement: HTMLElement, name: string) {
     const c = within(canvasElement);

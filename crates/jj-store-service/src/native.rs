@@ -1,4 +1,6 @@
 //! Repository-bound authority used by in-process JJ stores and RPC handlers.
+#[path = "native_stores.rs"]
+mod stores;
 use crate::{
     auth::{BearerToken, Clock, Permission, Principal},
     guard::{AuthenticatedGuard, RepositoryAccess, SemanticPolicy},
@@ -17,6 +19,7 @@ use jj_store_wal::publication as replication;
 use jj_store_wal::{self as wal, inventory::DependencySource as _, publication::*};
 use sha2::{Digest as _, Sha256};
 use std::{collections::BTreeSet, sync::Arc, time::Duration};
+pub(crate) use stores::{native_receipt, publication_outcome};
 
 #[derive(Clone, Copy)]
 pub struct SessionLimits {

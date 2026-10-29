@@ -92,6 +92,7 @@
     {#if focused}
       <StoreDiscussionSheet
         title="Agent response"
+        scrollable={!documentMode}
         {open}
         {onClose}
         {returnFocus}

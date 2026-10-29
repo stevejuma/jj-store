@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { expectSelectedViewTab } from "../../fixtures/view-tabs.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -10,8 +11,12 @@
     beforeEach: async () => {
       await views.repositorySettings();
     },
-    tags: ["visual-pending"],
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    tags: ["visual-pending", "application"],
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 </script>
 
@@ -84,9 +89,7 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Back to repository" }),
     );
-    await expect(
-      canvas.getByText("jj-store · Branches", { exact: true }),
-    ).toBeVisible();
+    await expectSelectedViewTab(canvasElement, "Branches");
     await expect(canvasElement.ownerDocument.defaultView?.location.hash).toBe(
       beforeHash,
     );
@@ -216,7 +219,8 @@
   }}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Settings mobile"
-  args={{ accessMode: "local_trusted", displayMode: "mobile" }}
+  args={{ accessMode: "local_trusted" }}
   play={playMobileSettings}
 />

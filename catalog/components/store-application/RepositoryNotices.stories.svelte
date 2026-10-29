@@ -7,9 +7,13 @@
   const { Story } = defineMeta({
     title: "JJ Store/Repository unavailable banners",
     component: Fixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { collaborationState: "failed", initiallyCollapsed: false },
-    parameters: { layout: "fullscreen", jjStoreShell: true },
+    parameters: {
+      jjStoreStory: { kind: "application" },
+      layout: "fullscreen",
+      jjStoreShell: true,
+    },
   });
 
   async function expectReviewBanner(canvasElement: HTMLElement) {

@@ -17,6 +17,9 @@ impl NormalizerProfileV1 {
     pub fn acp_controller_v2() -> Self {
         Self::new(IntegrationId::OwnedController, "jj-acp-control-2")
     }
+    pub fn native_capture_v1() -> Self {
+        Self::new(IntegrationId::OwnedController, "jj-native-capture-1")
+    }
     pub fn codex_0_156_1() -> Self {
         Self::new(IntegrationId::Codex, "0.156.1")
     }
@@ -68,6 +71,7 @@ impl NormalizerProfileV1 {
                     | (IntegrationId::Cursor, "2026.09.26-dd393fe")
                     | (IntegrationId::OpenCode, "1.18.30")
                     | (IntegrationId::OwnedController, "jj-acp-control-2")
+                    | (IntegrationId::OwnedController, "jj-native-capture-1")
             )
     }
 }

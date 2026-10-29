@@ -5,9 +5,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Task scrolling",
     component: ProjectsHubFixture,
-    tags: ["visual-pending"],
+    tags: ["visual-pending", "application"],
     args: { detail: true, longTaskDetail: true },
-    parameters: { layout: "fullscreen" },
+    parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function fixedTaskChrome(
     canvasElement: HTMLElement,
@@ -80,6 +80,7 @@
   play={async ({ canvasElement }) => fixedTaskChrome(canvasElement, 950)}
 />
 <Story
+  parameters={{ viewport: { defaultViewport: "mobile1" } }}
   name="Narrow fixed header and composer"
   args={{ mobile: true }}
   play={async ({ canvasElement }) => fixedTaskChrome(canvasElement, 380)}

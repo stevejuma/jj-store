@@ -19,6 +19,7 @@ impl Coordinator {
         ReviewProjector::new(self)
             .load_review_event_graph(root)
             .await
+            .map_err(Into::into)
     }
     pub(super) async fn stage_review_event_graph(
         &self,
@@ -27,11 +28,13 @@ impl Coordinator {
         ReviewProjector::new(self)
             .stage_review_event_graph(graph)
             .await
+            .map_err(Into::into)
     }
     pub(super) async fn audit_review_event_graph(&self, graph: &ReviewEventGraphV1) -> Result<()> {
         ReviewProjector::new(self)
             .audit_review_event_graph(graph)
             .await
+            .map_err(Into::into)
     }
     pub(super) async fn reduce_review_workflow(
         &self,
@@ -40,6 +43,7 @@ impl Coordinator {
         ReviewProjector::new(self)
             .reduce_review_workflow(graph)
             .await
+            .map_err(Into::into)
     }
 
     pub(super) async fn load_replicated_thread(
@@ -286,32 +290,4 @@ fn order_review_comments(
         }
     }
     Ok(ordered)
-}
-
-pub(super) fn event_parent_map(
-    graph: &ReviewEventGraphV1,
-) -> BTreeMap<ReviewObjectRef, BTreeSet<ReviewObjectRef>> {
-    graph
-        .nodes
-        .iter()
-        .map(|node| (node.event, node.parents.iter().copied().collect()))
-        .collect()
-}
-
-pub(super) fn graph_is_ancestor(
-    parents: &BTreeMap<ReviewObjectRef, BTreeSet<ReviewObjectRef>>,
-    ancestor: ReviewObjectRef,
-    descendant: ReviewObjectRef,
-) -> bool {
-    let mut pending = vec![descendant];
-    let mut seen = BTreeSet::new();
-    while let Some(event) = pending.pop() {
-        if event == ancestor {
-            return true;
-        }
-        if seen.insert(event) {
-            pending.extend(parents.get(&event).into_iter().flatten().copied());
-        }
-    }
-    false
 }
