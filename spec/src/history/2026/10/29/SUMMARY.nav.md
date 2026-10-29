@@ -34,3 +34,5 @@
   {{#include E-JJ46-HISTORY-001/SUMMARY.nav.md}}
 - [E-JJ46-DOCS-002](E-JJ46-DOCS-002/index.md)
   {{#include E-JJ46-DOCS-002/SUMMARY.nav.md}}
+- [E-JJ46-MARKER-001](E-JJ46-MARKER-001/index.md)
+  {{#include E-JJ46-MARKER-001/SUMMARY.nav.md}}
