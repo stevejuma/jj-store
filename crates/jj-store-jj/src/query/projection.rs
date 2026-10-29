@@ -183,12 +183,12 @@ impl ReadonlyIndex for Reader {
     fn change_id_index(
         &self,
         heads: &mut dyn Iterator<Item = &b::CommitId>,
-    ) -> Box<dyn ChangeIdIndex> {
-        Box::new(Changes {
+    ) -> IndexResult<Box<dyn ChangeIdIndex>> {
+        Ok(Box::new(Changes {
             decorations: self.prepared.decorations.clone(),
             budget: self.budget.clone(),
             matches: heads.cloned().collect::<BTreeSet<_>>() == self.prepared.decorations.heads,
-        })
+        }))
     }
     fn start_modification(&self) -> Box<dyn MutableIndex> {
         ReadonlyIndex::start_modification(&self.prepared.raw)

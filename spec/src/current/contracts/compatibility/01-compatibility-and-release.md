@@ -243,3 +243,7 @@ responses without them remain valid. UI elapsed time requires valid ordered
 timestamps. The forge UI now caches observations in session memory and uses
 manual refresh; OAuth authorization polling, mutation guards, recovery journals
 and backend credentials remain unchanged. No native persistence format changes.
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

@@ -107,11 +107,11 @@ impl ContentFixture {
         });
         let commit_key = f.objects.put(&commit).await.unwrap().0;
         let native_id = b::CommitId::from_bytes(commit_key.as_bytes());
-        let target = o::RefTarget::from_merge(Merge::from_vec(vec![
+        let target = Merge::from_vec(vec![
             Some(native_id.clone()),
             None,
             Some(b::CommitId::from_bytes(roots::ROOT_COMMIT.as_bytes())),
-        ]));
+        ]);
         let mut view = o::View::make_root(native_id.clone());
         view.local_bookmarks
             .insert("conflicted".into(), target.clone());

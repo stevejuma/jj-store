@@ -70,7 +70,9 @@ impl Decorations {
         drop(set);
         // Upstream retains prefix ambiguity and hidden offsets. Empty heads
         // avoid a second ancestor traversal; this generation overlays visibility.
-        let changes = index.change_id_index(&mut std::iter::empty());
+        let changes = index
+            .change_id_index(&mut std::iter::empty())
+            .map_err(|_| Error::Unavailable)?;
         budget.work((index.num_commits() as usize).div_ceil(64))?;
         changes
             .resolve_prefix(&HexPrefix::from_bytes(
@@ -127,11 +129,11 @@ impl Decorations {
         target: &RefTarget,
         budget: &Budget,
     ) -> Result<()> {
-        let terms = target.added_ids().count() + target.removed_ids().count();
+        let terms = target.present_adds().count() + target.present_removes().count();
         budget.work(1 + terms * terms)?;
         for commit in target
-            .added_ids()
-            .chain(target.removed_ids())
+            .present_adds()
+            .chain(target.present_removes())
             .collect::<BTreeSet<_>>()
         {
             budget.work(1)?;
@@ -141,9 +143,9 @@ impl Decorations {
                 .push(Bookmark {
                     name: name.to_owned(),
                     remote: remote.map(str::to_owned),
-                    added: target.added_ids().any(|id| id == commit),
-                    removed: target.removed_ids().any(|id| id == commit),
-                    conflicted: target.has_conflict(),
+                    added: target.present_adds().any(|id| id == commit),
+                    removed: target.present_removes().any(|id| id == commit),
+                    conflicted: !target.is_resolved(),
                 });
         }
         Ok(())
@@ -174,7 +176,7 @@ fn label_weight(
     budget: &Budget,
 ) -> Result<u64> {
     budget.work(1)?;
-    let terms = target.added_ids().count() + target.removed_ids().count();
+    let terms = target.present_adds().count() + target.present_removes().count();
     if terms > budget.limits.metadata.max_merge_terms {
         return Err(budget.fail(Error::Limit));
     }

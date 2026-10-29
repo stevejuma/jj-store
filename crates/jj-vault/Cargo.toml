@@ -5,6 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 description = "Reusable automatic local vault checkpoint coordinator"
+publish = false
 readme = "README.md"
 
 [dependencies]

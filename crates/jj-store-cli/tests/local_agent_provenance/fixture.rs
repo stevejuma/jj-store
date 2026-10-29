@@ -6,7 +6,7 @@ use jj_store_service::local_repository::*;
 use std::{collections::BTreeSet, path::Path, process::Command};
 
 pub fn settings() -> UserSettings {
-    UserSettings::from_config(StackedConfig::with_defaults()).unwrap()
+    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap()
 }
 pub fn stock(path: &Path, args: &[&str]) -> String {
     let output = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))

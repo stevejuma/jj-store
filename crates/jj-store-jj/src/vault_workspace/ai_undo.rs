@@ -102,7 +102,7 @@ impl Session {
                 .map_err(jj)?;
         Ok(AiUndoPreview {
             paths: selected,
-            expected: format!("{:x}", Sha256::digest(identity)),
+            expected: crate::lower_hex(Sha256::digest(identity)),
         })
     }
 }

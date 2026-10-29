@@ -352,7 +352,7 @@ async fn build_with_tables(
             for (name, target) in &view.store_view().local_bookmarks {
                 budget.work(1)?;
                 let mut ids = Vec::new();
-                for id in target.as_merge().iter().flatten() {
+                for id in target.iter().flatten() {
                     budget.work(1)?;
                     ids.extend_from_slice(id.as_bytes());
                 }

@@ -150,7 +150,10 @@ complete performance baselines.
 
 Initial crates.io creation requires a short-lived API token. Verify all
 artifacts first, then authenticate outside the checkout. Publish the verified
-archives in dependency order with `pnpm release:registry -- --publish`.
+archives in dependency order with `pnpm release:registry -- --publish`. That
+publishes the `jj-store` command and the crates it links. `jj-history-service`,
+`jj-vault`, `tauri-plugin-jj-store`, and `jj-store-embedded-rustfs` stay off
+crates.io; applications consume them from the git repository.
 
 Configure every crate's trusted publisher for `stevejuma/jj-store`, workflow
 `publish-release.yml` and environment `release`, then enforce trusted

@@ -116,7 +116,7 @@ impl Fixture {
     }
 }
 fn settings() -> UserSettings {
-    UserSettings::from_config(StackedConfig::with_defaults()).unwrap()
+    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap()
 }
 fn oid(id: &o::OperationId) -> m::OperationId {
     m::OperationId::from_slice(id.as_bytes()).unwrap()

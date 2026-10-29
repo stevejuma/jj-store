@@ -1,9 +1,7 @@
 use super::*;
 use jj_lib::{
-    git_backend::GitBackend,
-    ref_name::WorkspaceName,
-    signing::Signer,
-    workspace_store::{SimpleWorkspaceStore, WorkspaceStore as _},
+    git_backend::GitBackend, ref_name::WorkspaceName, simple_workspace_store::SimpleWorkspaceStore,
+    workspace_store::WorkspaceStore as _,
 };
 use std::io::Write as _;
 
@@ -35,7 +33,8 @@ pub(super) async fn ensure(binding: &Binding, settings: &UserSettings) -> Result
                 gix::hash::Kind::Sha1,
             )?))
         },
-        Signer::from_settings(settings).map_err(jj)?,
+        jj_lib::signing_factory::signer_from_settings(settings).map_err(jj)?,
+        ReadonlyRepo::default_workspace_store_initializer(),
         ReadonlyRepo::default_op_store_initializer(),
         ReadonlyRepo::default_op_heads_store_initializer(),
         ReadonlyRepo::default_index_store_initializer(),
@@ -65,7 +64,7 @@ pub(super) async fn ensure(binding: &Binding, settings: &UserSettings) -> Result
     )
     .map_err(jj)?;
     fs::write(wc.join("type"), "local")?;
-    SimpleWorkspaceStore::load(&metadata)
+    SimpleWorkspaceStore::load(&metadata.join("workspace_store"))
         .map_err(jj)?
         .add(&name, &binding.root)
         .map_err(jj)?;

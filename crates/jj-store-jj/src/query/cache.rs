@@ -246,7 +246,7 @@ fn inventory(
                     if read != bytes {
                         return Err(Error::Unavailable);
                     }
-                    format!("{:x}", digest.finalize())
+                    crate::lower_hex(digest.finalize())
                 } else {
                     String::new()
                 };

@@ -1,8 +1,8 @@
 # M30 public release
 
-| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                         | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002,E-UI-CI-003,E-LAPIS-AI-001,E-STORY-PARITY-001,E-STORY-DOC-REVIEW-001,E-CI-SUITES-FIX-002,E-CI-SUITES-FIX-003,E-CI-OFFLINE-GOVERNANCE-001,E-PACKAGE-LICENSE-001,E-PACKAGE-LICENSE-002,E-GIT-CRATE-PINS-001,E-MIRA-012-PIN-001,E-PACKAGE-GIT-PINS-001 |
+| Task | Status      | Depends | Requirements                                                             | Acceptance gate                                                           | Next action                                                         | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ---- | ----------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M30  | In progress | M0      | JST-ARCH-005,JST-CLI-002,JST-CLI-004,JST-DOC-001,JST-DOC-002,JST-SEC-004 | Cargo, native bundles, Pages and authenticated GHCR release qualification | Repair qualification failures, then rerun the complete release gate | E-PUBLIC-RELEASE-001,E-AUTOMATION-GOVERNANCE-001,E-CI-BOOTSTRAP-001,E-CI-FORMAT-001,E-CI-TOOL-001,E-CI-ENVIRONMENT-001,E-CI-FIXTURE-001,E-CI-PIPELINE-001,E-CI-BUNDLE-001,E-CI-BROWSER-001,E-CI-GOVERNANCE-001,E-CI-ACTIONLINT-001,E-CI-STANDARD-001,E-CI-AFFECTED-001,E-CI-CACHE-TRIAL-001,E-CI-HEAVY-001,E-CI-SUITES-001,E-CI-SUITES-FIX-001,E-CI-RUNTIME-TOOLS-001,E-CI-SUITES-MEASURE-001,E-UI-CI-001,E-UI-CI-002,E-UI-CI-003,E-LAPIS-AI-001,E-STORY-PARITY-001,E-STORY-DOC-REVIEW-001,E-CI-SUITES-FIX-002,E-CI-SUITES-FIX-003,E-CI-OFFLINE-GOVERNANCE-001,E-PACKAGE-LICENSE-001,E-PACKAGE-LICENSE-002,E-GIT-CRATE-PINS-001,E-MIRA-012-PIN-001,E-PACKAGE-GIT-PINS-001,E-CLI-GIT-CRATES-001,E-FORMAT-INDEX-REVIEW-001,E-GOV-LINE-LIMIT-001,E-HMAC-KEYINIT-001,E-JJ46-COMPILE-001,E-JJ46-DOCS-001,E-JJ46-HISTORY-001,E-JJ46-DOCS-002,E-JJ46-MARKER-001,E-JJ46-MARKER-002,E-JJ46-WORKSPACE-001,E-JJ46-DISCOVERY-001 |
 
 E-AUTOMATION-GOVERNANCE-001 qualifies the generated release/dependency PR
 exception. Static spec checks, all planned tests and publication gates remain;
@@ -190,6 +190,59 @@ M30 stays In progress.
 E-PACKAGE-GIT-PINS-001 admits those exact published git tags in the release
 package check and still rejects every other git dependency. M30 stays In
 progress.
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the `jj-store` command and
+the crates that command links. `jj-history-service`, `jj-vault`,
+`tauri-plugin-jj-store`, and `jj-store-embedded-rustfs` stay git-only.
+Dependabot's open Cargo updates are combined into one change. M30 stays In
+progress.
+
+E-FORMAT-INDEX-REVIEW-001 formats those specification pages and refreshes the
+read-index documentation fingerprint after the Cargo.toml dependency bump. M30
+stays In progress.
+
+E-GOV-LINE-LIMIT-001 keeps the Dependabot rollup and git-only publication
+boundary inside the 400-line governance page. M30 stays In progress.
+
+E-HMAC-KEYINIT-001 imports `KeyInit` for hmac 0.13 SigV4 and cursor signing.
+Signatures and stored formats stay the same. M30 stays In progress; jj-lib
+0.46.0 still fails to compile in `jj-store-jj`.
+
+E-JJ46-COMPILE-001 updates `jj-store-jj`, the CLI, vault search digests, and
+Tantivy segment listing to the jj-lib 0.46 and digest 0.11 interfaces in this
+Cargo rollup. Stored formats, signatures, and the git-tag pins stay the same.
+M30 stays In progress.
+
+E-JJ46-DOCS-001 refreshes the capture, local, search, and CLI documentation
+reviews after that compile fix. The Stacks page names jj-lib 0.46.0. The
+recorded JJ 0.45.1 qualification stays in place. M30 stays In progress.
+
+E-JJ46-HISTORY-001 keeps a stock jj 0.45.1 read from writing
+`.jj/repo/workspace_store/type`. The local history loader uses the existing
+simple workspace store without jj-lib 0.46's compatibility write. Cancellation
+still leaves that checkout unchanged. M30 stays In progress.
+
+E-JJ46-DOCS-002 refreshes the local documentation fingerprint after that read
+keeps a stock jj 0.45 checkout from gaining a workspace-store type file. The
+local guides and the recorded JJ 0.45.1 qualification stay the same. M30 stays
+In progress.
+
+E-JJ46-MARKER-001 allows the one-time jj-lib 0.46 workspace-store type marker in
+archive and reword snapshots. Other repo bytes stay unchanged. M30 stays In
+progress.
+
+E-JJ46-MARKER-002 puts that allowance into the archive and reword tests. Other
+repo bytes stay unchanged. M30 stays In progress.
+
+E-JJ46-WORKSPACE-001 opens the jj-lib 0.46 workspace store at `workspace_store`
+during vault, cache, attachment, and migration initialization. `repo/index`
+remains the commit index directory. M30 stays In progress.
+
+E-JJ46-DISCOVERY-001 keeps history discovery from writing
+`.jj/repo/workspace_store/type` on a stock jj 0.45 checkout. The read uses the
+existing simple workspace store. Saved files and other repo bytes stay
+unchanged. M30 stays In progress.
+
 <!-- generated-navigation -->
 
 ## Pages

@@ -8,8 +8,9 @@ use jj_lib::{
     object_id::ObjectId as _,
     repo::Repo as _,
     settings::UserSettings,
+    simple_workspace_store::SimpleWorkspaceStore,
     workspace::Workspace,
-    workspace_store::{SimpleWorkspaceStore, WorkspaceStore as _},
+    workspace_store::WorkspaceStore as _,
 };
 use jj_store_jj::{factories::NativeStores, operation_stores::AuthorityResult};
 use jj_store_model as m;
@@ -378,7 +379,7 @@ impl Attachment {
         {
             return Err("physical workspace does not match attachment intent".into());
         }
-        SimpleWorkspaceStore::load(&self.record.cache)?
+        SimpleWorkspaceStore::load(&self.record.cache.join("workspace_store"))?
             .add(workspace.workspace_name(), destination)?;
         self.record.complete = true;
         self.save()?;

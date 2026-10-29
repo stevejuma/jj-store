@@ -316,8 +316,7 @@ impl TryFrom<&o::RefTarget> for RefTarget {
     type Error = CodecError;
     fn try_from(r: &o::RefTarget) -> Result<Self> {
         Ok(Self(
-            r.as_merge()
-                .iter()
+            r.iter()
                 .map(|id| id.as_ref().map(commit_id).transpose())
                 .collect::<Result<_>>()?,
         ))
@@ -326,9 +325,7 @@ impl TryFrom<&o::RefTarget> for RefTarget {
 impl TryFrom<RefTarget> for o::RefTarget {
     type Error = CodecError;
     fn try_from(r: RefTarget) -> Result<Self> {
-        Ok(Self::from_merge(merge(
-            r.0.into_iter().map(|id| id.map(native_commit_id)).collect(),
-        )?))
+        merge(r.0.into_iter().map(|id| id.map(native_commit_id)).collect())
     }
 }
 

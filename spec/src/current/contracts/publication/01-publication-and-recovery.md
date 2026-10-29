@@ -106,3 +106,7 @@ edits.
 Rust 1.99 atomic update naming and equivalent test-fixture iteration preserve
 manifest CAS, stable request identities, receipts and recovery. Public package
 metadata does not alter native codec or WAL formats.
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

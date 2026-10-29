@@ -151,7 +151,7 @@ async fn missing_original_extras_fail_before_reword_import_or_candidate_write() 
         fs::remove_file(entry.unwrap().path()).unwrap();
     }
     let before = fixture.state();
-    let metadata = files(&fixture.root().join(".jj/repo"));
+    let mut metadata = files(&fixture.root().join(".jj/repo"));
     let refs = files(&fixture.root().join(".git/refs"));
     assert!(matches!(
         lease
@@ -164,7 +164,19 @@ async fn missing_original_extras_fail_before_reword_import_or_candidate_write() 
             .await,
         Err(Error::Incomplete)
     ));
-    assert_eq!(files(&fixture.root().join(".jj/repo")), metadata);
+    let marker = fixture.root().join(".jj/repo/workspace_store/type");
+    let mut after = files(&fixture.root().join(".jj/repo"));
+    let written = after.remove(&marker);
+    let previous = metadata.remove(&marker);
+    assert_eq!(after, metadata);
+    if let Some(previous) = previous {
+        assert_eq!(written.as_ref(), Some(&previous));
+    } else {
+        assert_eq!(
+            written.as_deref(),
+            Some(jj_lib::simple_workspace_store::SimpleWorkspaceStore::NAME.as_bytes())
+        );
+    }
     assert_eq!(files(&fixture.root().join(".git/refs")), refs);
     assert_eq!(fixture.state(), before);
 }

@@ -7,6 +7,7 @@ edition = "2024"
 rust-version = "1.99"
 license = "Apache-2.0"
 description = "Separate managed RustFS runtime for jj-store native storage"
+publish = false
 repository = "https://github.com/stevejuma/jj-store"
 homepage = "https://stevejuma.github.io/jj-store/"
 readme = "README.md"
@@ -16,7 +17,7 @@ name = "jj-store-rustfs"
 path = "src/main.rs"
 
 [dependencies]
-rustfs = { version = "=1.0.0", default-features = false }
+rustfs = { version = "=1.0.1", default-features = false }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 [profile.dev]

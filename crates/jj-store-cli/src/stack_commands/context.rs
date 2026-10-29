@@ -26,7 +26,7 @@ impl local_browser::Access for LocalAccess {
         &self.metadata
     }
     async fn authorize(&self) -> local_browser::Result<()> {
-        let settings = UserSettings::from_config(StackedConfig::with_defaults())
+        let settings = UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
             .map_err(|_| local_browser::Error::Unavailable)?;
         let workspace = Workspace::load(
             &settings,
@@ -59,7 +59,8 @@ impl Context {
     pub async fn open(directory: &Path) -> AuthorityResult<Self> {
         let cwd = directory.canonicalize()?;
         let workspace_directory = jj_cli::cli_util::find_workspace_dir(&cwd);
-        let settings = UserSettings::from_config(StackedConfig::with_defaults())?;
+        let settings =
+            UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)?;
         let workspace = Workspace::load(
             &settings,
             workspace_directory,

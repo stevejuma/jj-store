@@ -7,10 +7,8 @@ async fn publish(f: &Fixture, commit: &b::Commit, large_ref: bool) -> Arc<Commit
     let mut view = roots::view();
     view.head_ids = [id.clone()].into();
     if large_ref {
-        view.local_bookmarks.insert(
-            "amplified".into(),
-            o::RefTarget::from_merge(Merge::from_vec(vec![Some(id); 1025])),
-        );
+        view.local_bookmarks
+            .insert("amplified".into(), Merge::from_vec(vec![Some(id); 1025]));
     }
     let view_key = f.objects.put(&view).await.unwrap().0;
     assert_eq!(f.objects.get::<o::View>(view_key).await.unwrap(), view);

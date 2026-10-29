@@ -6,8 +6,7 @@ impl TryFrom<&o::RefTarget> for GitRefTargetV1 {
     type Error = Error;
     fn try_from(r: &o::RefTarget) -> Result<Self> {
         Ok(Self(
-            r.as_merge()
-                .iter()
+            r.iter()
                 .map(|id| id.as_ref().map(git_commit_id).transpose())
                 .collect::<Result<_>>()?,
         ))
@@ -16,11 +15,11 @@ impl TryFrom<&o::RefTarget> for GitRefTargetV1 {
 impl TryFrom<GitRefTargetV1> for o::RefTarget {
     type Error = Error;
     fn try_from(r: GitRefTargetV1) -> Result<Self> {
-        Ok(Self::from_merge(merge(
+        merge(
             r.0.into_iter()
                 .map(|id| id.map(git_native_commit_id))
                 .collect(),
-        )?))
+        )
     }
 }
 

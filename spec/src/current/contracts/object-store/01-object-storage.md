@@ -49,3 +49,7 @@ proof that a remote write finished. Any unknown repository write pauses erasure,
 retains the original deletion journal and requires a cold managed storage
 restart before continuing. External S3 erasure needs a separately qualified
 provider-side write fence and remains unavailable.
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

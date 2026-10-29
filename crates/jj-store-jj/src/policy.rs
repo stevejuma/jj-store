@@ -141,8 +141,8 @@ impl NativePolicy {
             for (name, target) in &view.local_bookmarks {
                 if self.protection.bookmarks.contains(name.as_str()) {
                     let ids = target
-                        .added_ids()
-                        .chain(target.removed_ids())
+                        .present_adds()
+                        .chain(target.present_removes())
                         .map(commit_id)
                         .collect::<wal::Result<Vec<_>>>()?;
                     protected.extend(graph.commit_ancestors(ids).await?);

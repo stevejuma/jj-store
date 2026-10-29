@@ -1,7 +1,7 @@
 use super::*;
 use jj_lib::{
-    ref_name::WorkspaceName,
-    workspace_store::{SimpleWorkspaceStore, WorkspaceStore as _},
+    ref_name::WorkspaceName, simple_workspace_store::SimpleWorkspaceStore,
+    workspace_store::WorkspaceStore as _,
 };
 use std::io::{Read as _, Write as _};
 pub(super) fn saved(binding: &Binding) -> Result<StoredBinding> {
@@ -78,7 +78,7 @@ impl Binding {
         if stored.binding.root == self.root && stored.binding.state == self.state {
             return Ok(());
         }
-        SimpleWorkspaceStore::load(&self.metadata())
+        SimpleWorkspaceStore::load(&self.metadata().join("workspace_store"))
             .map_err(jj)?
             .add(WorkspaceName::DEFAULT, &self.root)
             .map_err(jj)?;

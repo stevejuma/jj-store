@@ -112,7 +112,7 @@ impl Fixture {
             )
             .unwrap(),
         );
-        UserSettings::from_config(config).unwrap()
+        UserSettings::from_config_and_home_dir(config, None).unwrap()
     }
     async fn attachment(&self, name: &str) -> Attachment {
         Attachment::open(

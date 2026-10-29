@@ -21,9 +21,11 @@ async fn prepared_local_visibility_preserves_divergence_offsets_and_ten_thousand
     );
     jj(source.path(), &["log", "--no-graph", "-r", "all()"]);
     let metadata = source.path().join(".jj/repo");
-    let settings =
-        jj_lib::settings::UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())
-            .unwrap();
+    let settings = jj_lib::settings::UserSettings::from_config_and_home_dir(
+        jj_lib::config::StackedConfig::with_defaults(),
+        None,
+    )
+    .unwrap();
     let loader = jj_lib::repo::RepoLoader::init_from_file_system(
         &settings,
         &metadata,
@@ -34,7 +36,7 @@ async fn prepared_local_visibility_preserves_divergence_offsets_and_ten_thousand
     let selected = repo.view().wc_commit_ids().values().next().unwrap().clone();
     let target = jj_lib::op_store::RefTarget::normal(selected.clone());
     let conflict = repo.view().get_local_bookmark("branch".as_ref()).clone();
-    assert!(conflict.has_conflict());
+    assert!(!conflict.is_resolved());
     let mut transaction = repo.start_transaction();
     for number in 0..10_000 {
         transaction.repo_mut().set_local_bookmark_target(

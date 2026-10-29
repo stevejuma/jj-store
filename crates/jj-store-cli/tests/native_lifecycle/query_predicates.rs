@@ -236,7 +236,7 @@ async fn native_oracle(
                     &revset::SymbolResolver::new(repo.as_ref(), extensions.symbol_resolvers()),
                 )
                 .unwrap();
-            let set = resolved.evaluate(repo.as_ref()).unwrap();
+            let set = resolved.evaluate().unwrap();
             set.stream_graph()
                 .map_ok(|(id, _)| cid(&id))
                 .try_collect()

@@ -95,7 +95,10 @@ pub(crate) fn policy_at_git(
         .string("core.excludesFile")
         .map(|v| {
             std::str::from_utf8(&v)
-                .map(jj_lib::file_util::expand_home_path)
+                .map(|path| {
+                    let home = std::env::var_os("HOME").map(std::path::PathBuf::from);
+                    jj_lib::file_util::expand_home_path(path, home.as_deref())
+                })
                 .map_err(|_| Error::Invalid)
         })
         .transpose()?;

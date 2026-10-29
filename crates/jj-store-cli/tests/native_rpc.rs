@@ -218,8 +218,11 @@ fn key(value: m::ObjectKey) -> wire::ObjectId {
     }
 }
 fn settings() -> jj_lib::settings::UserSettings {
-    jj_lib::settings::UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())
-        .unwrap()
+    jj_lib::settings::UserSettings::from_config_and_home_dir(
+        jj_lib::config::StackedConfig::with_defaults(),
+        None,
+    )
+    .unwrap()
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

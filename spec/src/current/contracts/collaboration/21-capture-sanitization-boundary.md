@@ -41,3 +41,7 @@ scanning. It preserves the original rules, canonical sanitized JSON and refusal
 bounds. Only the host supplies admitted roots, private cache and resolved
 secrets. Real-scanner library evidence remains distinct from native Notes
 admission, durable backend publication and cold conversation recovery.
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

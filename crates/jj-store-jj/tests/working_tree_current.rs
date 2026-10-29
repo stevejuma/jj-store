@@ -54,7 +54,8 @@ async fn fixture() -> (tempfile::TempDir, PathBuf, Arc<Access>, m::OperationId) 
     let fixture = tempfile::tempdir().unwrap();
     let root = fixture.path().canonicalize().unwrap().join("workspace");
     fs::create_dir(&root).unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let (workspace, repo) = Workspace::init_internal_git(&settings, &root, gix::hash::Kind::Sha1)
         .await
         .unwrap();

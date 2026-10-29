@@ -82,7 +82,7 @@ async fn inspect(recovery: &RecoveredHistory, budget: &Budget, repair: bool) -> 
     }
     if let Some(store) = &destination.store
         && let Some(kind) = physical::read(store, "type", 64, true, budget)?
-        && kind.bytes != SimpleOpStore::name().as_bytes()
+        && kind.bytes != SimpleOpStore::NAME.as_bytes()
     {
         return Err(Error::Invalid);
     }
@@ -97,7 +97,7 @@ async fn inspect(recovery: &RecoveredHistory, budget: &Budget, repair: bool) -> 
         if physical::read(store, "type", 64, false, budget)?
             .ok_or(Error::Incomplete)?
             .bytes
-            != SimpleOpStore::name().as_bytes()
+            != SimpleOpStore::NAME.as_bytes()
         {
             return Err(Error::Invalid);
         }
@@ -127,7 +127,7 @@ async fn inspect(recovery: &RecoveredHistory, budget: &Budget, repair: bool) -> 
     destination.check()?;
     let store = destination.store.as_ref().ok_or(Error::Unavailable)?;
     if physical::read(store, "type", 64, true, budget)?.is_none() {
-        synced::select(store, "type", SimpleOpStore::name().as_bytes(), budget)?;
+        synced::select(store, "type", SimpleOpStore::NAME.as_bytes(), budget)?;
     }
     for (group, name, bytes, missing) in &records {
         if !missing {
@@ -172,7 +172,7 @@ async fn inspect(recovery: &RecoveredHistory, budget: &Budget, repair: bool) -> 
     if physical::read(store, "type", 64, false, budget)?
         .ok_or(Error::Unavailable)?
         .bytes
-        != SimpleOpStore::name().as_bytes()
+        != SimpleOpStore::NAME.as_bytes()
     {
         return Err(Error::EpochChanged);
     }

@@ -320,3 +320,7 @@ Working-copy status is a read-only private composition. Its physical fingerprint
 and complete path/line totals grant no mutation, checkout, receipt,
 content-token or publication authority. Existing typed mutation requirements
 remain unchanged (JST-MUT-001; E-WORKING-COPY-STATUS-001).
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

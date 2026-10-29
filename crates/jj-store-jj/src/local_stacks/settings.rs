@@ -34,7 +34,7 @@ pub(super) fn load(root: &Path) -> Result<UserSettings> {
         }
     }
     // The shared repo config belongs to the resolved JJ repository, including linked workspaces.
-    let defaults = UserSettings::from_config(config.clone()).map_err(jj)?;
+    let defaults = UserSettings::from_config_and_home_dir(config.clone(), None).map_err(jj)?;
     let workspace = Workspace::load(
         &defaults,
         root,
@@ -58,7 +58,7 @@ pub(super) fn load(root: &Path) -> Result<UserSettings> {
     if !overrides.is_empty() {
         config.add_layer(ConfigLayer::parse(ConfigSource::EnvOverrides, &overrides).map_err(jj)?);
     }
-    UserSettings::from_config(config).map_err(jj)
+    UserSettings::from_config_and_home_dir(config, None).map_err(jj)
 }
 pub(super) fn tracking(settings: &UserSettings) -> Result<Box<dyn jj_lib::matchers::Matcher>> {
     let expression = settings.get_string("snapshot.auto-track").map_err(jj)?;
@@ -101,7 +101,10 @@ pub(super) fn ignores(repo: &ReadonlyRepo, root: &Path) -> Result<Arc<GitIgnoreF
         .string("core.excludesFile")
         .map(|value| {
             std::str::from_utf8(&value)
-                .map(jj_lib::file_util::expand_home_path)
+                .map(|path| {
+                    let home = std::env::var_os("HOME").map(std::path::PathBuf::from);
+                    jj_lib::file_util::expand_home_path(path, home.as_deref())
+                })
                 .map_err(jj)
         })
         .transpose()?;

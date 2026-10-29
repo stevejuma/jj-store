@@ -166,6 +166,11 @@ impl NativeStores {
             self.bind(&component)?;
             fs::write(component.join("type"), "jj-store")?;
         }
+        let workspace_path = path.join("workspace_store");
+        fs::create_dir(&workspace_path)?;
+        let workspace_store =
+            ReadonlyRepo::default_workspace_store_initializer()(settings, &workspace_path)?;
+        fs::write(workspace_path.join("type"), workspace_store.name())?;
         let index_path = path.join("index");
         fs::create_dir(&index_path)?;
         let index = ReadonlyRepo::default_index_store_initializer()(settings, &index_path)?;
@@ -203,12 +208,13 @@ impl NativeStores {
         }
         let store = jj_lib::store::Store::new(
             Box::new(self.backend()?),
-            jj_lib::signing::Signer::from_settings(settings)?,
+            jj_lib::signing_factory::signer_from_settings(settings)?,
             jj_lib::tree_merge::MergeOptions::from_settings(settings)?,
         );
         Ok(RepoLoader::new(
             settings.clone(),
             store,
+            crate::query_workspace::store(),
             Arc::new(self.operations()?),
             Arc::new(self.heads()?),
             index,

@@ -38,11 +38,11 @@ async fn native_filtered_references_seek_pinned_text_before_selected_target_read
     }
     view.local_bookmarks.insert(
         "removed".into(),
-        o::RefTarget::from_merge(Merge::from_vec(vec![
+        Merge::from_vec(vec![
             Some(last.clone()),
             Some(hidden),
             Some(divergent.clone()),
-        ])),
+        ]),
     );
     view.wc_commit_ids.insert("desktop".into(), last);
     view.wc_commit_ids.insert("other".into(), divergent);

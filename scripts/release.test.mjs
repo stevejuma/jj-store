@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import {
   orderedPackages,
+  publishablePackages,
   validateVersion,
   validateTag,
   metadata,
@@ -81,4 +82,14 @@ test("all public package versions have an acyclic coordinated graph", () => {
         );
     }
   validateVersion(data, data.version);
+  const published = publishablePackages(data).map((pkg) => pkg.name);
+  for (const name of [
+    "jj-history-service",
+    "jj-vault",
+    "tauri-plugin-jj-store",
+    "jj-store-embedded-rustfs",
+  ])
+    assert.equal(published.includes(name), false, name);
+  assert.ok(published.includes("jj-store"));
+  assert.ok(published.includes("jj-store-model"));
 });

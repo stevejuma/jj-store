@@ -9,7 +9,7 @@ use std::{fs, path::Path, process::Command, sync::Arc};
 const SOURCE: m::RepositoryId = m::RepositoryId::new([91; 16]);
 const DEST: m::RepositoryId = m::RepositoryId::new([92; 16]);
 fn settings() -> UserSettings {
-    UserSettings::from_config(StackedConfig::with_defaults()).unwrap()
+    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap()
 }
 fn stock(path: &Path, args: &[&str]) -> String {
     let out = Command::new("jj")

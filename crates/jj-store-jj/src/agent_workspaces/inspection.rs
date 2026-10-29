@@ -55,8 +55,9 @@ pub async fn evidence(
 ) -> crate::local_metadata::Result<crate::local_evidence::GitEvidenceCapsuleV1> {
     let metadata = metadata.to_owned();
     tokio::task::spawn_blocking(move || {
-        let settings = jj_lib::settings::UserSettings::from_config(
+        let settings = jj_lib::settings::UserSettings::from_config_and_home_dir(
             jj_lib::config::StackedConfig::with_defaults(),
+            None,
         )
         .map_err(|_| crate::local_metadata::Error::Invalid("settings"))?;
         tokio::runtime::Builder::new_current_thread()

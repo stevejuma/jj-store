@@ -96,7 +96,7 @@ fn sample_copy() -> b::CopyHistory {
 fn sample_view() -> o::View {
     let mut v = o::View::make_root(c(1));
     v.head_ids.insert(c(2));
-    let conflict = o::RefTarget::from_merge(Merge::from_vec(vec![Some(c(3)), None, Some(c(4))]));
+    let conflict = Merge::from_vec(vec![Some(c(3)), None, Some(c(4))]);
     v.local_bookmarks
         .insert("conflicted".into(), conflict.clone());
     v.local_bookmarks

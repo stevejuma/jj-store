@@ -6,8 +6,9 @@ use jj_lib::{
     object_id::ObjectId as _,
     ref_name::WorkspaceNameBuf,
     settings::UserSettings,
+    simple_workspace_store::SimpleWorkspaceStore,
     workspace::Workspace,
-    workspace_store::{SimpleWorkspaceStore, WorkspaceStore as _},
+    workspace_store::WorkspaceStore as _,
 };
 use jj_store_jj::{
     backend::BackendLimits,
@@ -307,7 +308,8 @@ impl Migration {
         stores.initialize_cache(settings, stage.path()).await?;
         self.record.local_connection.write(stage.path())?;
         let workspace: WorkspaceNameBuf = self.record.workspace.clone().into();
-        SimpleWorkspaceStore::load(stage.path())?.add(&workspace, &self.record.workspace_root)?;
+        SimpleWorkspaceStore::load(&stage.path().join("workspace_store"))?
+            .add(&workspace, &self.record.workspace_root)?;
         stores
             .load_at(
                 &stores.load_cache(settings, stage.path())?,

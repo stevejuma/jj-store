@@ -60,7 +60,8 @@ async fn candidate_with_symlink(
     changes: FileChanges<'_>,
     link: Option<(&str, &str)>,
 ) -> OperationArchiveV1 {
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let loader = jj_lib::repo::RepoLoader::init_from_file_system(
         &settings,
         &f.root().join(".jj/repo"),

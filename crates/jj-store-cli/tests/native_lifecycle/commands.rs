@@ -182,11 +182,7 @@ impl Branches {
         view.wc_commit_ids.insert("browser".into(), native(ids[0]));
         view.local_bookmarks.insert(
             "topic".into(),
-            o::RefTarget::from_merge(Merge::from_vec(vec![
-                Some(native(ids[0])),
-                None,
-                Some(native(ids[1])),
-            ])),
+            Merge::from_vec(vec![Some(native(ids[0])), None, Some(native(ids[1]))]),
         );
         let operation = stage_view(&f, &root, view, "two native branches").await;
         f.session

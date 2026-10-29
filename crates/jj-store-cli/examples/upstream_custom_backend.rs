@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::path::Path;
-use std::pin::Pin;
-use std::time::SystemTime;
-
 use async_trait::async_trait;
 use futures::AsyncRead;
 use futures::stream::BoxStream;
@@ -40,14 +36,15 @@ use jj_lib::backend::SymlinkId;
 use jj_lib::backend::Tree;
 use jj_lib::backend::TreeId;
 use jj_lib::git_backend::GitBackend;
-use jj_lib::index::Index;
 use jj_lib::repo::StoreFactories;
 use jj_lib::repo_path::RepoPath;
 use jj_lib::repo_path::RepoPathBuf;
 use jj_lib::settings::UserSettings;
-use jj_lib::signing::Signer;
+use jj_lib::signing_factory::signer_from_settings;
 use jj_lib::workspace::Workspace;
 use jj_lib::workspace::WorkspaceInitError;
+use std::path::Path;
+use std::pin::Pin;
 
 #[derive(clap::Parser, Clone, Debug)]
 enum CustomCommand {
@@ -80,7 +77,7 @@ async fn run_custom_command(
                 &settings,
                 wc_path,
                 &|settings, store_path| Ok(Box::new(JitBackend::init(settings, store_path)?)),
-                Signer::from_settings(&settings).map_err(WorkspaceInitError::SignInit)?,
+                signer_from_settings(&settings).map_err(WorkspaceInitError::SignInit)?,
             )
             .await?;
             Ok(())
@@ -207,9 +204,5 @@ impl Backend for JitBackend {
         head: &CommitId,
     ) -> BackendResult<BoxStream<'_, BackendResult<CopyRecord>>> {
         self.inner.get_copy_records(paths, root, head)
-    }
-
-    fn gc(&self, index: &dyn Index, keep_newer: SystemTime) -> BackendResult<()> {
-        self.inner.gc(index, keep_newer)
     }
 }

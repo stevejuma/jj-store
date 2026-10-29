@@ -113,28 +113,28 @@ async fn describe(
                 .view()
                 .local_bookmarks()
                 .filter_map(|(name, target)| {
-                    let added = target.added_ids().any(|id| id == commit.id());
-                    let removed = target.removed_ids().any(|id| id == commit.id());
+                    let added = target.present_adds().any(|id| id == commit.id());
+                    let removed = target.present_removes().any(|id| id == commit.id());
                     (added || removed).then(|| Bookmark {
                         name: name.as_str().to_owned(),
                         remote: None,
                         added,
                         removed,
-                        conflicted: target.has_conflict(),
+                        conflicted: !target.is_resolved(),
                     })
                 })
                 .collect();
             bookmarks.extend(repo.view().all_remote_bookmarks().filter_map(
                 |(symbol, remote_ref)| {
                     let target = &remote_ref.target;
-                    let added = target.added_ids().any(|id| id == commit.id());
-                    let removed = target.removed_ids().any(|id| id == commit.id());
+                    let added = target.present_adds().any(|id| id == commit.id());
+                    let removed = target.present_removes().any(|id| id == commit.id());
                     (added || removed).then(|| Bookmark {
                         name: symbol.name.as_str().to_owned(),
                         remote: Some(symbol.remote.as_str().to_owned()),
                         added,
                         removed,
-                        conflicted: target.has_conflict(),
+                        conflicted: !target.is_resolved(),
                     })
                 },
             ));
@@ -338,7 +338,7 @@ pub(super) async fn run(
                 }
                 return Ok((Nodes::Log(nodes), next.map(m::ObjectKey::Commit)));
             }
-            let set = resolved.evaluate(repo).map_err(|_| Error::Unavailable)?;
+            let set = resolved.evaluate().map_err(|_| Error::Unavailable)?;
             let mut stream = set.stream_graph();
             let mut nodes = vec![];
             while let Some((id, edges)) = stream.try_next().await.map_err(|_| Error::Unavailable)? {

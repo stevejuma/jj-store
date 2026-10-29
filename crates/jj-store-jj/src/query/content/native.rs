@@ -64,7 +64,7 @@ impl Context {
         let backend = NativeBackend::new(self.objects.clone(), authority, BackendLimits::default())
             .map_err(|_| Error::Unavailable)?
             .with_derived_files(Some(files));
-        let settings = UserSettings::from_config(StackedConfig::with_defaults())
+        let settings = UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
             .map_err(|_| Error::Unavailable)?;
         Ok(Store::new(
             Box::new(backend),

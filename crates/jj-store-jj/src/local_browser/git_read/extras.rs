@@ -142,7 +142,7 @@ impl Extras {
                     budget.read_bytes(n)?;
                     digest.update(&buffer[..n]);
                 }
-                if size != info.len() || format!("{:x}", digest.finalize()) != id {
+                if size != info.len() || crate::lower_hex(digest.finalize()) != id {
                     return Err(Error::Corrupt);
                 }
                 if Stamp::read(&file)? != stamp {
@@ -251,7 +251,7 @@ impl Segment {
                 digest.update(&buffer[..n]);
             }
             if size != self.size
-                || format!("{:x}", digest.finalize()) != self.digest
+                || crate::lower_hex(digest.finalize()) != self.digest
                 || Stamp::read(file)? != self.stamp
             {
                 return Err(Error::Corrupt);
@@ -425,7 +425,7 @@ mod tests {
             }
             digest.update(&buffer[..n]);
         }
-        let name = format!("{:x}", digest.finalize());
+        let name = crate::lower_hex(digest.finalize());
         let path = root.join(&name);
         fs::rename(staging, &path).unwrap();
         fs::write(root.join("heads").join(&name), []).unwrap();

@@ -9,8 +9,9 @@ impl Provider {
         let mut configured = None;
         let mut exclude = None;
         if kind.trim() == "git" {
-            let settings = jj_lib::settings::UserSettings::from_config(
+            let settings = jj_lib::settings::UserSettings::from_config_and_home_dir(
                 jj_lib::config::StackedConfig::with_defaults(),
+                None,
             )
             .map_err(|_| "ignore_policy_unavailable")?;
             let metadata = crate::local_repository::metadata_store(&settings, &selection.metadata)
@@ -21,7 +22,10 @@ impl Provider {
                 .string("core.excludesFile")
                 .map(|s| {
                     std::str::from_utf8(&s)
-                        .map(jj_lib::file_util::expand_home_path)
+                        .map(|path| {
+                            let home = std::env::var_os("HOME").map(std::path::PathBuf::from);
+                            jj_lib::file_util::expand_home_path(path, home.as_deref())
+                        })
                         .map_err(|_| "invalid_ignore_policy")
                 })
                 .transpose()?;

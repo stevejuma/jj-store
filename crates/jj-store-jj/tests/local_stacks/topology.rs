@@ -233,7 +233,8 @@ async fn legacy_replace(root: &Path, description: &str) -> String {
         settings::UserSettings,
         workspace::Workspace,
     };
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let mut workspace = Workspace::load(
         &settings,
         root,

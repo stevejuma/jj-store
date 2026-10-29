@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Re-reviewed the publication topic pages against a test-only, clippy-directed collapse of two nested ifs in the jj-store-object S3 deletion test-harness mock server: no product behavior, deletion semantics, storage format or page statement changed, so the pages remain accurate as written.",
-      "fingerprint": "137f83249e308fc8d1e051d2959049cf2e69b5af1f85ce9235c995a2a89c2a04"
+      "reason": "Reviewed the hmac 0.13 KeyInit import in S3 SigV4 signing. Request canonicalization, signatures, checksums, and storage outcomes are unchanged, so the storage and publication pages stay accurate.",
+      "fingerprint": "ebed638423597786112d12a047a2a9b7db817456b065773f8d4bc9e99fa9b917"
     }
   },
   {
@@ -44,8 +44,8 @@
     ],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Reviewed sibling agent-redaction pin eada2b26 (0.1.1) with transient CodexSnapshotReader docs: technical capture records the published source pin, keeps tentative batches until Complete without durable ACK/resume, and leaves application spool and receipt contracts unchanged.",
-      "fingerprint": "1213597bbc69a4b9831b55dfb1e5a206286bdb23600f6295cc62cf03c606a837"
+      "reason": "Reviewed the digest 0.11 pending-hook filename. It stays the lowercase hex of the same SHA-256 key, and the capture guides still describe spool, receipts, and source admission without that encoding.",
+      "fingerprint": "0267da2ef4f0b4b95dbe0103bb78b4f644a94586824ec5f95c2eb947f7afb45e"
     }
   },
   {
@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the jj-vault committed indexed read-admission change (bounded five-second publisher wait, pinned committed index generation, explicit Busy under sustained contention, never initializes or repairs projection bytes) against the local topic pages: they keep their architecture-level history and backup statements accurate, and the canonical automatic-vault-backup chapter owns the admission detail.",
-      "fingerprint": "594da2826859232f55e3ad8a4c188fbfdb4455eaf9304d1ea537de7082c7052b"
+      "reason": "Reviewed history discovery after it opens a stock jj 0.45 checkout without writing workspace_store/type. The local guides and the recorded JJ 0.45.1 qualification stay the same.",
+      "fingerprint": "e2ea48ac445a2e918943304bba08837fcdffa6850d7a0fac62d2722de290fda4"
     }
   },
   {
@@ -70,8 +70,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed 2a479c74..4d660d4c private working-tree status and observer drain: complete sparse/ignored baseline comparison, bounded private bytes, second witness observation and authorization. Local technical manual preserves read-only scope and no new browser route.",
-      "fingerprint": "299a0b26f9b04695c6573b29624ec1ed396664ae405cafe7c061834ac208e74e"
+      "reason": "Reviewed hmac 0.13 KeyInit imports for service cursor signatures. Cursor bytes, authorization, and service behavior are unchanged, so the architecture and transport pages stay accurate.",
+      "fingerprint": "7aa8f4af1876927142367b5b1cf531f560acde853e522766b3e09bfce18bd597"
     }
   },
   {
@@ -79,8 +79,8 @@
     "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
     "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
-      "reason": "Reviewed equivalent native read-context iteration after release lint cleanup. Rebuildable search authority and bounded read behavior are unchanged.",
-      "fingerprint": "44511ad330c06eccd325f5abd7eeb77eadec857f6e32907ba3ba037274cf775f"
+      "reason": "Reviewed Tantivy 0.27 segment file listing. Existing index components are still copied when the staged files exist, and the search pages do not depend on SegmentMeta list_files.",
+      "fingerprint": "d39d764e6f67db4e785dcb2cc550c87e13627aee94459b45af320ca49371ac62"
     }
   },
   {
@@ -114,8 +114,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed the unchanged local-folder CLI contract now delegated to reusable default-settings JJ discovery; original safe error categories, read-only inspection and metadata reopening remain intact, without new commands or executable configuration.",
-      "fingerprint": "045cf6ded0936340b50e146f3e417b91b7422de7d1feefb0eaf9fd11370dd969"
+      "reason": "Reviewed CLI cache and attachment loads against the jj-lib 0.46 workspace_store directory. Commands, errors, and the recorded JJ 0.45.1 install qualification stay the same.",
+      "fingerprint": "2d46e232f9b50f141f5454b6ee2d8034541fcd6cd484835e921cd6e5d4efe6f1"
     }
   },
   {
@@ -127,8 +127,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Re-reviewed the http topic pages against a test-only repair that aligns the contract-inventory count pins (202 total/88 local) with the deliberately landed and already-regenerated 204-path openapi surface from the confirmed repository-deletion routes: the transport, security and conversion pages describe behavior, not test pins, and remain accurate without content changes.",
-      "fingerprint": "3734dbafe4b39ec528320d7a11175517655436dd0e82b71c32d4986be63c065c"
+      "reason": "Reviewed hmac 0.13 KeyInit imports for HTTP cursor signatures. Admission, wire format, and route contracts are unchanged, so the transport and security pages stay accurate.",
+      "fingerprint": "6d581d7f2bf41d62afc7c35b48d99374cb55a287bddc96baa8f45faa810c5f06"
     }
   },
   {
@@ -196,8 +196,8 @@
       "docs/site/technical/architecture.md"
     ],
     "review": {
-      "reason": "Reviewed Cargo distribution metadata only; read-index source, exact-root fingerprints, posting invariants, bounded retention and native authority separation remain unchanged.",
-      "fingerprint": "6269ce044ebe95a7a454a2c6e0a7f8cdb0c4b2c3b07d0368dd0b9ef8db16f784"
+      "reason": "Read-index Cargo.toml now requires sha2 0.11 and redb 4.4. Exact-root fingerprints, posting invariants, bounded retention and native authority are unchanged, and the manual pages do not pin those crate versions.",
+      "fingerprint": "c460ea7795fae19ba3405603fb53abfa1604596b2d9ab30eb130b1383586943d"
     }
   },
   {

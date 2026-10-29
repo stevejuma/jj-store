@@ -83,7 +83,7 @@ pub(super) fn read(root: &Dir, path: &str) -> Result<Option<Vec<u8>>> {
     Ok(Some(data))
 }
 pub(super) fn digest(data: Option<&[u8]>) -> String {
-    data.map(|bytes| format!("{:x}", Sha256::digest(bytes)))
+    data.map(|bytes| crate::lower_hex(Sha256::digest(bytes)))
         .unwrap_or_else(|| "missing".into())
 }
 pub(super) fn executable(root: &Dir, path: &str) -> Result<bool> {

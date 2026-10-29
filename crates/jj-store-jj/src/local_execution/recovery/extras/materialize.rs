@@ -6,7 +6,7 @@ use jj_lib::{
 use prost::Message as _;
 use std::collections::BTreeMap;
 pub(super) fn backend(recovery: &RecoveredHistory) -> Result<GitBackend> {
-    let settings = UserSettings::from_config(StackedConfig::with_defaults())
+    let settings = UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
         .map_err(|_| Error::Unavailable)?;
     let backend = GitBackend::load(&settings, &recovery.access.metadata_path().join("store"))
         .map_err(|_| Error::Unavailable)?;

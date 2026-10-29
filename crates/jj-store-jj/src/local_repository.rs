@@ -18,7 +18,10 @@ pub fn metadata_store(settings: &UserSettings, repo_path: &Path) -> Result<Metad
 
 /// Default-only settings for hosts that consume owned interfaces, without importing JJ.
 pub fn default_metadata_store(repo_path: &Path) -> Result<MetadataStore> {
-    let settings = UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())
-        .map_err(Error::other)?;
+    let settings = UserSettings::from_config_and_home_dir(
+        jj_lib::config::StackedConfig::with_defaults(),
+        None,
+    )
+    .map_err(Error::other)?;
     metadata_store(&settings, repo_path)
 }

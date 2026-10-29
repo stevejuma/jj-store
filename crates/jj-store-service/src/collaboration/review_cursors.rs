@@ -1,7 +1,7 @@
 use super::{Error, Result, ReviewReadSnapshot};
 use crate::{auth::Clock, pagination::Limits};
 use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
-use hmac::{Hmac, Mac as _};
+use hmac::{Hmac, KeyInit as _, Mac as _};
 use jj_store_model as m;
 use jj_store_wal::publication::{ReviewCatalogKey, ReviewStoreSnapshot};
 use serde::{Deserialize, Serialize};

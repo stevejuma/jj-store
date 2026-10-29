@@ -33,7 +33,8 @@ async fn retained_operation_ancestry_reconstructs_exactly_after_source_loss_and_
         })
         .await
         .unwrap();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let archive = local_evidence::capture_operation_archive(
         &settings,
         &fixture.root().join(".jj/repo"),
@@ -106,7 +107,8 @@ async fn archive_limits_and_missing_source_ancestry_fail_without_publication() {
     let fixture = Fixture::new().await;
     let expected = fixture.witness().await;
     let before = fixture.state();
-    let settings = UserSettings::from_config(StackedConfig::with_defaults()).unwrap();
+    let settings =
+        UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap();
     let metadata = fixture.root().join(".jj/repo");
     for limits in [
         OperationArchiveLimits {

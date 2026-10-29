@@ -16,6 +16,21 @@ fn files(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
     }
     result
 }
+fn assert_repo_files_stable(root: &Path, mut before: BTreeMap<PathBuf, Vec<u8>>) {
+    let marker = root.join(".jj/repo/workspace_store/type");
+    let mut after = files(&root.join(".jj/repo"));
+    let written = after.remove(&marker);
+    let previous = before.remove(&marker);
+    assert_eq!(after, before);
+    if let Some(previous) = previous {
+        assert_eq!(written.as_ref(), Some(&previous));
+    } else {
+        assert_eq!(
+            written.as_deref(),
+            Some(jj_lib::simple_workspace_store::SimpleWorkspaceStore::NAME.as_bytes())
+        );
+    }
+}
 #[tokio::test]
 async fn historical_only_code_remains_reachable_after_gc_and_packed_ref_replay() {
     let fixture = Fixture::new().await;
@@ -63,7 +78,7 @@ async fn historical_only_code_remains_reachable_after_gc_and_packed_ref_replay()
         !archive.capsule().unwrap().commits.contains_key(&historical),
         "test requires code used only by a historical view"
     );
-    assert_eq!(files(&fixture.root().join(".jj/repo")), source_before);
+    assert_repo_files_stable(&fixture.root(), source_before);
     let store = MetadataStore::open(&fixture.root().join(".git"), Limits::default()).unwrap();
     let key = adversarial::key(&fixture);
     let StackRetentionOutcome::Retained(selected) =
@@ -113,7 +128,7 @@ async fn archive_capture_never_imports_missing_extras_or_creates_nogc_refs() {
     let state = fixture.state();
     assert!(
         local_evidence::capture_operation_archive(
-            &UserSettings::from_config(StackedConfig::with_defaults()).unwrap(),
+            &UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None).unwrap(),
             &fixture.root().join(".jj/repo"),
             fixture.access().repository(),
             operation,
@@ -123,7 +138,7 @@ async fn archive_capture_never_imports_missing_extras_or_creates_nogc_refs() {
         .is_err(),
         "recovery cannot infer lost original change IDs/extras"
     );
-    assert_eq!(files(&fixture.root().join(".jj/repo")), before);
+    assert_repo_files_stable(&fixture.root(), before);
     assert_eq!(files(&fixture.root().join(".git/refs")), refs);
     assert_eq!(fixture.state(), state);
 }

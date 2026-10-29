@@ -158,7 +158,7 @@ async fn generate(
         hash.update((index as u64).to_le_bytes());
         parts.push(Part {
             descriptor: Hunk {
-                id: format!("native:{:x}", hash.finalize()),
+                id: format!("native:{}", crate::lower_hex(hash.finalize())),
                 label,
                 patch,
             },

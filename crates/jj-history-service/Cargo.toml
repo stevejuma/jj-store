@@ -8,6 +8,7 @@ repository.workspace = true
 homepage.workspace = true
 readme = "README.md"
 description = "Host-admitted operation-pinned local history without a UI transport"
+publish = false
 
 [dependencies]
 jj-store-jj = { workspace = true, default-features = false, features = ["local-history"] }

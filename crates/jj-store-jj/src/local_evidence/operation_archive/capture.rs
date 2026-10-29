@@ -65,7 +65,7 @@ async fn capture(
     let kind = physical::read(&source, "type", 64, false, &budget)
         .map_err(|_| Error::Invalid("source operation type"))?
         .ok_or(Error::Invalid("source operation type"))?;
-    if kind.bytes != SimpleOpStore::name().as_bytes() {
+    if kind.bytes != SimpleOpStore::NAME.as_bytes() {
         return Err(Error::Invalid("source operation profile"));
     }
     let operations =

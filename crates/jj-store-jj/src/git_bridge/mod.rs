@@ -259,7 +259,10 @@ pub async fn verify_delta(
     let scratch = tempfile::tempdir()?;
     let bare = scratch.path().join("verified.git");
     gix::init_bare(&bare)?;
-    let settings = UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())?;
+    let settings = UserSettings::from_config_and_home_dir(
+        jj_lib::config::StackedConfig::with_defaults(),
+        None,
+    )?;
     let mut converter = GitConverter::open(
         &settings,
         &scratch.path().join("conversion"),
@@ -358,7 +361,7 @@ async fn verify_intent_view(
         let target = view
             .local_bookmarks
             .get(name)
-            .unwrap_or_else(|| op::RefTarget::absent_ref());
+            .unwrap_or(&op::ABSENT_REF_TARGET);
         let desired = value
             .desired
             .native

@@ -10,3 +10,7 @@ at that local authority. A bounded background worker exchanges immutable objects
 and accepted publications with one configured authenticated upstream. Remote
 health changes replication status; it does not enter the foreground command
 path.
+
+E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
+crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
+jj-store-embedded-rustfs stay git-only.

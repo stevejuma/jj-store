@@ -386,7 +386,7 @@ impl Executor {
     }
 }
 pub(crate) fn loader(path: &Path) -> Result<RepoLoader> {
-    let settings = UserSettings::from_config(StackedConfig::with_defaults())
+    let settings = UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
         .map_err(|_| Error::Unavailable)?;
     if std::fs::read_to_string(path.join("store/type"))
         .map_err(|_| Error::Unavailable)?
@@ -398,12 +398,65 @@ pub(crate) fn loader(path: &Path) -> Result<RepoLoader> {
     if std::fs::read_to_string(path.join("op_store/type"))
         .map_err(|_| Error::Unavailable)?
         .trim()
-        != jj_lib::simple_op_store::SimpleOpStore::name()
+        != jj_lib::simple_op_store::SimpleOpStore::NAME
     {
         return Err(Error::Invalid);
     }
-    RepoLoader::init_from_file_system(&settings, path, &default_backend_factories())
-        .map_err(|_| Error::Unavailable)
+    let factories = default_backend_factories();
+    // jj-lib 0.46 writes workspace_store/type when that file is absent. A read of
+    // a stock 0.45 checkout must leave those bytes unchanged.
+    if !path.join("workspace_store/type").is_file() {
+        return loader_without_workspace_type(&settings, path, &factories);
+    }
+    RepoLoader::init_from_file_system(&settings, path, &factories).map_err(|_| Error::Unavailable)
+}
+fn loader_without_workspace_type(
+    settings: &UserSettings,
+    path: &Path,
+    factories: &jj_lib::repo::StoreFactories,
+) -> Result<RepoLoader> {
+    let merge_options = jj_lib::tree_merge::MergeOptions::from_settings(settings)
+        .map_err(|_| Error::Unavailable)?;
+    let store = jj_lib::store::Store::new(
+        factories
+            .load_backend(settings, &path.join("store"))
+            .map_err(|_| Error::Unavailable)?,
+        jj_lib::signing_factory::signer_from_settings(settings).map_err(|_| Error::Unavailable)?,
+        merge_options,
+    );
+    let workspace =
+        jj_lib::simple_workspace_store::SimpleWorkspaceStore::load(&path.join("workspace_store"))
+            .map_err(|_| Error::Unavailable)?;
+    let workspace_store: Arc<dyn jj_lib::workspace_store::WorkspaceStore> =
+        Arc::from(Box::new(workspace) as Box<dyn jj_lib::workspace_store::WorkspaceStore>);
+    let root = jj_lib::op_store::RootOperationData {
+        root_commit_id: store.root_commit_id().clone(),
+    };
+    Ok(RepoLoader::new(
+        settings.clone(),
+        store,
+        workspace_store,
+        Arc::from(
+            factories
+                .load_op_store(settings, &path.join("op_store"), root)
+                .map_err(|_| Error::Unavailable)?,
+        ),
+        Arc::from(
+            factories
+                .load_op_heads_store(settings, &path.join("op_heads"))
+                .map_err(|_| Error::Unavailable)?,
+        ),
+        Arc::from(
+            factories
+                .load_index_store(settings, &path.join("index"))
+                .map_err(|_| Error::Unavailable)?,
+        ),
+        Arc::from(
+            factories
+                .load_submodule_store(settings, &path.join("submodule_store"))
+                .map_err(|_| Error::Unavailable)?,
+        ),
+    ))
 }
 fn git_id(id: &impl jj_lib::object_id::ObjectId) -> Result<m::GitSha1Id> {
     m::GitSha1Id::from_slice(id.as_bytes()).map_err(|_| Error::Corrupt)

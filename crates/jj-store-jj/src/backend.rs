@@ -8,7 +8,6 @@ use crate::{
 use futures::{AsyncRead, stream::BoxStream};
 use jj_lib::{
     backend::*,
-    index::Index,
     object_id::ObjectId,
     repo_path::{RepoPath, RepoPathBuf},
 };
@@ -20,7 +19,7 @@ use std::{
     pin::Pin,
     sync::{Arc, Mutex},
     task::{Context, Poll},
-    time::{Duration, SystemTime},
+    time::Duration,
 };
 use tokio::sync::Semaphore;
 use tokio_util::compat::{FuturesAsyncReadCompatExt as _, TokioAsyncReadCompatExt as _};
@@ -135,7 +134,7 @@ impl NativeBackend {
                 BackendError::ObjectNotFound {
                     object_type,
                     hash,
-                    source: e.into(),
+                    source: Some(e.into()),
                 }
             } else {
                 BackendError::ReadObject {
@@ -419,11 +418,6 @@ impl Backend for NativeBackend {
         id_bytes(head, "commit")?;
         crate::copy_query::records(self, paths, root, head)
             .map(|stream| self.runtime.stream(stream))
-    }
-    fn gc(&self, _index: &dyn Index, _keep_newer: SystemTime) -> BackendResult<()> {
-        Err(BackendError::Unsupported(
-            "destructive GC is disabled".to_owned(),
-        ))
     }
 }
 

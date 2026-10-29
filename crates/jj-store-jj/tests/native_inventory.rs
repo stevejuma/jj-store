@@ -99,11 +99,11 @@ async fn inventory_includes_invisible_evolution_copies_and_every_reference_term(
     view.head_ids = BTreeSet::from([cid(current)]).into_iter().collect();
     view.local_bookmarks.insert(
         "conflicted".into(),
-        o::RefTarget::from_merge(Merge::from_vec(vec![
+        Merge::from_vec(vec![
             Some(commits[1].clone()),
             Some(commits[2].clone()),
             None,
-        ])),
+        ]),
     );
     view.local_tags
         .insert("tag".into(), o::RefTarget::normal(commits[3].clone()));

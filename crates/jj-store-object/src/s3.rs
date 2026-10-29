@@ -4,7 +4,7 @@ use crate::*;
 use base64::Engine as _;
 use chrono::{DateTime, Utc};
 use futures::TryStreamExt as _;
-use hmac::{Hmac, Mac as _};
+use hmac::{Hmac, KeyInit as _, Mac as _};
 use reqwest::{Client, Method, Response, StatusCode, Url};
 use sha2::{Digest as _, Sha256};
 use std::{

@@ -367,11 +367,13 @@ impl Executor {
                 }
                 let selected = operation_store::selected(&context, operation).await?;
                 let raw = loader(context.access.binding.metadata_path())?;
-                let settings = UserSettings::from_config(StackedConfig::with_defaults())
-                    .map_err(|_| Error::Unavailable)?;
+                let settings =
+                    UserSettings::from_config_and_home_dir(StackedConfig::with_defaults(), None)
+                        .map_err(|_| Error::Unavailable)?;
                 let repo_loader = RepoLoader::new(
                     settings,
                     guard.store(),
+                    raw.workspace_store().clone(),
                     selected.op_store().clone(),
                     raw.op_heads_store().clone(),
                     prepared.index.clone(),
@@ -443,11 +445,15 @@ impl Executor {
                     let guard = scoped::Guard::new(source, &context.access, budget.clone(), limits);
                     let selected = operation_store::selected(&context, operation).await?;
                     let raw = loader(context.access.binding.metadata_path())?;
-                    let settings = UserSettings::from_config(StackedConfig::with_defaults())
-                        .map_err(|_| Error::Unavailable)?;
+                    let settings = UserSettings::from_config_and_home_dir(
+                        StackedConfig::with_defaults(),
+                        None,
+                    )
+                    .map_err(|_| Error::Unavailable)?;
                     let loader = RepoLoader::new(
                         settings,
                         guard.store(),
+                        raw.workspace_store().clone(),
                         selected.op_store().clone(),
                         raw.op_heads_store().clone(),
                         prepared.index.clone(),
