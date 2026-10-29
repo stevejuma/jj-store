@@ -141,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Settings action rows keep outline button labels on theme foreground beside muted help.",
-      "fingerprint": "ea84f5b5b0bd44f0f728c51b1a529c74a4acabc9215159339ec0f87a80d8b278"
+      "reason": "StoreSettings.css Prettier selector wrap only; outline and ghost action-row labels stay on theme foreground.",
+      "fingerprint": "3bdf5d086acba5755ae2b084157cc4b34fd31cab3ab5808b4b409ebca5d0725b"
     }
   },
   {
