@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the jj-lib 0.46 interface updates in jj-store-jj and the vault search digests. The Stacks page now names jj-lib 0.46.0. The recorded macOS Git qualification stays JJ 0.45.1 and is not extended.",
-      "fingerprint": "ad1ca6638727c166317427c67d541b4d0b8ef07f021b2d3372b2ba3591b8cd34"
+      "reason": "Reviewed the stock jj 0.45 history read. It opens a checkout that has no workspace_store type file without jj-lib 0.46's compatibility write. The local guides and the recorded JJ 0.45.1 qualification stay the same.",
+      "fingerprint": "afb4471e4cb22391892b871ad718dc4f797dee5cdc94dbd2086e5a84fbb3c723"
     }
   },
   {
