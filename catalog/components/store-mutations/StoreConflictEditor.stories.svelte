@@ -23,14 +23,21 @@
 
   async function sheetFor(canvasElement: HTMLElement) {
     const page = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      page.getByRole("button", { name: "Application menu" }),
+    const menu = await page.findByRole("button", {
+      name: "Application menu",
+    });
+    await userEvent.click(menu);
+    const resolve = await page.findByRole("menuitem", {
+      name: "Resolve conflicts",
+    });
+    await userEvent.click(resolve);
+    const dialog = await page.findByRole(
+      "region",
+      { name: "Resolve native conflicts" },
+      { timeout: 10_000 },
     );
-    await userEvent.click(
-      page.getByRole("menuitem", { name: "Resolve conflicts" }),
-    );
-    const dialog = await page.findByRole("region", {
-      name: "Resolve native conflicts",
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
     });
     return { page, dialog, view: within(dialog) };
   }
