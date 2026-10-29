@@ -59,6 +59,9 @@
       const input = await p.findByRole("combobox", {
         name: `${label} navigation`,
       });
+      // The picker focuses its search input on mount; Escape must originate
+      // inside the popover to dismiss it and restore trigger focus.
+      await waitFor(() => expect(input).toHaveFocus());
       const popup = input.closest<HTMLElement>(
         ".lc-community-navigation__section-picker",
       )!;
