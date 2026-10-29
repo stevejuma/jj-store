@@ -24,3 +24,5 @@
   {{#include E-FORMAT-INDEX-REVIEW-001/SUMMARY.nav.md}}
 - [E-GOV-LINE-LIMIT-001](E-GOV-LINE-LIMIT-001/index.md)
   {{#include E-GOV-LINE-LIMIT-001/SUMMARY.nav.md}}
+- [E-HMAC-KEYINIT-001](E-HMAC-KEYINIT-001/index.md)
+  {{#include E-HMAC-KEYINIT-001/SUMMARY.nav.md}}

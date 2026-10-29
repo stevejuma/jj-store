@@ -20,7 +20,7 @@ use axum::{
     extract::{Path, State as ExtractState},
     routing::{get, post},
 };
-use hmac::{Hmac, Mac as _};
+use hmac::{Hmac, KeyInit as _, Mac as _};
 use jj_store_service::local_browser as management;
 use jj_store_service::repository_deletion as deletion;
 use management::code as local;

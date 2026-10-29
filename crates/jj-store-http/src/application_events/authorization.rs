@@ -1,5 +1,5 @@
 use super::*;
-use hmac::{Hmac, Mac as _};
+use hmac::{Hmac, KeyInit as _, Mac as _};
 use jj_store_model::portable::CodeProfileV1;
 use sha2::Sha256;
 pub(super) struct Authorization {

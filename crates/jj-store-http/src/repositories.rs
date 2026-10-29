@@ -4,7 +4,7 @@ use crate::{
     dto::{RepositoryPage, RepositorySummary},
 };
 use axum::http::{HeaderMap, header};
-use hmac::{Hmac, Mac as _};
+use hmac::{Hmac, KeyInit as _, Mac as _};
 use jj_store_model::{RepositoryId, TokenId};
 use jj_store_service::{
     auth::{BearerToken, Permission},

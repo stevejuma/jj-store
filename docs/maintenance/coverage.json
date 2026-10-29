@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Re-reviewed the publication topic pages against a test-only, clippy-directed collapse of two nested ifs in the jj-store-object S3 deletion test-harness mock server: no product behavior, deletion semantics, storage format or page statement changed, so the pages remain accurate as written.",
-      "fingerprint": "137f83249e308fc8d1e051d2959049cf2e69b5af1f85ce9235c995a2a89c2a04"
+      "reason": "Reviewed the hmac 0.13 KeyInit import in S3 SigV4 signing. Request canonicalization, signatures, checksums, and storage outcomes are unchanged, so the storage and publication pages stay accurate.",
+      "fingerprint": "ebed638423597786112d12a047a2a9b7db817456b065773f8d4bc9e99fa9b917"
     }
   },
   {
@@ -70,8 +70,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed 2a479c74..4d660d4c private working-tree status and observer drain: complete sparse/ignored baseline comparison, bounded private bytes, second witness observation and authorization. Local technical manual preserves read-only scope and no new browser route.",
-      "fingerprint": "299a0b26f9b04695c6573b29624ec1ed396664ae405cafe7c061834ac208e74e"
+      "reason": "Reviewed hmac 0.13 KeyInit imports for service cursor signatures. Cursor bytes, authorization, and service behavior are unchanged, so the architecture and transport pages stay accurate.",
+      "fingerprint": "7aa8f4af1876927142367b5b1cf531f560acde853e522766b3e09bfce18bd597"
     }
   },
   {
@@ -79,8 +79,8 @@
     "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
     "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
-      "reason": "Reviewed equivalent native read-context iteration after release lint cleanup. Rebuildable search authority and bounded read behavior are unchanged.",
-      "fingerprint": "44511ad330c06eccd325f5abd7eeb77eadec857f6e32907ba3ba037274cf775f"
+      "reason": "Reviewed the hmac 0.13 KeyInit import for search cursor signatures. Rebuildable search authority and bounded paging are unchanged, so the search pages stay accurate.",
+      "fingerprint": "6167651e7e036a7345a361589a4723e54184dd82fe5bd142a9292a00b777061c"
     }
   },
   {
@@ -127,8 +127,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Re-reviewed the http topic pages against a test-only repair that aligns the contract-inventory count pins (202 total/88 local) with the deliberately landed and already-regenerated 204-path openapi surface from the confirmed repository-deletion routes: the transport, security and conversion pages describe behavior, not test pins, and remain accurate without content changes.",
-      "fingerprint": "3734dbafe4b39ec528320d7a11175517655436dd0e82b71c32d4986be63c065c"
+      "reason": "Reviewed hmac 0.13 KeyInit imports for HTTP cursor signatures. Admission, wire format, and route contracts are unchanged, so the transport and security pages stay accurate.",
+      "fingerprint": "6d581d7f2bf41d62afc7c35b48d99374cb55a287bddc96baa8f45faa810c5f06"
     }
   },
   {
