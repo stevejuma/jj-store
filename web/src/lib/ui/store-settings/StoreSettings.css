@@ -127,8 +127,11 @@
   align-items: stretch;
   gap: 0.5rem;
 }
-.store-settings__actions > [data-ui-component="button"] {
-  /* Outline/ghost buttons inherit muted copy from surrounding settings chrome. */
+.store-settings__actions
+  > [data-ui-component="button"][data-variant="outline"],
+.store-settings__actions
+  > [data-ui-component="button"][data-variant="ghost"] {
+  /* Outline/ghost labels must not inherit muted settings copy. */
   color: var(--foreground);
 }
 .store-settings__action-row > .store-settings__actions {
