@@ -166,6 +166,11 @@ impl NativeStores {
             self.bind(&component)?;
             fs::write(component.join("type"), "jj-store")?;
         }
+        let workspace_path = path.join("workspace_store");
+        fs::create_dir(&workspace_path)?;
+        let workspace_store =
+            ReadonlyRepo::default_workspace_store_initializer()(settings, &workspace_path)?;
+        fs::write(workspace_path.join("type"), workspace_store.name())?;
         let index_path = path.join("index");
         fs::create_dir(&index_path)?;
         let index = ReadonlyRepo::default_index_store_initializer()(settings, &index_path)?;

@@ -38,3 +38,5 @@
   {{#include E-JJ46-MARKER-001/SUMMARY.nav.md}}
 - [E-JJ46-MARKER-002](E-JJ46-MARKER-002/index.md)
   {{#include E-JJ46-MARKER-002/SUMMARY.nav.md}}
+- [E-JJ46-WORKSPACE-001](E-JJ46-WORKSPACE-001/index.md)
+  {{#include E-JJ46-WORKSPACE-001/SUMMARY.nav.md}}

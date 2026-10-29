@@ -379,7 +379,7 @@ impl Attachment {
         {
             return Err("physical workspace does not match attachment intent".into());
         }
-        SimpleWorkspaceStore::load(&self.record.cache)?
+        SimpleWorkspaceStore::load(&self.record.cache.join("workspace_store"))?
             .add(workspace.workspace_name(), destination)?;
         self.record.complete = true;
         self.save()?;

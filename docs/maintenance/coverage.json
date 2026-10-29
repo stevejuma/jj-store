@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the stock jj 0.45 history read. It opens a checkout that has no workspace_store type file without jj-lib 0.46's compatibility write. The local guides and the recorded JJ 0.45.1 qualification stay the same.",
-      "fingerprint": "afb4471e4cb22391892b871ad718dc4f797dee5cdc94dbd2086e5a84fbb3c723"
+      "reason": "Reviewed workspace-store loads for jj-lib 0.46. A stock jj 0.45 checkout is opened from its workspace_store directory, and history discovery does not write the type file. The local guides and the recorded JJ 0.45.1 qualification stay the same.",
+      "fingerprint": "1b62cae4c983a69c634527fcec53bc6c90b0ac533ad95a37fa6d78ade58467de"
     }
   },
   {
@@ -114,8 +114,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed the CLI against jj-lib 0.46 workspace, bookmark, and settings calls. Commands, errors, and the recorded JJ 0.45.1 install qualification stay the same.",
-      "fingerprint": "cbdca6dcb974cd3d7026189b58e3f3a6666567b8449527d1517e86432592ba16"
+      "reason": "Reviewed CLI cache and attachment loads against the jj-lib 0.46 workspace_store directory. Commands, errors, and the recorded JJ 0.45.1 install qualification stay the same.",
+      "fingerprint": "2d46e232f9b50f141f5454b6ee2d8034541fcd6cd484835e921cd6e5d4efe6f1"
     }
   },
   {

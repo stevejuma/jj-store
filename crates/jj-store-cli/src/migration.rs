@@ -308,7 +308,8 @@ impl Migration {
         stores.initialize_cache(settings, stage.path()).await?;
         self.record.local_connection.write(stage.path())?;
         let workspace: WorkspaceNameBuf = self.record.workspace.clone().into();
-        SimpleWorkspaceStore::load(stage.path())?.add(&workspace, &self.record.workspace_root)?;
+        SimpleWorkspaceStore::load(&stage.path().join("workspace_store"))?
+            .add(&workspace, &self.record.workspace_root)?;
         stores
             .load_at(
                 &stores.load_cache(settings, stage.path())?,

@@ -78,7 +78,7 @@ impl Binding {
         if stored.binding.root == self.root && stored.binding.state == self.state {
             return Ok(());
         }
-        SimpleWorkspaceStore::load(&self.metadata())
+        SimpleWorkspaceStore::load(&self.metadata().join("workspace_store"))
             .map_err(jj)?
             .add(WorkspaceName::DEFAULT, &self.root)
             .map_err(jj)?;

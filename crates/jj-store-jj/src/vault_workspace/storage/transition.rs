@@ -61,7 +61,7 @@ impl Storage {
             ref_name::WorkspaceName, simple_workspace_store::SimpleWorkspaceStore,
             workspace_store::WorkspaceStore as _,
         };
-        SimpleWorkspaceStore::load(&value.stage.join("repo"))
+        SimpleWorkspaceStore::load(&value.stage.join("repo").join("workspace_store"))
             .map_err(jj)?
             .add(WorkspaceName::DEFAULT, &self.base.root)
             .map_err(jj)?;

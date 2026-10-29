@@ -64,7 +64,7 @@ pub(super) async fn ensure(binding: &Binding, settings: &UserSettings) -> Result
     )
     .map_err(jj)?;
     fs::write(wc.join("type"), "local")?;
-    SimpleWorkspaceStore::load(&metadata)
+    SimpleWorkspaceStore::load(&metadata.join("workspace_store"))
         .map_err(jj)?
         .add(&name, &binding.root)
         .map_err(jj)?;
