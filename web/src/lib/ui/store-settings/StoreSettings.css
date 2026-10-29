@@ -127,10 +127,8 @@
   align-items: stretch;
   gap: 0.5rem;
 }
-.store-settings__actions
-  > [data-ui-component="button"][data-variant="outline"],
-.store-settings__actions
-  > [data-ui-component="button"][data-variant="ghost"] {
+.store-settings__actions > [data-ui-component="button"][data-variant="outline"],
+.store-settings__actions > [data-ui-component="button"][data-variant="ghost"] {
   /* Outline/ghost labels must not inherit muted settings copy. */
   color: var(--foreground);
 }
