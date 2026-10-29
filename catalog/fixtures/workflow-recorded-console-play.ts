@@ -5,10 +5,13 @@ export const verifyRecordedConsole = async ({
   canvasElement: HTMLElement;
 }) => {
   const canvas = within(canvasElement);
-  await waitFor(async () => {
-    await expect(
-      await canvas.findByRole("region", { name: "Step console" }),
-    ).toBeVisible();
+  const consoleRegion = await canvas.findByRole(
+    "region",
+    { name: "Step console" },
+    { timeout: 15_000 },
+  );
+  await waitFor(() => {
+    expect(consoleRegion).toBeVisible();
   });
   const step = await canvas.findByRole("button", {
     name: "Step build · completed",
