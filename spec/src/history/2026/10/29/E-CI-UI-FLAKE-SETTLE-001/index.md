@@ -194,6 +194,31 @@ JJ_STORE_VALIDATION_RUNTIME=native pnpm check:progress
 Progress evidence gate accepts this leaf with the new history record
 (186 tasks; 994 evidence records).
 <!-- /run -->
+
+<!-- run -->
+### Run 7
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+node scripts/validation.mjs run web:test:browser -- web/tests/browser/local-capture-settings.spec.ts --repeat-each=25 --workers=1
+```
+
+**Notes**
+
+Post-fix repeat of the Run 4 flake baseline on external docker: 125/125 in
+8.0m, zero axe color-contrast violations. The spec now waits for capture
+request quiescence (1.2s without a new /v1/local/capture request, longer than
+the refresh latch delay plus one burst) before each axe sample, so sampling
+sees the settled enabled view; disabled controls remain excluded by axe and
+settled colors stay fully checked.
+<!-- /run -->
 <!-- /evidence-field -->
 
 <!-- evidence-field:result markdown -->
@@ -232,9 +257,8 @@ picker play, and axe sampling quiescence in local-capture-settings.
 <!-- evidence-field:next markdown -->
 ## Next
 
-Post-fix browser repeat-each=25 quiescence run is in flight at commit time;
-record it as a follow-up run once observed. Commit, push to the PR 24 branch,
-and confirm the hosted Storybook and Application browser lanes go green.
+Recorded the post-fix browser repeat as Run 7. Confirm the hosted Storybook
+and Application browser lanes of the PR 24 re-run go green.
 <!-- /evidence-field -->
 
 <!-- evidence-field:contract_review yaml -->
