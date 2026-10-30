@@ -85,6 +85,7 @@ test("parallel cold shards use disjoint result directories and CI stops on failu
         env: {
           ...process.env,
           CI: "true",
+          JJ_STORE_CI_REPORTS: "0",
           JJ_STORE_REAL_BASE_URL: "http://127.0.0.1:7530",
           JJ_STORE_REAL_SHARD: shard,
         },
@@ -213,12 +214,13 @@ require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(p
 `,
     { mode: 0o755 },
   );
-  const invoke = (lane, shard = "") => {
+  const invoke = (lane, shard = "", reports = "0") => {
     writeFileSync(log, "");
     execFileSync(process.execPath, ["scripts/ci-browser.mjs", lane], {
       env: {
         ...process.env,
         CI: "true",
+        JJ_STORE_CI_REPORTS: reports,
         JJ_STORE_CI_PREBUILT: "1",
         JJ_STORE_BROWSER_SHARD: shard,
         BROWSER_CALL_LOG: log,
@@ -245,6 +247,27 @@ require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(p
   ]);
   assert.deepEqual(invoke("help"), [
     ["exec", "playwright", "test", "--config", "web/playwright.docs.config.ts"],
+  ]);
+  assert.deepEqual(invoke("storybook", "2/3", "1"), [
+    [
+      "test:storybook",
+      "--shard=2/3",
+      "--reporter=default",
+      "--reporter=junit",
+      "--outputFile=.release/ci-results/storybook.xml",
+    ],
+  ]);
+  assert.deepEqual(invoke("catalog", "", "1"), [
+    [
+      "exec",
+      "node",
+      "--test",
+      "--test-reporter=spec",
+      "--test-reporter-destination=stdout",
+      "--test-reporter=junit",
+      "--test-reporter-destination=.release/ci-results/catalog.xml",
+      "scripts/catalog-browser.test.mjs",
+    ],
   ]);
 });
 test("CI pins the shared local-source package and rejects mutable revisions", () => {

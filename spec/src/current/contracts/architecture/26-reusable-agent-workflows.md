@@ -125,13 +125,13 @@ enqueue acceptance is distinct from provider delivery and captured answers.
 Existing JJ home/workspace/store preparation remains host-owned and retains its
 native publication and exact request identities.
 
-The headless TypeScript client lives in `@lapismd/jj-conversations` with public
-built ESM/type exports and no UI/runtime dependency. The private application
-consumes those exports through its source workspace; publishable manifests keep
-registry dependency metadata. Consumer commands build the package before use;
-there is no source alias. Mention tokens retain exact installation setup IDs,
-not member keys or execution grants. Delivery observations preserve full-width
-host sequences; existing UI adapters own any display-only numeric conversion.
+The headless `@lapismd/jj-conversations` client exposes built ESM/types without
+UI/runtime dependencies. Its npm metadata admits public access only for this
+client; the owning application stays private and builds public exports before
+use. Published metadata uses registry dependencies without source aliases.
+Mention tokens retain exact installation setup IDs, not execution grants or
+member keys. Delivery observations preserve full-width host sequences; UI
+adapters own numeric display conversion. JST-ARCH-005 governs npm qualification.
 
 Typed client transports receive immutable exact encoded commands under a fixed
 host scope. A lost response retains an unknown operation; retries only read

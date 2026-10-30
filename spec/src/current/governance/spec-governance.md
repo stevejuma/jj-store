@@ -372,8 +372,8 @@ protocol or visual baseline gates.
 
 Public distribution maps `.github/`, `.changeset/`, `.config/nextest.toml`,
 Dockerfile and `.dockerignore` to architecture/23-public-distribution.md.
-Changesets governs coordinated Cargo/native/container versions through a private
-npm package. Full release qualification and M30 evidence precede publication.
+Private Changesets governs Cargo/native/container; Conversations npm is scoped.
+Full M30 qualification, exact artifacts and signer identity precede publication.
 
 E-AUTOMATION-GOVERNANCE-001 exempts generated `changeset-release/main` and
 Dependabot `dependabot/` PRs from JST-GOV-002/003/004/011 notes and same-change

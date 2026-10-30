@@ -238,12 +238,17 @@
     "id": "conversation-client",
     "sources": [
       "packages/jj-conversations/src",
-      "packages/jj-conversations/package.json"
+      "packages/jj-conversations/package.json",
+      ".github/workflows/npm-publish-jj-conversations.yml",
+      "scripts/conversations-npm-artifact.mjs",
+      "scripts/conversations-npm-plan.mjs",
+      "scripts/conversations-npm.mjs",
+      "scripts/conversations-provenance.mjs"
     ],
     "pages": ["docs/site/technical/conversations.md"],
     "review": {
-      "reason": "Reviewed public ESM/type archive, scoped exact wire requests, status-only unknown recovery and identity-only restoration; full-width sequences and native authority remain distinct from transport receipt presence.",
-      "fingerprint": "ddd45cdca897f72bb3123cc03c7f0d2fe0207538c17297db041aad824753edd9"
+      "reason": "Reviewed public npm publication and exact qualified artifact reuse, complete heavy and package gates, mandatory release guards, Sigstore issuer and workflow policy, npm GitHub event and numeric repository identities, owner bootstrap, and actual registry/consumer verification; private application and Rust publication stay separate.",
+      "fingerprint": "88051c5c84d9efd200d2c3b37e722722a2305bb2fe63942a8f3650a01c12f8b9"
     }
   },
   {
