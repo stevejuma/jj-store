@@ -52,7 +52,10 @@ const env = {
 
 test("Conversations bootstrap remains main-only and scoped to one explicit mode", () => {
   assert.equal(validateInvocation(env, "0.1.0"), "attest");
-  assert.equal(validateInvocation({ ...env, INPUT_MODE: "verify" }, "0.1.0"), "verify");
+  assert.equal(
+    validateInvocation({ ...env, INPUT_MODE: "verify" }, "0.1.0"),
+    "verify",
+  );
   for (const patch of [
     { GITHUB_REF: "refs/heads/feature" },
     { GITHUB_REPOSITORY: "fork/jj-store" },

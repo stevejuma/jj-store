@@ -298,24 +298,24 @@ behind `npm-production` or verify the registry copy. It MUST NOT rerun
 repository-wide heavy qualification. It MUST NOT publish Rust crates, native
 bundles or the private application. When the version is already on npm, the
 workflow MUST NOT upload again. It downloads the registry tarball and requires
-the same size, SHA-256 and integrity. A matching tarball with no provenance
-MUST succeed. Provenance, when present, MUST be well formed. A different
-tarball for the same version MUST fail. A protected main-only `attest` mode
-MAY sign and retain a detached npm-compatible Sigstore bundle for the exact
-PURL, tarball SHA512, workflow and source after the package checks. The
-verifier MUST enforce both the cryptographic chain and exact issuer and
-workflow identity when provenance is present. The predicate MUST include npm's
-required GitHub event and exact numeric repository/owner ID strings in
-`internalParameters.github`; signing MUST reject foreign IDs. Explicit
-verification/publication reuse MUST admit a successful canonical workflow run
-with its package gate, exact source/run/attempt and checksummed artifact;
-publication requires the current main source. UI-only client source selects the web CI
-lane; shared root manifests keep their conservative selection. The scoped npm
-release guards MUST run in the normal release-check/test lanes and again before
-preparing its qualified client artifact. CI selection fixtures MUST explicitly
-choose ordinary or complete reporting independently of an enclosing Docker
-worker's environment. Both profiles retain exact shard forwarding; complete
-reporting preserves JUnit and all test results.
+the same size, SHA-256 and integrity. A matching tarball with no provenance MUST
+succeed. Provenance, when present, MUST be well formed. A different tarball for
+the same version MUST fail. A protected main-only `attest` mode MAY sign and
+retain a detached npm-compatible Sigstore bundle for the exact PURL, tarball
+SHA512, workflow and source after the package checks. The verifier MUST enforce
+both the cryptographic chain and exact issuer and workflow identity when
+provenance is present. The predicate MUST include npm's required GitHub event
+and exact numeric repository/owner ID strings in `internalParameters.github`;
+signing MUST reject foreign IDs. Explicit verification/publication reuse MUST
+admit a successful canonical workflow run with its package gate, exact
+source/run/attempt and checksummed artifact; publication requires the current
+main source. UI-only client source selects the web CI lane; shared root
+manifests keep their conservative selection. The scoped npm release guards MUST
+run in the normal release-check/test lanes and again before preparing its
+qualified client artifact. CI selection fixtures MUST explicitly choose ordinary
+or complete reporting independently of an enclosing Docker worker's environment.
+Both profiles retain exact shard forwarding; complete reporting preserves JUnit
+and all test results.
 
 Shared read admission remains contained in the existing JJ crate. Its internal
 modules retain public re-exports and add no feature or dependency requirement.

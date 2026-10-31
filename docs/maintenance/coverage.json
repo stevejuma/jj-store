@@ -42,10 +42,7 @@
       "scripts/ci-redaction-source.mjs",
       "scripts/agent-redaction-source.json"
     ],
-    "pages": [
-      "docs/site/guides/capture.md",
-      "docs/site/technical/capture.md"
-    ],
+    "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
       "reason": "Reviewed the digest 0.11 pending-hook filename. It stays the lowercase hex of the same SHA-256 key, and the capture guides still describe spool, receipts, and source admission without that encoding.",
       "fingerprint": "0267da2ef4f0b4b95dbe0103bb78b4f644a94586824ec5f95c2eb947f7afb45e"
@@ -53,10 +50,7 @@
   },
   {
     "id": "local",
-    "sources": [
-      "crates/jj-store-jj/src",
-      "crates/jj-vault/src"
-    ],
+    "sources": ["crates/jj-store-jj/src", "crates/jj-vault/src"],
     "pages": [
       "docs/site/technical/local.md",
       "docs/site/guides/git.md",
@@ -69,10 +63,7 @@
   },
   {
     "id": "services",
-    "sources": [
-      "crates/jj-store-service/src",
-      "crates/jj-store-rpc/src"
-    ],
+    "sources": ["crates/jj-store-service/src", "crates/jj-store-rpc/src"],
     "pages": [
       "docs/site/technical/architecture.md",
       "docs/site/reference/transport.md",
@@ -85,14 +76,8 @@
   },
   {
     "id": "search",
-    "sources": [
-      "crates/jj-store-adapters/src",
-      "crates/jj-store-tantivy/src"
-    ],
-    "pages": [
-      "docs/site/technical/reads.md",
-      "docs/site/guides/search.md"
-    ],
+    "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
+    "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
       "reason": "Reviewed Tantivy 0.27 segment file listing. Existing index components are still copied when the staged files exist, and the search pages do not depend on SegmentMeta list_files.",
       "fingerprint": "d39d764e6f67db4e785dcb2cc550c87e13627aee94459b45af320ca49371ac62"
@@ -100,13 +85,8 @@
   },
   {
     "id": "replication",
-    "sources": [
-      "crates/jj-store-replication/src"
-    ],
-    "pages": [
-      "docs/site/technical/replication.md",
-      "docs/site/guides/sync.md"
-    ],
+    "sources": ["crates/jj-store-replication/src"],
+    "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
     "review": {
       "reason": "Reviewed sync semantic projection suppressing idle scheduler churn while preserving checkpoint, pause and fault notices; replication authority is unchanged.",
       "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2"
@@ -114,9 +94,7 @@
   },
   {
     "id": "configuration",
-    "sources": [
-      "crates/jj-store-server/src"
-    ],
+    "sources": ["crates/jj-store-server/src"],
     "pages": [
       "docs/site/reference/configuration.md",
       "docs/site/reference/environment.md",
@@ -129,9 +107,7 @@
   },
   {
     "id": "cli",
-    "sources": [
-      "crates/jj-store-cli/src"
-    ],
+    "sources": ["crates/jj-store-cli/src"],
     "pages": [
       "docs/site/cli/index.md",
       "docs/site/getting-started/install.md",
@@ -144,9 +120,7 @@
   },
   {
     "id": "http",
-    "sources": [
-      "crates/jj-store-http/src"
-    ],
+    "sources": ["crates/jj-store-http/src"],
     "pages": [
       "docs/site/reference/transport.md",
       "docs/site/reference/security.md",
@@ -159,9 +133,7 @@
   },
   {
     "id": "application",
-    "sources": [
-      "web/src"
-    ],
+    "sources": ["web/src"],
     "pages": [
       "docs/site/guides/browsing.md",
       "docs/site/guides/editing.md",
@@ -175,13 +147,8 @@
   },
   {
     "id": "desktop",
-    "sources": [
-      "desktop/src",
-      "desktop/crates/terminal-engine/src"
-    ],
-    "pages": [
-      "docs/site/technical/lifecycle.md"
-    ],
+    "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
+    "pages": ["docs/site/technical/lifecycle.md"],
     "review": {
       "reason": "Reviewed shared native resource verification, complete Lapis helper staging and unchanged service ownership and paired JJ lifecycle.",
       "fingerprint": "ad916d5efa57aa8b06d1b31cb9cffb9382ee0043f4f9ca345c5b0527fbb9cfc2"
@@ -189,14 +156,8 @@
   },
   {
     "id": "contracts",
-    "sources": [
-      "schemas/openapi.json",
-      "docs/cli"
-    ],
-    "pages": [
-      "docs/site/reference/transport.md",
-      "docs/site/cli/index.md"
-    ],
+    "sources": ["schemas/openapi.json", "docs/cli"],
+    "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
       "reason": "Regenerated the locked OpenAPI artifact after property ordering changed. Parsed documents are structurally identical across all 204 paths; authorization, wire DTOs and the transport reference remain unchanged.",
       "fingerprint": "78d2eabb59dd3a0c931579fd9beb88a263bcf85f3a3c53cbf986f212939440fd"
@@ -241,13 +202,8 @@
   },
   {
     "id": "forge-stacks",
-    "sources": [
-      "crates/jj-forge/src"
-    ],
-    "pages": [
-      "docs/site/guides/git.md",
-      "docs/site/reference/transport.md"
-    ],
+    "sources": ["crates/jj-forge/src"],
+    "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
     "review": {
       "reason": "Reviewed 1a5d8cbc..4d660d4c explicit Forgejo PAT verification, provider-specific authorization header and host-owned secret namespaces. Git manual distinguishes native embedding support from current browser account screens and retains push/permission guards.",
       "fingerprint": "974a6da232ac41765eb21c4166cb076fdf71577baa2cd8881586459fc7799fa1"
@@ -271,12 +227,8 @@
   },
   {
     "id": "conversations",
-    "sources": [
-      "crates/jj-store-conversations/src"
-    ],
-    "pages": [
-      "docs/site/technical/conversations.md"
-    ],
+    "sources": ["crates/jj-store-conversations/src"],
+    "pages": ["docs/site/technical/conversations.md"],
     "review": {
       "reason": "Reviewed optional selected Agent/Thread capture, journal-before-IO ordering, retained native preparation, request-aware read-only recovery, exact receipt comparison and host ownership against Git and native-provider fixtures.",
       "fingerprint": "f976bab65db2953857af4998ddcc6dfa60350db0d42af55f56c2646dc551fa0b"
@@ -293,9 +245,7 @@
       "scripts/conversations-npm.mjs",
       "scripts/conversations-provenance.mjs"
     ],
-    "pages": [
-      "docs/site/technical/conversations.md"
-    ],
+    "pages": ["docs/site/technical/conversations.md"],
     "review": {
       "reason": "Reviewed the conversations npm workflow after limiting it to the package tests, exact pack, and idempotent registry verification. A matching tarball succeeds without provenance; a different tarball fails; repository-wide heavy qualification is no longer part of this publication.",
       "fingerprint": "02ae6f7fe1a746025881c243969128604ec529a084f752c383db830321c0af0c"
@@ -309,9 +259,7 @@
       "crates/tauri-plugin-jj-store/permissions/default.toml",
       "crates/jj-history-service/src"
     ],
-    "pages": [
-      "docs/site/technical/local.md"
-    ],
+    "pages": ["docs/site/technical/local.md"],
     "review": {
       "reason": "Reviewed f58b9363..4d660d4c successful drained-scope retirement and direct bounded pinned metadata reads with reference-operation ancestry validation. Local technical manual preserves admission, original pins and failed-shutdown recovery state.",
       "fingerprint": "041935d8e843a621bfbeec7b2fab0afc797b2148d334800f8ad3fc722d148c3b"
@@ -325,9 +273,7 @@
       "scripts/history-contracts.mjs",
       "crates/tauri-plugin-jj-store/schema.json"
     ],
-    "pages": [
-      "docs/site/technical/local.md"
-    ],
+    "pages": ["docs/site/technical/local.md"],
     "review": {
       "reason": "Reviewed @lapismd/jj-history 0.1.0 public publishConfig against unchanged local history manual: admitted heads/open/status/read/blame/close contracts and explicit handle closure remain as documented.",
       "fingerprint": "cc13ef5d340bb6832d499390f9e4e41bfa6ffdd27779b30905c08702741e733b"

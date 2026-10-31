@@ -75,7 +75,7 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - run: pnpm --filter @lapismd/jj-conversations test
       - run: node --test scripts/conversations-npm.test.mjs
       - run: node scripts/conversations-npm.mjs prepare
@@ -121,7 +121,7 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - run: npm install --global npm@12.0.2
       - uses: actions/download-artifact@v8
         with:
@@ -186,7 +186,7 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - run: npm install --global npm@12.0.2
       - uses: actions/download-artifact@v8
         with:
@@ -231,7 +231,7 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - uses: actions/download-artifact@v8
         with:
           name: ${{ needs.identity.outputs.artifact_name }}
