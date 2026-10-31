@@ -21,7 +21,7 @@ package containment do not expand their platform or release qualification.
 
 JST-ARCH-005 governs the coordinated public source, Cargo, native archive and
 container distribution. Changesets owns the release version and notes through
-the private npm workspace package; npm publication is disabled. The version PR
+the private npm workspace package, which is never published. Its version PR
 synchronizes every Cargo package and internal registry dependency, the embedded
 RustFS workspace and release metadata. Version tags select immutable qualified
 source. Publication never replaces an existing package, tag or digest. crates.io
@@ -284,9 +284,29 @@ The standalone `@lapismd/jj-conversations` archive ships built ESM/declarations,
 license, notice and a short README. Its private owning application uses a normal
 semver workspace dependency on public exports; published SDK metadata contains
 no source aliases or workspace dependencies. Source, archive acceptance and
-registry publication remain distinct under JST-ARCH-005. UI-only client source
-selects the web CI lane; shared root manifests keep their conservative
-selection.
+registry publication remain distinct under JST-ARCH-005. The package-scoped
+`jj-conversations-v<version>` npm workflow MUST admit an immutable main source,
+complete the existing manual qualification workflow, test and pack the exact
+client, then publish that artifact behind `npm-production` and verify a clean
+registry install, signatures and provenance. It MUST NOT publish Rust crates,
+native bundles or the private application. A protected main-only `attest` mode
+MUST complete that same qualification before signing and retaining a detached
+npm-compatible Sigstore bundle for the exact PURL, tarball SHA512, workflow and
+source. The verifier MUST enforce both the cryptographic chain and exact issuer
+and workflow identity. The predicate MUST include npm's required GitHub event
+and exact numeric repository/owner ID strings in `internalParameters.github`;
+signing MUST reject foreign IDs. Initial bootstrap MAY stage only that identical
+artifact with its verified provenance file. Explicit verification/publication
+reuse MUST admit a successful canonical workflow run with its complete
+qualification and package gates, exact source/run/attempt and checksummed
+artifact; publication requires the current main source. Reuse never substitutes
+a package test for heavy qualification. UI-only client source selects the web CI
+lane; shared root manifests keep their conservative selection. The scoped npm
+release guards MUST run in the normal release-check/test lanes and again before
+preparing its qualified client artifact. CI selection fixtures MUST explicitly
+choose ordinary or complete reporting independently of an enclosing Docker
+worker's environment. Both profiles retain exact shard forwarding; complete
+reporting preserves JUnit and all test results.
 
 Shared read admission remains contained in the existing JJ crate. Its internal
 modules retain public re-exports and add no feature or dependency requirement.

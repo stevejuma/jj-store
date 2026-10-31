@@ -1,0 +1,256 @@
+name: Publish @lapismd/jj-conversations
+
+on:
+  push:
+    tags: ["jj-conversations-v*"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description:
+          Attest for initial bootstrap, publish, or verify an actual registry
+          release
+        type: choice
+        options: [attest, publish, verify]
+        default: verify
+        required: true
+      qualified_run:
+        description:
+          Successful canonical attest run to reuse (required for verify)
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: jj-conversations-npm-production
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  identity:
+    name: Admit canonical immutable package source
+    if: github.repository == 'stevejuma/jj-store'
+    runs-on: ubuntu-22.04
+    outputs:
+      source: ${{ steps.plan.outputs.source }}
+      mode: ${{ steps.plan.outputs.mode }}
+      reused: ${{ steps.plan.outputs.reused }}
+      artifact_name: ${{ steps.plan.outputs.artifact_name }}
+      artifact_run: ${{ steps.plan.outputs.run }}
+      artifact_attempt: ${{ steps.plan.outputs.attempt }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - id: plan
+        run: node scripts/conversations-npm.mjs plan
+        env:
+          INPUT_MODE: ${{ inputs.mode }}
+          INPUT_QUALIFIED_RUN: ${{ inputs.qualified_run }}
+
+  qualify:
+    name: Complete source qualification
+    needs: identity
+    if: needs.identity.outputs.reused != 'true'
+    uses: ./.github/workflows/ci-heavy.yml
+    with:
+      ref: ${{ needs.identity.outputs.source }}
+
+  package-gate:
+    name: Validate exact client artifact
+    needs: [identity, qualify]
+    if: needs.qualify.result == 'success'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.identity.outputs.source }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm --filter @lapismd/jj-conversations test
+      - run: node --test scripts/conversations-npm.test.mjs
+      - run: node scripts/conversations-npm.mjs prepare
+        env:
+          JJ_CONVERSATIONS_HEAVY_QUALIFIED: "1"
+          JJ_CONVERSATIONS_SOURCE: ${{ needs.identity.outputs.source }}
+          JJ_CONVERSATIONS_ARTIFACT_RUN:
+            ${{ needs.identity.outputs.artifact_run }}
+          JJ_CONVERSATIONS_ARTIFACT_ATTEMPT:
+            ${{ needs.identity.outputs.artifact_attempt }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ needs.identity.outputs.artifact_name }}
+          path: .release/conversations/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  publish-production:
+    name: Protected npm publication or bootstrap attestation
+    needs: [identity, qualify, package-gate]
+    if: >-
+      always() && needs.identity.result == 'success' &&
+      needs.identity.outputs.mode != 'verify' && (needs.package-gate.result ==
+      'success' || needs.identity.outputs.reused == 'true')
+    runs-on: ubuntu-22.04
+    environment: npm-production
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    env:
+      JJ_CONVERSATIONS_SOURCE: ${{ needs.identity.outputs.source }}
+      JJ_CONVERSATIONS_ARTIFACT_RUN: ${{ needs.identity.outputs.artifact_run }}
+      JJ_CONVERSATIONS_ARTIFACT_ATTEMPT:
+        ${{ needs.identity.outputs.artifact_attempt }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.identity.outputs.source }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: npm install --global npm@12.0.2
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.identity.outputs.artifact_name }}
+          path: .release/conversations
+          run-id: ${{ needs.identity.outputs.artifact_run }}
+          github-token: ${{ github.token }}
+      - run: node scripts/conversations-npm.mjs verify-artifact
+      - name: Probe existing protected bootstrap authentication
+        if: needs.identity.outputs.mode == 'attest'
+        env:
+          NODE_AUTH_TOKEN:
+            ${{ secrets.NPM_BOOTSTRAP_TOKEN || secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            npm whoami --registry=https://registry.npmjs.org
+            echo "Protected bootstrap credential is present and authenticated." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No protected bootstrap credential is available; the signed artifact requires owner bootstrap." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Sign and verify detached provenance without npm authentication
+        if: needs.identity.outputs.mode == 'attest'
+        run: node scripts/conversations-npm.mjs attest
+      - uses: actions/upload-artifact@v7
+        if: needs.identity.outputs.mode == 'attest'
+        with:
+          name:
+            jj-conversations-bootstrap-${{ needs.identity.outputs.source }}-${{
+            github.run_attempt }}
+          path: .release/conversations/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish the exact qualified artifact
+        if: needs.identity.outputs.mode == 'publish'
+        run: node scripts/conversations-npm.mjs publish
+        env:
+          NODE_AUTH_TOKEN:
+            ${{ secrets.NPM_BOOTSTRAP_TOKEN || secrets.NPM_TOKEN }}
+
+  verify-provenance:
+    name: Verify actual registry package, signatures and consumer
+    needs: [identity, publish-production]
+    if: >-
+      always() && needs.identity.result == 'success' &&
+      (needs.identity.outputs.mode == 'verify' || (needs.identity.outputs.mode
+      == 'publish' && needs.publish-production.result == 'success'))
+    runs-on: ubuntu-22.04
+    env:
+      JJ_CONVERSATIONS_SOURCE: ${{ needs.identity.outputs.source }}
+      JJ_CONVERSATIONS_ARTIFACT_RUN: ${{ needs.identity.outputs.artifact_run }}
+      JJ_CONVERSATIONS_ARTIFACT_ATTEMPT:
+        ${{ needs.identity.outputs.artifact_attempt }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.identity.outputs.source }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: npm install --global npm@12.0.2
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.identity.outputs.artifact_name }}
+          path: .release/conversations
+          run-id: ${{ needs.identity.outputs.artifact_run }}
+          github-token: ${{ github.token }}
+      - run: node scripts/conversations-npm.mjs verify
+      - uses: actions/upload-artifact@v7
+        with:
+          name:
+            jj-conversations-registry-${{ needs.identity.outputs.source }}-${{
+            github.run_attempt }}
+          path: |
+            .release/conversations/registry-receipt.json
+            .release/conversations/consumer-package.json
+            .release/conversations/consumer-package-lock.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  release-notes:
+    name: Finalize verified Conversations GitHub release
+    needs: [identity, verify-provenance]
+    if: needs.identity.outputs.mode == 'publish'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      actions: read
+    env:
+      JJ_CONVERSATIONS_SOURCE: ${{ needs.identity.outputs.source }}
+      JJ_CONVERSATIONS_ARTIFACT_RUN: ${{ needs.identity.outputs.artifact_run }}
+      JJ_CONVERSATIONS_ARTIFACT_ATTEMPT:
+        ${{ needs.identity.outputs.artifact_attempt }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.identity.outputs.source }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.identity.outputs.artifact_name }}
+          path: .release/conversations
+          run-id: ${{ needs.identity.outputs.artifact_run }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v8
+        with:
+          name:
+            jj-conversations-registry-${{ needs.identity.outputs.source }}-${{
+            github.run_attempt }}
+          path: .release/conversations
+      - run: node scripts/conversations-npm.mjs notes

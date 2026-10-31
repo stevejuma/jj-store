@@ -138,7 +138,7 @@
     "@lapismd/design-core": "^0.7.0",
     "@lapismd/jj-conversations": "^0.1.0",
     "@lapismd/mira": "~0.1.2",
-    "@lapismd/spec-validator": "^0.1.4",
+    "@lapismd/spec-validator": "^0.2.0",
     "@lapismd/storybook-addon-visual-delta": "^0.1.0",
     "@lezer/highlight": "^1.2.5",
     "@lucide/svelte": "^1.21.0",
@@ -184,7 +184,8 @@
     "vite": "^8.3.1",
     "vitest": "^4.1.11",
     "ws": "8.22.0",
-    "yaml": "^2.9.1"
+    "yaml": "^2.9.1",
+    "sigstore": "4.1.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

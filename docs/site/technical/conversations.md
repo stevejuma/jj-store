@@ -115,6 +115,24 @@ operator action. Build with `pnpm client:build`; focused package tests use
 `pnpm client:test`. An independent archive consumer verifies public runtime and
 type exports without access to the source tree.
 
+The package's public npm configuration exposes only this headless client; the
+owning application remains private. Publication uses the package-scoped
+`npm-publish-jj-conversations.yml` workflow and the full manual source
+qualification required by JST-ARCH-005. A protected main-only `attest` run
+retains a checksummed tarball and verified Sigstore provenance for initial owner
+bootstrap. The predicate includes npm's GitHub event and exact numeric
+repository and owner identities, and signing rejects foreign IDs. The owner
+stages those identical bytes with the provenance file; source or archive checks
+alone do not establish npm availability.
+
+After publication, `verify` checks the downloaded package bytes, public import,
+strict clean installation and registry signatures/provenance. Its qualified-run
+input must identify a successful canonical run whose complete heavy and package
+gates passed. `publish` may reuse that same qualified source on unchanged main,
+then finalizes the package-scoped GitHub release only after registry checks. The
+scoped version tag keeps the existing full qualification path for later
+releases. This flow publishes no Rust crate, native archive or application.
+
 Construct `ConversationClient` for one app/vault scope with a typed transport
 and lossless encoder. The client binds each request ID to immutable exact
 encoded bytes in memory. Concurrent callers share one submission. A lost
