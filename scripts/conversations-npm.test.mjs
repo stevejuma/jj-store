@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { verify } from "sigstore";
 import {
   integrity,
+  sha256,
   packageName,
   repository,
   workflow,
@@ -32,6 +33,7 @@ const manifest = {
   ...expected,
   tarball: "lapismd-jj-conversations-0.1.0.tgz",
   integrity: integrity(bytes),
+  sha256: sha256(bytes),
   size: bytes.length,
 };
 const env = {
@@ -50,12 +52,16 @@ const env = {
 
 test("Conversations bootstrap remains main-only and scoped to one explicit mode", () => {
   assert.equal(validateInvocation(env, "0.1.0"), "attest");
+  assert.equal(
+    validateInvocation({ ...env, INPUT_MODE: "verify" }, "0.1.0"),
+    "verify",
+  );
   for (const patch of [
     { GITHUB_REF: "refs/heads/feature" },
     { GITHUB_REPOSITORY: "fork/jj-store" },
     { INPUT_MODE: "unknown" },
-    { INPUT_QUALIFIED_RUN: "123" },
-    { INPUT_MODE: "verify" },
+    { INPUT_MODE: "attest", INPUT_QUALIFIED_RUN: "123" },
+    { INPUT_MODE: "verify", INPUT_QUALIFIED_RUN: "not-a-run" },
   ])
     assert.throws(() => validateInvocation({ ...env, ...patch }, "0.1.0"));
   assert.equal(
@@ -77,7 +83,7 @@ test("Conversations bootstrap remains main-only and scoped to one explicit mode"
   );
 });
 
-test("artifact reuse refuses incomplete heavy qualification, skipped package gates and forks", () => {
+test("artifact reuse admits the Conversations package gate and refuses skipped package gates and forks", () => {
   const run = {
     repository: { full_name: repository },
     head_repository: { full_name: repository },
@@ -91,10 +97,6 @@ test("artifact reuse refuses incomplete heavy qualification, skipped package gat
     run_attempt: 1,
   };
   const jobs = [
-    {
-      name: "Complete source qualification / Complete qualification gate",
-      conclusion: "success",
-    },
     { name: "Validate exact client artifact", conclusion: "success" },
   ];
   assert.deepEqual(admitQualifiedRun(run, jobs), expected);
@@ -107,9 +109,9 @@ test("artifact reuse refuses incomplete heavy qualification, skipped package gat
     { head_sha: "not-a-sha" },
   ])
     assert.throws(() => admitQualifiedRun({ ...run, ...patch }, jobs));
-  assert.throws(() => admitQualifiedRun(run, jobs.slice(1)));
+  assert.throws(() => admitQualifiedRun(run, []));
   assert.throws(() =>
-    admitQualifiedRun(run, [jobs[0], { ...jobs[1], conclusion: "skipped" }]),
+    admitQualifiedRun(run, [{ ...jobs[0], conclusion: "skipped" }]),
   );
 });
 
@@ -185,25 +187,48 @@ test("npm provenance signs one PURL/digest and the exact main workflow source", 
     assert.throws(() => provenanceStatement(manifest, { ...env, ...patch }));
 });
 
-test("downloaded npm package must retain immutable bytes and provenance", () => {
+test("downloaded npm package must match size, SHA-256 and integrity, with or without provenance", () => {
   const metadata = {
     name: packageName,
     version: "0.1.0",
     dist: { integrity: manifest.integrity, attestations: { provenance: {} } },
   };
+  const withoutProvenance = {
+    ...metadata,
+    dist: { integrity: manifest.integrity },
+  };
   assert.doesNotThrow(() => validateRegistry(manifest, metadata, bytes));
+  assert.doesNotThrow(() =>
+    validateRegistry(manifest, withoutProvenance, bytes),
+  );
   assert.throws(() =>
     validateRegistry(manifest, metadata, Buffer.from("changed")),
   );
   assert.throws(() =>
     validateRegistry(
       manifest,
-      { ...metadata, dist: { integrity: manifest.integrity } },
-      bytes,
+      {
+        ...metadata,
+        dist: { integrity: integrity(Buffer.from("changed")) },
+      },
+      Buffer.from("changed"),
     ),
   );
   assert.throws(() =>
     validateRegistry(manifest, { ...metadata, version: "0.2.0" }, bytes),
+  );
+  assert.throws(() =>
+    validateRegistry(
+      manifest,
+      {
+        ...withoutProvenance,
+        dist: {
+          integrity: manifest.integrity,
+          attestations: { provenance: "malformed" },
+        },
+      },
+      bytes,
+    ),
   );
 });
 

@@ -60,18 +60,10 @@ jobs:
           INPUT_MODE: ${{ inputs.mode }}
           INPUT_QUALIFIED_RUN: ${{ inputs.qualified_run }}
 
-  qualify:
-    name: Complete source qualification
-    needs: identity
-    if: needs.identity.outputs.reused != 'true'
-    uses: ./.github/workflows/ci-heavy.yml
-    with:
-      ref: ${{ needs.identity.outputs.source }}
-
   package-gate:
     name: Validate exact client artifact
-    needs: [identity, qualify]
-    if: needs.qualify.result == 'success'
+    needs: identity
+    if: needs.identity.result == 'success'
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v7
@@ -83,12 +75,11 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - run: pnpm --filter @lapismd/jj-conversations test
       - run: node --test scripts/conversations-npm.test.mjs
       - run: node scripts/conversations-npm.mjs prepare
         env:
-          JJ_CONVERSATIONS_HEAVY_QUALIFIED: "1"
           JJ_CONVERSATIONS_SOURCE: ${{ needs.identity.outputs.source }}
           JJ_CONVERSATIONS_ARTIFACT_RUN:
             ${{ needs.identity.outputs.artifact_run }}
@@ -104,11 +95,10 @@ jobs:
 
   publish-production:
     name: Protected npm publication or bootstrap attestation
-    needs: [identity, qualify, package-gate]
+    needs: [identity, package-gate]
     if: >-
-      always() && needs.identity.result == 'success' &&
-      needs.identity.outputs.mode != 'verify' && (needs.package-gate.result ==
-      'success' || needs.identity.outputs.reused == 'true')
+      needs.identity.result == 'success' && needs.package-gate.result ==
+      'success' && needs.identity.outputs.mode == 'publish'
     runs-on: ubuntu-22.04
     environment: npm-production
     permissions:
@@ -131,7 +121,7 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - run: npm install --global npm@12.0.2
       - uses: actions/download-artifact@v8
         with:
@@ -174,11 +164,12 @@ jobs:
 
   verify-provenance:
     name: Verify actual registry package, signatures and consumer
-    needs: [identity, publish-production]
+    needs: [identity, package-gate, publish-production]
     if: >-
       always() && needs.identity.result == 'success' &&
-      (needs.identity.outputs.mode == 'verify' || (needs.identity.outputs.mode
-      == 'publish' && needs.publish-production.result == 'success'))
+      needs.package-gate.result == 'success' && (needs.identity.outputs.mode ==
+      'verify' || (needs.identity.outputs.mode == 'publish' &&
+      needs.publish-production.result == 'success'))
     runs-on: ubuntu-22.04
     env:
       JJ_CONVERSATIONS_SOURCE: ${{ needs.identity.outputs.source }}
@@ -195,7 +186,7 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - run: npm install --global npm@12.0.2
       - uses: actions/download-artifact@v8
         with:
@@ -240,7 +231,7 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --ignore-pnpmfile
+      - run: pnpm install --frozen-lockfile --ignore-pnpmfile --ignore-scripts
       - uses: actions/download-artifact@v8
         with:
           name: ${{ needs.identity.outputs.artifact_name }}

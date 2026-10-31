@@ -372,8 +372,8 @@ protocol or visual baseline gates.
 
 Public distribution maps `.github/`, `.changeset/`, `.config/nextest.toml`,
 Dockerfile and `.dockerignore` to architecture/23-public-distribution.md.
-Private Changesets governs Cargo/native/container; Conversations npm is scoped.
-Full M30 gates bind canonical producers, exact artifacts and signer identities.
+Private Changesets governs Cargo/native/container; Conversations npm scripts
+verify the published tarball. Full M30 gates still bind producers and signers.
 
 E-AUTOMATION-GOVERNANCE-001 exempts generated `changeset-release/main` and
 Dependabot `dependabot/` PRs from JST-GOV-002/003/004/011 notes and same-change

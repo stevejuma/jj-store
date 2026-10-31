@@ -247,8 +247,8 @@
     ],
     "pages": ["docs/site/technical/conversations.md"],
     "review": {
-      "reason": "Reviewed public npm publication and exact qualified artifact reuse, complete heavy and package gates, mandatory release guards, Sigstore issuer and workflow policy, npm GitHub event and numeric repository identities, owner bootstrap, and actual registry/consumer verification; private application and Rust publication stay separate.",
-      "fingerprint": "88051c5c84d9efd200d2c3b37e722722a2305bb2fe63942a8f3650a01c12f8b9"
+      "reason": "Reviewed the conversations npm workflow after limiting it to the package tests, exact pack, and idempotent registry verification. A matching tarball succeeds without provenance; a different tarball fails; repository-wide heavy qualification is no longer part of this publication.",
+      "fingerprint": "d534be878701238f8e979d35c2b1535d526cac4b154675534a6bc03bed4db1a7"
     }
   },
   {
