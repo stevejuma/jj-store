@@ -3502,6 +3502,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "create_thread"
+                    },
                     "anchor": {
                       "type": "object",
                       "properties": {
@@ -3806,6 +3810,10 @@ Requires current repository write permission. The authenticated session supplies
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "native_v1"
+                                                },
                                                 "object": {
                                                   "oneOf": [
                                                     {
@@ -3949,10 +3957,6 @@ Requires current repository write permission. The authenticated session supplies
                                                       "additionalProperties": false
                                                     }
                                                   ]
-                                                },
-                                                "profile": {
-                                                  "type": "string",
-                                                  "const": "native_v1"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -3964,6 +3968,10 @@ Requires current repository write permission. The authenticated session supplies
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "git_sha1_jj045"
+                                                },
                                                 "kind": {
                                                   "type": "string",
                                                   "enum": [
@@ -3977,10 +3985,6 @@ Requires current repository write permission. The authenticated session supplies
                                                   "pattern": "^[0-9a-f]{40}$",
                                                   "minLength": 40,
                                                   "maxLength": 40
-                                                },
-                                                "profile": {
-                                                  "type": "string",
-                                                  "const": "git_sha1_jj045"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -4409,6 +4413,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "profile": {
+                                              "type": "string",
+                                              "const": "native_v1"
+                                            },
                                             "object": {
                                               "oneOf": [
                                                 {
@@ -4552,10 +4560,6 @@ Requires current repository write permission. The authenticated session supplies
                                                   "additionalProperties": false
                                                 }
                                               ]
-                                            },
-                                            "profile": {
-                                              "type": "string",
-                                              "const": "native_v1"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -4567,6 +4571,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "profile": {
+                                              "type": "string",
+                                              "const": "git_sha1_jj045"
+                                            },
                                             "kind": {
                                               "type": "string",
                                               "enum": [
@@ -4580,10 +4588,6 @@ Requires current repository write permission. The authenticated session supplies
                                               "pattern": "^[0-9a-f]{40}$",
                                               "minLength": 40,
                                               "maxLength": 40
-                                            },
-                                            "profile": {
-                                              "type": "string",
-                                              "const": "git_sha1_jj045"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -4889,6 +4893,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "tool"
+                                            },
                                             "tool_call_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -4940,10 +4948,6 @@ Requires current repository write permission. The authenticated session supplies
                                               "pattern": "^[0-9a-f]{32}$",
                                               "minLength": 32,
                                               "maxLength": 32
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "tool"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -4957,6 +4961,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "message"
+                                            },
                                             "message_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -5002,10 +5010,6 @@ Requires current repository write permission. The authenticated session supplies
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "message"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -5018,6 +5022,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "plan"
+                                            },
                                             "block_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -5063,10 +5071,6 @@ Requires current repository write permission. The authenticated session supplies
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "plan"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -5309,6 +5313,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "tool"
+                                            },
                                             "tool_call_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -5360,10 +5368,6 @@ Requires current repository write permission. The authenticated session supplies
                                               "pattern": "^[0-9a-f]{32}$",
                                               "minLength": 32,
                                               "maxLength": 32
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "tool"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -5377,6 +5381,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "message"
+                                            },
                                             "message_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -5422,10 +5430,6 @@ Requires current repository write permission. The authenticated session supplies
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "message"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -5438,6 +5442,10 @@ Requires current repository write permission. The authenticated session supplies
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "plan"
+                                            },
                                             "block_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -5483,10 +5491,6 @@ Requires current repository write permission. The authenticated session supplies
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "plan"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -5742,10 +5746,6 @@ Requires current repository write permission. The authenticated session supplies
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "create_thread"
                     }
                   },
                   "additionalProperties": false,
@@ -5758,6 +5758,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "append_reply"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -5807,10 +5811,6 @@ Requires current repository write permission. The authenticated session supplies
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "append_reply"
                     }
                   },
                   "additionalProperties": false,
@@ -5824,6 +5824,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "edit_comment"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -5865,10 +5869,6 @@ Requires current repository write permission. The authenticated session supplies
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "edit_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -5882,6 +5882,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "resolve_comment_conflict"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -5926,10 +5930,6 @@ Requires current repository write permission. The authenticated session supplies
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "resolve_comment_conflict"
                     }
                   },
                   "additionalProperties": false,
@@ -5943,6 +5943,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "tombstone_comment"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -5960,10 +5964,6 @@ Requires current repository write permission. The authenticated session supplies
                         "string",
                         "null"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "tombstone_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -5976,6 +5976,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "hide_comment"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -5990,10 +5994,6 @@ Requires current repository write permission. The authenticated session supplies
                     },
                     "moderation_reason": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "hide_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -6007,6 +6007,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "resolve_thread"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -6024,10 +6028,6 @@ Requires current repository write permission. The authenticated session supplies
                         "string",
                         "null"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "resolve_thread"
                     }
                   },
                   "additionalProperties": false,
@@ -6040,6 +6040,10 @@ Requires current repository write permission. The authenticated session supplies
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "reopen_thread"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -6057,10 +6061,6 @@ Requires current repository write permission. The authenticated session supplies
                         "string",
                         "null"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "reopen_thread"
                     }
                   },
                   "additionalProperties": false,
@@ -7721,6 +7721,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "create_intentional"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -7738,10 +7742,6 @@ Current repository permission is checked for every request. Commands and status 
                         "minLength": 32,
                         "maxLength": 32
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "create_intentional"
                     }
                   },
                   "additionalProperties": false,
@@ -7755,6 +7755,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "create_conversation"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -7769,12 +7773,12 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
-                            "id": {
-                              "type": "string"
-                            },
                             "type": {
                               "type": "string",
                               "const": "conversation"
+                            },
+                            "id": {
+                              "type": "string"
                             }
                           },
                           "additionalProperties": false,
@@ -7786,15 +7790,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "recorded"
+                            },
                             "session": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "recorded"
                             }
                           },
                           "additionalProperties": false,
@@ -7804,10 +7808,6 @@ Current repository permission is checked for every request. Commands and status 
                           ]
                         }
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "create_conversation"
                     }
                   },
                   "additionalProperties": false,
@@ -7821,6 +7821,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "create_annotation"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -7829,10 +7833,6 @@ Current repository permission is checked for every request. Commands and status 
                     },
                     "title": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "create_annotation"
                     }
                   },
                   "additionalProperties": false,
@@ -7845,6 +7845,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "set_codebase"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -7891,10 +7895,6 @@ Current repository permission is checked for every request. Commands and status 
                         "minLength": 32,
                         "maxLength": 32
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "set_codebase"
                     }
                   },
                   "additionalProperties": false,
@@ -7908,6 +7908,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "set_metadata"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -7986,12 +7990,12 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
-                            "id": {
-                              "type": "string"
-                            },
                             "type": {
                               "type": "string",
                               "const": "conversation"
+                            },
+                            "id": {
+                              "type": "string"
                             }
                           },
                           "additionalProperties": false,
@@ -8003,15 +8007,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "recorded"
+                            },
                             "session": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "recorded"
                             }
                           },
                           "additionalProperties": false,
@@ -8217,10 +8221,6 @@ Current repository permission is checked for every request. Commands and status 
                         }
                       },
                       "additionalProperties": false
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "set_metadata"
                     }
                   },
                   "additionalProperties": false,
@@ -8235,6 +8235,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "submit"
+                    },
                     "submission": {
                       "type": "object",
                       "properties": {
@@ -8411,15 +8415,15 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8431,6 +8435,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -8474,10 +8482,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8491,6 +8495,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -8588,10 +8596,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8607,6 +8611,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -8658,10 +8666,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8675,6 +8679,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -8766,10 +8774,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8784,15 +8788,15 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8804,6 +8808,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -8845,10 +8853,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8863,6 +8867,10 @@ Current repository permission is checked for every request. Commands and status 
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -8910,10 +8918,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8928,6 +8932,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -8944,10 +8952,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -8961,6 +8965,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -9012,10 +9020,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -9178,15 +9182,15 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9198,6 +9202,10 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9241,10 +9249,6 @@ Current repository permission is checked for every request. Commands and status 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "human_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9258,6 +9262,10 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9355,10 +9363,6 @@ Current repository permission is checked for every request. Commands and status 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9374,6 +9378,10 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9425,10 +9433,6 @@ Current repository permission is checked for every request. Commands and status 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_invocation"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9442,6 +9446,10 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9533,10 +9541,6 @@ Current repository permission is checked for every request. Commands and status 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_output"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9551,15 +9555,15 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9571,6 +9575,10 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9612,10 +9620,6 @@ Current repository permission is checked for every request. Commands and status 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9630,6 +9634,10 @@ Current repository permission is checked for every request. Commands and status 
                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  },
                                   "repository": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9677,10 +9685,6 @@ Current repository permission is checked for every request. Commands and status 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "repository_review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9695,6 +9699,10 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  },
                                   "task_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9711,10 +9719,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "type": "integer",
                                     "format": "uint64",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "work_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9728,6 +9732,10 @@ Current repository permission is checked for every request. Commands and status 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -9779,10 +9787,6 @@ Current repository permission is checked for every request. Commands and status 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_checkpoint"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -9949,15 +9953,15 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -9969,6 +9973,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10012,10 +10020,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10029,6 +10033,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10126,10 +10134,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10145,6 +10149,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10196,10 +10204,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10213,6 +10217,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10304,10 +10312,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10322,15 +10326,15 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10342,6 +10346,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10383,10 +10391,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10401,6 +10405,10 @@ Current repository permission is checked for every request. Commands and status 
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10448,10 +10456,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10466,6 +10470,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10482,10 +10490,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10499,6 +10503,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -10550,10 +10558,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -10592,10 +10596,6 @@ Current repository permission is checked for every request. Commands and status 
                         "comments",
                         "references"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "submit"
                     }
                   },
                   "additionalProperties": false,
@@ -10607,6 +10607,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "create_comment_discussion"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10625,15 +10629,15 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "thread"
+                                },
                                 "thread_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
                                   "minLength": 32,
                                   "maxLength": 32
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "thread"
                                 }
                               },
                               "additionalProperties": false,
@@ -10645,6 +10649,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "human_message"
+                                },
                                 "thread_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -10688,10 +10696,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "human_message"
                                 }
                               },
                               "additionalProperties": false,
@@ -10705,6 +10709,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "agent_message"
+                                },
                                 "session_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -10802,10 +10810,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "agent_message"
                                 }
                               },
                               "additionalProperties": false,
@@ -10821,6 +10825,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "tool_invocation"
+                                },
                                 "session_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -10872,10 +10880,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "tool_invocation"
                                 }
                               },
                               "additionalProperties": false,
@@ -10889,6 +10893,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "tool_output"
+                                },
                                 "session_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -10980,10 +10988,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "tool_output"
                                 }
                               },
                               "additionalProperties": false,
@@ -10998,15 +11002,15 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "review_thread"
+                                },
                                 "thread_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
                                   "minLength": 32,
                                   "maxLength": 32
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "review_thread"
                                 }
                               },
                               "additionalProperties": false,
@@ -11018,6 +11022,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "review_comment"
+                                },
                                 "thread_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -11059,10 +11067,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "review_comment"
                                 }
                               },
                               "additionalProperties": false,
@@ -11077,6 +11081,10 @@ Current repository permission is checked for every request. Commands and status 
                               "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "repository_review_comment"
+                                },
                                 "repository": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -11124,10 +11132,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "repository_review_comment"
                                 }
                               },
                               "additionalProperties": false,
@@ -11142,6 +11146,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "work_comment"
+                                },
                                 "task_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -11158,10 +11166,6 @@ Current repository permission is checked for every request. Commands and status 
                                   "type": "integer",
                                   "format": "uint64",
                                   "minimum": 0
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "work_comment"
                                 }
                               },
                               "additionalProperties": false,
@@ -11175,6 +11179,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "agent_checkpoint"
+                                },
                                 "session_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -11226,10 +11234,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "agent_checkpoint"
                                 }
                               },
                               "additionalProperties": false,
@@ -11294,10 +11298,6 @@ Current repository permission is checked for every request. Commands and status 
                         "target",
                         "quote"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "create_comment_discussion"
                     }
                   },
                   "additionalProperties": false,
@@ -11311,6 +11311,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "create_agent_discussion"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -11326,15 +11330,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "thread"
                             }
                           },
                           "additionalProperties": false,
@@ -11346,6 +11350,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11389,10 +11397,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "human_message"
                             }
                           },
                           "additionalProperties": false,
@@ -11406,6 +11410,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11503,10 +11511,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_message"
                             }
                           },
                           "additionalProperties": false,
@@ -11522,6 +11526,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11573,10 +11581,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_invocation"
                             }
                           },
                           "additionalProperties": false,
@@ -11590,6 +11594,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11681,10 +11689,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_output"
                             }
                           },
                           "additionalProperties": false,
@@ -11699,15 +11703,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_thread"
                             }
                           },
                           "additionalProperties": false,
@@ -11719,6 +11723,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11760,10 +11768,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -11778,6 +11782,10 @@ Current repository permission is checked for every request. Commands and status 
                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            },
                             "repository": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11825,10 +11833,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "repository_review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -11843,6 +11847,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            },
                             "task_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11859,10 +11867,6 @@ Current repository permission is checked for every request. Commands and status 
                               "type": "integer",
                               "format": "uint64",
                               "minimum": 0
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "work_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -11876,6 +11880,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -11927,10 +11935,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_checkpoint"
                             }
                           },
                           "additionalProperties": false,
@@ -11942,10 +11946,6 @@ Current repository permission is checked for every request. Commands and status 
                           ]
                         }
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "create_agent_discussion"
                     }
                   },
                   "additionalProperties": false,
@@ -11959,6 +11959,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "create"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -12183,10 +12187,6 @@ Current repository permission is checked for every request. Commands and status 
                           "type": "null"
                         }
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "create"
                     }
                   },
                   "additionalProperties": false,
@@ -12199,6 +12199,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "rename"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -12239,10 +12243,6 @@ Current repository permission is checked for every request. Commands and status 
                     },
                     "title": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "rename"
                     }
                   },
                   "additionalProperties": false,
@@ -12256,6 +12256,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "lifecycle"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -12303,10 +12307,6 @@ Current repository permission is checked for every request. Commands and status 
                         "tombstone",
                         "restore"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "lifecycle"
                     }
                   },
                   "additionalProperties": false,
@@ -12320,6 +12320,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "message"
+                    },
                     "emojis": {
                       "type": "array",
                       "items": {
@@ -12468,10 +12472,6 @@ Current repository permission is checked for every request. Commands and status 
                         "string",
                         "null"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "message"
                     }
                   },
                   "additionalProperties": false,
@@ -12485,6 +12485,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "link"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -12534,6 +12538,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "comment_reply"
+                            },
                             "reply": {
                               "type": "object",
                               "properties": {
@@ -12543,15 +12551,15 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "thread"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
                                           "minLength": 32,
                                           "maxLength": 32
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "thread"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -12563,6 +12571,10 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "human_message"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -12606,10 +12618,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "human_message"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -12623,6 +12631,10 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "agent_message"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -12720,10 +12732,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "agent_message"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -12739,6 +12747,10 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "tool_invocation"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -12790,10 +12802,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "tool_invocation"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -12807,6 +12815,10 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "tool_output"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -12898,10 +12910,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "tool_output"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -12916,15 +12924,15 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "review_thread"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
                                           "minLength": 32,
                                           "maxLength": 32
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "review_thread"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -12936,6 +12944,10 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "review_comment"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -12977,10 +12989,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "review_comment"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -12995,6 +13003,10 @@ Current repository permission is checked for every request. Commands and status 
                                       "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "repository_review_comment"
+                                        },
                                         "repository": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -13042,10 +13054,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "repository_review_comment"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -13060,6 +13068,10 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "work_comment"
+                                        },
                                         "task_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -13076,10 +13088,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "type": "integer",
                                           "format": "uint64",
                                           "minimum": 0
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "work_comment"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -13093,6 +13101,10 @@ Current repository permission is checked for every request. Commands and status 
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "agent_checkpoint"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -13144,10 +13156,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "agent_checkpoint"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -13169,15 +13177,15 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "thread"
+                                            },
                                             "thread_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
                                               "minLength": 32,
                                               "maxLength": 32
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "thread"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13189,6 +13197,10 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "human_message"
+                                            },
                                             "thread_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13232,10 +13244,6 @@ Current repository permission is checked for every request. Commands and status 
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "human_message"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13249,6 +13257,10 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "agent_message"
+                                            },
                                             "session_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13346,10 +13358,6 @@ Current repository permission is checked for every request. Commands and status 
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "agent_message"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13365,6 +13373,10 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "tool_invocation"
+                                            },
                                             "session_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13416,10 +13428,6 @@ Current repository permission is checked for every request. Commands and status 
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "tool_invocation"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13433,6 +13441,10 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "tool_output"
+                                            },
                                             "session_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13524,10 +13536,6 @@ Current repository permission is checked for every request. Commands and status 
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "tool_output"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13542,15 +13550,15 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "review_thread"
+                                            },
                                             "thread_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
                                               "minLength": 32,
                                               "maxLength": 32
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "review_thread"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13562,6 +13570,10 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "review_comment"
+                                            },
                                             "thread_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13603,10 +13615,6 @@ Current repository permission is checked for every request. Commands and status 
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "review_comment"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13621,6 +13629,10 @@ Current repository permission is checked for every request. Commands and status 
                                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "repository_review_comment"
+                                            },
                                             "repository": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13668,10 +13680,6 @@ Current repository permission is checked for every request. Commands and status 
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "repository_review_comment"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13686,6 +13694,10 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "work_comment"
+                                            },
                                             "task_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13702,10 +13714,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "type": "integer",
                                               "format": "uint64",
                                               "minimum": 0
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "work_comment"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13719,6 +13727,10 @@ Current repository permission is checked for every request. Commands and status 
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "type": {
+                                              "type": "string",
+                                              "const": "agent_checkpoint"
+                                            },
                                             "session_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13770,10 +13782,6 @@ Current repository permission is checked for every request. Commands and status 
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "type": {
-                                              "type": "string",
-                                              "const": "agent_checkpoint"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13847,15 +13855,15 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -13867,6 +13875,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -13910,10 +13922,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -13927,6 +13935,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -14024,10 +14036,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14043,6 +14051,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -14094,10 +14106,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14111,6 +14119,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -14202,10 +14214,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14220,15 +14228,15 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14240,6 +14248,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -14281,10 +14293,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14299,6 +14307,10 @@ Current repository permission is checked for every request. Commands and status 
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -14346,10 +14358,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14364,6 +14372,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -14380,10 +14392,6 @@ Current repository permission is checked for every request. Commands and status 
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14397,6 +14405,10 @@ Current repository permission is checked for every request. Commands and status 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -14448,10 +14460,6 @@ Current repository permission is checked for every request. Commands and status 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -14472,10 +14480,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "answer",
                                 "comments"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "comment_reply"
                             }
                           },
                           "additionalProperties": false,
@@ -14487,6 +14491,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "comment_batch"
+                            },
                             "request_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -14501,15 +14509,15 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "thread"
+                                      },
                                       "thread_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
                                         "minLength": 32,
                                         "maxLength": 32
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "thread"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -14521,6 +14529,10 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "human_message"
+                                      },
                                       "thread_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -14564,10 +14576,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "kind",
                                           "id"
                                         ]
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "human_message"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -14581,6 +14589,10 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "agent_message"
+                                      },
                                       "session_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -14678,10 +14690,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "kind",
                                           "id"
                                         ]
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "agent_message"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -14697,6 +14705,10 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "tool_invocation"
+                                      },
                                       "session_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -14748,10 +14760,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "kind",
                                           "id"
                                         ]
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "tool_invocation"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -14765,6 +14773,10 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "tool_output"
+                                      },
                                       "session_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -14856,10 +14868,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "kind",
                                           "id"
                                         ]
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "tool_output"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -14874,15 +14882,15 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "review_thread"
+                                      },
                                       "thread_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
                                         "minLength": 32,
                                         "maxLength": 32
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "review_thread"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -14894,6 +14902,10 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "review_comment"
+                                      },
                                       "thread_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -14935,10 +14947,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "kind",
                                           "id"
                                         ]
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "review_comment"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -14953,6 +14961,10 @@ Current repository permission is checked for every request. Commands and status 
                                     "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "repository_review_comment"
+                                      },
                                       "repository": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -15000,10 +15012,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "kind",
                                           "id"
                                         ]
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "repository_review_comment"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -15018,6 +15026,10 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "work_comment"
+                                      },
                                       "task_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -15034,10 +15046,6 @@ Current repository permission is checked for every request. Commands and status 
                                         "type": "integer",
                                         "format": "uint64",
                                         "minimum": 0
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "work_comment"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -15051,6 +15059,10 @@ Current repository permission is checked for every request. Commands and status 
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "agent_checkpoint"
+                                      },
                                       "session_id": {
                                         "type": "string",
                                         "pattern": "^[0-9a-f]{32}$",
@@ -15102,10 +15114,6 @@ Current repository permission is checked for every request. Commands and status 
                                           "kind",
                                           "id"
                                         ]
-                                      },
-                                      "type": {
-                                        "type": "string",
-                                        "const": "agent_checkpoint"
                                       }
                                     },
                                     "additionalProperties": false,
@@ -15188,10 +15196,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "comment_batch"
                             }
                           },
                           "additionalProperties": false,
@@ -15204,6 +15208,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "capture_gap"
+                            },
                             "source_state": {
                               "type": "object",
                               "properties": {
@@ -15367,10 +15375,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "thread_id",
                                 "observed_thread"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "capture_gap"
                             }
                           },
                           "additionalProperties": false,
@@ -15384,6 +15388,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "session"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -15432,10 +15440,6 @@ Current repository permission is checked for every request. Commands and status 
                             },
                             "primary": {
                               "type": "boolean"
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "session"
                             }
                           },
                           "additionalProperties": false,
@@ -15449,6 +15453,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "code"
+                            },
                             "anchor": {
                               "description": "Native IDs and portable evidence remain distinct; neither is a device path.",
                               "oneOf": [
@@ -15710,10 +15718,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "code"
                             }
                           },
                           "additionalProperties": false,
@@ -15726,6 +15730,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review"
+                            },
                             "review_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -15761,10 +15769,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review"
                             }
                           },
                           "additionalProperties": false,
@@ -15810,10 +15814,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "link"
                     }
                   },
                   "additionalProperties": false,
@@ -15828,6 +15828,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "detach"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -15897,10 +15901,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "detach"
                     }
                   },
                   "additionalProperties": false,
@@ -16360,15 +16360,15 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "thread"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "thread"
                     }
                   },
                   "additionalProperties": false,
@@ -16380,6 +16380,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "human_message"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16423,10 +16427,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "human_message"
                     }
                   },
                   "additionalProperties": false,
@@ -16440,6 +16440,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "agent_message"
+                    },
                     "session_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16537,10 +16541,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "agent_message"
                     }
                   },
                   "additionalProperties": false,
@@ -16556,6 +16556,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "tool_invocation"
+                    },
                     "session_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16607,10 +16611,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "tool_invocation"
                     }
                   },
                   "additionalProperties": false,
@@ -16624,6 +16624,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "tool_output"
+                    },
                     "session_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16715,10 +16719,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "tool_output"
                     }
                   },
                   "additionalProperties": false,
@@ -16733,15 +16733,15 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "review_thread"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "review_thread"
                     }
                   },
                   "additionalProperties": false,
@@ -16753,6 +16753,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "review_comment"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16794,10 +16798,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "review_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -16812,6 +16812,10 @@ Current repository permission is checked for every request. Commands and status 
                   "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "repository_review_comment"
+                    },
                     "repository": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16859,10 +16863,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "repository_review_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -16877,6 +16877,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "work_comment"
+                    },
                     "task_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16893,10 +16897,6 @@ Current repository permission is checked for every request. Commands and status 
                       "type": "integer",
                       "format": "uint64",
                       "minimum": 0
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "work_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -16910,6 +16910,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "agent_checkpoint"
+                    },
                     "session_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -16961,10 +16965,6 @@ Current repository permission is checked for every request. Commands and status 
                         "kind",
                         "id"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "agent_checkpoint"
                     }
                   },
                   "additionalProperties": false,
@@ -17188,6 +17188,10 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "set"
+                    },
                     "emoji": {
                       "type": [
                         "object",
@@ -17223,15 +17227,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "thread"
                             }
                           },
                           "additionalProperties": false,
@@ -17243,6 +17247,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17286,10 +17294,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "human_message"
                             }
                           },
                           "additionalProperties": false,
@@ -17303,6 +17307,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17400,10 +17408,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_message"
                             }
                           },
                           "additionalProperties": false,
@@ -17419,6 +17423,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17470,10 +17478,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_invocation"
                             }
                           },
                           "additionalProperties": false,
@@ -17487,6 +17491,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17578,10 +17586,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_output"
                             }
                           },
                           "additionalProperties": false,
@@ -17596,15 +17600,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_thread"
                             }
                           },
                           "additionalProperties": false,
@@ -17616,6 +17620,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17657,10 +17665,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -17675,6 +17679,10 @@ Current repository permission is checked for every request. Commands and status 
                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            },
                             "repository": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17722,10 +17730,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "repository_review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -17740,6 +17744,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            },
                             "task_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17756,10 +17764,6 @@ Current repository permission is checked for every request. Commands and status 
                               "type": "integer",
                               "format": "uint64",
                               "minimum": 0
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "work_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -17773,6 +17777,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17824,10 +17832,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_checkpoint"
                             }
                           },
                           "additionalProperties": false,
@@ -17871,12 +17875,12 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
-                            "sequence": {
-                              "type": "string"
-                            },
                             "type": {
                               "type": "string",
                               "const": "emoji"
+                            },
+                            "sequence": {
+                              "type": "string"
                             }
                           },
                           "additionalProperties": false,
@@ -17888,6 +17892,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "custom"
+                            },
                             "emoji_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17925,10 +17933,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "custom"
                             }
                           },
                           "additionalProperties": false,
@@ -17975,10 +17979,6 @@ Current repository permission is checked for every request. Commands and status 
                           "id"
                         ]
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "set"
                     }
                   },
                   "additionalProperties": false,
@@ -17992,21 +17992,25 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "clear"
+                    },
                     "target": {
                       "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "thread"
                             }
                           },
                           "additionalProperties": false,
@@ -18018,6 +18022,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18061,10 +18069,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "human_message"
                             }
                           },
                           "additionalProperties": false,
@@ -18078,6 +18082,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18175,10 +18183,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_message"
                             }
                           },
                           "additionalProperties": false,
@@ -18194,6 +18198,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18245,10 +18253,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_invocation"
                             }
                           },
                           "additionalProperties": false,
@@ -18262,6 +18266,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18353,10 +18361,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_output"
                             }
                           },
                           "additionalProperties": false,
@@ -18371,15 +18375,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_thread"
                             }
                           },
                           "additionalProperties": false,
@@ -18391,6 +18395,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18432,10 +18440,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -18450,6 +18454,10 @@ Current repository permission is checked for every request. Commands and status 
                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            },
                             "repository": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18497,10 +18505,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "repository_review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -18515,6 +18519,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            },
                             "task_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18531,10 +18539,6 @@ Current repository permission is checked for every request. Commands and status 
                               "type": "integer",
                               "format": "uint64",
                               "minimum": 0
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "work_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -18548,6 +18552,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18599,10 +18607,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_checkpoint"
                             }
                           },
                           "additionalProperties": false,
@@ -18650,10 +18654,6 @@ Current repository permission is checked for every request. Commands and status 
                           "id"
                         ]
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "clear"
                     }
                   },
                   "additionalProperties": false,
@@ -18666,21 +18666,25 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "resolve_conflict"
+                    },
                     "target": {
                       "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "thread"
                             }
                           },
                           "additionalProperties": false,
@@ -18692,6 +18696,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18735,10 +18743,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "human_message"
                             }
                           },
                           "additionalProperties": false,
@@ -18752,6 +18756,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18849,10 +18857,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_message"
                             }
                           },
                           "additionalProperties": false,
@@ -18868,6 +18872,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -18919,10 +18927,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_invocation"
                             }
                           },
                           "additionalProperties": false,
@@ -18936,6 +18940,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -19027,10 +19035,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_output"
                             }
                           },
                           "additionalProperties": false,
@@ -19045,15 +19049,15 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_thread"
                             }
                           },
                           "additionalProperties": false,
@@ -19065,6 +19069,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -19106,10 +19114,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -19124,6 +19128,10 @@ Current repository permission is checked for every request. Commands and status 
                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            },
                             "repository": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -19171,10 +19179,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "repository_review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -19189,6 +19193,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            },
                             "task_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -19205,10 +19213,6 @@ Current repository permission is checked for every request. Commands and status 
                               "type": "integer",
                               "format": "uint64",
                               "minimum": 0
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "work_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -19222,6 +19226,10 @@ Current repository permission is checked for every request. Commands and status 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -19273,10 +19281,6 @@ Current repository permission is checked for every request. Commands and status 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_checkpoint"
                             }
                           },
                           "additionalProperties": false,
@@ -19322,12 +19326,12 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
-                                "sequence": {
-                                  "type": "string"
-                                },
                                 "type": {
                                   "type": "string",
                                   "const": "emoji"
+                                },
+                                "sequence": {
+                                  "type": "string"
                                 }
                               },
                               "additionalProperties": false,
@@ -19339,6 +19343,10 @@ Current repository permission is checked for every request. Commands and status 
                             {
                               "type": "object",
                               "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "custom"
+                                },
                                 "emoji_id": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{32}$",
@@ -19376,10 +19384,6 @@ Current repository permission is checked for every request. Commands and status 
                                     "kind",
                                     "id"
                                   ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "const": "custom"
                                 }
                               },
                               "additionalProperties": false,
@@ -19431,10 +19435,6 @@ Current repository permission is checked for every request. Commands and status 
                           "id"
                         ]
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "resolve_conflict"
                     }
                   },
                   "additionalProperties": false,

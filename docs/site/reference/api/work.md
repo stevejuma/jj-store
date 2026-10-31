@@ -1497,6 +1497,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "create_project"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1508,10 +1512,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "create_project"
                     }
                   },
                   "additionalProperties": false,
@@ -1525,6 +1525,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "update_project"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1541,10 +1545,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "update_project"
                     }
                   },
                   "additionalProperties": false,
@@ -1559,6 +1559,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "set_repository"
+                    },
                     "project": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1578,10 +1582,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                     },
                     "active": {
                       "type": "boolean"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "set_repository"
                     }
                   },
                   "additionalProperties": false,
@@ -1596,6 +1596,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "create_task"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1636,10 +1640,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "create_task"
                     }
                   },
                   "additionalProperties": false,
@@ -1655,6 +1655,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "update_task"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1703,10 +1707,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "update_task"
                     }
                   },
                   "additionalProperties": false,
@@ -1723,6 +1723,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "add_comment"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1751,10 +1755,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "add_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -1769,6 +1769,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "edit_comment"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1787,10 +1791,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "edit_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -1805,6 +1805,10 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "tombstone_comment"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -1820,10 +1824,6 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                       "type": "integer",
                       "format": "uint64",
                       "minimum": 0
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "tombstone_comment"
                     }
                   },
                   "additionalProperties": false,
