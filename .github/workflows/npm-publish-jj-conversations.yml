@@ -167,9 +167,9 @@ jobs:
     needs: [identity, package-gate, publish-production]
     if: >-
       always() && needs.identity.result == 'success' &&
-      needs.package-gate.result == 'success' &&
-      (needs.identity.outputs.mode == 'verify' || (needs.identity.outputs.mode
-      == 'publish' && needs.publish-production.result == 'success'))
+      needs.package-gate.result == 'success' && (needs.identity.outputs.mode ==
+      'verify' || (needs.identity.outputs.mode == 'publish' &&
+      needs.publish-production.result == 'success'))
     runs-on: ubuntu-22.04
     env:
       JJ_CONVERSATIONS_SOURCE: ${{ needs.identity.outputs.source }}
