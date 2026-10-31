@@ -1,5 +1,14 @@
 # Compatibility and release
 
+E-CONVERSATIONS-NPM-004 confirms the unchanged compatibility boundary for the
+regenerated OpenAPI and TypeScript projections. Parsed schema contents remain
+identical across all 204 paths, with actual HTTP/SSE response validation
+retained. The object-property ordering refresh changes no request/response
+shape, identity, native object, WAL, manifest, receipt or migration profile.
+JST-COMPAT-003 retains all complete release/platform/storage qualification
+gates; this source projection proof does not qualify npm publication or promote
+M30.
+
 E-CRATE-READMES-001 adds maintained runtime-helper overviews with links to
 existing detailed guidance. JST-COMPAT-001/003 pins, separate dependency graphs
 and qualification gates remain unchanged; documentation is not runtime proof.
