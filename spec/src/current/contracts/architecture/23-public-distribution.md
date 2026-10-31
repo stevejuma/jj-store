@@ -293,21 +293,23 @@ semver workspace dependency on public exports; published SDK metadata contains
 no source aliases or workspace dependencies. Source, archive acceptance and
 registry publication remain distinct under JST-ARCH-005. The package-scoped
 `jj-conversations-v<version>` npm workflow MUST admit an immutable main source,
-complete the existing manual qualification workflow, test and pack the exact
-client, then publish that artifact behind `npm-production` and verify a clean
-registry install, signatures and provenance. It MUST NOT publish Rust crates,
-native bundles or the private application. A protected main-only `attest` mode
-MUST complete that same qualification before signing and retaining a detached
-npm-compatible Sigstore bundle for the exact PURL, tarball SHA512, workflow and
-source. The verifier MUST enforce both the cryptographic chain and exact issuer
-and workflow identity. The predicate MUST include npm's required GitHub event
-and exact numeric repository/owner ID strings in `internalParameters.github`;
-signing MUST reject foreign IDs. Initial bootstrap MAY stage only that identical
-artifact with its verified provenance file. Explicit verification/publication
-reuse MUST admit a successful canonical workflow run with its complete
-qualification and package gates, exact source/run/attempt and checksummed
-artifact; publication requires the current main source. Reuse never substitutes
-a package test for heavy qualification. UI-only client source selects the web CI
+test and pack only `@lapismd/jj-conversations`, then publish that artifact
+behind `npm-production` or verify the registry copy. It MUST NOT rerun
+repository-wide heavy qualification. It MUST NOT publish Rust crates, native
+bundles or the private application. When the version is already on npm, the
+workflow MUST NOT upload again. It downloads the registry tarball and requires
+the same size, SHA-256 and integrity. A matching tarball with no provenance
+MUST succeed. Provenance, when present, MUST be well formed. A different
+tarball for the same version MUST fail. A protected main-only `attest` mode
+MAY sign and retain a detached npm-compatible Sigstore bundle for the exact
+PURL, tarball SHA512, workflow and source after the package checks. The
+verifier MUST enforce both the cryptographic chain and exact issuer and
+workflow identity when provenance is present. The predicate MUST include npm's
+required GitHub event and exact numeric repository/owner ID strings in
+`internalParameters.github`; signing MUST reject foreign IDs. Explicit
+verification/publication reuse MUST admit a successful canonical workflow run
+with its package gate, exact source/run/attempt and checksummed artifact;
+publication requires the current main source. UI-only client source selects the web CI
 lane; shared root manifests keep their conservative selection. The scoped npm
 release guards MUST run in the normal release-check/test lanes and again before
 preparing its qualified client artifact. CI selection fixtures MUST explicitly

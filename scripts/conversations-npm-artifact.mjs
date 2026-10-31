@@ -10,6 +10,8 @@ export const packageDirectory = "packages/jj-conversations";
 export const artifactDirectory = ".release/conversations";
 export const integrity = (bytes) =>
   "sha512-" + createHash("sha512").update(bytes).digest("base64");
+export const sha256 = (bytes) =>
+  createHash("sha256").update(bytes).digest("hex");
 export const run = (command, args, options = {}) =>
   execFileSync(command, args, { stdio: "inherit", ...options });
 export const output = (command, args, options = {}) =>
@@ -56,6 +58,7 @@ export function validateManifest(manifest, expected, bytes) {
     basename(manifest.tarball) !== manifest.tarball ||
     !manifest.tarball.endsWith(".tgz") ||
     manifest.integrity !== integrity(bytes) ||
+    manifest.sha256 !== sha256(bytes) ||
     manifest.size !== bytes.length
   )
     throw Error(
@@ -102,7 +105,6 @@ export function prepareArtifact(root = process.cwd(), env = process.env) {
   const expected = expectedArtifact(env);
   if (
     env.GITHUB_REPOSITORY !== repository ||
-    env.JJ_CONVERSATIONS_HEAVY_QUALIFIED !== "1" ||
     env.GITHUB_SHA !== expected.source ||
     !/^[a-f0-9]{40}$/.test(expected.source ?? "") ||
     !/^\d+$/.test(expected.run ?? "") ||
@@ -148,6 +150,7 @@ export function prepareArtifact(root = process.cwd(), env = process.env) {
     ...expected,
     tarball,
     size: bytes.length,
+    sha256: sha256(bytes),
     integrity: integrity(bytes),
     files,
   };

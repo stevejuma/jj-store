@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { pathToFileURL } from "node:url";
 import {
   integrity,
+  sha256,
   loadArtifact,
   output,
   packageName,
@@ -31,13 +32,16 @@ export function validateRegistry(manifest, metadata, bytes) {
     metadata.name !== packageName ||
     metadata.version !== manifest.version ||
     metadata.dist?.integrity !== manifest.integrity ||
-    integrity(bytes) !== manifest.integrity
+    integrity(bytes) !== manifest.integrity ||
+    sha256(bytes) !== manifest.sha256 ||
+    bytes.length !== manifest.size
   )
     throw Error(
       "Downloaded Conversations version differs from the qualified artifact",
     );
-  if (!metadata.dist.attestations?.provenance)
-    throw Error("Conversations registry package has no provenance attestation");
+  const provenance = metadata.dist?.attestations?.provenance;
+  if (provenance != null && typeof provenance !== "object")
+    throw Error("Conversations registry provenance is malformed");
 }
 
 export async function publish(root = process.cwd(), env = process.env) {
@@ -55,10 +59,14 @@ export async function publish(root = process.cwd(), env = process.env) {
     );
   const existing = await registry(manifest);
   if (existing) {
-    if (existing.dist?.integrity !== manifest.integrity)
-      throw Error(
-        "Existing Conversations version has different immutable bytes",
-      );
+    const response = await fetch(existing.dist?.tarball);
+    if (!response.ok)
+      throw Error(`npm tarball request failed: ${response.status}`);
+    validateRegistry(
+      manifest,
+      existing,
+      Buffer.from(await response.arrayBuffer()),
+    );
     console.log(
       "Exact Conversations version already exists; preserving the immutable package",
     );
@@ -139,9 +147,10 @@ export async function verifyRegistry(root = process.cwd()) {
       ],
       { cwd: consumer },
     );
-    run("npm", ["audit", "signatures", "--include-attestations"], {
-      cwd: consumer,
-    });
+    if (metadata.dist?.attestations?.provenance)
+      run("npm", ["audit", "signatures", "--include-attestations"], {
+        cwd: consumer,
+      });
     writeJson(
       join(directory, "consumer-package.json"),
       readJson(join(consumer, "package.json")),
