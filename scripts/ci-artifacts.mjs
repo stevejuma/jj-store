@@ -21,6 +21,7 @@ import {
   uiLanePayloads,
 } from "./ci-artifact-layout.mjs";
 import { verifyUiProducer } from "./ci-ui-producer.mjs";
+import { isConversationsProducer } from "./ci-conversations-producer.mjs";
 export { payloads, lanePayloads } from "./ci-artifact-layout.mjs";
 
 export function identity(env = process.env) {
@@ -82,12 +83,15 @@ export function verifyProducer(run, jobs, expected, roles) {
     "Producer attempt mismatch",
   );
   assert.equal(run.repository.full_name, expected.repository);
-  assert.equal(run.event, "workflow_dispatch");
+  assert.ok(
+    run.event === "workflow_dispatch" || isConversationsProducer(run),
+    "Unapproved producer event",
+  );
   assert.ok(
     [
       ".github/workflows/ci-heavy.yml",
       ".github/workflows/publish-release.yml",
-    ].includes(run.path),
+    ].includes(run.path) || isConversationsProducer(run),
     "Unapproved producer workflow",
   );
   for (const leaf of [

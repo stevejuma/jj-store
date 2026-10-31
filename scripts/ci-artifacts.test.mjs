@@ -47,6 +47,42 @@ const jobs = () =>
     "Standard checks / required",
     "build artifact producer",
   ].map((name) => ({ name: `qualification / ${name}`, conclusion: "success" }));
+
+test("Conversations qualification admits canonical main or scoped-tag heavy producers", () => {
+  const npmRun = {
+    ...producer(),
+    path: ".github/workflows/npm-publish-jj-conversations.yml",
+    head_branch: "main",
+  };
+  assert.doesNotThrow(() =>
+    verifyProducer(npmRun, jobs(), expected, ["build"]),
+  );
+  assert.doesNotThrow(() =>
+    verifyProducer(
+      { ...npmRun, event: "push", head_branch: "jj-conversations-v0.1.0" },
+      jobs(),
+      expected,
+      ["build"],
+    ),
+  );
+  for (const changed of [
+    { event: "pull_request" },
+    { head_branch: "feature" },
+    { event: "push", head_branch: "main" },
+    { event: "push", head_branch: "v0.1.0" },
+    { path: ".github/workflows/npm-publish-jj-history.yml" },
+  ])
+    assert.throws(() =>
+      verifyProducer({ ...npmRun, ...changed }, jobs(), expected, ["build"]),
+    );
+  assert.throws(() =>
+    verifyProducer(npmRun, jobs(), { ...expected, attempt: "1" }, ["build"]),
+  );
+  const failed = jobs();
+  failed[1].conclusion = "failure";
+  assert.throws(() => verifyProducer(npmRun, failed, expected, ["build"]));
+});
+
 test("artifact reuse requires successful exact producers, not a successful unrelated suite", () => {
   assert.doesNotThrow(() =>
     verifyProducer(producer(), jobs(), expected, ["build"]),
