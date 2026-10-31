@@ -8,6 +8,13 @@ Generated reference comparison, diagram rendering, the complete strict manual
 build and link/anchor closure remain required. This review does not qualify
 package publication or change M30's independent release gates.
 
+E-CONVERSATIONS-NPM-006 records the conversations manual and maintenance
+coverage for the scoped npm workflow. The technical page and review fingerprint
+describe package tests, exact pack, and idempotent registry verification. A
+matching published tarball succeeds without provenance. A different tarball
+fails. This review does not rerun repository-wide heavy qualification or upload
+0.1.0 again.
+
 The M33 delivery checklist under `docs/maintenance` summarizes completed slices,
 current work, previews and remaining gates. Update its stable task IDs after
 verified implementation slices; canonical milestone ledgers retain status
