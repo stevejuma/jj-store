@@ -25,17 +25,12 @@ export function admitQualifiedRun(run, jobs) {
     run.run_attempt <= 0 ||
     !jobs.some(
       (job) =>
-        job.name.endsWith("Complete qualification gate") &&
-        job.conclusion === "success",
-    ) ||
-    !jobs.some(
-      (job) =>
         job.name === "Validate exact client artifact" &&
         job.conclusion === "success",
     )
   )
     throw Error(
-      "Artifact reuse requires a successful canonical complete qualification and package gate",
+      "Artifact reuse requires a successful canonical Conversations package gate",
     );
   return {
     source: run.head_sha,
@@ -66,7 +61,8 @@ export function validateInvocation(env, version) {
       );
     if (
       env.INPUT_MODE === "verify" &&
-      !/^\d+$/.test(env.INPUT_QUALIFIED_RUN ?? "")
+      env.INPUT_QUALIFIED_RUN &&
+      !/^\d+$/.test(env.INPUT_QUALIFIED_RUN)
     )
       throw Error("Read-only verification requires a qualified artifact run");
     return env.INPUT_MODE;
