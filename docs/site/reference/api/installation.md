@@ -966,12 +966,12 @@ Requires current repository read permission. Unknown query fields are rejected. 
                       {
                         "type": "object",
                         "properties": {
-                          "name": {
-                            "type": "string"
-                          },
                           "kind": {
                             "type": "string",
                             "const": "bookmark"
+                          },
+                          "name": {
+                            "type": "string"
                           }
                         },
                         "additionalProperties": false,
@@ -983,12 +983,12 @@ Requires current repository read permission. Unknown query fields are rejected. 
                       {
                         "type": "object",
                         "properties": {
-                          "name": {
-                            "type": "string"
-                          },
                           "kind": {
                             "type": "string",
                             "const": "workspace"
+                          },
+                          "name": {
+                            "type": "string"
                           }
                         },
                         "additionalProperties": false,
@@ -6773,6 +6773,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             {
                               "type": "object",
                               "properties": {
+                                "graph": {
+                                  "type": "string",
+                                  "const": "log"
+                                },
                                 "revset": {
                                   "type": "string"
                                 },
@@ -6788,10 +6792,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "at_time_millis": {
                                   "type": "integer",
                                   "format": "int64"
-                                },
-                                "graph": {
-                                  "type": "string",
-                                  "const": "log"
                                 }
                               },
                               "additionalProperties": false,
@@ -6818,12 +6818,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             {
                               "type": "object",
                               "properties": {
-                                "query": {
-                                  "type": "string"
-                                },
                                 "graph": {
                                   "type": "string",
                                   "const": "operations_filtered"
+                                },
+                                "query": {
+                                  "type": "string"
                                 }
                               },
                               "additionalProperties": false,
@@ -6835,15 +6835,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             {
                               "type": "object",
                               "properties": {
+                                "graph": {
+                                  "type": "string",
+                                  "const": "evolution"
+                                },
                                 "commit": {
                                   "type": "string",
                                   "pattern": "^[0-9a-f]{40}$",
                                   "minLength": 40,
                                   "maxLength": 40
-                                },
-                                "graph": {
-                                  "type": "string",
-                                  "const": "evolution"
                                 }
                               },
                               "additionalProperties": false,
@@ -10091,6 +10091,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "create_project"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10102,10 +10106,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "create_project"
                     }
                   },
                   "additionalProperties": false,
@@ -10119,6 +10119,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "update_project"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10135,10 +10139,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "update_project"
                     }
                   },
                   "additionalProperties": false,
@@ -10153,6 +10153,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "set_repository"
+                    },
                     "project": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10172,10 +10176,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "active": {
                       "type": "boolean"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "set_repository"
                     }
                   },
                   "additionalProperties": false,
@@ -10190,6 +10190,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "create_task"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10230,10 +10234,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "create_task"
                     }
                   },
                   "additionalProperties": false,
@@ -10249,6 +10249,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "update_task"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10297,10 +10301,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "update_task"
                     }
                   },
                   "additionalProperties": false,
@@ -10317,6 +10317,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "add_comment"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10345,10 +10349,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "add_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -10363,6 +10363,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "edit_comment"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10381,10 +10385,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "body": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "edit_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -10399,6 +10399,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "tombstone_comment"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -10414,10 +10418,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "type": "integer",
                       "format": "uint64",
                       "minimum": 0
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "tombstone_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -11528,15 +11528,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     {
                       "type": "object",
                       "properties": {
+                        "subject": {
+                          "type": "string",
+                          "const": "session"
+                        },
                         "session_id": {
                           "type": "string",
                           "pattern": "^[0-9a-f]{32}$",
                           "minLength": 32,
                           "maxLength": 32
-                        },
-                        "subject": {
-                          "type": "string",
-                          "const": "session"
                         }
                       },
                       "additionalProperties": false,
@@ -11548,6 +11548,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     {
                       "type": "object",
                       "properties": {
+                        "subject": {
+                          "type": "string",
+                          "const": "operation"
+                        },
                         "repository": {
                           "type": "string",
                           "pattern": "^[0-9a-f]{32}$",
@@ -11559,10 +11563,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "pattern": "^[0-9a-f]{128}$",
                           "minLength": 128,
                           "maxLength": 128
-                        },
-                        "subject": {
-                          "type": "string",
-                          "const": "operation"
                         }
                       },
                       "additionalProperties": false,
@@ -11575,6 +11575,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     {
                       "type": "object",
                       "properties": {
+                        "subject": {
+                          "type": "string",
+                          "const": "revision"
+                        },
                         "repository": {
                           "type": "string",
                           "pattern": "^[0-9a-f]{32}$",
@@ -11586,10 +11590,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "pattern": "^[0-9a-f]{40}$",
                           "minLength": 40,
                           "maxLength": 40
-                        },
-                        "subject": {
-                          "type": "string",
-                          "const": "revision"
                         }
                       },
                       "additionalProperties": false,
@@ -12395,6 +12395,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "create_thread"
+                    },
                     "anchor": {
                       "type": "object",
                       "properties": {
@@ -12699,6 +12703,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "native_v1"
+                                                },
                                                 "object": {
                                                   "oneOf": [
                                                     {
@@ -12842,10 +12850,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "additionalProperties": false
                                                     }
                                                   ]
-                                                },
-                                                "profile": {
-                                                  "type": "string",
-                                                  "const": "native_v1"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -12857,6 +12861,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "git_sha1_jj045"
+                                                },
                                                 "kind": {
                                                   "type": "string",
                                                   "enum": [
@@ -12870,10 +12878,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "pattern": "^[0-9a-f]{40}$",
                                                   "minLength": 40,
                                                   "maxLength": 40
-                                                },
-                                                "profile": {
-                                                  "type": "string",
-                                                  "const": "git_sha1_jj045"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -13302,6 +13306,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "profile": {
+                                              "type": "string",
+                                              "const": "native_v1"
+                                            },
                                             "object": {
                                               "oneOf": [
                                                 {
@@ -13445,10 +13453,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "additionalProperties": false
                                                 }
                                               ]
-                                            },
-                                            "profile": {
-                                              "type": "string",
-                                              "const": "native_v1"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13460,6 +13464,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "profile": {
+                                              "type": "string",
+                                              "const": "git_sha1_jj045"
+                                            },
                                             "kind": {
                                               "type": "string",
                                               "enum": [
@@ -13473,10 +13481,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "pattern": "^[0-9a-f]{40}$",
                                               "minLength": 40,
                                               "maxLength": 40
-                                            },
-                                            "profile": {
-                                              "type": "string",
-                                              "const": "git_sha1_jj045"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13782,6 +13786,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "tool"
+                                            },
                                             "tool_call_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13833,10 +13841,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "pattern": "^[0-9a-f]{32}$",
                                               "minLength": 32,
                                               "maxLength": 32
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "tool"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13850,6 +13854,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "message"
+                                            },
                                             "message_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13895,10 +13903,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "message"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -13911,6 +13915,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "plan"
+                                            },
                                             "block_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -13956,10 +13964,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "plan"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -14202,6 +14206,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "tool"
+                                            },
                                             "tool_call_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -14253,10 +14261,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "pattern": "^[0-9a-f]{32}$",
                                               "minLength": 32,
                                               "maxLength": 32
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "tool"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -14270,6 +14274,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "message"
+                                            },
                                             "message_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -14315,10 +14323,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "message"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -14331,6 +14335,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "plan"
+                                            },
                                             "block_id": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
@@ -14376,10 +14384,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "kind",
                                                 "id"
                                               ]
-                                            },
-                                            "kind": {
-                                              "type": "string",
-                                              "const": "plan"
                                             }
                                           },
                                           "additionalProperties": false,
@@ -14635,10 +14639,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "create_thread"
                     }
                   },
                   "additionalProperties": false,
@@ -14651,6 +14651,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "append_reply"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -14700,10 +14704,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "append_reply"
                     }
                   },
                   "additionalProperties": false,
@@ -14717,6 +14717,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "edit_comment"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -14758,10 +14762,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "edit_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -14775,6 +14775,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "resolve_comment_conflict"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -14819,10 +14823,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "text",
                         "sanitizer_version"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "resolve_comment_conflict"
                     }
                   },
                   "additionalProperties": false,
@@ -14836,6 +14836,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "tombstone_comment"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -14853,10 +14857,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "string",
                         "null"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "tombstone_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -14869,6 +14869,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "hide_comment"
+                    },
                     "comment_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -14883,10 +14887,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "moderation_reason": {
                       "type": "string"
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "hide_comment"
                     }
                   },
                   "additionalProperties": false,
@@ -14900,6 +14900,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "resolve_thread"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -14917,10 +14921,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "string",
                         "null"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "resolve_thread"
                     }
                   },
                   "additionalProperties": false,
@@ -14933,6 +14933,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "command": {
+                      "type": "string",
+                      "const": "reopen_thread"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -14950,10 +14954,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "string",
                         "null"
                       ]
-                    },
-                    "command": {
-                      "type": "string",
-                      "const": "reopen_thread"
                     }
                   },
                   "additionalProperties": false,
@@ -15646,14 +15646,14 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "threads"
+                    },
                     "limit": {
                       "type": "integer",
                       "format": "uint32",
                       "minimum": 0
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "threads"
                     }
                   },
                   "additionalProperties": false,
@@ -15665,6 +15665,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "events"
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -15675,10 +15679,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "type": "integer",
                       "format": "uint32",
                       "minimum": 0
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "events"
                     }
                   },
                   "additionalProperties": false,
@@ -15691,21 +15691,25 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "reactions"
+                    },
                     "target": {
                       "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "thread"
                             }
                           },
                           "additionalProperties": false,
@@ -15717,6 +15721,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -15760,10 +15768,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "human_message"
                             }
                           },
                           "additionalProperties": false,
@@ -15777,6 +15781,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -15874,10 +15882,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_message"
                             }
                           },
                           "additionalProperties": false,
@@ -15893,6 +15897,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -15944,10 +15952,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_invocation"
                             }
                           },
                           "additionalProperties": false,
@@ -15961,6 +15965,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16052,10 +16060,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_output"
                             }
                           },
                           "additionalProperties": false,
@@ -16070,15 +16074,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_thread"
                             }
                           },
                           "additionalProperties": false,
@@ -16090,6 +16094,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16131,10 +16139,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -16149,6 +16153,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            },
                             "repository": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16196,10 +16204,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "repository_review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -16214,6 +16218,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            },
                             "task_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16230,10 +16238,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "type": "integer",
                               "format": "uint64",
                               "minimum": 0
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "work_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -16247,6 +16251,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16298,10 +16306,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_checkpoint"
                             }
                           },
                           "additionalProperties": false,
@@ -16318,10 +16322,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "type": "integer",
                       "format": "uint32",
                       "minimum": 0
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "reactions"
                     }
                   },
                   "additionalProperties": false,
@@ -16334,14 +16334,14 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "emojis"
+                    },
                     "limit": {
                       "type": "integer",
                       "format": "uint32",
                       "minimum": 0
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "emojis"
                     }
                   },
                   "additionalProperties": false,
@@ -16747,11 +16747,19 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "domain": {
+                      "type": "string",
+                      "const": "thread"
+                    },
                     "intent": {
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "create_intentional"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16769,10 +16777,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "minLength": 32,
                                 "maxLength": 32
                               }
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "create_intentional"
                             }
                           },
                           "additionalProperties": false,
@@ -16786,6 +16790,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "create_conversation"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16800,12 +16808,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
-                                    "id": {
-                                      "type": "string"
-                                    },
                                     "type": {
                                       "type": "string",
                                       "const": "conversation"
+                                    },
+                                    "id": {
+                                      "type": "string"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -16817,15 +16825,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "recorded"
+                                    },
                                     "session": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "recorded"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -16835,10 +16843,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   ]
                                 }
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "create_conversation"
                             }
                           },
                           "additionalProperties": false,
@@ -16852,6 +16856,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "create_annotation"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16860,10 +16868,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             },
                             "title": {
                               "type": "string"
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "create_annotation"
                             }
                           },
                           "additionalProperties": false,
@@ -16876,6 +16880,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "set_codebase"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -16922,10 +16930,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "minLength": 32,
                                 "maxLength": 32
                               }
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "set_codebase"
                             }
                           },
                           "additionalProperties": false,
@@ -16939,6 +16943,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "set_metadata"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -17017,12 +17025,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
-                                    "id": {
-                                      "type": "string"
-                                    },
                                     "type": {
                                       "type": "string",
                                       "const": "conversation"
+                                    },
+                                    "id": {
+                                      "type": "string"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -17034,15 +17042,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "recorded"
+                                    },
                                     "session": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "recorded"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -17248,10 +17256,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 }
                               },
                               "additionalProperties": false
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "set_metadata"
                             }
                           },
                           "additionalProperties": false,
@@ -17266,6 +17270,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "submit"
+                            },
                             "submission": {
                               "type": "object",
                               "properties": {
@@ -17442,15 +17450,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "thread"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
                                                     "minLength": 32,
                                                     "maxLength": 32
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "thread"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17462,6 +17470,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "human_message"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -17505,10 +17517,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "human_message"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17522,6 +17530,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "agent_message"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -17619,10 +17631,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "agent_message"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17638,6 +17646,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "tool_invocation"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -17689,10 +17701,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "tool_invocation"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17706,6 +17714,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "tool_output"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -17797,10 +17809,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "tool_output"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17815,15 +17823,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "review_thread"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
                                                     "minLength": 32,
                                                     "maxLength": 32
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "review_thread"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17835,6 +17843,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "review_comment"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -17876,10 +17888,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "review_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17894,6 +17902,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "repository_review_comment"
+                                                  },
                                                   "repository": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -17941,10 +17953,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "repository_review_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17959,6 +17967,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "work_comment"
+                                                  },
                                                   "task_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -17975,10 +17987,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "type": "integer",
                                                     "format": "uint64",
                                                     "minimum": 0
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "work_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -17992,6 +18000,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "agent_checkpoint"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -18043,10 +18055,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "agent_checkpoint"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -18209,15 +18217,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18229,6 +18237,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18272,10 +18284,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18289,6 +18297,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18386,10 +18398,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18405,6 +18413,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18456,10 +18468,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18473,6 +18481,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18564,10 +18576,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18582,15 +18590,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18602,6 +18610,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18643,10 +18655,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18661,6 +18669,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18708,10 +18720,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18726,6 +18734,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18742,10 +18754,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18759,6 +18767,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -18810,10 +18822,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -18980,15 +18988,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "thread"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
                                                     "minLength": 32,
                                                     "maxLength": 32
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "thread"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19000,6 +19008,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "human_message"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19043,10 +19055,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "human_message"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19060,6 +19068,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "agent_message"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19157,10 +19169,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "agent_message"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19176,6 +19184,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "tool_invocation"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19227,10 +19239,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "tool_invocation"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19244,6 +19252,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "tool_output"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19335,10 +19347,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "tool_output"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19353,15 +19361,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "review_thread"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
                                                     "minLength": 32,
                                                     "maxLength": 32
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "review_thread"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19373,6 +19381,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "review_comment"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19414,10 +19426,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "review_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19432,6 +19440,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "repository_review_comment"
+                                                  },
                                                   "repository": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19479,10 +19491,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "repository_review_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19497,6 +19505,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "work_comment"
+                                                  },
                                                   "task_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19513,10 +19525,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "type": "integer",
                                                     "format": "uint64",
                                                     "minimum": 0
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "work_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19530,6 +19538,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "agent_checkpoint"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -19581,10 +19593,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "agent_checkpoint"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -19623,10 +19631,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "comments",
                                 "references"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "submit"
                             }
                           },
                           "additionalProperties": false,
@@ -19638,6 +19642,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "create_comment_discussion"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -19656,15 +19664,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "thread"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
                                           "minLength": 32,
                                           "maxLength": 32
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "thread"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -19676,6 +19684,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "human_message"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -19719,10 +19731,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "human_message"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -19736,6 +19744,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "agent_message"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -19833,10 +19845,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "agent_message"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -19852,6 +19860,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "tool_invocation"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -19903,10 +19915,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "tool_invocation"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -19920,6 +19928,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "tool_output"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -20011,10 +20023,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "tool_output"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -20029,15 +20037,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "review_thread"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
                                           "minLength": 32,
                                           "maxLength": 32
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "review_thread"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -20049,6 +20057,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "review_comment"
+                                        },
                                         "thread_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -20090,10 +20102,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "review_comment"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -20108,6 +20116,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "repository_review_comment"
+                                        },
                                         "repository": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -20155,10 +20167,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "repository_review_comment"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -20173,6 +20181,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "work_comment"
+                                        },
                                         "task_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -20189,10 +20201,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "type": "integer",
                                           "format": "uint64",
                                           "minimum": 0
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "work_comment"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -20206,6 +20214,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "agent_checkpoint"
+                                        },
                                         "session_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -20257,10 +20269,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "agent_checkpoint"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -20325,10 +20333,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "target",
                                 "quote"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "create_comment_discussion"
                             }
                           },
                           "additionalProperties": false,
@@ -20342,6 +20346,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "create_agent_discussion"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -20357,15 +20365,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20377,6 +20385,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "human_message"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20420,10 +20432,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "human_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20437,6 +20445,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_message"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20534,10 +20546,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20553,6 +20561,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_invocation"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20604,10 +20616,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_invocation"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20621,6 +20629,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_output"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20712,10 +20724,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_output"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20730,15 +20738,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20750,6 +20758,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_comment"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20791,10 +20803,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20809,6 +20817,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "repository_review_comment"
+                                    },
                                     "repository": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20856,10 +20868,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "repository_review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20874,6 +20882,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "work_comment"
+                                    },
                                     "task_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20890,10 +20902,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "type": "integer",
                                       "format": "uint64",
                                       "minimum": 0
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "work_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20907,6 +20915,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_checkpoint"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -20958,10 +20970,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_checkpoint"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -20973,10 +20981,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   ]
                                 }
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "create_agent_discussion"
                             }
                           },
                           "additionalProperties": false,
@@ -20990,6 +20994,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "create"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -21214,10 +21222,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "type": "null"
                                 }
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "create"
                             }
                           },
                           "additionalProperties": false,
@@ -21230,6 +21234,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "rename"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -21270,10 +21278,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             },
                             "title": {
                               "type": "string"
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "rename"
                             }
                           },
                           "additionalProperties": false,
@@ -21287,6 +21291,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "lifecycle"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -21334,10 +21342,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "tombstone",
                                 "restore"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "lifecycle"
                             }
                           },
                           "additionalProperties": false,
@@ -21351,6 +21355,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "message"
+                            },
                             "emojis": {
                               "type": "array",
                               "items": {
@@ -21499,10 +21507,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "string",
                                 "null"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "message"
                             }
                           },
                           "additionalProperties": false,
@@ -21516,6 +21520,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "link"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -21565,6 +21573,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "comment_reply"
+                                    },
                                     "reply": {
                                       "type": "object",
                                       "properties": {
@@ -21574,15 +21586,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "thread"
+                                                },
                                                 "thread_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
                                                   "minLength": 32,
                                                   "maxLength": 32
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "thread"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -21594,6 +21606,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "human_message"
+                                                },
                                                 "thread_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -21637,10 +21653,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "kind",
                                                     "id"
                                                   ]
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "human_message"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -21654,6 +21666,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "agent_message"
+                                                },
                                                 "session_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -21751,10 +21767,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "kind",
                                                     "id"
                                                   ]
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "agent_message"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -21770,6 +21782,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "tool_invocation"
+                                                },
                                                 "session_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -21821,10 +21837,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "kind",
                                                     "id"
                                                   ]
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "tool_invocation"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -21838,6 +21850,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "tool_output"
+                                                },
                                                 "session_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -21929,10 +21945,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "kind",
                                                     "id"
                                                   ]
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "tool_output"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -21947,15 +21959,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "review_thread"
+                                                },
                                                 "thread_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
                                                   "minLength": 32,
                                                   "maxLength": 32
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "review_thread"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -21967,6 +21979,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "review_comment"
+                                                },
                                                 "thread_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -22008,10 +22024,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "kind",
                                                     "id"
                                                   ]
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "review_comment"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -22026,6 +22038,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "repository_review_comment"
+                                                },
                                                 "repository": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -22073,10 +22089,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "kind",
                                                     "id"
                                                   ]
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "repository_review_comment"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -22091,6 +22103,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "work_comment"
+                                                },
                                                 "task_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -22107,10 +22123,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "type": "integer",
                                                   "format": "uint64",
                                                   "minimum": 0
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "work_comment"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -22124,6 +22136,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             {
                                               "type": "object",
                                               "properties": {
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "agent_checkpoint"
+                                                },
                                                 "session_id": {
                                                   "type": "string",
                                                   "pattern": "^[0-9a-f]{32}$",
@@ -22175,10 +22191,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "kind",
                                                     "id"
                                                   ]
-                                                },
-                                                "type": {
-                                                  "type": "string",
-                                                  "const": "agent_checkpoint"
                                                 }
                                               },
                                               "additionalProperties": false,
@@ -22200,15 +22212,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "thread"
+                                                    },
                                                     "thread_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
                                                       "minLength": 32,
                                                       "maxLength": 32
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "thread"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22220,6 +22232,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "human_message"
+                                                    },
                                                     "thread_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22263,10 +22279,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "kind",
                                                         "id"
                                                       ]
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "human_message"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22280,6 +22292,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "agent_message"
+                                                    },
                                                     "session_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22377,10 +22393,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "kind",
                                                         "id"
                                                       ]
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "agent_message"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22396,6 +22408,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "tool_invocation"
+                                                    },
                                                     "session_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22447,10 +22463,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "kind",
                                                         "id"
                                                       ]
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "tool_invocation"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22464,6 +22476,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "tool_output"
+                                                    },
                                                     "session_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22555,10 +22571,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "kind",
                                                         "id"
                                                       ]
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "tool_output"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22573,15 +22585,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "review_thread"
+                                                    },
                                                     "thread_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
                                                       "minLength": 32,
                                                       "maxLength": 32
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "review_thread"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22593,6 +22605,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "review_comment"
+                                                    },
                                                     "thread_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22634,10 +22650,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "kind",
                                                         "id"
                                                       ]
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "review_comment"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22652,6 +22664,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "repository_review_comment"
+                                                    },
                                                     "repository": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22699,10 +22715,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "kind",
                                                         "id"
                                                       ]
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "repository_review_comment"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22717,6 +22729,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "work_comment"
+                                                    },
                                                     "task_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22733,10 +22749,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "type": "integer",
                                                       "format": "uint64",
                                                       "minimum": 0
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "work_comment"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22750,6 +22762,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 {
                                                   "type": "object",
                                                   "properties": {
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "agent_checkpoint"
+                                                    },
                                                     "session_id": {
                                                       "type": "string",
                                                       "pattern": "^[0-9a-f]{32}$",
@@ -22801,10 +22817,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "kind",
                                                         "id"
                                                       ]
-                                                    },
-                                                    "type": {
-                                                      "type": "string",
-                                                      "const": "agent_checkpoint"
                                                     }
                                                   },
                                                   "additionalProperties": false,
@@ -22878,15 +22890,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "thread"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
                                                     "minLength": 32,
                                                     "maxLength": 32
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "thread"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -22898,6 +22910,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "human_message"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -22941,10 +22957,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "human_message"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -22958,6 +22970,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "agent_message"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -23055,10 +23071,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "agent_message"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23074,6 +23086,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "tool_invocation"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -23125,10 +23141,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "tool_invocation"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23142,6 +23154,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "tool_output"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -23233,10 +23249,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "tool_output"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23251,15 +23263,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "review_thread"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
                                                     "minLength": 32,
                                                     "maxLength": 32
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "review_thread"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23271,6 +23283,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "review_comment"
+                                                  },
                                                   "thread_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -23312,10 +23328,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "review_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23330,6 +23342,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "repository_review_comment"
+                                                  },
                                                   "repository": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -23377,10 +23393,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "repository_review_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23395,6 +23407,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "work_comment"
+                                                  },
                                                   "task_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -23411,10 +23427,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "type": "integer",
                                                     "format": "uint64",
                                                     "minimum": 0
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "work_comment"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23428,6 +23440,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               {
                                                 "type": "object",
                                                 "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "agent_checkpoint"
+                                                  },
                                                   "session_id": {
                                                     "type": "string",
                                                     "pattern": "^[0-9a-f]{32}$",
@@ -23479,10 +23495,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "kind",
                                                       "id"
                                                     ]
-                                                  },
-                                                  "type": {
-                                                    "type": "string",
-                                                    "const": "agent_checkpoint"
                                                   }
                                                 },
                                                 "additionalProperties": false,
@@ -23503,10 +23515,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "answer",
                                         "comments"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "comment_reply"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -23518,6 +23526,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "comment_batch"
+                                    },
                                     "request_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -23532,15 +23544,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "thread"
+                                              },
                                               "thread_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
                                                 "minLength": 32,
                                                 "maxLength": 32
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "thread"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -23552,6 +23564,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "human_message"
+                                              },
                                               "thread_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -23595,10 +23611,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "kind",
                                                   "id"
                                                 ]
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "human_message"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -23612,6 +23624,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "agent_message"
+                                              },
                                               "session_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -23709,10 +23725,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "kind",
                                                   "id"
                                                 ]
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "agent_message"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -23728,6 +23740,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "tool_invocation"
+                                              },
                                               "session_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -23779,10 +23795,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "kind",
                                                   "id"
                                                 ]
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "tool_invocation"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -23796,6 +23808,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "tool_output"
+                                              },
                                               "session_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -23887,10 +23903,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "kind",
                                                   "id"
                                                 ]
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "tool_output"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -23905,15 +23917,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "review_thread"
+                                              },
                                               "thread_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
                                                 "minLength": 32,
                                                 "maxLength": 32
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "review_thread"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -23925,6 +23937,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "review_comment"
+                                              },
                                               "thread_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -23966,10 +23982,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "kind",
                                                   "id"
                                                 ]
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "review_comment"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -23984,6 +23996,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "repository_review_comment"
+                                              },
                                               "repository": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -24031,10 +24047,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "kind",
                                                   "id"
                                                 ]
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "repository_review_comment"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -24049,6 +24061,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "work_comment"
+                                              },
                                               "task_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -24065,10 +24081,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "type": "integer",
                                                 "format": "uint64",
                                                 "minimum": 0
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "work_comment"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -24082,6 +24094,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           {
                                             "type": "object",
                                             "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "agent_checkpoint"
+                                              },
                                               "session_id": {
                                                 "type": "string",
                                                 "pattern": "^[0-9a-f]{32}$",
@@ -24133,10 +24149,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                   "kind",
                                                   "id"
                                                 ]
-                                              },
-                                              "type": {
-                                                "type": "string",
-                                                "const": "agent_checkpoint"
                                               }
                                             },
                                             "additionalProperties": false,
@@ -24219,10 +24231,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "comment_batch"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -24235,6 +24243,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "capture_gap"
+                                    },
                                     "source_state": {
                                       "type": "object",
                                       "properties": {
@@ -24398,10 +24410,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "thread_id",
                                         "observed_thread"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "capture_gap"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -24415,6 +24423,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "session"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -24463,10 +24475,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     },
                                     "primary": {
                                       "type": "boolean"
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "session"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -24480,6 +24488,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "code"
+                                    },
                                     "anchor": {
                                       "description": "Native IDs and portable evidence remain distinct; neither is a device path.",
                                       "oneOf": [
@@ -24741,10 +24753,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "code"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -24757,6 +24765,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review"
+                                    },
                                     "review_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -24792,10 +24804,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -24841,10 +24849,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "link"
                             }
                           },
                           "additionalProperties": false,
@@ -24859,6 +24863,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "detach"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -24928,10 +24936,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "detach"
                             }
                           },
                           "additionalProperties": false,
@@ -24943,10 +24947,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           ]
                         }
                       ]
-                    },
-                    "domain": {
-                      "type": "string",
-                      "const": "thread"
                     }
                   },
                   "additionalProperties": false,
@@ -24958,12 +24958,20 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "domain": {
+                      "type": "string",
+                      "const": "reaction"
+                    },
                     "intent": {
                       "description": "A typed reaction command never accepts an actor from an API caller.",
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "set"
+                            },
                             "emoji": {
                               "type": [
                                 "object",
@@ -24999,15 +25007,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25019,6 +25027,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "human_message"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25062,10 +25074,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "human_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25079,6 +25087,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_message"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25176,10 +25188,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25195,6 +25203,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_invocation"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25246,10 +25258,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_invocation"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25263,6 +25271,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_output"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25354,10 +25366,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_output"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25372,15 +25380,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25392,6 +25400,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_comment"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25433,10 +25445,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25451,6 +25459,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "repository_review_comment"
+                                    },
                                     "repository": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25498,10 +25510,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "repository_review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25516,6 +25524,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "work_comment"
+                                    },
                                     "task_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25532,10 +25544,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "type": "integer",
                                       "format": "uint64",
                                       "minimum": 0
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "work_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25549,6 +25557,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_checkpoint"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25600,10 +25612,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_checkpoint"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25647,12 +25655,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
-                                    "sequence": {
-                                      "type": "string"
-                                    },
                                     "type": {
                                       "type": "string",
                                       "const": "emoji"
+                                    },
+                                    "sequence": {
+                                      "type": "string"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25664,6 +25672,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom"
+                                    },
                                     "emoji_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25701,10 +25713,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "custom"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25751,10 +25759,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "id"
                                 ]
                               }
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "set"
                             }
                           },
                           "additionalProperties": false,
@@ -25768,21 +25772,25 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "clear"
+                            },
                             "target": {
                               "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
                               "oneOf": [
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25794,6 +25802,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "human_message"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25837,10 +25849,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "human_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25854,6 +25862,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_message"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -25951,10 +25963,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -25970,6 +25978,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_invocation"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26021,10 +26033,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_invocation"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26038,6 +26046,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_output"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26129,10 +26141,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_output"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26147,15 +26155,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26167,6 +26175,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_comment"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26208,10 +26220,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26226,6 +26234,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "repository_review_comment"
+                                    },
                                     "repository": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26273,10 +26285,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "repository_review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26291,6 +26299,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "work_comment"
+                                    },
                                     "task_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26307,10 +26319,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "type": "integer",
                                       "format": "uint64",
                                       "minimum": 0
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "work_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26324,6 +26332,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_checkpoint"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26375,10 +26387,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_checkpoint"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26426,10 +26434,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "id"
                                 ]
                               }
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "clear"
                             }
                           },
                           "additionalProperties": false,
@@ -26442,21 +26446,25 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "resolve_conflict"
+                            },
                             "target": {
                               "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
                               "oneOf": [
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26468,6 +26476,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "human_message"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26511,10 +26523,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "human_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26528,6 +26536,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_message"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26625,10 +26637,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_message"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26644,6 +26652,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_invocation"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26695,10 +26707,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_invocation"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26712,6 +26720,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tool_output"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26803,10 +26815,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "tool_output"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26821,15 +26829,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_thread"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
                                       "minLength": 32,
                                       "maxLength": 32
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_thread"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26841,6 +26849,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "review_comment"
+                                    },
                                     "thread_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26882,10 +26894,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26900,6 +26908,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "repository_review_comment"
+                                    },
                                     "repository": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26947,10 +26959,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "repository_review_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26965,6 +26973,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "work_comment"
+                                    },
                                     "task_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -26981,10 +26993,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "type": "integer",
                                       "format": "uint64",
                                       "minimum": 0
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "work_comment"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -26998,6 +27006,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 {
                                   "type": "object",
                                   "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "agent_checkpoint"
+                                    },
                                     "session_id": {
                                       "type": "string",
                                       "pattern": "^[0-9a-f]{32}$",
@@ -27049,10 +27061,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "kind",
                                         "id"
                                       ]
-                                    },
-                                    "type": {
-                                      "type": "string",
-                                      "const": "agent_checkpoint"
                                     }
                                   },
                                   "additionalProperties": false,
@@ -27098,12 +27106,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
-                                        "sequence": {
-                                          "type": "string"
-                                        },
                                         "type": {
                                           "type": "string",
                                           "const": "emoji"
+                                        },
+                                        "sequence": {
+                                          "type": "string"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -27115,6 +27123,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     {
                                       "type": "object",
                                       "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "custom"
+                                        },
                                         "emoji_id": {
                                           "type": "string",
                                           "pattern": "^[0-9a-f]{32}$",
@@ -27152,10 +27164,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "kind",
                                             "id"
                                           ]
-                                        },
-                                        "type": {
-                                          "type": "string",
-                                          "const": "custom"
                                         }
                                       },
                                       "additionalProperties": false,
@@ -27207,10 +27215,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "id"
                                 ]
                               }
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "resolve_conflict"
                             }
                           },
                           "additionalProperties": false,
@@ -27221,10 +27225,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           ]
                         }
                       ]
-                    },
-                    "domain": {
-                      "type": "string",
-                      "const": "reaction"
                     }
                   },
                   "additionalProperties": false,
@@ -27236,11 +27236,19 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "domain": {
+                      "type": "string",
+                      "const": "emoji"
+                    },
                     "intent": {
                       "oneOf": [
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "define"
+                            },
                             "emoji_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -27296,10 +27304,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "minimum": 0,
                                 "maximum": 255
                               }
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "define"
                             }
                           },
                           "additionalProperties": false,
@@ -27314,6 +27318,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "retire"
+                            },
                             "emoji_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -27351,10 +27359,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "retire"
                             }
                           },
                           "additionalProperties": false,
@@ -27365,10 +27369,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           ]
                         }
                       ]
-                    },
-                    "domain": {
-                      "type": "string",
-                      "const": "emoji"
                     }
                   },
                   "additionalProperties": false,
@@ -29584,12 +29584,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "delete_branch"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29601,12 +29601,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "commit": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "abandon"
+                    },
+                    "commit": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29618,6 +29618,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "discard"
+                    },
                     "selections": {
                       "type": "array",
                       "items": {
@@ -29645,10 +29649,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "discard"
                     }
                   },
                   "additionalProperties": false,
@@ -29660,15 +29660,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "resolve"
+                    },
                     "path": {
                       "type": "string"
                     },
                     "content": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "resolve"
                     }
                   },
                   "additionalProperties": false,
@@ -29681,6 +29681,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "move"
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -29693,10 +29697,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "above",
                         "below"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "move"
                     }
                   },
                   "additionalProperties": false,
@@ -29710,15 +29710,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "squash"
+                    },
                     "commit": {
                       "type": "string"
                     },
                     "target": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "squash"
                     }
                   },
                   "additionalProperties": false,
@@ -29731,12 +29731,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "commit": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "uncommit"
+                    },
+                    "commit": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29748,12 +29748,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "rebase"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29765,12 +29765,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "squash_branch"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29782,15 +29782,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "setup"
+                    },
                     "name": {
                       "type": "string"
                     },
                     "target": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "setup"
                     }
                   },
                   "additionalProperties": false,
@@ -29803,12 +29803,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "name": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "create"
+                    },
+                    "name": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29820,12 +29820,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "workspace": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "switch"
+                    },
+                    "workspace": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29837,12 +29837,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "apply"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29854,12 +29854,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "unapply"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29871,15 +29871,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "unapply_branches"
+                    },
                     "branches": {
                       "type": "array",
                       "items": {
                         "type": "string"
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "unapply_branches"
                     }
                   },
                   "additionalProperties": false,
@@ -29891,12 +29891,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "set_target"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29908,6 +29908,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "update"
+                    },
                     "workspace": {
                       "type": "string"
                     },
@@ -29916,10 +29920,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "target": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "update"
                     }
                   },
                   "additionalProperties": false,
@@ -29933,12 +29933,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "workspace": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "delete"
+                    },
+                    "workspace": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -29950,6 +29950,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "transfer"
+                    },
                     "target": {
                       "type": "string"
                     },
@@ -29980,10 +29984,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "transfer"
                     }
                   },
                   "additionalProperties": false,
@@ -29996,56 +29996,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "commit": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "selections": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "source": {
-                            "type": "string"
-                          },
-                          "path": {
-                            "type": "string"
-                          },
-                          "hunks": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
-                            "items": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "additionalProperties": false,
-                        "required": [
-                          "source",
-                          "path"
-                        ]
-                      }
-                    },
                     "kind": {
                       "type": "string",
                       "const": "split"
-                    }
-                  },
-                  "additionalProperties": false,
-                  "required": [
-                    "kind",
-                    "commit",
-                    "message",
-                    "selections"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -30079,10 +30033,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "edit"
                     }
                   },
                   "additionalProperties": false,
@@ -30096,6 +30046,60 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "edit"
+                    },
+                    "commit": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "hunks": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "source",
+                          "path"
+                        ]
+                      }
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "commit",
+                    "message",
+                    "selections"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "create_stack"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -30104,10 +30108,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "string",
                         "null"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "create_stack"
                     }
                   },
                   "additionalProperties": false,
@@ -30119,6 +30119,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "create_branch"
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -30131,10 +30135,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "above",
                         "below"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "create_branch"
                     }
                   },
                   "additionalProperties": false,
@@ -30148,15 +30148,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "rename_branch"
+                    },
                     "branch": {
                       "type": "string"
                     },
                     "name": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "rename_branch"
                     }
                   },
                   "additionalProperties": false,
@@ -30169,15 +30169,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "reword"
+                    },
                     "commit": {
                       "type": "string"
                     },
                     "message": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "reword"
                     }
                   },
                   "additionalProperties": false,
@@ -30190,6 +30190,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "empty"
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -30202,10 +30206,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "message": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "empty"
                     }
                   },
                   "additionalProperties": false,
@@ -30219,6 +30219,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "commit"
+                    },
                     "branch": {
                       "type": "string"
                     },
@@ -30252,10 +30256,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "commit"
                     }
                   },
                   "additionalProperties": false,
@@ -30533,12 +30533,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "delete_branch"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30550,12 +30550,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "commit": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "abandon"
+                    },
+                    "commit": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30567,6 +30567,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "discard"
+                    },
                     "selections": {
                       "type": "array",
                       "items": {
@@ -30594,10 +30598,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "discard"
                     }
                   },
                   "additionalProperties": false,
@@ -30609,15 +30609,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "resolve"
+                    },
                     "path": {
                       "type": "string"
                     },
                     "content": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "resolve"
                     }
                   },
                   "additionalProperties": false,
@@ -30630,6 +30630,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "move"
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -30642,10 +30646,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "above",
                         "below"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "move"
                     }
                   },
                   "additionalProperties": false,
@@ -30659,15 +30659,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "squash"
+                    },
                     "commit": {
                       "type": "string"
                     },
                     "target": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "squash"
                     }
                   },
                   "additionalProperties": false,
@@ -30680,12 +30680,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "commit": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "uncommit"
+                    },
+                    "commit": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30697,12 +30697,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "rebase"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30714,12 +30714,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "squash_branch"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30731,15 +30731,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "setup"
+                    },
                     "name": {
                       "type": "string"
                     },
                     "target": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "setup"
                     }
                   },
                   "additionalProperties": false,
@@ -30752,12 +30752,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "name": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "create"
+                    },
+                    "name": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30769,12 +30769,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "workspace": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "switch"
+                    },
+                    "workspace": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30786,12 +30786,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "apply"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30803,12 +30803,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "unapply"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30820,15 +30820,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "unapply_branches"
+                    },
                     "branches": {
                       "type": "array",
                       "items": {
                         "type": "string"
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "unapply_branches"
                     }
                   },
                   "additionalProperties": false,
@@ -30840,12 +30840,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "branch": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "set_target"
+                    },
+                    "branch": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30857,6 +30857,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "update"
+                    },
                     "workspace": {
                       "type": "string"
                     },
@@ -30865,10 +30869,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "target": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "update"
                     }
                   },
                   "additionalProperties": false,
@@ -30882,12 +30882,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "workspace": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "delete"
+                    },
+                    "workspace": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -30899,6 +30899,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "transfer"
+                    },
                     "target": {
                       "type": "string"
                     },
@@ -30929,10 +30933,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "transfer"
                     }
                   },
                   "additionalProperties": false,
@@ -30945,56 +30945,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "commit": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "selections": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "source": {
-                            "type": "string"
-                          },
-                          "path": {
-                            "type": "string"
-                          },
-                          "hunks": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
-                            "items": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "additionalProperties": false,
-                        "required": [
-                          "source",
-                          "path"
-                        ]
-                      }
-                    },
                     "kind": {
                       "type": "string",
                       "const": "split"
-                    }
-                  },
-                  "additionalProperties": false,
-                  "required": [
-                    "kind",
-                    "commit",
-                    "message",
-                    "selections"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -31028,10 +30982,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "edit"
                     }
                   },
                   "additionalProperties": false,
@@ -31045,6 +30995,60 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "edit"
+                    },
+                    "commit": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "hunks": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "source",
+                          "path"
+                        ]
+                      }
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "commit",
+                    "message",
+                    "selections"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "create_stack"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -31053,10 +31057,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "string",
                         "null"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "create_stack"
                     }
                   },
                   "additionalProperties": false,
@@ -31068,6 +31068,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "create_branch"
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -31080,10 +31084,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "above",
                         "below"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "create_branch"
                     }
                   },
                   "additionalProperties": false,
@@ -31097,15 +31097,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "rename_branch"
+                    },
                     "branch": {
                       "type": "string"
                     },
                     "name": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "rename_branch"
                     }
                   },
                   "additionalProperties": false,
@@ -31118,15 +31118,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "reword"
+                    },
                     "commit": {
                       "type": "string"
                     },
                     "message": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "reword"
                     }
                   },
                   "additionalProperties": false,
@@ -31139,6 +31139,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "empty"
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -31151,10 +31155,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     },
                     "message": {
                       "type": "string"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "empty"
                     }
                   },
                   "additionalProperties": false,
@@ -31168,6 +31168,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "commit"
+                    },
                     "branch": {
                       "type": "string"
                     },
@@ -31201,10 +31205,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "path"
                         ]
                       }
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "commit"
                     }
                   },
                   "additionalProperties": false,
@@ -31609,15 +31609,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "add_token"
+                },
                 "api_url": {
                   "type": "string"
                 },
                 "token": {
                   "type": "string"
-                },
-                "kind": {
-                  "type": "string",
-                  "const": "add_token"
                 }
               },
               "additionalProperties": false,
@@ -31630,12 +31630,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
-                "account": {
-                  "type": "string"
-                },
                 "kind": {
                   "type": "string",
                   "const": "forget"
+                },
+                "account": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -31660,12 +31660,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
-                "session": {
-                  "type": "string"
-                },
                 "kind": {
                   "type": "string",
                   "const": "poll_oauth"
+                },
+                "session": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -31677,12 +31677,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
-                "session": {
-                  "type": "string"
-                },
                 "kind": {
                   "type": "string",
                   "const": "cancel_oauth"
+                },
+                "session": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -31889,12 +31889,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "auto_connect": {
-                      "type": "boolean"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "detect"
+                    },
+                    "auto_connect": {
+                      "type": "boolean"
                     }
                   },
                   "additionalProperties": false,
@@ -31906,6 +31906,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "bind_account"
+                    },
                     "account": {
                       "type": "string"
                     },
@@ -31955,10 +31959,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "target",
                         "native_stacks"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "bind_account"
                     }
                   },
                   "additionalProperties": false,
@@ -31984,12 +31984,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "bookmark": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "restack_preview"
+                    },
+                    "bookmark": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -32001,6 +32001,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "restack"
+                    },
                     "plan": {
                       "type": "object",
                       "properties": {
@@ -32098,10 +32102,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "target_head",
                         "merged"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "restack"
                     }
                   },
                   "additionalProperties": false,
@@ -32113,6 +32113,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "configure"
+                    },
                     "connection": {
                       "type": "object",
                       "properties": {
@@ -32159,10 +32163,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "target",
                         "native_stacks"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "configure"
                     }
                   },
                   "additionalProperties": false,
@@ -32174,15 +32174,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "preview"
+                    },
                     "bookmark": {
                       "type": "string"
                     },
                     "draft": {
                       "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "preview"
                     }
                   },
                   "additionalProperties": false,
@@ -32195,6 +32195,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "submit"
+                    },
                     "plan": {
                       "type": "object",
                       "properties": {
@@ -32406,10 +32410,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "cumulative",
                         "items"
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "submit"
                     }
                   },
                   "additionalProperties": false,
@@ -32421,12 +32421,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "request_id": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "recover"
+                    },
+                    "request_id": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -32438,12 +32438,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "request_id": {
-                      "type": "string"
-                    },
                     "kind": {
                       "type": "string",
                       "const": "operation_status"
+                    },
+                    "request_id": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -32455,14 +32455,14 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "pull_request"
+                    },
                     "number": {
                       "type": "integer",
                       "format": "uint64",
                       "minimum": 0
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "pull_request"
                     }
                   },
                   "additionalProperties": false,
@@ -32474,6 +32474,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "pr"
+                    },
                     "request_id": {
                       "type": "string"
                     },
@@ -32487,6 +32491,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "edit"
+                            },
                             "title": {
                               "type": "string"
                             },
@@ -32495,10 +32503,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             },
                             "expected_body": {
                               "type": "string"
-                            },
-                            "kind": {
-                              "type": "string",
-                              "const": "edit"
                             }
                           },
                           "additionalProperties": false,
@@ -32512,12 +32516,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
-                            "draft": {
-                              "type": "boolean"
-                            },
                             "kind": {
                               "type": "string",
                               "const": "draft"
+                            },
+                            "draft": {
+                              "type": "boolean"
                             }
                           },
                           "additionalProperties": false,
@@ -32529,15 +32533,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "merge"
+                            },
                             "method": {
                               "type": "string"
                             },
                             "expected_sha": {
                               "type": "string"
-                            },
-                            "kind": {
-                              "type": "string",
-                              "const": "merge"
                             }
                           },
                           "additionalProperties": false,
@@ -32550,12 +32554,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
-                            "receipt": {
-                              "type": "string"
-                            },
                             "kind": {
                               "type": "string",
                               "const": "merge_status"
+                            },
+                            "receipt": {
+                              "type": "string"
                             }
                           },
                           "additionalProperties": false,
@@ -32580,12 +32584,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
-                            "run": {
-                              "type": "string"
-                            },
                             "kind": {
                               "type": "string",
                               "const": "jobs"
+                            },
+                            "run": {
+                              "type": "string"
                             }
                           },
                           "additionalProperties": false,
@@ -32597,15 +32601,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "logs"
+                            },
                             "run": {
                               "type": "string"
                             },
                             "job": {
                               "type": "string"
-                            },
-                            "kind": {
-                              "type": "string",
-                              "const": "logs"
                             }
                           },
                           "additionalProperties": false,
@@ -32618,15 +32622,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "rerun"
+                            },
                             "run": {
                               "type": "string"
                             },
                             "failed_only": {
                               "type": "boolean"
-                            },
-                            "kind": {
-                              "type": "string",
-                              "const": "rerun"
                             }
                           },
                           "additionalProperties": false,
@@ -32639,12 +32643,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
-                            "run": {
-                              "type": "string"
-                            },
                             "kind": {
                               "type": "string",
                               "const": "cancel"
+                            },
+                            "run": {
+                              "type": "string"
                             }
                           },
                           "additionalProperties": false,
@@ -32654,10 +32658,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           ]
                         }
                       ]
-                    },
-                    "kind": {
-                      "type": "string",
-                      "const": "pr"
                     }
                   },
                   "additionalProperties": false,
@@ -35662,6 +35662,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "create"
+                    },
                     "title": {
                       "type": "string"
                     },
@@ -35673,10 +35677,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "minLength": 32,
                         "maxLength": 32
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "create"
                     }
                   },
                   "additionalProperties": false,
@@ -35689,6 +35689,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "codebase"
+                    },
                     "home": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -35741,10 +35745,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "minLength": 32,
                         "maxLength": 32
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "codebase"
                     }
                   },
                   "additionalProperties": false,
@@ -35962,6 +35962,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "view": {
+                      "type": "string",
+                      "const": "changes"
+                    },
                     "range": {
                       "type": "string",
                       "enum": [
@@ -35975,10 +35979,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "string",
                         "null"
                       ]
-                    },
-                    "view": {
-                      "type": "string",
-                      "const": "changes"
                     }
                   },
                   "additionalProperties": false,
@@ -36412,6 +36412,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "configure"
+                    },
                     "settings": {
                       "type": "object",
                       "properties": {
@@ -36475,10 +36479,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         }
                       },
                       "additionalProperties": false
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "configure"
                     }
                   },
                   "additionalProperties": false,
@@ -36516,12 +36516,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "path": {
-                      "type": "string"
-                    },
                     "action": {
                       "type": "string",
                       "const": "import"
+                    },
+                    "path": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -36533,12 +36533,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "model": {
-                      "type": "string"
-                    },
                     "action": {
                       "type": "string",
                       "const": "remove"
+                    },
+                    "model": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -36576,14 +36576,14 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "invitation": true,
                     "action": {
                       "type": "string",
                       "const": "pair"
-                    }
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invitation": true
                   },
                   "additionalProperties": false,
                   "required": [
@@ -36595,12 +36595,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "identity": {
-                      "type": "string"
-                    },
                     "action": {
                       "type": "string",
                       "const": "revoke"
+                    },
+                    "identity": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -37168,6 +37168,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
+                "action": {
+                  "type": "string",
+                  "const": "connect"
+                },
                 "request_id": {
                   "type": "string",
                   "pattern": "^[0-9a-f]{32}$",
@@ -37179,10 +37183,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     "string",
                     "null"
                   ]
-                },
-                "action": {
-                  "type": "string",
-                  "const": "connect"
                 }
               },
               "additionalProperties": false,
@@ -37194,12 +37194,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
-                "attempt": {
-                  "type": "string"
-                },
                 "action": {
                   "type": "string",
                   "const": "cancel"
+                },
+                "attempt": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -37211,12 +37211,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
-                "account": {
-                  "type": "string"
-                },
                 "action": {
                   "type": "string",
                   "const": "sign_out"
+                },
+                "account": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -40760,12 +40760,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "title": {
-                      "type": "string"
-                    },
                     "action": {
                       "type": "string",
                       "const": "rename"
+                    },
+                    "title": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -40829,15 +40829,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "cancel"
+                    },
                     "job": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "cancel"
                     }
                   },
                   "additionalProperties": false,
@@ -40849,15 +40849,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "publish"
+                    },
                     "job": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
                       "minLength": 32,
                       "maxLength": 32
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "publish"
                     }
                   },
                   "additionalProperties": false,
@@ -41354,15 +41354,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "thread"
                             }
                           },
                           "additionalProperties": false,
@@ -41374,6 +41374,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41417,10 +41421,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "human_message"
                             }
                           },
                           "additionalProperties": false,
@@ -41434,6 +41434,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41531,10 +41535,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_message"
                             }
                           },
                           "additionalProperties": false,
@@ -41550,6 +41550,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41601,10 +41605,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_invocation"
                             }
                           },
                           "additionalProperties": false,
@@ -41618,6 +41618,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41709,10 +41713,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_output"
                             }
                           },
                           "additionalProperties": false,
@@ -41727,15 +41727,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_thread"
                             }
                           },
                           "additionalProperties": false,
@@ -41747,6 +41747,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41788,10 +41792,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -41806,6 +41806,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            },
                             "repository": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41853,10 +41857,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "repository_review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -41871,6 +41871,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            },
                             "task_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41887,10 +41891,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "type": "integer",
                               "format": "uint64",
                               "minimum": 0
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "work_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -41904,6 +41904,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -41955,10 +41959,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_checkpoint"
                             }
                           },
                           "additionalProperties": false,
@@ -42249,15 +42249,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42269,6 +42269,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42312,10 +42316,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "human_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42329,6 +42329,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42426,10 +42430,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42445,6 +42445,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42496,10 +42500,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_invocation"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42513,6 +42513,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42604,10 +42608,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_output"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42622,15 +42622,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42642,6 +42642,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42683,10 +42687,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42701,6 +42701,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  },
                                   "repository": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42748,10 +42752,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "repository_review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42766,6 +42766,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  },
                                   "task_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42782,10 +42786,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "type": "integer",
                                     "format": "uint64",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "work_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -42799,6 +42799,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -42850,10 +42854,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_checkpoint"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -43016,15 +43016,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "thread"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
                             "minLength": 32,
                             "maxLength": 32
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "thread"
                           }
                         },
                         "additionalProperties": false,
@@ -43036,6 +43036,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "human_message"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43079,10 +43083,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "human_message"
                           }
                         },
                         "additionalProperties": false,
@@ -43096,6 +43096,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "agent_message"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43193,10 +43197,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "agent_message"
                           }
                         },
                         "additionalProperties": false,
@@ -43212,6 +43212,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "tool_invocation"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43263,10 +43267,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "tool_invocation"
                           }
                         },
                         "additionalProperties": false,
@@ -43280,6 +43280,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "tool_output"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43371,10 +43375,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "tool_output"
                           }
                         },
                         "additionalProperties": false,
@@ -43389,15 +43389,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "review_thread"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
                             "minLength": 32,
                             "maxLength": 32
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "review_thread"
                           }
                         },
                         "additionalProperties": false,
@@ -43409,6 +43409,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "review_comment"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43450,10 +43454,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "review_comment"
                           }
                         },
                         "additionalProperties": false,
@@ -43468,6 +43468,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "repository_review_comment"
+                          },
                           "repository": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43515,10 +43519,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "repository_review_comment"
                           }
                         },
                         "additionalProperties": false,
@@ -43533,6 +43533,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "work_comment"
+                          },
                           "task_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43549,10 +43553,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             "type": "integer",
                             "format": "uint64",
                             "minimum": 0
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "work_comment"
                           }
                         },
                         "additionalProperties": false,
@@ -43566,6 +43566,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "agent_checkpoint"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -43617,10 +43621,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "agent_checkpoint"
                           }
                         },
                         "additionalProperties": false,
@@ -43787,15 +43787,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -43807,6 +43807,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -43850,10 +43854,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "human_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -43867,6 +43867,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -43964,10 +43968,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -43983,6 +43983,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -44034,10 +44038,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_invocation"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -44051,6 +44051,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -44142,10 +44146,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_output"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -44160,15 +44160,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -44180,6 +44180,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -44221,10 +44225,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -44239,6 +44239,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  },
                                   "repository": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -44286,10 +44290,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "repository_review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -44304,6 +44304,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  },
                                   "task_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -44320,10 +44324,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "type": "integer",
                                     "format": "uint64",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "work_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -44337,6 +44337,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -44388,10 +44392,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_checkpoint"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -45043,6 +45043,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "configure"
+                    },
                     "preferences": {
                       "type": "object",
                       "properties": {
@@ -45066,10 +45070,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         }
                       },
                       "additionalProperties": false
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "configure"
                     }
                   },
                   "additionalProperties": false,
@@ -45081,6 +45081,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "prompt"
+                    },
                     "comments": {
                       "type": [
                         "object",
@@ -45260,15 +45264,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45280,6 +45284,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45323,10 +45331,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45340,6 +45344,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45437,10 +45445,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45456,6 +45460,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45507,10 +45515,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45524,6 +45528,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45615,10 +45623,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45633,15 +45637,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45653,6 +45657,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45694,10 +45702,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45712,6 +45716,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45759,10 +45767,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45777,6 +45781,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45793,10 +45801,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -45810,6 +45814,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -45861,10 +45869,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -46027,15 +46031,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46047,6 +46051,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46090,10 +46098,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "human_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46107,6 +46111,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46204,10 +46212,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46223,6 +46227,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46274,10 +46282,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_invocation"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46291,6 +46295,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46382,10 +46390,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_output"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46400,15 +46404,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46420,6 +46424,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46461,10 +46469,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46479,6 +46483,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  },
                                   "repository": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46526,10 +46534,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "repository_review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46544,6 +46548,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  },
                                   "task_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46560,10 +46568,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "type": "integer",
                                     "format": "uint64",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "work_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46577,6 +46581,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -46628,10 +46636,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_checkpoint"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -46798,15 +46802,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -46818,6 +46822,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -46861,10 +46869,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -46878,6 +46882,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -46975,10 +46983,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -46994,6 +46998,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -47045,10 +47053,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -47062,6 +47066,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -47153,10 +47161,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -47171,15 +47175,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -47191,6 +47195,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -47232,10 +47240,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -47250,6 +47254,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -47297,10 +47305,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -47315,6 +47319,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -47331,10 +47339,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -47348,6 +47352,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -47399,10 +47407,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -47449,10 +47453,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "type": "integer",
                       "format": "uint64",
                       "minimum": 0
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "prompt"
                     }
                   },
                   "additionalProperties": false,
@@ -47465,6 +47465,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "permission"
+                    },
                     "permission_id": {
                       "type": "string"
                     },
@@ -47473,10 +47477,6 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         "string",
                         "null"
                       ]
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "permission"
                     }
                   },
                   "additionalProperties": false,
@@ -47488,12 +47488,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
-                    "target": {
-                      "type": "string"
-                    },
                     "action": {
                       "type": "string",
                       "const": "cancel"
+                    },
+                    "target": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -49106,15 +49106,15 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
+                "action": {
+                  "type": "string",
+                  "const": "rename"
+                },
                 "id": {
                   "type": "string"
                 },
                 "name": {
                   "type": "string"
-                },
-                "action": {
-                  "type": "string",
-                  "const": "rename"
                 }
               },
               "additionalProperties": false,
@@ -49127,12 +49127,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             {
               "type": "object",
               "properties": {
-                "id": {
-                  "type": "string"
-                },
                 "action": {
                   "type": "string",
                   "const": "remove"
+                },
+                "id": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -50208,15 +50208,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "thread"
                             }
                           },
                           "additionalProperties": false,
@@ -50228,6 +50228,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50271,10 +50275,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "human_message"
                             }
                           },
                           "additionalProperties": false,
@@ -50288,6 +50288,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50385,10 +50389,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_message"
                             }
                           },
                           "additionalProperties": false,
@@ -50404,6 +50404,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50455,10 +50459,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_invocation"
                             }
                           },
                           "additionalProperties": false,
@@ -50472,6 +50472,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50563,10 +50567,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "tool_output"
                             }
                           },
                           "additionalProperties": false,
@@ -50581,15 +50581,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
                               "minLength": 32,
                               "maxLength": 32
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_thread"
                             }
                           },
                           "additionalProperties": false,
@@ -50601,6 +50601,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            },
                             "thread_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50642,10 +50646,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -50660,6 +50660,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                           "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            },
                             "repository": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50707,10 +50711,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "repository_review_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -50725,6 +50725,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            },
                             "task_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50741,10 +50745,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "type": "integer",
                               "format": "uint64",
                               "minimum": 0
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "work_comment"
                             }
                           },
                           "additionalProperties": false,
@@ -50758,6 +50758,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         {
                           "type": "object",
                           "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            },
                             "session_id": {
                               "type": "string",
                               "pattern": "^[0-9a-f]{32}$",
@@ -50809,10 +50813,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "kind",
                                 "id"
                               ]
-                            },
-                            "type": {
-                              "type": "string",
-                              "const": "agent_checkpoint"
                             }
                           },
                           "additionalProperties": false,
@@ -51103,15 +51103,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51123,6 +51123,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51166,10 +51170,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "human_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51183,6 +51183,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51280,10 +51284,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51299,6 +51299,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51350,10 +51354,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_invocation"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51367,6 +51367,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51458,10 +51462,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_output"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51476,15 +51476,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51496,6 +51496,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51537,10 +51541,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51555,6 +51555,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  },
                                   "repository": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51602,10 +51606,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "repository_review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51620,6 +51620,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  },
                                   "task_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51636,10 +51640,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                     "type": "integer",
                                     "format": "uint64",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "work_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51653,6 +51653,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -51704,10 +51708,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_checkpoint"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -51870,15 +51870,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "thread"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
                             "minLength": 32,
                             "maxLength": 32
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "thread"
                           }
                         },
                         "additionalProperties": false,
@@ -51890,6 +51890,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "human_message"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -51933,10 +51937,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "human_message"
                           }
                         },
                         "additionalProperties": false,
@@ -51950,6 +51950,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "agent_message"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -52047,10 +52051,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "agent_message"
                           }
                         },
                         "additionalProperties": false,
@@ -52066,6 +52066,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "tool_invocation"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -52117,10 +52121,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "tool_invocation"
                           }
                         },
                         "additionalProperties": false,
@@ -52134,6 +52134,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "tool_output"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -52225,10 +52229,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "tool_output"
                           }
                         },
                         "additionalProperties": false,
@@ -52243,15 +52243,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "review_thread"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
                             "minLength": 32,
                             "maxLength": 32
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "review_thread"
                           }
                         },
                         "additionalProperties": false,
@@ -52263,6 +52263,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "review_comment"
+                          },
                           "thread_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -52304,10 +52308,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "review_comment"
                           }
                         },
                         "additionalProperties": false,
@@ -52322,6 +52322,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "repository_review_comment"
+                          },
                           "repository": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -52369,10 +52373,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "repository_review_comment"
                           }
                         },
                         "additionalProperties": false,
@@ -52387,6 +52387,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "work_comment"
+                          },
                           "task_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -52403,10 +52407,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                             "type": "integer",
                             "format": "uint64",
                             "minimum": 0
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "work_comment"
                           }
                         },
                         "additionalProperties": false,
@@ -52420,6 +52420,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       {
                         "type": "object",
                         "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "agent_checkpoint"
+                          },
                           "session_id": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{32}$",
@@ -52471,10 +52475,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               "kind",
                               "id"
                             ]
-                          },
-                          "type": {
-                            "type": "string",
-                            "const": "agent_checkpoint"
                           }
                         },
                         "additionalProperties": false,
@@ -52641,15 +52641,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -52661,6 +52661,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -52704,10 +52708,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "human_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -52721,6 +52721,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -52818,10 +52822,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -52837,6 +52837,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -52888,10 +52892,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_invocation"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -52905,6 +52905,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -52996,10 +53000,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_output"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -53014,15 +53014,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -53034,6 +53034,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -53075,10 +53079,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -53093,6 +53093,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  },
                                   "repository": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -53140,10 +53144,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "repository_review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -53158,6 +53158,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  },
                                   "task_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -53174,10 +53178,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                     "type": "integer",
                                     "format": "uint64",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "work_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -53191,6 +53191,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -53242,10 +53246,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_checkpoint"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -53489,6 +53489,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "configure"
+                    },
                     "preferences": {
                       "type": "object",
                       "properties": {
@@ -53512,10 +53516,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         }
                       },
                       "additionalProperties": false
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "configure"
                     }
                   },
                   "additionalProperties": false,
@@ -53527,6 +53527,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "prompt"
+                    },
                     "comments": {
                       "type": [
                         "object",
@@ -53706,15 +53710,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -53726,6 +53730,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -53769,10 +53777,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -53786,6 +53790,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -53883,10 +53891,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -53902,6 +53906,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -53953,10 +53961,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -53970,6 +53974,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -54061,10 +54069,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -54079,15 +54083,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -54099,6 +54103,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -54140,10 +54148,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -54158,6 +54162,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -54205,10 +54213,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -54223,6 +54227,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -54239,10 +54247,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -54256,6 +54260,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -54307,10 +54315,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -54473,15 +54477,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54493,6 +54497,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -54536,10 +54544,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "human_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54553,6 +54557,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -54650,10 +54658,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_message"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54669,6 +54673,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -54720,10 +54728,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_invocation"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54737,6 +54741,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -54828,10 +54836,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "tool_output"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54846,15 +54850,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
                                     "minLength": 32,
                                     "maxLength": 32
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_thread"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54866,6 +54870,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  },
                                   "thread_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -54907,10 +54915,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54925,6 +54929,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                 "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  },
                                   "repository": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -54972,10 +54980,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "repository_review_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -54990,6 +54994,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  },
                                   "task_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -55006,10 +55014,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                     "type": "integer",
                                     "format": "uint64",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "work_comment"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -55023,6 +55027,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  },
                                   "session_id": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{32}$",
@@ -55074,10 +55082,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       "kind",
                                       "id"
                                     ]
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "agent_checkpoint"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -55244,15 +55248,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55264,6 +55268,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55307,10 +55315,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "human_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55324,6 +55328,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55421,10 +55429,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_message"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55440,6 +55444,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55491,10 +55499,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_invocation"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55508,6 +55512,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55599,10 +55607,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "tool_output"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55617,15 +55621,15 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
                                             "minLength": 32,
                                             "maxLength": 32
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_thread"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55637,6 +55641,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          },
                                           "thread_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55678,10 +55686,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55696,6 +55700,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                         "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          },
                                           "repository": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55743,10 +55751,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "repository_review_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55761,6 +55765,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          },
                                           "task_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55777,10 +55785,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                             "type": "integer",
                                             "format": "uint64",
                                             "minimum": 0
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "work_comment"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55794,6 +55798,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                       {
                                         "type": "object",
                                         "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          },
                                           "session_id": {
                                             "type": "string",
                                             "pattern": "^[0-9a-f]{32}$",
@@ -55845,10 +55853,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                                               "kind",
                                               "id"
                                             ]
-                                          },
-                                          "type": {
-                                            "type": "string",
-                                            "const": "agent_checkpoint"
                                           }
                                         },
                                         "additionalProperties": false,
@@ -55895,10 +55899,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                       "type": "integer",
                       "format": "uint64",
                       "minimum": 0
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "prompt"
                     }
                   },
                   "additionalProperties": false,
@@ -55911,6 +55911,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                 {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "permission"
+                    },
                     "permission_id": {
                       "type": "string"
                     },
@@ -55919,10 +55923,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         "string",
                         "null"
                       ]
-                    },
-                    "action": {
-                      "type": "string",
-                      "const": "permission"
                     }
                   },
                   "additionalProperties": false,
@@ -55934,12 +55934,12 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                 {
                   "type": "object",
                   "properties": {
-                    "target": {
-                      "type": "string"
-                    },
                     "action": {
                       "type": "string",
                       "const": "cancel"
+                    },
+                    "target": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -56209,6 +56209,10 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                 {
                   "type": "object",
                   "properties": {
+                    "view": {
+                      "type": "string",
+                      "const": "changes"
+                    },
                     "range": {
                       "type": "string",
                       "enum": [
@@ -56222,10 +56226,6 @@ Authenticated execution only. Requires operator-enabled agent admission for the 
                         "string",
                         "null"
                       ]
-                    },
-                    "view": {
-                      "type": "string",
-                      "const": "changes"
                     }
                   },
                   "additionalProperties": false,
@@ -61295,6 +61295,10 @@ Requires current repository read permission. Unknown query fields are rejected. 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "save_profile"
+                    },
                     "expected": {
                       "type": [
                         "string",
@@ -61329,10 +61333,6 @@ Requires current repository read permission. Unknown query fields are rejected. 
                         "display_name",
                         "description"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "save_profile"
                     }
                   },
                   "additionalProperties": false,
@@ -61344,29 +61344,10 @@ Requires current repository read permission. Unknown query fields are rejected. 
                 {
                   "type": "object",
                   "properties": {
-                    "bytes": {
-                      "type": "array",
-                      "items": {
-                        "type": "integer",
-                        "format": "uint8",
-                        "minimum": 0,
-                        "maximum": 255
-                      }
-                    },
                     "type": {
                       "type": "string",
                       "const": "upload"
-                    }
-                  },
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "bytes"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
+                    },
                     "bytes": {
                       "type": "array",
                       "items": {
@@ -61375,10 +61356,6 @@ Requires current repository read permission. Unknown query fields are rejected. 
                         "minimum": 0,
                         "maximum": 255
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "upload_image"
                     }
                   },
                   "additionalProperties": false,
@@ -61390,6 +61367,33 @@ Requires current repository read permission. Unknown query fields are rejected. 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "upload_image"
+                    },
+                    "bytes": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "format": "uint8",
+                        "minimum": 0,
+                        "maximum": 255
+                      }
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "bytes"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "save_emoji"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -61407,10 +61411,6 @@ Requires current repository read permission. Unknown query fields are rejected. 
                     },
                     "asset": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "save_emoji"
                     }
                   },
                   "additionalProperties": false,
@@ -61424,6 +61424,10 @@ Requires current repository read permission. Unknown query fields are rejected. 
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "retire_emoji"
+                    },
                     "id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -61432,10 +61436,6 @@ Requires current repository read permission. Unknown query fields are rejected. 
                     },
                     "expected": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "retire_emoji"
                     }
                   },
                   "additionalProperties": false,

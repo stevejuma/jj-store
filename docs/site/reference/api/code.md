@@ -6347,6 +6347,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "edit_file"
+                    },
                     "bookmark": {
                       "type": "string"
                     },
@@ -6373,10 +6377,6 @@ Requires current repository write permission, including status. Strict typed com
                     },
                     "description": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "edit_file"
                     }
                   },
                   "additionalProperties": false,
@@ -6393,6 +6393,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "resolve_conflicts"
+                    },
                     "commit": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{128}$",
@@ -6419,6 +6423,10 @@ Requires current repository write permission, including status. Strict typed com
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "uploaded_file"
+                                  },
                                   "upload": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{64}$",
@@ -6435,10 +6443,6 @@ Requires current repository write permission, including status. Strict typed com
                                     ],
                                     "format": "uint32",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "uploaded_file"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -6451,14 +6455,14 @@ Requires current repository write permission, including status. Strict typed com
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "select_term"
+                                  },
                                   "term": {
                                     "type": "integer",
                                     "format": "uint32",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "select_term"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -6490,10 +6494,6 @@ Requires current repository write permission, including status. Strict typed com
                           "resolution"
                         ]
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "resolve_conflicts"
                     }
                   },
                   "additionalProperties": false,
@@ -6506,6 +6506,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "new"
+                    },
                     "parents": {
                       "type": "array",
                       "items": {
@@ -6523,10 +6527,6 @@ Requires current repository write permission, including status. Strict typed com
                         "string",
                         "null"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "new"
                     }
                   },
                   "additionalProperties": false,
@@ -6539,6 +6539,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "describe"
+                    },
                     "commit": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{128}$",
@@ -6547,10 +6551,6 @@ Requires current repository write permission, including status. Strict typed com
                     },
                     "description": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "describe"
                     }
                   },
                   "additionalProperties": false,
@@ -6563,6 +6563,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "bookmark_create"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -6571,10 +6575,6 @@ Requires current repository write permission, including status. Strict typed com
                       "pattern": "^[0-9a-f]{128}$",
                       "minLength": 128,
                       "maxLength": 128
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "bookmark_create"
                     }
                   },
                   "additionalProperties": false,
@@ -6587,6 +6587,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "bookmark_move"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -6607,10 +6611,6 @@ Requires current repository write permission, including status. Strict typed com
                       "pattern": "^[0-9a-f]{128}$",
                       "minLength": 128,
                       "maxLength": 128
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "bookmark_move"
                     }
                   },
                   "additionalProperties": false,
@@ -6624,6 +6624,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "bookmark_delete"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -6638,10 +6642,6 @@ Requires current repository write permission, including status. Strict typed com
                         "minLength": 128,
                         "maxLength": 128
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "bookmark_delete"
                     }
                   },
                   "additionalProperties": false,
@@ -6654,15 +6654,15 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "reconcile_operations"
+                    },
                     "base": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{128}$",
                       "minLength": 128,
                       "maxLength": 128
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "reconcile_operations"
                     }
                   },
                   "additionalProperties": false,
@@ -6674,6 +6674,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "abandon"
+                    },
                     "commits": {
                       "type": "array",
                       "items": {
@@ -6688,10 +6692,6 @@ Requires current repository write permission, including status. Strict typed com
                     },
                     "restore_descendants": {
                       "type": "boolean"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "abandon"
                     }
                   },
                   "additionalProperties": false,
@@ -6943,6 +6943,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "edit_file"
+                    },
                     "bookmark": {
                       "type": "string"
                     },
@@ -6969,10 +6973,6 @@ Requires current repository write permission, including status. Strict typed com
                     },
                     "description": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "edit_file"
                     }
                   },
                   "additionalProperties": false,
@@ -6989,6 +6989,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "resolve_conflicts"
+                    },
                     "commit": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{128}$",
@@ -7015,6 +7019,10 @@ Requires current repository write permission, including status. Strict typed com
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "uploaded_file"
+                                  },
                                   "upload": {
                                     "type": "string",
                                     "pattern": "^[0-9a-f]{64}$",
@@ -7031,10 +7039,6 @@ Requires current repository write permission, including status. Strict typed com
                                     ],
                                     "format": "uint32",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "uploaded_file"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -7047,14 +7051,14 @@ Requires current repository write permission, including status. Strict typed com
                               {
                                 "type": "object",
                                 "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "select_term"
+                                  },
                                   "term": {
                                     "type": "integer",
                                     "format": "uint32",
                                     "minimum": 0
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "const": "select_term"
                                   }
                                 },
                                 "additionalProperties": false,
@@ -7086,10 +7090,6 @@ Requires current repository write permission, including status. Strict typed com
                           "resolution"
                         ]
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "resolve_conflicts"
                     }
                   },
                   "additionalProperties": false,
@@ -7102,6 +7102,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "new"
+                    },
                     "parents": {
                       "type": "array",
                       "items": {
@@ -7119,10 +7123,6 @@ Requires current repository write permission, including status. Strict typed com
                         "string",
                         "null"
                       ]
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "new"
                     }
                   },
                   "additionalProperties": false,
@@ -7135,6 +7135,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "describe"
+                    },
                     "commit": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{128}$",
@@ -7143,10 +7147,6 @@ Requires current repository write permission, including status. Strict typed com
                     },
                     "description": {
                       "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "describe"
                     }
                   },
                   "additionalProperties": false,
@@ -7159,6 +7159,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "bookmark_create"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -7167,10 +7171,6 @@ Requires current repository write permission, including status. Strict typed com
                       "pattern": "^[0-9a-f]{128}$",
                       "minLength": 128,
                       "maxLength": 128
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "bookmark_create"
                     }
                   },
                   "additionalProperties": false,
@@ -7183,6 +7183,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "bookmark_move"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -7203,10 +7207,6 @@ Requires current repository write permission, including status. Strict typed com
                       "pattern": "^[0-9a-f]{128}$",
                       "minLength": 128,
                       "maxLength": 128
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "bookmark_move"
                     }
                   },
                   "additionalProperties": false,
@@ -7220,6 +7220,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "bookmark_delete"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -7234,10 +7238,6 @@ Requires current repository write permission, including status. Strict typed com
                         "minLength": 128,
                         "maxLength": 128
                       }
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "bookmark_delete"
                     }
                   },
                   "additionalProperties": false,
@@ -7250,15 +7250,15 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "reconcile_operations"
+                    },
                     "base": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{128}$",
                       "minLength": 128,
                       "maxLength": 128
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "reconcile_operations"
                     }
                   },
                   "additionalProperties": false,
@@ -7270,6 +7270,10 @@ Requires current repository write permission, including status. Strict typed com
                 {
                   "type": "object",
                   "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "abandon"
+                    },
                     "commits": {
                       "type": "array",
                       "items": {
@@ -7284,10 +7288,6 @@ Requires current repository write permission, including status. Strict typed com
                     },
                     "restore_descendants": {
                       "type": "boolean"
-                    },
-                    "type": {
-                      "type": "string",
-                      "const": "abandon"
                     }
                   },
                   "additionalProperties": false,

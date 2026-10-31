@@ -6,6 +6,13 @@ loopback and a pipe on stdin. Launch-only bundle-path and origin overrides never
 persist or alter credentials. Owner EOF enters the same bounded shutdown as
 interrupt/termination. See [desktop](../desktop/index.md).
 
+The watchdog retains the duplicated owner descriptor in Tokio's safe owned Unix
+pipe receiver, which verifies read access and registers nonblocking I/O. It
+drains any owner bytes and enters the same bounded shutdown on EOF or a read
+error. This preserves JST-CLI-002/JST-CLI-004 and the crate's unsafe-code ban;
+it does not use the deprecated generic AsyncFd constructor or suppress strict
+compiler diagnostics.
+
 Native browser qualification MUST verify that authenticated query metadata omits
 host identity hints. Registered-folder identity fallback remains an adapter
 read; it MUST NOT invoke installed JJ/Git commands, migrate configuration or

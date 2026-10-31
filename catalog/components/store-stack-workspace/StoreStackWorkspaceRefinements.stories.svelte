@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { workspaceFileName } from "../../fixtures/stack-workspace/story-actions.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -7,6 +8,9 @@
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Refinements",
     component: StackWorkspaceFixture,
+    beforeEach: async () => {
+      await views.stacks();
+    },
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });

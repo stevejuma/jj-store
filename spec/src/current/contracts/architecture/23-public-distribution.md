@@ -377,3 +377,10 @@ Release-governance acceptance follows the declared validation lane through its
 public package command and still requires every release/CI test plus package
 checks. The standard cohort includes history service and vault packages; model
 impact verifies their full reverse dependency closure without reducing coverage.
+
+E-CONVERSATIONS-NPM-003 verifies the focused source repair for deprecated
+desktop owner-pipe registration and generated contract ordering. Safe owned I/O
+and normally regenerated artifacts preserve the existing contracts. M30 retains
+the pending protected source merge, fresh complete heavy/client qualification,
+immutable artifact/provenance and actual npm/registry/GitHub release gates.
+Source acceptance and earlier failed runs do not qualify a public package.

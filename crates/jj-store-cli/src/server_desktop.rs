@@ -3,6 +3,8 @@ use clap::Args;
 use jj_store_jj::operation_stores::AuthorityResult;
 use jj_store_server::config::{Access, Config, Storage};
 use std::{net::SocketAddr, path::PathBuf};
+#[cfg(unix)]
+use tokio::{io::AsyncReadExt, net::unix::pipe::Receiver};
 
 #[derive(Debug, Default, Args)]
 pub struct DesktopOptions {
@@ -59,30 +61,42 @@ impl DesktopOptions {
 
 /// Registers a nonblocking owner pipe before announcing the listener.
 #[cfg(unix)]
-pub fn owner_pipe() -> AuthorityResult<tokio::io::unix::AsyncFd<std::os::fd::OwnedFd>> {
+pub fn owner_pipe() -> AuthorityResult<Receiver> {
     let input = rustix::io::dup(std::io::stdin())?;
     if rustix::fs::FileType::from_raw_mode(rustix::fs::fstat(&input)?.st_mode)
         != rustix::fs::FileType::Fifo
     {
         return Err("desktop supervision requires an owner stdin pipe".into());
     }
-    let flags = rustix::fs::fcntl_getfl(&input)?;
-    rustix::fs::fcntl_setfl(&input, flags | rustix::fs::OFlags::NONBLOCK)?;
-    Ok(tokio::io::unix::AsyncFd::new(input)?)
+    Ok(Receiver::from_owned_fd(input)?)
 }
 
 #[cfg(unix)]
-pub async fn owner_closed(input: tokio::io::unix::AsyncFd<std::os::fd::OwnedFd>) {
+pub async fn owner_closed(mut input: Receiver) {
     let mut bytes = [0_u8; 64];
-    loop {
-        let Ok(mut ready) = input.readable().await else {
-            return;
-        };
-        match ready
-            .try_io(|fd| rustix::io::read(fd.get_ref(), &mut bytes).map_err(std::io::Error::from))
-        {
-            Ok(Ok(0)) | Ok(Err(_)) => return,
-            _ => {}
-        }
+    while matches!(input.read(&mut bytes).await, Ok(count) if count > 0) {}
+}
+
+#[cfg(all(test, unix))]
+mod tests {
+    use super::*;
+    use std::time::Duration;
+    use tokio::io::AsyncWriteExt;
+
+    #[tokio::test]
+    async fn owner_bytes_keep_the_watchdog_open_until_eof() {
+        let (mut owner, input) = tokio::net::unix::pipe::pipe().unwrap();
+        owner.write_all(&[1; 128]).await.unwrap();
+        let mut closed = Box::pin(owner_closed(input));
+        assert!(
+            tokio::time::timeout(Duration::from_millis(50), &mut closed)
+                .await
+                .is_err(),
+            "owner bytes must be drained without stopping the service"
+        );
+        drop(owner);
+        tokio::time::timeout(Duration::from_secs(5), closed)
+            .await
+            .expect("closing the owner pipe must complete the watchdog");
     }
 }

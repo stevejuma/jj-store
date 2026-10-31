@@ -20,6 +20,14 @@ document and are checked for drift together with it. Generation is offline once
 locked build dependencies have been installed and requires no credentials or
 server. Generated files are not edited by hand.
 
+E-CONVERSATIONS-NPM-003 refreshes both checked-in artifacts through the normal
+locked generator after its object-property ordering changed. The parsed OpenAPI
+documents remain structurally identical, including all 204 paths; request,
+response, authorization and wire contracts are unchanged. Byte-for-byte drift
+checking and actual HTTP/SSE response validation remain enabled. Generated HTTP
+reference pages are refreshed from that same artifact so their embedded schema
+ordering agrees with the checked-in OpenAPI document.
+
 Contract shape validation does not establish runtime authorization or native
 semantics; the existing transport/lifecycle tests remain required. Rust numeric
 widths are retained in JSON schemas. Browser clients must reject unsafe integer

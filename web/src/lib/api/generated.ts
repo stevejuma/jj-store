@@ -3893,14 +3893,14 @@ export interface components {
     };
     SearchScope:
       | {
-          name: string;
           /** @constant */
           kind: "bookmark";
+          name: string;
         }
       | {
-          name: string;
           /** @constant */
           kind: "workspace";
+          name: string;
         };
     /** @enum {string} */
     SearchOperation: "idle" | "applying" | "rebuilding" | "retrying" | "failed";
@@ -4110,20 +4110,20 @@ export interface components {
     };
     SearchDocumentKey:
       | {
-          id: components["schemas"]["OperationId"];
           /** @constant */
           kind: "operation";
+          id: components["schemas"]["OperationId"];
         }
       | {
-          id: components["schemas"]["CommitId"];
           /** @constant */
           kind: "commit";
+          id: components["schemas"]["CommitId"];
         }
       | {
-          scope: string;
-          path: string;
           /** @constant */
           kind: "file";
+          scope: string;
+          path: string;
         };
     ChangeId: string;
     FileId: string;
@@ -4219,75 +4219,75 @@ export interface components {
     /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
     ReactionTargetV1:
       | {
-          thread_id: components["schemas"]["ThreadId"];
           /** @constant */
           type: "thread";
+          thread_id: components["schemas"]["ThreadId"];
         }
       | {
+          /** @constant */
+          type: "human_message";
           thread_id: components["schemas"]["ThreadId"];
           message_id: components["schemas"]["HumanMessageId"];
           revision: components["schemas"]["CollabObjectRef"];
-          /** @constant */
-          type: "human_message";
         }
       | {
+          /** @constant */
+          type: "agent_message";
           session_id: components["schemas"]["AgentSessionId"];
           message_id: components["schemas"]["MessageId"];
           event_id: components["schemas"]["AgentEventId"];
           batch: components["schemas"]["AgentObjectRef"];
           content: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "agent_message";
         }
       | {
+          /** @constant */
+          type: "tool_invocation";
           session_id: components["schemas"]["AgentSessionId"];
           tool_id: components["schemas"]["ToolCallId"];
           snapshot: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "tool_invocation";
         }
       | {
+          /** @constant */
+          type: "tool_output";
           session_id: components["schemas"]["AgentSessionId"];
           tool_id: components["schemas"]["ToolCallId"];
           snapshot: components["schemas"]["AgentObjectRef"];
           content: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "tool_output";
         }
       | {
-          thread_id: components["schemas"]["ReviewThreadId"];
           /** @constant */
           type: "review_thread";
+          thread_id: components["schemas"]["ReviewThreadId"];
         }
       | {
+          /** @constant */
+          type: "review_comment";
           thread_id: components["schemas"]["ReviewThreadId"];
           comment_id: components["schemas"]["CommentId"];
           revision: components["schemas"]["ReviewObjectRef"];
-          /** @constant */
-          type: "review_comment";
         }
       | {
+          /** @constant */
+          type: "repository_review_comment";
           repository: components["schemas"]["RepositoryId"];
           thread_id: components["schemas"]["ReviewThreadId"];
           comment_id: components["schemas"]["CommentId"];
           revision: components["schemas"]["ReviewObjectRef"];
-          /** @constant */
-          type: "repository_review_comment";
         }
       | {
+          /** @constant */
+          type: "work_comment";
           task_id: components["schemas"]["TaskId"];
           comment_id: components["schemas"]["WorkCommentId"];
           /** Format: uint64 */
           version: number;
-          /** @constant */
-          type: "work_comment";
         }
       | {
+          /** @constant */
+          type: "agent_checkpoint";
           session_id: components["schemas"]["AgentSessionId"];
           checkpoint_id: components["schemas"]["AgentCheckpointId"];
           version: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "agent_checkpoint";
         };
     ThreadId: string;
     HumanMessageId: string;
@@ -4441,14 +4441,16 @@ export interface components {
     };
     AgentActivity:
       | {
+          /** @constant */
+          type: "session_state";
           /** Format: uint64 */
           sequence: number;
           event_id: components["schemas"]["AgentEventId"];
           state: components["schemas"]["SessionState"];
-          /** @constant */
-          type: "session_state";
         }
       | {
+          /** @constant */
+          type: "message";
           reaction_target?: components["schemas"]["ReactionTargetV1"] | null;
           /** Format: uint64 */
           sequence: number;
@@ -4459,35 +4461,35 @@ export interface components {
           occurred_at_millis?: number | null;
           role: components["schemas"]["MessageRole"];
           content: components["schemas"]["AgentContent"];
-          /** @constant */
-          type: "message";
         }
       | {
+          /** @constant */
+          type: "tool";
           /** Format: uint64 */
           sequence: number;
           event_id: components["schemas"]["AgentEventId"];
           tool: components["schemas"]["AgentToolActivity"];
-          /** @constant */
-          type: "tool";
         }
       | {
+          /** @constant */
+          type: "permission";
           /** Format: uint64 */
           sequence: number;
           event_id: components["schemas"]["AgentEventId"];
           tool_call_id: components["schemas"]["ToolCallId"] | null;
           state: components["schemas"]["PermissionState"];
-          /** @constant */
-          type: "permission";
         }
       | {
+          /** @constant */
+          type: "file_observed";
           /** Format: uint64 */
           sequence: number;
           event_id: components["schemas"]["AgentEventId"];
           path: string;
-          /** @constant */
-          type: "file_observed";
         }
       | {
+          /** @constant */
+          type: "capture_gap";
           /** Format: uint64 */
           sequence: number;
           event_id: components["schemas"]["AgentEventId"];
@@ -4495,8 +4497,6 @@ export interface components {
           missing_from: number;
           /** Format: uint64 */
           missing_to: number;
-          /** @constant */
-          type: "capture_gap";
         };
     TurnId: string;
     /** @enum {string} */
@@ -4601,30 +4601,30 @@ export interface components {
     };
     AgentRelationSubject:
       | {
-          session_id: components["schemas"]["AgentSessionId"];
           /** @constant */
           subject: "session";
+          session_id: components["schemas"]["AgentSessionId"];
         }
       | {
-          session_id: components["schemas"]["AgentSessionId"];
-          tool_call_id: components["schemas"]["ToolCallId"];
           /** @constant */
           subject: "tool";
+          session_id: components["schemas"]["AgentSessionId"];
+          tool_call_id: components["schemas"]["ToolCallId"];
         }
       | {
-          operation_id: components["schemas"]["OperationId"];
           /** @constant */
           subject: "operation";
+          operation_id: components["schemas"]["OperationId"];
         }
       | {
-          commit_id: components["schemas"]["CommitId"];
           /** @constant */
           subject: "revision";
+          commit_id: components["schemas"]["CommitId"];
         }
       | {
-          checkpoint_id: components["schemas"]["AgentCheckpointId"];
           /** @constant */
           subject: "checkpoint";
+          checkpoint_id: components["schemas"]["AgentCheckpointId"];
         };
     AgentRelationLink: {
       kind: components["schemas"]["AgentRelationKind"];
@@ -4879,15 +4879,15 @@ export interface components {
     GitSha1Id: string;
     CodeObjectIdV1:
       | {
-          object: components["schemas"]["ObjectKey"];
           /** @constant */
           profile: "native_v1";
+          object: components["schemas"]["ObjectKey"];
         }
       | {
-          kind: components["schemas"]["GitObjectKindV1"];
-          id: components["schemas"]["GitSha1Id"];
           /** @constant */
           profile: "git_sha1_jj045";
+          kind: components["schemas"]["GitObjectKindV1"];
+          id: components["schemas"]["GitSha1Id"];
         };
     ObjectKey:
       | {
@@ -4962,23 +4962,23 @@ export interface components {
     };
     AgentContentOwnerV1:
       | {
+          /** @constant */
+          kind: "tool";
           tool_call_id: components["schemas"]["ToolCallId"];
           snapshot: components["schemas"]["AgentObjectRef"];
           attempt_id: components["schemas"]["ToolAttemptId"];
-          /** @constant */
-          kind: "tool";
         }
       | {
-          message_id: components["schemas"]["MessageId"];
-          snapshot: components["schemas"]["AgentObjectRef"];
           /** @constant */
           kind: "message";
+          message_id: components["schemas"]["MessageId"];
+          snapshot: components["schemas"]["AgentObjectRef"];
         }
       | {
-          block_id: components["schemas"]["BlockId"];
-          snapshot: components["schemas"]["AgentObjectRef"];
           /** @constant */
           kind: "plan";
+          block_id: components["schemas"]["BlockId"];
+          snapshot: components["schemas"]["AgentObjectRef"];
         };
     ToolAttemptId: string;
     BlockId: string;
@@ -5055,22 +5055,22 @@ export interface components {
     };
     ReviewCommentContent:
       | {
+          /** @constant */
+          state: "visible";
           body_id: components["schemas"]["ReviewObjectId"];
           format: components["schemas"]["ReviewBodyFormatV1"];
           text: string;
           sanitizer_version: string;
-          /** @constant */
-          state: "visible";
         }
       | {
-          reason: string | null;
           /** @constant */
           state: "tombstoned";
+          reason: string | null;
         }
       | {
-          reason: string;
           /** @constant */
           state: "hidden";
+          reason: string;
         };
     /** @enum {string} */
     ReviewBodyFormatV1: "plain_text" | "safe_markdown";
@@ -5101,55 +5101,55 @@ export interface components {
     };
     ReviewEventKind:
       | {
+          /** @constant */
+          action: "created";
           anchor_id: components["schemas"]["ReviewObjectId"];
           initial_comment_id: components["schemas"]["CommentId"];
           initial_revision_id: components["schemas"]["ReviewObjectId"];
-          /** @constant */
-          action: "created";
         }
       | {
+          /** @constant */
+          action: "reply_added";
           comment_id: components["schemas"]["CommentId"];
           parent_comment_id: components["schemas"]["CommentId"] | null;
           revision_id: components["schemas"]["ReviewObjectId"];
-          /** @constant */
-          action: "reply_added";
         }
       | {
+          /** @constant */
+          action: "comment_revised";
           comment_id: components["schemas"]["CommentId"];
           previous_revision_id: components["schemas"]["ReviewObjectId"];
           revision_id: components["schemas"]["ReviewObjectId"];
-          /** @constant */
-          action: "comment_revised";
         }
       | {
+          /** @constant */
+          action: "comment_conflict_resolved";
           comment_id: components["schemas"]["CommentId"];
           superseded_revision_ids: components["schemas"]["ReviewObjectId"][];
           revision_id: components["schemas"]["ReviewObjectId"];
-          /** @constant */
-          action: "comment_conflict_resolved";
         }
       | {
-          action_id: components["schemas"]["ReviewActionId"];
-          reason: string | null;
           /** @constant */
           action: "resolved";
-        }
-      | {
           action_id: components["schemas"]["ReviewActionId"];
           reason: string | null;
+        }
+      | {
           /** @constant */
           action: "reopened";
+          action_id: components["schemas"]["ReviewActionId"];
+          reason: string | null;
         };
     ReviewCommandOutcome:
       | {
-          receipt: components["schemas"]["ReviewCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["ReviewCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     ReviewCommandReceipt: {
       /** Format: uint32 */
@@ -5181,19 +5181,19 @@ export interface components {
     };
     ReviewCommandStatus:
       | {
-          receipt: components["schemas"]["ReviewCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["ReviewCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     CollabPage: {
       snapshot: components["schemas"]["CollabReadSnapshotV1"];
@@ -5222,33 +5222,33 @@ export interface components {
     };
     CollabPageItems:
       | {
-          threads: components["schemas"]["ThreadSummaryV1"][];
           /** @constant */
           type: "threads";
+          threads: components["schemas"]["ThreadSummaryV1"][];
         }
       | {
-          thread_id: components["schemas"]["ThreadId"];
-          events: components["schemas"]["ThreadEventItemV1"][];
           /** @constant */
           type: "events";
+          thread_id: components["schemas"]["ThreadId"];
+          events: components["schemas"]["ThreadEventItemV1"][];
         }
       | {
+          /** @constant */
+          type: "reactions";
           target: components["schemas"]["ReactionTargetV1"];
           revision: components["schemas"]["TargetRevisionV1"];
           reactions: components["schemas"]["ReactionAggregateV1"][];
           /** Format: uint32 */
           conflict_count: number;
           actors: components["schemas"]["ReactionActorRowV1"][];
-          /** @constant */
-          type: "reactions";
         }
       | {
+          /** @constant */
+          type: "emojis";
           versions: {
             [key: string]: components["schemas"]["CollabObjectRef"];
           };
           definitions: components["schemas"]["CustomEmojiVersionV1"][];
-          /** @constant */
-          type: "emojis";
         };
     ThreadSummaryV1: {
       reference: components["schemas"]["CollabObjectRef"];
@@ -5300,9 +5300,9 @@ export interface components {
     };
     ThreadPurposeV1:
       | {
-          target: components["schemas"]["ConversationMetadataTargetV1"];
           /** @constant */
           type: "conversation";
+          target: components["schemas"]["ConversationMetadataTargetV1"];
         }
       | {
           /** @constant */
@@ -5310,14 +5310,14 @@ export interface components {
         };
     ConversationMetadataTargetV1:
       | {
-          id: string;
           /** @constant */
           type: "conversation";
+          id: string;
         }
       | {
-          session: components["schemas"]["AgentSessionId"];
           /** @constant */
           type: "recorded";
+          session: components["schemas"]["AgentSessionId"];
         };
     ThreadDirectoryMetadata: {
       /** Format: uint32 */
@@ -5369,44 +5369,44 @@ export interface components {
     ThreadLinkId: string;
     ThreadLinkTargetV1:
       | {
-          reply: components["schemas"]["CommentReplyLinkV1"];
           /** @constant */
           type: "comment_reply";
+          reply: components["schemas"]["CommentReplyLinkV1"];
         }
       | {
+          /** @constant */
+          type: "comment_batch";
           request_id: components["schemas"]["RequestId"];
           comments: components["schemas"]["ReactionTargetV1"][];
           message: components["schemas"]["CollabObjectRef"] | null;
           reply_to?: components["schemas"]["CollabObjectRef"] | null;
-          /** @constant */
-          type: "comment_batch";
         }
       | {
+          /** @constant */
+          type: "capture_gap";
           source_state: components["schemas"]["AgentObjectRef"];
           event_batch: components["schemas"]["AgentObjectRef"];
           binding: components["schemas"]["ThreadBindingV1"];
-          /** @constant */
-          type: "capture_gap";
         }
       | {
+          /** @constant */
+          type: "session";
           session_id: components["schemas"]["AgentSessionId"];
           snapshot: components["schemas"]["AgentObjectRef"];
           primary: boolean;
-          /** @constant */
-          type: "session";
         }
       | {
+          /** @constant */
+          type: "code";
           anchor: components["schemas"]["ThreadCodeAnchorV1"];
           evidence_method: components["schemas"]["EvidenceMethod"];
           evidence: components["schemas"]["AgentObjectRef"] | null;
-          /** @constant */
-          type: "code";
         }
       | {
-          review_id: components["schemas"]["ReviewThreadId"];
-          snapshot: components["schemas"]["ReviewObjectRef"];
           /** @constant */
           type: "review";
+          review_id: components["schemas"]["ReviewThreadId"];
+          snapshot: components["schemas"]["ReviewObjectRef"];
         };
     /** @description Capture adapters may bind explicitly. Absence is the supported unlinked state. */
     ThreadBindingV1: {
@@ -5432,34 +5432,34 @@ export interface components {
           type: "codebase_changed";
         }
       | {
-          version: components["schemas"]["CollabObjectRef"];
           /** @constant */
           type: "metadata";
+          version: components["schemas"]["CollabObjectRef"];
         }
       | {
           /** @constant */
           type: "created";
         }
       | {
-          previous_title: string;
           /** @constant */
           type: "renamed";
+          previous_title: string;
         }
       | {
-          previous_status: components["schemas"]["ThreadStatusV12"];
-          action: components["schemas"]["ThreadActionV1"];
           /** @constant */
           type: "lifecycle";
+          previous_status: components["schemas"]["ThreadStatusV12"];
+          action: components["schemas"]["ThreadActionV1"];
         }
       | {
-          revision: components["schemas"]["CollabObjectRef"];
           /** @constant */
           type: "message";
+          revision: components["schemas"]["CollabObjectRef"];
         }
       | {
-          version: components["schemas"]["CollabObjectRef"];
           /** @constant */
           type: "link";
+          version: components["schemas"]["CollabObjectRef"];
         };
     /** @enum {string} */
     ThreadActionV1: "activate" | "idle" | "archive" | "tombstone" | "restore";
@@ -5481,15 +5481,15 @@ export interface components {
           type: "dislike";
         }
       | {
-          sequence: string;
           /** @constant */
           type: "emoji";
+          sequence: string;
         }
       | {
-          emoji_id: components["schemas"]["CustomEmojiId"];
-          version: components["schemas"]["CollabObjectRef"];
           /** @constant */
           type: "custom";
+          emoji_id: components["schemas"]["CustomEmojiId"];
+          version: components["schemas"]["CollabObjectRef"];
         };
     ReactionActorRowV1: {
       actor: components["schemas"]["PrincipalId"];
@@ -5508,14 +5508,14 @@ export interface components {
     };
     CollabCommandOutcome:
       | {
-          receipt: components["schemas"]["CollabCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["CollabCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     CollabCommandReceipt: {
       /** Format: uint32 */
@@ -5531,19 +5531,19 @@ export interface components {
     };
     CollabCommandResultV1:
       | {
-          result: components["schemas"]["ThreadCommandResultV1"];
           /** @constant */
           domain: "thread";
+          result: components["schemas"]["ThreadCommandResultV1"];
         }
       | {
-          result: components["schemas"]["ReactionCommandResultV1"];
           /** @constant */
           domain: "reaction";
+          result: components["schemas"]["ReactionCommandResultV1"];
         }
       | {
-          version: components["schemas"]["CollabObjectRef"];
           /** @constant */
           domain: "emoji";
+          version: components["schemas"]["CollabObjectRef"];
         };
     ThreadCommandResultV1: {
       thread_id: components["schemas"]["ThreadId"];
@@ -5563,19 +5563,19 @@ export interface components {
     };
     CollabCommandStatus:
       | {
-          receipt: components["schemas"]["CollabCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["CollabCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     ContentPage: {
       /** Format: uint32 */
@@ -5749,9 +5749,9 @@ export interface components {
           on: "reaction_added";
         }
       | {
-          bookmark: string;
           /** @constant */
           on: "bookmark_changed";
+          bookmark: string;
         };
     WorkflowConditions: {
       revset?: string | null;
@@ -5792,20 +5792,20 @@ export interface components {
     };
     WorkflowExecutor:
       | {
-          name: string;
           /** @constant */
           type: "command";
+          name: string;
         }
       | {
-          path: string;
           /** @constant */
           type: "github_workflow";
+          path: string;
         }
       | {
-          agent: string;
-          prompt: string;
           /** @constant */
           type: "agent";
+          agent: string;
+          prompt: string;
         };
     WorkflowRun: {
       id: components["schemas"]["RunId"];
@@ -5875,33 +5875,33 @@ export interface components {
     EvidenceId: string;
     WorkflowEvidenceData:
       | {
+          /** @constant */
+          type: "log";
           step?: string | null;
           stream: string;
           text: string;
-          /** @constant */
-          type: "log";
         }
       | {
+          /** @constant */
+          type: "step";
           step: string;
           status: components["schemas"]["WorkflowRunStatus"];
           output: {
             [key: string]: string;
           };
-          /** @constant */
-          type: "step";
         }
       | {
+          /** @constant */
+          type: "artifact";
           name: string;
           media_type: string;
           bytes: number[];
-          /** @constant */
-          type: "artifact";
         }
       | {
-          session: string;
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           type: "agent";
+          session: string;
+          request_id: components["schemas"]["RequestId"];
         };
     WorkflowSourceEvent: {
       id: components["schemas"]["SourceEventId"];
@@ -5935,14 +5935,14 @@ export interface components {
     };
     WorkflowCommandOutcome:
       | {
-          receipt: components["schemas"]["WorkflowCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["WorkflowCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     WorkflowCommandReceipt: {
       /** Format: uint32 */
@@ -5973,19 +5973,19 @@ export interface components {
     };
     WorkflowCommandStatus:
       | {
-          receipt: components["schemas"]["WorkflowCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["WorkflowCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     WorkPage: {
       /** Format: uint32 */
@@ -6046,14 +6046,14 @@ export interface components {
     };
     WorkCommandOutcome:
       | {
-          receipt: components["schemas"]["WorkCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["WorkCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     WorkCommandReceipt: {
       /** Format: uint32 */
@@ -6071,19 +6071,19 @@ export interface components {
     };
     WorkCommandStatus:
       | {
-          receipt: components["schemas"]["WorkCommandReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["WorkCommandReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     CommittedEvent: {
       /** Format: uint32 */
@@ -6091,19 +6091,19 @@ export interface components {
       cursor: components["schemas"]["EventCursor"];
     } & (
       | {
-          snapshot: components["schemas"]["HeadSnapshot"];
           /** @constant */
           type: "ready";
+          snapshot: components["schemas"]["HeadSnapshot"];
         }
       | {
           /** @constant */
           type: "changed";
         }
       | {
-          reason: components["schemas"]["EventResetReason"];
-          snapshot: components["schemas"]["HeadSnapshot"];
           /** @constant */
           type: "reset";
+          reason: components["schemas"]["EventResetReason"];
+          snapshot: components["schemas"]["HeadSnapshot"];
         }
     );
     EventCursor: {
@@ -6199,26 +6199,26 @@ export interface components {
     };
     NativeTreeValue:
       | {
+          /** @constant */
+          type: "file";
           id: components["schemas"]["FileId"];
           executable: boolean;
           copy: components["schemas"]["CopyReference"];
-          /** @constant */
-          type: "file";
         }
       | {
-          id: components["schemas"]["SymlinkId"];
           /** @constant */
           type: "symlink";
+          id: components["schemas"]["SymlinkId"];
         }
       | {
-          id: components["schemas"]["TreeId"];
           /** @constant */
           type: "tree";
+          id: components["schemas"]["TreeId"];
         }
       | {
-          id: number[];
           /** @constant */
           type: "submodule";
+          id: number[];
         };
     /** @description A copy placeholder is not a content-addressed object or dependency. */
     CopyReference:
@@ -6448,26 +6448,26 @@ export interface components {
     };
     Reference:
       | {
-          name: string;
-          targets: components["schemas"]["Target"][];
           /** @constant */
           kind: "workspace";
+          name: string;
+          targets: components["schemas"]["Target"][];
         }
       | {
+          /** @constant */
+          kind: "bookmark";
           name: string;
           terms: (components["schemas"]["CommitId"] | null)[];
           conflicted: boolean;
           workspaces: string[];
           targets: components["schemas"]["Target"][];
-          /** @constant */
-          kind: "bookmark";
         }
       | {
+          /** @constant */
+          kind: "change";
           change: components["schemas"]["ChangeId"];
           divergent: boolean;
           targets: components["schemas"]["Target"][];
-          /** @constant */
-          kind: "change";
         };
     Target: {
       commit: components["schemas"]["CommitId"];
@@ -6501,16 +6501,16 @@ export interface components {
     };
     OperationDiffData:
       | {
-          operation: components["schemas"]["OperationId"];
-          view: components["schemas"]["ViewId"];
           /** @constant */
           status: "root";
+          operation: components["schemas"]["OperationId"];
+          view: components["schemas"]["ViewId"];
         }
       | {
-          operation: components["schemas"]["OperationId"];
-          parents: components["schemas"]["OperationId"][];
           /** @constant */
           status: "select_parent";
+          operation: components["schemas"]["OperationId"];
+          parents: components["schemas"]["OperationId"][];
         }
       | ({
           /** @constant */
@@ -6579,16 +6579,16 @@ export interface components {
     };
     Comparison:
       | {
-          from: components["schemas"]["CommitId"];
-          to: components["schemas"]["CommitId"];
           /** @constant */
           status: "exact";
+          from: components["schemas"]["CommitId"];
+          to: components["schemas"]["CommitId"];
         }
       | {
-          before: components["schemas"]["CommitId"][];
-          after: components["schemas"]["CommitId"][];
           /** @constant */
           status: "select";
+          before: components["schemas"]["CommitId"][];
+          after: components["schemas"]["CommitId"][];
         }
       | {
           /** @constant */
@@ -6685,19 +6685,19 @@ export interface components {
     };
     LastChange:
       | {
+          /** @constant */
+          status: "available";
           attribution: components["schemas"]["Attribution"];
           commit: components["schemas"]["CommitId"];
           change: components["schemas"]["ChangeId"];
           description: string;
           author: components["schemas"]["NativeSignature"];
           committer: components["schemas"]["NativeSignature"];
-          /** @constant */
-          status: "available";
         }
       | {
-          reason: components["schemas"]["LastChangeUnavailable"];
           /** @constant */
           status: "unavailable";
+          reason: components["schemas"]["LastChangeUnavailable"];
         };
     /**
      * @description Provenance of the displayed commit, not a claim about all-branch history.
@@ -6738,15 +6738,15 @@ export interface components {
     ConflictRole: "add" | "remove";
     ConflictEditor:
       | {
-          contents: string[];
-          executable: boolean;
           /** @constant */
           status: "text";
+          contents: string[];
+          executable: boolean;
         }
       | {
-          reason: components["schemas"]["ConflictUnsupported"];
           /** @constant */
           status: "unsupported";
+          reason: components["schemas"]["ConflictUnsupported"];
         };
     /** @enum {string} */
     ConflictUnsupported:
@@ -6789,14 +6789,14 @@ export interface components {
     FileDiffSourceKind: "normal" | "copy" | "rename";
     FileDiffContent:
       | {
-          hunks: components["schemas"]["FileDiffHunk"][];
           /** @constant */
           status: "text";
+          hunks: components["schemas"]["FileDiffHunk"][];
         }
       | {
-          reason: components["schemas"]["FileDiffUnavailable"];
           /** @constant */
           status: "unavailable";
+          reason: components["schemas"]["FileDiffUnavailable"];
         };
     FileDiffHunk: {
       kind: components["schemas"]["FileDiffHunkKind"];
@@ -6856,9 +6856,9 @@ export interface components {
           status: "ready";
         }
       | {
-          error: components["schemas"]["GraphError"];
           /** @constant */
           status: "failed";
+          error: components["schemas"]["GraphError"];
         }
       | {
           /** @constant */
@@ -6926,14 +6926,14 @@ export interface components {
           status: "canceling";
         }
       | {
-          index: components["schemas"]["IndexReport"];
           /** @constant */
           status: "ready";
+          index: components["schemas"]["IndexReport"];
         }
       | {
-          error: components["schemas"]["GraphError"];
           /** @constant */
           status: "failed";
+          error: components["schemas"]["GraphError"];
         }
       | {
           /** @constant */
@@ -6949,14 +6949,14 @@ export interface components {
     };
     Preview:
       | {
-          preview: components["schemas"]["PreviewReport"];
           /** @constant */
           status: "prepared";
+          preview: components["schemas"]["PreviewReport"];
         }
       | {
-          receipt: components["schemas"]["Receipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["Receipt"];
         };
     PreviewReport: {
       /** Format: uint32 */
@@ -7025,14 +7025,14 @@ export interface components {
     };
     Outcome:
       | {
-          receipt: components["schemas"]["Receipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["Receipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     ConflictUpload: {
       /** Format: uint32 */
@@ -7052,42 +7052,42 @@ export interface components {
     };
     Status:
       | {
-          receipt: components["schemas"]["Receipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["Receipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         };
     ApplicationFreshnessEvent:
       | {
+          /** @constant */
+          type: "ready";
           /** Format: uint32 */
           version: number;
           witnesses: components["schemas"]["Change4"][];
-          /** @constant */
-          type: "ready";
         }
       | {
+          /** @constant */
+          type: "changed";
           /** Format: uint32 */
           version: number;
           change: components["schemas"]["Change4"];
-          /** @constant */
-          type: "changed";
         }
       | {
+          /** @constant */
+          type: "reset";
           /** Format: uint32 */
           version: number;
           reason: string;
           witnesses: components["schemas"]["Change4"][];
-          /** @constant */
-          type: "reset";
         };
     Change4: {
       repository: components["schemas"]["RepositoryId"] | null;
@@ -7137,22 +7137,22 @@ export interface components {
     };
     RegistrationOutcome:
       | {
+          /** @constant */
+          status: "committed";
           request_id: components["schemas"]["RequestId"];
           binding: components["schemas"]["LocalBinding"];
           /** Format: uint64 */
           revision: number;
-          /** @constant */
-          status: "committed";
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         };
     LocalFolder: {
       path: string;
@@ -7161,21 +7161,21 @@ export interface components {
     };
     NativeCreationOutcome:
       | {
+          /** @constant */
+          status: "committed";
           request_id: components["schemas"]["RequestId"];
           repository: components["schemas"]["RepositoryId"];
           name: string;
-          /** @constant */
-          status: "committed";
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         };
     DeletionOutcome: {
       /** Format: uint32 */
@@ -7569,26 +7569,26 @@ export interface components {
     };
     LocalTreeValue:
       | {
+          /** @constant */
+          type: "file";
           id: components["schemas"]["GitSha1Id"];
           executable: boolean;
           copy: components["schemas"]["LocalCopyReference"];
-          /** @constant */
-          type: "file";
         }
       | {
-          id: components["schemas"]["GitSha1Id"];
           /** @constant */
           type: "symlink";
+          id: components["schemas"]["GitSha1Id"];
         }
       | {
-          id: components["schemas"]["GitSha1Id"];
           /** @constant */
           type: "tree";
+          id: components["schemas"]["GitSha1Id"];
         }
       | {
-          id: number[];
           /** @constant */
           type: "submodule";
+          id: number[];
         };
     LocalCopyReference:
       | {
@@ -7602,19 +7602,19 @@ export interface components {
         };
     LocalPathsLastChange:
       | {
+          /** @constant */
+          status: "available";
           attribution: components["schemas"]["LocalPathsAttribution"];
           commit: components["schemas"]["GitSha1Id"];
           change: components["schemas"]["ChangeId"];
           description: string;
           author: components["schemas"]["NativeSignature"];
           committer: components["schemas"]["NativeSignature"];
-          /** @constant */
-          status: "available";
         }
       | {
-          reason: components["schemas"]["LocalPathsLastChangeUnavailable"];
           /** @constant */
           status: "unavailable";
+          reason: components["schemas"]["LocalPathsLastChangeUnavailable"];
         };
     /**
      * @description Provenance of the displayed commit, not a claim about all-branch history.
@@ -7635,26 +7635,26 @@ export interface components {
     };
     LocalReferencesReference:
       | {
-          name: string;
-          targets: components["schemas"]["LocalReferencesTarget"][];
           /** @constant */
           kind: "workspace";
+          name: string;
+          targets: components["schemas"]["LocalReferencesTarget"][];
         }
       | {
+          /** @constant */
+          kind: "bookmark";
           name: string;
           terms: (components["schemas"]["GitSha1Id"] | null)[];
           conflicted: boolean;
           workspaces: string[];
           targets: components["schemas"]["LocalReferencesTarget"][];
-          /** @constant */
-          kind: "bookmark";
         }
       | {
+          /** @constant */
+          kind: "change";
           change: components["schemas"]["ChangeId"];
           divergent: boolean;
           targets: components["schemas"]["LocalReferencesTarget"][];
-          /** @constant */
-          kind: "change";
         };
     LocalReferencesTarget: {
       commit: components["schemas"]["GitSha1Id"];
@@ -7678,16 +7678,16 @@ export interface components {
     };
     LocalOperationDiffData:
       | {
-          operation: components["schemas"]["OperationId"];
-          view: components["schemas"]["ViewId"];
           /** @constant */
           status: "root";
+          operation: components["schemas"]["OperationId"];
+          view: components["schemas"]["ViewId"];
         }
       | {
-          operation: components["schemas"]["OperationId"];
-          parents: components["schemas"]["OperationId"][];
           /** @constant */
           status: "select_parent";
+          operation: components["schemas"]["OperationId"];
+          parents: components["schemas"]["OperationId"][];
         }
       | ({
           /** @constant */
@@ -7750,16 +7750,16 @@ export interface components {
     };
     LocalOperationChangesComparison:
       | {
-          from: components["schemas"]["GitSha1Id"];
-          to: components["schemas"]["GitSha1Id"];
           /** @constant */
           status: "exact";
+          from: components["schemas"]["GitSha1Id"];
+          to: components["schemas"]["GitSha1Id"];
         }
       | {
-          before: components["schemas"]["GitSha1Id"][];
-          after: components["schemas"]["GitSha1Id"][];
           /** @constant */
           status: "select";
+          before: components["schemas"]["GitSha1Id"][];
+          after: components["schemas"]["GitSha1Id"][];
         }
       | {
           /** @constant */
@@ -7791,14 +7791,14 @@ export interface components {
     LocalFileDiffSourceKind: "normal" | "copy" | "rename";
     LocalFileDiffContent:
       | {
-          hunks: components["schemas"]["LocalFileDiffHunk"][];
           /** @constant */
           status: "text";
+          hunks: components["schemas"]["LocalFileDiffHunk"][];
         }
       | {
-          reason: components["schemas"]["LocalFileDiffUnavailable"];
           /** @constant */
           status: "unavailable";
+          reason: components["schemas"]["LocalFileDiffUnavailable"];
         };
     LocalFileDiffHunk: {
       kind: components["schemas"]["LocalFileDiffHunkKind"];
@@ -7856,15 +7856,15 @@ export interface components {
     LocalConflictRole: "add" | "remove";
     LocalConflictEditor:
       | {
-          contents: string[];
-          executable: boolean;
           /** @constant */
           status: "text";
+          contents: string[];
+          executable: boolean;
         }
       | {
-          reason: components["schemas"]["LocalConflictUnsupported"];
           /** @constant */
           status: "unsupported";
+          reason: components["schemas"]["LocalConflictUnsupported"];
         };
     /** @enum {string} */
     LocalConflictUnsupported:
@@ -7891,14 +7891,14 @@ export interface components {
           status: "canceling";
         }
       | {
-          stats: components["schemas"]["LocalGraphStats"];
           /** @constant */
           status: "ready";
+          stats: components["schemas"]["LocalGraphStats"];
         }
       | {
-          error: components["schemas"]["GraphError"];
           /** @constant */
           status: "failed";
+          error: components["schemas"]["GraphError"];
         }
       | {
           /** @constant */
@@ -7944,19 +7944,19 @@ export interface components {
     };
     LocalWorkOutcome:
       | {
-          receipt: components["schemas"]["LocalWorkReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["LocalWorkReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         };
     LocalWorkReceipt: {
       /** Format: uint32 */
@@ -8059,21 +8059,21 @@ export interface components {
     };
     LocalAgentSubject:
       | {
-          session_id: components["schemas"]["AgentSessionId"];
           /** @constant */
           subject: "session";
+          session_id: components["schemas"]["AgentSessionId"];
         }
       | {
-          repository: components["schemas"]["RepositoryId"];
-          operation_id: components["schemas"]["OperationId"];
           /** @constant */
           subject: "operation";
+          repository: components["schemas"]["RepositoryId"];
+          operation_id: components["schemas"]["OperationId"];
         }
       | {
-          repository: components["schemas"]["RepositoryId"];
-          commit_id: components["schemas"]["GitSha1Id"];
           /** @constant */
           subject: "revision";
+          repository: components["schemas"]["RepositoryId"];
+          commit_id: components["schemas"]["GitSha1Id"];
         };
     LocalReviewPageResponse: {
       data: components["schemas"]["LocalReviewThreadPage"];
@@ -8113,19 +8113,19 @@ export interface components {
     };
     LocalReviewOutcome:
       | {
-          receipt: components["schemas"]["LocalReviewReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["LocalReviewReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         };
     LocalReviewReceipt: {
       /** Format: uint32 */
@@ -8170,19 +8170,19 @@ export interface components {
     };
     LocalCollabOutcome:
       | {
-          receipt: components["schemas"]["LocalCollabReceipt"];
           /** @constant */
           status: "committed";
+          receipt: components["schemas"]["LocalCollabReceipt"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         };
     LocalCollabReceipt: {
       /** Format: uint32 */
@@ -8267,9 +8267,9 @@ export interface components {
     };
     WorkingTreeFileKind:
       | {
-          executable: boolean;
           /** @constant */
           type: "file";
+          executable: boolean;
         }
       | {
           /** @constant */
@@ -8588,53 +8588,53 @@ export interface components {
     };
     ForgePrAction:
       | {
+          /** @constant */
+          kind: "edit";
           title: string;
           body: string;
           expected_body: string;
-          /** @constant */
-          kind: "edit";
         }
       | {
-          draft: boolean;
           /** @constant */
           kind: "draft";
+          draft: boolean;
         }
       | {
-          method: string;
-          expected_sha: string;
           /** @constant */
           kind: "merge";
+          method: string;
+          expected_sha: string;
         }
       | {
-          receipt: string;
           /** @constant */
           kind: "merge_status";
+          receipt: string;
         }
       | {
           /** @constant */
           kind: "checks";
         }
       | {
-          run: string;
           /** @constant */
           kind: "jobs";
+          run: string;
         }
       | {
-          run: string;
-          job: string;
           /** @constant */
           kind: "logs";
+          run: string;
+          job: string;
         }
       | {
-          run: string;
-          failed_only: boolean;
           /** @constant */
           kind: "rerun";
+          run: string;
+          failed_only: boolean;
         }
       | {
-          run: string;
           /** @constant */
           kind: "cancel";
+          run: string;
         };
     ConversionPreview: {
       /** Format: uint32 */
@@ -8648,19 +8648,19 @@ export interface components {
     };
     ConversionOutcome:
       | {
-          report: components["schemas"]["ConversionReport"];
           /** @constant */
           status: "committed";
+          report: components["schemas"]["ConversionReport"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "outcome_unknown";
+          request_id: components["schemas"]["RequestId"];
         }
       | {
-          request_id: components["schemas"]["RequestId"];
           /** @constant */
           status: "not_known";
+          request_id: components["schemas"]["RequestId"];
         };
     ConversionReport: {
       /** Format: uint32 */
@@ -8696,14 +8696,14 @@ export interface components {
     };
     LocalFreshnessEvent:
       | {
-          snapshot: components["schemas"]["LocalRepositorySnapshot"];
           /** @constant */
           type: "ready";
+          snapshot: components["schemas"]["LocalRepositorySnapshot"];
         }
       | {
-          snapshot: components["schemas"]["LocalRepositorySnapshot"];
           /** @constant */
           type: "changed";
+          snapshot: components["schemas"]["LocalRepositorySnapshot"];
         };
     LocalCaptureSettings: {
       /** Format: uint32 */
@@ -9451,9 +9451,9 @@ export interface components {
     };
     Action:
       | {
-          title: string;
           /** @constant */
           action: "rename";
+          title: string;
         }
       | {
           /** @constant */
@@ -9472,14 +9472,14 @@ export interface components {
           action: "regenerate_title";
         }
       | {
-          job: components["schemas"]["RequestId"];
           /** @constant */
           action: "cancel";
+          job: components["schemas"]["RequestId"];
         }
       | {
-          job: components["schemas"]["RequestId"];
           /** @constant */
           action: "publish";
+          job: components["schemas"]["RequestId"];
         };
     AgentConversationOutcome: {
       request_id: components["schemas"]["RequestId"];
@@ -9795,27 +9795,27 @@ export interface components {
     };
     DirectoryResult:
       | {
-          profile: components["schemas"]["UserProfile"];
           /** @constant */
           type: "profile";
+          profile: components["schemas"]["UserProfile"];
         }
       | {
-          asset: string;
-          preview: string;
           /** @constant */
           type: "media";
+          asset: string;
+          preview: string;
         }
       | {
-          emoji: components["schemas"]["LibraryEmoji"];
           /** @constant */
           type: "emoji";
+          emoji: components["schemas"]["LibraryEmoji"];
         }
       | {
+          /** @constant */
+          type: "identity";
           token: components["schemas"]["TokenId"];
           principal: components["schemas"]["PrincipalId"];
           revoked: boolean;
-          /** @constant */
-          type: "identity";
         };
     UserProfile: {
       principal: components["schemas"]["PrincipalId"];
@@ -11079,14 +11079,14 @@ export interface operations {
             scopes: {
               [key: string]:
                 | {
-                    name: string;
                     /** @constant */
                     kind: "bookmark";
+                    name: string;
                   }
                 | {
-                    name: string;
                     /** @constant */
                     kind: "workspace";
+                    name: string;
                   };
             };
             include_prefixes: string[];
@@ -16120,6 +16120,8 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                command: "create_thread";
                 anchor: {
                   /** Format: uint32 */
                   schema_version: number;
@@ -16193,6 +16195,8 @@ export interface operations {
                             path: string;
                             object:
                               | {
+                                  /** @constant */
+                                  profile: "native_v1";
                                   object:
                                     | {
                                         /** @constant */
@@ -16229,15 +16233,13 @@ export interface operations {
                                         kind: "operation";
                                         id: string;
                                       };
-                                  /** @constant */
-                                  profile: "native_v1";
                                 }
                               | {
+                                  /** @constant */
+                                  profile: "git_sha1_jj045";
                                   /** @enum {string} */
                                   kind: "commit" | "tree" | "blob";
                                   id: string;
-                                  /** @constant */
-                                  profile: "git_sha1_jj045";
                                 };
                             /** @enum {string} */
                             value_kind:
@@ -16334,6 +16336,8 @@ export interface operations {
                           path: string;
                           object:
                             | {
+                                /** @constant */
+                                profile: "native_v1";
                                 object:
                                   | {
                                       /** @constant */
@@ -16370,15 +16374,13 @@ export interface operations {
                                       kind: "operation";
                                       id: string;
                                     };
-                                /** @constant */
-                                profile: "native_v1";
                               }
                             | {
+                                /** @constant */
+                                profile: "git_sha1_jj045";
                                 /** @enum {string} */
                                 kind: "commit" | "tree" | "blob";
                                 id: string;
-                                /** @constant */
-                                profile: "git_sha1_jj045";
                               };
                           /** @enum {string} */
                           value_kind:
@@ -16477,6 +16479,8 @@ export interface operations {
                           };
                           owner:
                             | {
+                                /** @constant */
+                                kind: "tool";
                                 tool_call_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -16503,10 +16507,10 @@ export interface operations {
                                   id: string;
                                 };
                                 attempt_id: string;
-                                /** @constant */
-                                kind: "tool";
                               }
                             | {
+                                /** @constant */
+                                kind: "message";
                                 message_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -16532,10 +16536,10 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "message";
                               }
                             | {
+                                /** @constant */
+                                kind: "plan";
                                 block_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -16561,8 +16565,6 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "plan";
                               };
                           block_id: string;
                           block_version: {
@@ -16670,6 +16672,8 @@ export interface operations {
                           };
                           owner:
                             | {
+                                /** @constant */
+                                kind: "tool";
                                 tool_call_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -16696,10 +16700,10 @@ export interface operations {
                                   id: string;
                                 };
                                 attempt_id: string;
-                                /** @constant */
-                                kind: "tool";
                               }
                             | {
+                                /** @constant */
+                                kind: "message";
                                 message_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -16725,10 +16729,10 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "message";
                               }
                             | {
+                                /** @constant */
+                                kind: "plan";
                                 block_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -16754,8 +16758,6 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "plan";
                               };
                         };
                       }
@@ -16828,10 +16830,10 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "create_thread";
               }
             | {
+                /** @constant */
+                command: "append_reply";
                 thread_id: string;
                 /** Format: uint64 */
                 expected_workflow_version: number;
@@ -16844,10 +16846,10 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "append_reply";
               }
             | {
+                /** @constant */
+                command: "edit_comment";
                 comment_id: string;
                 expected_revision_id: string;
                 replacement_body: {
@@ -16858,10 +16860,10 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "edit_comment";
               }
             | {
+                /** @constant */
+                command: "resolve_comment_conflict";
                 comment_id: string;
                 expected_revision_ids: string[];
                 replacement_body: {
@@ -16872,36 +16874,34 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "resolve_comment_conflict";
               }
             | {
+                /** @constant */
+                command: "tombstone_comment";
                 comment_id: string;
                 expected_revision_id: string;
                 reason?: string | null;
-                /** @constant */
-                command: "tombstone_comment";
               }
             | {
+                /** @constant */
+                command: "hide_comment";
                 comment_id: string;
                 expected_revision_id: string;
                 moderation_reason: string;
-                /** @constant */
-                command: "hide_comment";
               }
             | {
-                thread_id: string;
-                expected_thread_version: string;
-                reason?: string | null;
                 /** @constant */
                 command: "resolve_thread";
-              }
-            | {
                 thread_id: string;
                 expected_thread_version: string;
                 reason?: string | null;
+              }
+            | {
                 /** @constant */
                 command: "reopen_thread";
+                thread_id: string;
+                expected_thread_version: string;
+                reason?: string | null;
               };
         };
       };
@@ -18237,36 +18237,38 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                type: "create_intentional";
                 thread_id: string;
                 title: string;
                 repositories: string[];
-                /** @constant */
-                type: "create_intentional";
               }
             | {
+                /** @constant */
+                type: "create_conversation";
                 thread_id: string;
                 title: string;
                 target:
                   | {
-                      id: string;
                       /** @constant */
                       type: "conversation";
+                      id: string;
                     }
                   | {
-                      session: string;
                       /** @constant */
                       type: "recorded";
+                      session: string;
                     };
-                /** @constant */
-                type: "create_conversation";
               }
             | {
-                thread_id: string;
-                title: string;
                 /** @constant */
                 type: "create_annotation";
+                thread_id: string;
+                title: string;
               }
             | {
+                /** @constant */
+                type: "set_codebase";
                 thread_id: string;
                 expected: {
                   /** @enum {string} */
@@ -18285,10 +18287,10 @@ export interface operations {
                   id: string;
                 };
                 repositories: string[];
-                /** @constant */
-                type: "set_codebase";
               }
             | {
+                /** @constant */
+                type: "set_metadata";
                 thread_id: string;
                 expected_thread: {
                   /** @enum {string} */
@@ -18324,14 +18326,14 @@ export interface operations {
                 } | null;
                 target:
                   | {
-                      id: string;
                       /** @constant */
                       type: "conversation";
+                      id: string;
                     }
                   | {
-                      session: string;
                       /** @constant */
                       type: "recorded";
+                      session: string;
                     };
                 value: {
                   /** @default null */
@@ -18411,10 +18413,10 @@ export interface operations {
                     };
                   };
                 };
-                /** @constant */
-                type: "set_metadata";
               }
             | {
+                /** @constant */
+                type: "submit";
                 submission: {
                   emojis?: {
                     source: string;
@@ -18479,11 +18481,13 @@ export interface operations {
                       /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                       target:
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "human_message";
                             thread_id: string;
                             message_id: string;
                             revision: {
@@ -18502,10 +18506,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "human_message";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_message";
                             session_id: string;
                             message_id: string;
                             event_id: string;
@@ -18557,10 +18561,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_message";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_invocation";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -18587,10 +18591,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_invocation";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_output";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -18641,15 +18645,15 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_output";
                           }
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "review_thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "review_comment";
                             thread_id: string;
                             comment_id: string;
                             revision: {
@@ -18666,10 +18670,10 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "repository_review_comment";
                             repository: string;
                             thread_id: string;
                             comment_id: string;
@@ -18687,18 +18691,18 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "repository_review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "work_comment";
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
                             version: number;
-                            /** @constant */
-                            type: "work_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_checkpoint";
                             session_id: string;
                             checkpoint_id: string;
                             version: {
@@ -18725,8 +18729,6 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_checkpoint";
                           };
                       /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                       part?: string | null;
@@ -18777,11 +18779,13 @@ export interface operations {
                   }[];
                   references: (
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "human_message";
                         thread_id: string;
                         message_id: string;
                         revision: {
@@ -18800,10 +18804,10 @@ export interface operations {
                             | "image_asset";
                           id: string;
                         };
-                        /** @constant */
-                        type: "human_message";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_message";
                         session_id: string;
                         message_id: string;
                         event_id: string;
@@ -18855,10 +18859,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_message";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_invocation";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -18885,10 +18889,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_invocation";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_output";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -18939,15 +18943,15 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_output";
                       }
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "review_thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "review_comment";
                         thread_id: string;
                         comment_id: string;
                         revision: {
@@ -18964,10 +18968,10 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "repository_review_comment";
                         repository: string;
                         thread_id: string;
                         comment_id: string;
@@ -18985,18 +18989,18 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "repository_review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "work_comment";
                         task_id: string;
                         comment_id: string;
                         /** Format: uint64 */
                         version: number;
-                        /** @constant */
-                        type: "work_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_checkpoint";
                         session_id: string;
                         checkpoint_id: string;
                         version: {
@@ -19023,8 +19027,6 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_checkpoint";
                       }
                   )[];
                   workspace_comments?: {
@@ -19059,11 +19061,13 @@ export interface operations {
                     previous?:
                       | (
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "human_message";
                               thread_id: string;
                               message_id: string;
                               revision: {
@@ -19082,10 +19086,10 @@ export interface operations {
                                   | "image_asset";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "human_message";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_message";
                               session_id: string;
                               message_id: string;
                               event_id: string;
@@ -19137,10 +19141,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_message";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_invocation";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -19167,10 +19171,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_invocation";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_output";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -19221,15 +19225,15 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_output";
                             }
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "review_thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "review_comment";
                               thread_id: string;
                               comment_id: string;
                               revision: {
@@ -19246,10 +19250,10 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "repository_review_comment";
                               repository: string;
                               thread_id: string;
                               comment_id: string;
@@ -19267,18 +19271,18 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "repository_review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "work_comment";
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
                               version: number;
-                              /** @constant */
-                              type: "work_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_checkpoint";
                               session_id: string;
                               checkpoint_id: string;
                               version: {
@@ -19305,8 +19309,6 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_checkpoint";
                             }
                         )
                       | null;
@@ -19314,21 +19316,23 @@ export interface operations {
                     edit?: boolean;
                   }[];
                 };
-                /** @constant */
-                type: "submit";
               }
             | {
+                /** @constant */
+                type: "create_comment_discussion";
                 thread_id: string;
                 title: string;
                 source: {
                   /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                   target:
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "human_message";
                         thread_id: string;
                         message_id: string;
                         revision: {
@@ -19347,10 +19351,10 @@ export interface operations {
                             | "image_asset";
                           id: string;
                         };
-                        /** @constant */
-                        type: "human_message";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_message";
                         session_id: string;
                         message_id: string;
                         event_id: string;
@@ -19402,10 +19406,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_message";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_invocation";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -19432,10 +19436,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_invocation";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_output";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -19486,15 +19490,15 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_output";
                       }
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "review_thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "review_comment";
                         thread_id: string;
                         comment_id: string;
                         revision: {
@@ -19511,10 +19515,10 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "repository_review_comment";
                         repository: string;
                         thread_id: string;
                         comment_id: string;
@@ -19532,18 +19536,18 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "repository_review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "work_comment";
                         task_id: string;
                         comment_id: string;
                         /** Format: uint64 */
                         version: number;
-                        /** @constant */
-                        type: "work_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_checkpoint";
                         session_id: string;
                         checkpoint_id: string;
                         version: {
@@ -19570,8 +19574,6 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_checkpoint";
                       };
                   /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                   part?: string | null;
@@ -19585,20 +19587,22 @@ export interface operations {
                   /** @description Retained display evidence, validated against the selected bytes. */
                   quote: string;
                 };
-                /** @constant */
-                type: "create_comment_discussion";
               }
             | {
+                /** @constant */
+                type: "create_agent_discussion";
                 thread_id: string;
                 title: string;
                 /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                 target:
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -19617,10 +19621,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -19672,10 +19676,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -19702,10 +19706,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -19756,15 +19760,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -19781,10 +19785,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -19802,18 +19806,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -19840,13 +19844,11 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_checkpoint";
                     };
-                /** @constant */
-                type: "create_agent_discussion";
               }
             | {
+                /** @constant */
+                type: "create";
                 thread_id: string;
                 title: string;
                 baseline?:
@@ -19894,10 +19896,10 @@ export interface operations {
                         }
                     )
                   | null;
-                /** @constant */
-                type: "create";
               }
             | {
+                /** @constant */
+                type: "rename";
                 thread_id: string;
                 expected: {
                   /** @enum {string} */
@@ -19916,10 +19918,10 @@ export interface operations {
                   id: string;
                 };
                 title: string;
-                /** @constant */
-                type: "rename";
               }
             | {
+                /** @constant */
+                type: "lifecycle";
                 thread_id: string;
                 expected: {
                   /** @enum {string} */
@@ -19940,10 +19942,10 @@ export interface operations {
                 /** @enum {string} */
                 action:
                   "activate" | "idle" | "archive" | "tombstone" | "restore";
-                /** @constant */
-                type: "lifecycle";
               }
             | {
+                /** @constant */
+                type: "message";
                 emojis?: {
                   source: string;
                   shortcode: string;
@@ -20000,10 +20002,10 @@ export interface operations {
                   id: string;
                 } | null;
                 body?: string | null;
-                /** @constant */
-                type: "message";
               }
             | {
+                /** @constant */
+                type: "link";
                 thread_id: string;
                 expected_thread: {
                   /** @enum {string} */
@@ -20024,15 +20026,19 @@ export interface operations {
                 link_id: string;
                 target:
                   | {
+                      /** @constant */
+                      type: "comment_reply";
                       reply: {
                         /** @description Exact user message capture containing a successful context delivery. */
                         prompt:
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "human_message";
                               thread_id: string;
                               message_id: string;
                               revision: {
@@ -20051,10 +20057,10 @@ export interface operations {
                                   | "image_asset";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "human_message";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_message";
                               session_id: string;
                               message_id: string;
                               event_id: string;
@@ -20106,10 +20112,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_message";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_invocation";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -20136,10 +20142,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_invocation";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_output";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -20190,15 +20196,15 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_output";
                             }
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "review_thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "review_comment";
                               thread_id: string;
                               comment_id: string;
                               revision: {
@@ -20215,10 +20221,10 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "repository_review_comment";
                               repository: string;
                               thread_id: string;
                               comment_id: string;
@@ -20236,18 +20242,18 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "repository_review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "work_comment";
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
                               version: number;
-                              /** @constant */
-                              type: "work_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_checkpoint";
                               session_id: string;
                               checkpoint_id: string;
                               version: {
@@ -20274,18 +20280,18 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_checkpoint";
                             };
                         answer: {
                           /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                           target:
                             | {
-                                thread_id: string;
                                 /** @constant */
                                 type: "thread";
+                                thread_id: string;
                               }
                             | {
+                                /** @constant */
+                                type: "human_message";
                                 thread_id: string;
                                 message_id: string;
                                 revision: {
@@ -20304,10 +20310,10 @@ export interface operations {
                                     | "image_asset";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "human_message";
                               }
                             | {
+                                /** @constant */
+                                type: "agent_message";
                                 session_id: string;
                                 message_id: string;
                                 event_id: string;
@@ -20359,10 +20365,10 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "agent_message";
                               }
                             | {
+                                /** @constant */
+                                type: "tool_invocation";
                                 session_id: string;
                                 tool_id: string;
                                 snapshot: {
@@ -20389,10 +20395,10 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "tool_invocation";
                               }
                             | {
+                                /** @constant */
+                                type: "tool_output";
                                 session_id: string;
                                 tool_id: string;
                                 snapshot: {
@@ -20443,15 +20449,15 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "tool_output";
                               }
                             | {
-                                thread_id: string;
                                 /** @constant */
                                 type: "review_thread";
+                                thread_id: string;
                               }
                             | {
+                                /** @constant */
+                                type: "review_comment";
                                 thread_id: string;
                                 comment_id: string;
                                 revision: {
@@ -20468,10 +20474,10 @@ export interface operations {
                                     | "status_page";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "review_comment";
                               }
                             | {
+                                /** @constant */
+                                type: "repository_review_comment";
                                 repository: string;
                                 thread_id: string;
                                 comment_id: string;
@@ -20489,18 +20495,18 @@ export interface operations {
                                     | "status_page";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "repository_review_comment";
                               }
                             | {
+                                /** @constant */
+                                type: "work_comment";
                                 task_id: string;
                                 comment_id: string;
                                 /** Format: uint64 */
                                 version: number;
-                                /** @constant */
-                                type: "work_comment";
                               }
                             | {
+                                /** @constant */
+                                type: "agent_checkpoint";
                                 session_id: string;
                                 checkpoint_id: string;
                                 version: {
@@ -20527,8 +20533,6 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "agent_checkpoint";
                               };
                           /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                           part?: string | null;
@@ -20544,11 +20548,13 @@ export interface operations {
                         };
                         comments: (
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "human_message";
                               thread_id: string;
                               message_id: string;
                               revision: {
@@ -20567,10 +20573,10 @@ export interface operations {
                                   | "image_asset";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "human_message";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_message";
                               session_id: string;
                               message_id: string;
                               event_id: string;
@@ -20622,10 +20628,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_message";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_invocation";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -20652,10 +20658,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_invocation";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_output";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -20706,15 +20712,15 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_output";
                             }
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "review_thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "review_comment";
                               thread_id: string;
                               comment_id: string;
                               revision: {
@@ -20731,10 +20737,10 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "repository_review_comment";
                               repository: string;
                               thread_id: string;
                               comment_id: string;
@@ -20752,18 +20758,18 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "repository_review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "work_comment";
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
                               version: number;
-                              /** @constant */
-                              type: "work_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_checkpoint";
                               session_id: string;
                               checkpoint_id: string;
                               version: {
@@ -20790,23 +20796,23 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_checkpoint";
                             }
                         )[];
                       };
-                      /** @constant */
-                      type: "comment_reply";
                     }
                   | {
+                      /** @constant */
+                      type: "comment_batch";
                       request_id: string;
                       comments: (
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "human_message";
                             thread_id: string;
                             message_id: string;
                             revision: {
@@ -20825,10 +20831,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "human_message";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_message";
                             session_id: string;
                             message_id: string;
                             event_id: string;
@@ -20880,10 +20886,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_message";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_invocation";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -20910,10 +20916,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_invocation";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_output";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -20964,15 +20970,15 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_output";
                           }
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "review_thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "review_comment";
                             thread_id: string;
                             comment_id: string;
                             revision: {
@@ -20989,10 +20995,10 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "repository_review_comment";
                             repository: string;
                             thread_id: string;
                             comment_id: string;
@@ -21010,18 +21016,18 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "repository_review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "work_comment";
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
                             version: number;
-                            /** @constant */
-                            type: "work_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_checkpoint";
                             session_id: string;
                             checkpoint_id: string;
                             version: {
@@ -21048,8 +21054,6 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_checkpoint";
                           }
                       )[];
                       message?: {
@@ -21084,10 +21088,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       } | null;
-                      /** @constant */
-                      type: "comment_batch";
                     }
                   | {
+                      /** @constant */
+                      type: "capture_gap";
                       source_state: {
                         /** @enum {string} */
                         kind:
@@ -21172,10 +21176,10 @@ export interface operations {
                           id: string;
                         } | null;
                       };
-                      /** @constant */
-                      type: "capture_gap";
                     }
                   | {
+                      /** @constant */
+                      type: "session";
                       session_id: string;
                       snapshot: {
                         /** @enum {string} */
@@ -21202,10 +21206,10 @@ export interface operations {
                         id: string;
                       };
                       primary: boolean;
-                      /** @constant */
-                      type: "session";
                     }
                   | {
+                      /** @constant */
+                      type: "code";
                       /** @description Native IDs and portable evidence remain distinct; neither is a device path. */
                       anchor:
                         | {
@@ -21280,10 +21284,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       } | null;
-                      /** @constant */
-                      type: "code";
                     }
                   | {
+                      /** @constant */
+                      type: "review";
                       review_id: string;
                       snapshot: {
                         /** @enum {string} */
@@ -21299,8 +21303,6 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review";
                     };
                 observed_primary?: {
                   /** @enum {string} */
@@ -21318,10 +21320,10 @@ export interface operations {
                     | "image_asset";
                   id: string;
                 } | null;
-                /** @constant */
-                type: "link";
               }
             | {
+                /** @constant */
+                type: "detach";
                 thread_id: string;
                 expected_thread: {
                   /** @enum {string} */
@@ -21355,8 +21357,6 @@ export interface operations {
                     | "image_asset";
                   id: string;
                 };
-                /** @constant */
-                type: "detach";
               };
         };
       };
@@ -21732,11 +21732,13 @@ export interface operations {
           /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
           target:
             | {
-                thread_id: string;
                 /** @constant */
                 type: "thread";
+                thread_id: string;
               }
             | {
+                /** @constant */
+                type: "human_message";
                 thread_id: string;
                 message_id: string;
                 revision: {
@@ -21755,10 +21757,10 @@ export interface operations {
                     | "image_asset";
                   id: string;
                 };
-                /** @constant */
-                type: "human_message";
               }
             | {
+                /** @constant */
+                type: "agent_message";
                 session_id: string;
                 message_id: string;
                 event_id: string;
@@ -21810,10 +21812,10 @@ export interface operations {
                     | "catalog_conflict";
                   id: string;
                 };
-                /** @constant */
-                type: "agent_message";
               }
             | {
+                /** @constant */
+                type: "tool_invocation";
                 session_id: string;
                 tool_id: string;
                 snapshot: {
@@ -21840,10 +21842,10 @@ export interface operations {
                     | "catalog_conflict";
                   id: string;
                 };
-                /** @constant */
-                type: "tool_invocation";
               }
             | {
+                /** @constant */
+                type: "tool_output";
                 session_id: string;
                 tool_id: string;
                 snapshot: {
@@ -21894,15 +21896,15 @@ export interface operations {
                     | "catalog_conflict";
                   id: string;
                 };
-                /** @constant */
-                type: "tool_output";
               }
             | {
-                thread_id: string;
                 /** @constant */
                 type: "review_thread";
+                thread_id: string;
               }
             | {
+                /** @constant */
+                type: "review_comment";
                 thread_id: string;
                 comment_id: string;
                 revision: {
@@ -21919,10 +21921,10 @@ export interface operations {
                     | "status_page";
                   id: string;
                 };
-                /** @constant */
-                type: "review_comment";
               }
             | {
+                /** @constant */
+                type: "repository_review_comment";
                 repository: string;
                 thread_id: string;
                 comment_id: string;
@@ -21940,18 +21942,18 @@ export interface operations {
                     | "status_page";
                   id: string;
                 };
-                /** @constant */
-                type: "repository_review_comment";
               }
             | {
+                /** @constant */
+                type: "work_comment";
                 task_id: string;
                 comment_id: string;
                 /** Format: uint64 */
                 version: number;
-                /** @constant */
-                type: "work_comment";
               }
             | {
+                /** @constant */
+                type: "agent_checkpoint";
                 session_id: string;
                 checkpoint_id: string;
                 version: {
@@ -21978,8 +21980,6 @@ export interface operations {
                     | "catalog_conflict";
                   id: string;
                 };
-                /** @constant */
-                type: "agent_checkpoint";
               };
           /**
            * Format: uint32
@@ -22128,6 +22128,8 @@ export interface operations {
           /** @description A typed reaction command never accepts an actor from an API caller. */
           command:
             | {
+                /** @constant */
+                type: "set";
                 emoji?: {
                   source: string;
                   shortcode: string;
@@ -22136,11 +22138,13 @@ export interface operations {
                 /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                 target:
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -22159,10 +22163,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -22214,10 +22218,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -22244,10 +22248,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -22298,15 +22302,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -22323,10 +22327,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -22344,18 +22348,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -22382,8 +22386,6 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_checkpoint";
                     };
                 value:
                   | {
@@ -22395,11 +22397,13 @@ export interface operations {
                       type: "dislike";
                     }
                   | {
-                      sequence: string;
                       /** @constant */
                       type: "emoji";
+                      sequence: string;
                     }
                   | {
+                      /** @constant */
+                      type: "custom";
                       emoji_id: string;
                       version: {
                         /** @enum {string} */
@@ -22417,8 +22421,6 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "custom";
                     };
                 observed: {
                   /** @enum {string} */
@@ -22436,290 +22438,20 @@ export interface operations {
                     | "image_asset";
                   id: string;
                 }[];
-                /** @constant */
-                type: "set";
               }
             | {
-                /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
-                target:
-                  | {
-                      thread_id: string;
-                      /** @constant */
-                      type: "thread";
-                    }
-                  | {
-                      thread_id: string;
-                      message_id: string;
-                      revision: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "thread_version"
-                          | "conversation_metadata"
-                          | "thread_event"
-                          | "human_message_revision"
-                          | "thread_link"
-                          | "reaction"
-                          | "reaction_retraction"
-                          | "reaction_slot"
-                          | "custom_emoji_version"
-                          | "image_asset";
-                        id: string;
-                      };
-                      /** @constant */
-                      type: "human_message";
-                    }
-                  | {
-                      session_id: string;
-                      message_id: string;
-                      event_id: string;
-                      batch: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "session_snapshot"
-                          | "turn_snapshot"
-                          | "message_snapshot"
-                          | "tool_snapshot"
-                          | "intent"
-                          | "observation_batch"
-                          | "event_batch"
-                          | "transcript_manifest"
-                          | "transcript_page"
-                          | "transcript_chunk"
-                          | "content"
-                          | "checkpoint_version"
-                          | "association"
-                          | "alias"
-                          | "relation_page"
-                          | "source_state"
-                          | "projection_catalog"
-                          | "catalog_conflict";
-                        id: string;
-                      };
-                      content: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "session_snapshot"
-                          | "turn_snapshot"
-                          | "message_snapshot"
-                          | "tool_snapshot"
-                          | "intent"
-                          | "observation_batch"
-                          | "event_batch"
-                          | "transcript_manifest"
-                          | "transcript_page"
-                          | "transcript_chunk"
-                          | "content"
-                          | "checkpoint_version"
-                          | "association"
-                          | "alias"
-                          | "relation_page"
-                          | "source_state"
-                          | "projection_catalog"
-                          | "catalog_conflict";
-                        id: string;
-                      };
-                      /** @constant */
-                      type: "agent_message";
-                    }
-                  | {
-                      session_id: string;
-                      tool_id: string;
-                      snapshot: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "session_snapshot"
-                          | "turn_snapshot"
-                          | "message_snapshot"
-                          | "tool_snapshot"
-                          | "intent"
-                          | "observation_batch"
-                          | "event_batch"
-                          | "transcript_manifest"
-                          | "transcript_page"
-                          | "transcript_chunk"
-                          | "content"
-                          | "checkpoint_version"
-                          | "association"
-                          | "alias"
-                          | "relation_page"
-                          | "source_state"
-                          | "projection_catalog"
-                          | "catalog_conflict";
-                        id: string;
-                      };
-                      /** @constant */
-                      type: "tool_invocation";
-                    }
-                  | {
-                      session_id: string;
-                      tool_id: string;
-                      snapshot: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "session_snapshot"
-                          | "turn_snapshot"
-                          | "message_snapshot"
-                          | "tool_snapshot"
-                          | "intent"
-                          | "observation_batch"
-                          | "event_batch"
-                          | "transcript_manifest"
-                          | "transcript_page"
-                          | "transcript_chunk"
-                          | "content"
-                          | "checkpoint_version"
-                          | "association"
-                          | "alias"
-                          | "relation_page"
-                          | "source_state"
-                          | "projection_catalog"
-                          | "catalog_conflict";
-                        id: string;
-                      };
-                      content: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "session_snapshot"
-                          | "turn_snapshot"
-                          | "message_snapshot"
-                          | "tool_snapshot"
-                          | "intent"
-                          | "observation_batch"
-                          | "event_batch"
-                          | "transcript_manifest"
-                          | "transcript_page"
-                          | "transcript_chunk"
-                          | "content"
-                          | "checkpoint_version"
-                          | "association"
-                          | "alias"
-                          | "relation_page"
-                          | "source_state"
-                          | "projection_catalog"
-                          | "catalog_conflict";
-                        id: string;
-                      };
-                      /** @constant */
-                      type: "tool_output";
-                    }
-                  | {
-                      thread_id: string;
-                      /** @constant */
-                      type: "review_thread";
-                    }
-                  | {
-                      thread_id: string;
-                      comment_id: string;
-                      revision: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "anchor"
-                          | "comment_body"
-                          | "comment_revision"
-                          | "thread_event"
-                          | "event_page"
-                          | "thread_snapshot"
-                          | "relation_page"
-                          | "status_page";
-                        id: string;
-                      };
-                      /** @constant */
-                      type: "review_comment";
-                    }
-                  | {
-                      repository: string;
-                      thread_id: string;
-                      comment_id: string;
-                      revision: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "anchor"
-                          | "comment_body"
-                          | "comment_revision"
-                          | "thread_event"
-                          | "event_page"
-                          | "thread_snapshot"
-                          | "relation_page"
-                          | "status_page";
-                        id: string;
-                      };
-                      /** @constant */
-                      type: "repository_review_comment";
-                    }
-                  | {
-                      task_id: string;
-                      comment_id: string;
-                      /** Format: uint64 */
-                      version: number;
-                      /** @constant */
-                      type: "work_comment";
-                    }
-                  | {
-                      session_id: string;
-                      checkpoint_id: string;
-                      version: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "session_snapshot"
-                          | "turn_snapshot"
-                          | "message_snapshot"
-                          | "tool_snapshot"
-                          | "intent"
-                          | "observation_batch"
-                          | "event_batch"
-                          | "transcript_manifest"
-                          | "transcript_page"
-                          | "transcript_chunk"
-                          | "content"
-                          | "checkpoint_version"
-                          | "association"
-                          | "alias"
-                          | "relation_page"
-                          | "source_state"
-                          | "projection_catalog"
-                          | "catalog_conflict";
-                        id: string;
-                      };
-                      /** @constant */
-                      type: "agent_checkpoint";
-                    };
-                observed: {
-                  /** @enum {string} */
-                  kind:
-                    | "index_page"
-                    | "thread_version"
-                    | "conversation_metadata"
-                    | "thread_event"
-                    | "human_message_revision"
-                    | "thread_link"
-                    | "reaction"
-                    | "reaction_retraction"
-                    | "reaction_slot"
-                    | "custom_emoji_version"
-                    | "image_asset";
-                  id: string;
-                }[];
                 /** @constant */
                 type: "clear";
-              }
-            | {
                 /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                 target:
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -22738,10 +22470,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -22793,10 +22525,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -22823,10 +22555,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -22877,15 +22609,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -22902,10 +22634,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -22923,18 +22655,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -22961,8 +22693,278 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
+                    };
+                observed: {
+                  /** @enum {string} */
+                  kind:
+                    | "index_page"
+                    | "thread_version"
+                    | "conversation_metadata"
+                    | "thread_event"
+                    | "human_message_revision"
+                    | "thread_link"
+                    | "reaction"
+                    | "reaction_retraction"
+                    | "reaction_slot"
+                    | "custom_emoji_version"
+                    | "image_asset";
+                  id: string;
+                }[];
+              }
+            | {
+                /** @constant */
+                type: "resolve_conflict";
+                /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                target:
+                  | {
+                      /** @constant */
+                      type: "thread";
+                      thread_id: string;
+                    }
+                  | {
+                      /** @constant */
+                      type: "human_message";
+                      thread_id: string;
+                      message_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "conversation_metadata"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                    }
+                  | {
+                      /** @constant */
+                      type: "agent_message";
+                      session_id: string;
+                      message_id: string;
+                      event_id: string;
+                      batch: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                    }
+                  | {
+                      /** @constant */
+                      type: "tool_invocation";
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                    }
+                  | {
+                      /** @constant */
+                      type: "tool_output";
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                    }
+                  | {
+                      /** @constant */
+                      type: "review_thread";
+                      thread_id: string;
+                    }
+                  | {
+                      /** @constant */
+                      type: "review_comment";
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                    }
+                  | {
+                      /** @constant */
+                      type: "repository_review_comment";
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                    }
+                  | {
+                      /** @constant */
+                      type: "work_comment";
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                    }
+                  | {
                       /** @constant */
                       type: "agent_checkpoint";
+                      session_id: string;
+                      checkpoint_id: string;
+                      version: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
                     };
                 value?:
                   | (
@@ -22975,11 +22977,13 @@ export interface operations {
                           type: "dislike";
                         }
                       | {
-                          sequence: string;
                           /** @constant */
                           type: "emoji";
+                          sequence: string;
                         }
                       | {
+                          /** @constant */
+                          type: "custom";
                           emoji_id: string;
                           version: {
                             /** @enum {string} */
@@ -22997,8 +23001,6 @@ export interface operations {
                               | "image_asset";
                             id: string;
                           };
-                          /** @constant */
-                          type: "custom";
                         }
                     )
                   | null;
@@ -23018,8 +23020,6 @@ export interface operations {
                     | "image_asset";
                   id: string;
                 }[];
-                /** @constant */
-                type: "resolve_conflict";
               };
         };
       };
@@ -25660,6 +25660,8 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                type: "put";
                 workflow: string;
                 expected?: string | null;
                 definition: {
@@ -25687,9 +25689,9 @@ export interface operations {
                         on: "reaction_added";
                       }
                     | {
-                        bookmark: string;
                         /** @constant */
                         on: "bookmark_changed";
+                        bookmark: string;
                       };
                   conditions?: {
                     revset?: string | null;
@@ -25719,20 +25721,20 @@ export interface operations {
                     id: string;
                     executor:
                       | {
-                          name: string;
                           /** @constant */
                           type: "command";
+                          name: string;
                         }
                       | {
-                          path: string;
                           /** @constant */
                           type: "github_workflow";
+                          path: string;
                         }
                       | {
-                          agent: string;
-                          prompt: string;
                           /** @constant */
                           type: "agent";
+                          agent: string;
+                          prompt: string;
                         };
                     /** @default {} */
                     inputs?: {
@@ -25745,16 +25747,16 @@ export interface operations {
                     timeout_seconds?: number;
                   }[];
                 };
-                /** @constant */
-                type: "put";
               }
             | {
-                workflow: string;
-                expected: string;
                 /** @constant */
                 type: "remove";
+                workflow: string;
+                expected: string;
               }
             | {
+                /** @constant */
+                type: "evaluate";
                 event: {
                   id: string;
                   /** @description Canonical origin key/digest, or issuing repository/epoch/selected receipt. */
@@ -25825,10 +25827,10 @@ export interface operations {
                 definitions?: {
                   [key: string]: string;
                 } | null;
-                /** @constant */
-                type: "evaluate";
               }
             | {
+                /** @constant */
+                type: "run";
                 workflow: string;
                 expected: string;
                 /** @description Source anchors stay distinct from workflow and source-event identities. */
@@ -25880,30 +25882,32 @@ export interface operations {
                     position: number;
                   } | null;
                 };
-                /** @constant */
-                type: "run";
               }
             | {
+                /** @constant */
+                type: "claim";
                 run: string;
                 attempt: string;
                 host: string;
-                /** @constant */
-                type: "claim";
               }
             | {
+                /** @constant */
+                type: "report";
                 run: string;
                 attempt: string;
                 /** Format: uint64 */
                 sequence: number;
                 data:
                   | {
+                      /** @constant */
+                      type: "log";
                       step?: string | null;
                       stream: string;
                       text: string;
-                      /** @constant */
-                      type: "log";
                     }
                   | {
+                      /** @constant */
+                      type: "step";
                       step: string;
                       /** @enum {string} */
                       status:
@@ -25918,26 +25922,24 @@ export interface operations {
                       output: {
                         [key: string]: string;
                       };
-                      /** @constant */
-                      type: "step";
                     }
                   | {
+                      /** @constant */
+                      type: "artifact";
                       name: string;
                       media_type: string;
                       bytes: number[];
-                      /** @constant */
-                      type: "artifact";
                     }
                   | {
-                      session: string;
-                      request_id: string;
                       /** @constant */
                       type: "agent";
+                      session: string;
+                      request_id: string;
                     };
-                /** @constant */
-                type: "report";
               }
             | {
+                /** @constant */
+                type: "finish";
                 run: string;
                 attempt: string;
                 /** @enum {string} */
@@ -25951,31 +25953,29 @@ export interface operations {
                   | "unknown"
                   | "skipped";
                 result: string;
-                /** @constant */
-                type: "finish";
               }
             | {
-                run: string;
-                attempt: string;
                 /** @constant */
                 type: "heartbeat";
-              }
-            | {
                 run: string;
                 attempt: string;
+              }
+            | {
                 /** @constant */
                 type: "interrupt";
+                run: string;
+                attempt: string;
               }
             | {
-                run: string;
                 /** @constant */
                 type: "cancel";
+                run: string;
               }
             | {
-                run: string;
-                expected: string;
                 /** @constant */
                 type: "retry";
+                run: string;
+                expected: string;
               };
         };
       };
@@ -26597,31 +26597,33 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                command: "create_project";
                 id: string;
                 title: string;
                 body: string;
-                /** @constant */
-                command: "create_project";
               }
             | {
+                /** @constant */
+                command: "update_project";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
                 title: string;
                 body: string;
-                /** @constant */
-                command: "update_project";
               }
             | {
+                /** @constant */
+                command: "set_repository";
                 project: string;
                 /** Format: uint64 */
                 expected_version: number;
                 repository: string;
                 active: boolean;
-                /** @constant */
-                command: "set_repository";
               }
             | {
+                /** @constant */
+                command: "create_task";
                 id: string;
                 project: string;
                 /** Format: uint64 */
@@ -26630,10 +26632,10 @@ export interface operations {
                 body: string;
                 repository?: string | null;
                 parent?: string | null;
-                /** @constant */
-                command: "create_task";
               }
             | {
+                /** @constant */
+                command: "update_task";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
@@ -26645,37 +26647,35 @@ export interface operations {
                 state: "open" | "in_progress" | "blocked" | "done";
                 repository?: string | null;
                 parent?: string | null;
-                /** @constant */
-                command: "update_task";
               }
             | {
+                /** @constant */
+                command: "add_comment";
                 id: string;
                 task: string;
                 /** Format: uint64 */
                 expected_task_version: number;
                 reply_to?: string | null;
                 body: string;
-                /** @constant */
-                command: "add_comment";
               }
             | {
+                /** @constant */
+                command: "edit_comment";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
                 /** Format: uint64 */
                 expected_task_version: number;
                 body: string;
-                /** @constant */
-                command: "edit_comment";
               }
             | {
+                /** @constant */
+                command: "tombstone_comment";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
                 /** Format: uint64 */
                 expected_task_version: number;
-                /** @constant */
-                command: "tombstone_comment";
               };
         };
       };
@@ -33313,86 +33313,86 @@ export interface operations {
           };
           command:
             | {
+                /** @constant */
+                type: "edit_file";
                 bookmark: string;
                 expected: (string | null)[];
                 source: string;
                 destination: string;
                 contents: string;
                 description: string;
-                /** @constant */
-                type: "edit_file";
               }
             | {
+                /** @constant */
+                type: "resolve_conflicts";
                 commit: string;
                 paths: {
                   path: string;
                   fingerprint: string;
                   resolution:
                     | {
+                        /** @constant */
+                        type: "uploaded_file";
                         upload: string;
                         executable: boolean;
                         /** Format: uint32 */
                         copy_from_term?: number | null;
-                        /** @constant */
-                        type: "uploaded_file";
                       }
                     | {
-                        /** Format: uint32 */
-                        term: number;
                         /** @constant */
                         type: "select_term";
+                        /** Format: uint32 */
+                        term: number;
                       }
                     | {
                         /** @constant */
                         type: "delete";
                       };
                 }[];
-                /** @constant */
-                type: "resolve_conflicts";
               }
             | {
+                /** @constant */
+                type: "new";
                 parents: string[];
                 description: string;
                 workspace?: string | null;
-                /** @constant */
-                type: "new";
               }
             | {
-                commit: string;
-                description: string;
                 /** @constant */
                 type: "describe";
+                commit: string;
+                description: string;
               }
             | {
-                name: string;
-                target: string;
                 /** @constant */
                 type: "bookmark_create";
+                name: string;
+                target: string;
               }
             | {
+                /** @constant */
+                type: "bookmark_move";
                 name: string;
                 expected: (string | null)[];
                 target: string;
-                /** @constant */
-                type: "bookmark_move";
               }
             | {
-                name: string;
-                expected: (string | null)[];
                 /** @constant */
                 type: "bookmark_delete";
+                name: string;
+                expected: (string | null)[];
               }
             | {
-                base: string;
                 /** @constant */
                 type: "reconcile_operations";
+                base: string;
               }
             | {
+                /** @constant */
+                type: "abandon";
                 commits: string[];
                 retain_bookmarks: boolean;
                 restore_descendants: boolean;
-                /** @constant */
-                type: "abandon";
               };
         };
       };
@@ -33545,86 +33545,86 @@ export interface operations {
           };
           command:
             | {
+                /** @constant */
+                type: "edit_file";
                 bookmark: string;
                 expected: (string | null)[];
                 source: string;
                 destination: string;
                 contents: string;
                 description: string;
-                /** @constant */
-                type: "edit_file";
               }
             | {
+                /** @constant */
+                type: "resolve_conflicts";
                 commit: string;
                 paths: {
                   path: string;
                   fingerprint: string;
                   resolution:
                     | {
+                        /** @constant */
+                        type: "uploaded_file";
                         upload: string;
                         executable: boolean;
                         /** Format: uint32 */
                         copy_from_term?: number | null;
-                        /** @constant */
-                        type: "uploaded_file";
                       }
                     | {
-                        /** Format: uint32 */
-                        term: number;
                         /** @constant */
                         type: "select_term";
+                        /** Format: uint32 */
+                        term: number;
                       }
                     | {
                         /** @constant */
                         type: "delete";
                       };
                 }[];
-                /** @constant */
-                type: "resolve_conflicts";
               }
             | {
+                /** @constant */
+                type: "new";
                 parents: string[];
                 description: string;
                 workspace?: string | null;
-                /** @constant */
-                type: "new";
               }
             | {
-                commit: string;
-                description: string;
                 /** @constant */
                 type: "describe";
+                commit: string;
+                description: string;
               }
             | {
-                name: string;
-                target: string;
                 /** @constant */
                 type: "bookmark_create";
+                name: string;
+                target: string;
               }
             | {
+                /** @constant */
+                type: "bookmark_move";
                 name: string;
                 expected: (string | null)[];
                 target: string;
-                /** @constant */
-                type: "bookmark_move";
               }
             | {
-                name: string;
-                expected: (string | null)[];
                 /** @constant */
                 type: "bookmark_delete";
+                name: string;
+                expected: (string | null)[];
               }
             | {
-                base: string;
                 /** @constant */
                 type: "reconcile_operations";
+                base: string;
               }
             | {
+                /** @constant */
+                type: "abandon";
                 commits: string[];
                 retain_bookmarks: boolean;
                 restore_descendants: boolean;
-                /** @constant */
-                type: "abandon";
               };
         };
       };
@@ -36793,27 +36793,27 @@ export interface operations {
                 query: [
                   (
                     | {
+                        /** @constant */
+                        graph: "log";
                         revset: string;
                         workspace?: string | null;
                         user_email: string;
                         /** Format: int64 */
                         at_time_millis: number;
-                        /** @constant */
-                        graph: "log";
                       }
                     | {
                         /** @constant */
                         graph: "operations";
                       }
                     | {
-                        query: string;
                         /** @constant */
                         graph: "operations_filtered";
+                        query: string;
                       }
                     | {
-                        commit: string;
                         /** @constant */
                         graph: "evolution";
+                        commit: string;
                       }
                   ),
                   {
@@ -38845,31 +38845,33 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                command: "create_project";
                 id: string;
                 title: string;
                 body: string;
-                /** @constant */
-                command: "create_project";
               }
             | {
+                /** @constant */
+                command: "update_project";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
                 title: string;
                 body: string;
-                /** @constant */
-                command: "update_project";
               }
             | {
+                /** @constant */
+                command: "set_repository";
                 project: string;
                 /** Format: uint64 */
                 expected_version: number;
                 repository: string;
                 active: boolean;
-                /** @constant */
-                command: "set_repository";
               }
             | {
+                /** @constant */
+                command: "create_task";
                 id: string;
                 project: string;
                 /** Format: uint64 */
@@ -38878,10 +38880,10 @@ export interface operations {
                 body: string;
                 repository?: string | null;
                 parent?: string | null;
-                /** @constant */
-                command: "create_task";
               }
             | {
+                /** @constant */
+                command: "update_task";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
@@ -38893,37 +38895,35 @@ export interface operations {
                 state: "open" | "in_progress" | "blocked" | "done";
                 repository?: string | null;
                 parent?: string | null;
-                /** @constant */
-                command: "update_task";
               }
             | {
+                /** @constant */
+                command: "add_comment";
                 id: string;
                 task: string;
                 /** Format: uint64 */
                 expected_task_version: number;
                 reply_to?: string | null;
                 body: string;
-                /** @constant */
-                command: "add_comment";
               }
             | {
+                /** @constant */
+                command: "edit_comment";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
                 /** Format: uint64 */
                 expected_task_version: number;
                 body: string;
-                /** @constant */
-                command: "edit_comment";
               }
             | {
+                /** @constant */
+                command: "tombstone_comment";
                 id: string;
                 /** Format: uint64 */
                 expected_version: number;
                 /** Format: uint64 */
                 expected_task_version: number;
-                /** @constant */
-                command: "tombstone_comment";
               };
         };
       };
@@ -39729,21 +39729,21 @@ export interface operations {
           query: {
             subject:
               | {
-                  session_id: string;
                   /** @constant */
                   subject: "session";
+                  session_id: string;
                 }
               | {
-                  repository: string;
-                  operation_id: string;
                   /** @constant */
                   subject: "operation";
+                  repository: string;
+                  operation_id: string;
                 }
               | {
-                  repository: string;
-                  commit_id: string;
                   /** @constant */
                   subject: "revision";
+                  repository: string;
+                  commit_id: string;
                 };
             /** Format: uint */
             limit: number;
@@ -40303,6 +40303,8 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                command: "create_thread";
                 anchor: {
                   /** Format: uint32 */
                   schema_version: number;
@@ -40376,6 +40378,8 @@ export interface operations {
                             path: string;
                             object:
                               | {
+                                  /** @constant */
+                                  profile: "native_v1";
                                   object:
                                     | {
                                         /** @constant */
@@ -40412,15 +40416,13 @@ export interface operations {
                                         kind: "operation";
                                         id: string;
                                       };
-                                  /** @constant */
-                                  profile: "native_v1";
                                 }
                               | {
+                                  /** @constant */
+                                  profile: "git_sha1_jj045";
                                   /** @enum {string} */
                                   kind: "commit" | "tree" | "blob";
                                   id: string;
-                                  /** @constant */
-                                  profile: "git_sha1_jj045";
                                 };
                             /** @enum {string} */
                             value_kind:
@@ -40517,6 +40519,8 @@ export interface operations {
                           path: string;
                           object:
                             | {
+                                /** @constant */
+                                profile: "native_v1";
                                 object:
                                   | {
                                       /** @constant */
@@ -40553,15 +40557,13 @@ export interface operations {
                                       kind: "operation";
                                       id: string;
                                     };
-                                /** @constant */
-                                profile: "native_v1";
                               }
                             | {
+                                /** @constant */
+                                profile: "git_sha1_jj045";
                                 /** @enum {string} */
                                 kind: "commit" | "tree" | "blob";
                                 id: string;
-                                /** @constant */
-                                profile: "git_sha1_jj045";
                               };
                           /** @enum {string} */
                           value_kind:
@@ -40660,6 +40662,8 @@ export interface operations {
                           };
                           owner:
                             | {
+                                /** @constant */
+                                kind: "tool";
                                 tool_call_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -40686,10 +40690,10 @@ export interface operations {
                                   id: string;
                                 };
                                 attempt_id: string;
-                                /** @constant */
-                                kind: "tool";
                               }
                             | {
+                                /** @constant */
+                                kind: "message";
                                 message_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -40715,10 +40719,10 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "message";
                               }
                             | {
+                                /** @constant */
+                                kind: "plan";
                                 block_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -40744,8 +40748,6 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "plan";
                               };
                           block_id: string;
                           block_version: {
@@ -40853,6 +40855,8 @@ export interface operations {
                           };
                           owner:
                             | {
+                                /** @constant */
+                                kind: "tool";
                                 tool_call_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -40879,10 +40883,10 @@ export interface operations {
                                   id: string;
                                 };
                                 attempt_id: string;
-                                /** @constant */
-                                kind: "tool";
                               }
                             | {
+                                /** @constant */
+                                kind: "message";
                                 message_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -40908,10 +40912,10 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "message";
                               }
                             | {
+                                /** @constant */
+                                kind: "plan";
                                 block_id: string;
                                 snapshot: {
                                   /** @enum {string} */
@@ -40937,8 +40941,6 @@ export interface operations {
                                     | "catalog_conflict";
                                   id: string;
                                 };
-                                /** @constant */
-                                kind: "plan";
                               };
                         };
                       }
@@ -41011,10 +41013,10 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "create_thread";
               }
             | {
+                /** @constant */
+                command: "append_reply";
                 thread_id: string;
                 /** Format: uint64 */
                 expected_workflow_version: number;
@@ -41027,10 +41029,10 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "append_reply";
               }
             | {
+                /** @constant */
+                command: "edit_comment";
                 comment_id: string;
                 expected_revision_id: string;
                 replacement_body: {
@@ -41041,10 +41043,10 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "edit_comment";
               }
             | {
+                /** @constant */
+                command: "resolve_comment_conflict";
                 comment_id: string;
                 expected_revision_ids: string[];
                 replacement_body: {
@@ -41055,36 +41057,34 @@ export interface operations {
                   text: string;
                   sanitizer_version: string;
                 };
-                /** @constant */
-                command: "resolve_comment_conflict";
               }
             | {
+                /** @constant */
+                command: "tombstone_comment";
                 comment_id: string;
                 expected_revision_id: string;
                 reason?: string | null;
-                /** @constant */
-                command: "tombstone_comment";
               }
             | {
+                /** @constant */
+                command: "hide_comment";
                 comment_id: string;
                 expected_revision_id: string;
                 moderation_reason: string;
-                /** @constant */
-                command: "hide_comment";
               }
             | {
-                thread_id: string;
-                expected_thread_version: string;
-                reason?: string | null;
                 /** @constant */
                 command: "resolve_thread";
-              }
-            | {
                 thread_id: string;
                 expected_thread_version: string;
                 reason?: string | null;
+              }
+            | {
                 /** @constant */
                 command: "reopen_thread";
+                thread_id: string;
+                expected_thread_version: string;
+                reason?: string | null;
               };
         };
       };
@@ -41694,27 +41694,31 @@ export interface operations {
           metadata_commit?: string | null;
           query:
             | {
-                /** Format: uint32 */
-                limit: number;
                 /** @constant */
                 type: "threads";
+                /** Format: uint32 */
+                limit: number;
               }
             | {
+                /** @constant */
+                type: "events";
                 thread_id: string;
                 /** Format: uint32 */
                 limit: number;
-                /** @constant */
-                type: "events";
               }
             | {
+                /** @constant */
+                type: "reactions";
                 /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                 target:
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -41733,10 +41737,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -41788,10 +41792,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -41818,10 +41822,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -41872,15 +41876,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -41897,10 +41901,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -41918,18 +41922,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -41956,19 +41960,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_checkpoint";
                     };
                 /** Format: uint32 */
                 limit: number;
-                /** @constant */
-                type: "reactions";
               }
             | {
-                /** Format: uint32 */
-                limit: number;
                 /** @constant */
                 type: "emojis";
+                /** Format: uint32 */
+                limit: number;
               };
           cursor?: string | null;
         };
@@ -42248,38 +42248,42 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                domain: "thread";
                 intent:
                   | {
+                      /** @constant */
+                      type: "create_intentional";
                       thread_id: string;
                       title: string;
                       repositories: string[];
-                      /** @constant */
-                      type: "create_intentional";
                     }
                   | {
+                      /** @constant */
+                      type: "create_conversation";
                       thread_id: string;
                       title: string;
                       target:
                         | {
-                            id: string;
                             /** @constant */
                             type: "conversation";
+                            id: string;
                           }
                         | {
-                            session: string;
                             /** @constant */
                             type: "recorded";
+                            session: string;
                           };
-                      /** @constant */
-                      type: "create_conversation";
                     }
                   | {
-                      thread_id: string;
-                      title: string;
                       /** @constant */
                       type: "create_annotation";
+                      thread_id: string;
+                      title: string;
                     }
                   | {
+                      /** @constant */
+                      type: "set_codebase";
                       thread_id: string;
                       expected: {
                         /** @enum {string} */
@@ -42298,10 +42302,10 @@ export interface operations {
                         id: string;
                       };
                       repositories: string[];
-                      /** @constant */
-                      type: "set_codebase";
                     }
                   | {
+                      /** @constant */
+                      type: "set_metadata";
                       thread_id: string;
                       expected_thread: {
                         /** @enum {string} */
@@ -42337,14 +42341,14 @@ export interface operations {
                       } | null;
                       target:
                         | {
-                            id: string;
                             /** @constant */
                             type: "conversation";
+                            id: string;
                           }
                         | {
-                            session: string;
                             /** @constant */
                             type: "recorded";
+                            session: string;
                           };
                       value: {
                         /** @default null */
@@ -42424,10 +42428,10 @@ export interface operations {
                           };
                         };
                       };
-                      /** @constant */
-                      type: "set_metadata";
                     }
                   | {
+                      /** @constant */
+                      type: "submit";
                       submission: {
                         emojis?: {
                           source: string;
@@ -42492,11 +42496,13 @@ export interface operations {
                             /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                             target:
                               | {
-                                  thread_id: string;
                                   /** @constant */
                                   type: "thread";
+                                  thread_id: string;
                                 }
                               | {
+                                  /** @constant */
+                                  type: "human_message";
                                   thread_id: string;
                                   message_id: string;
                                   revision: {
@@ -42515,10 +42521,10 @@ export interface operations {
                                       | "image_asset";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "human_message";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "agent_message";
                                   session_id: string;
                                   message_id: string;
                                   event_id: string;
@@ -42570,10 +42576,10 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "agent_message";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "tool_invocation";
                                   session_id: string;
                                   tool_id: string;
                                   snapshot: {
@@ -42600,10 +42606,10 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "tool_invocation";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "tool_output";
                                   session_id: string;
                                   tool_id: string;
                                   snapshot: {
@@ -42654,15 +42660,15 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "tool_output";
                                 }
                               | {
-                                  thread_id: string;
                                   /** @constant */
                                   type: "review_thread";
+                                  thread_id: string;
                                 }
                               | {
+                                  /** @constant */
+                                  type: "review_comment";
                                   thread_id: string;
                                   comment_id: string;
                                   revision: {
@@ -42679,10 +42685,10 @@ export interface operations {
                                       | "status_page";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "review_comment";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "repository_review_comment";
                                   repository: string;
                                   thread_id: string;
                                   comment_id: string;
@@ -42700,18 +42706,18 @@ export interface operations {
                                       | "status_page";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "repository_review_comment";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "work_comment";
                                   task_id: string;
                                   comment_id: string;
                                   /** Format: uint64 */
                                   version: number;
-                                  /** @constant */
-                                  type: "work_comment";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "agent_checkpoint";
                                   session_id: string;
                                   checkpoint_id: string;
                                   version: {
@@ -42738,8 +42744,6 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "agent_checkpoint";
                                 };
                             /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                             part?: string | null;
@@ -42790,11 +42794,13 @@ export interface operations {
                         }[];
                         references: (
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "human_message";
                               thread_id: string;
                               message_id: string;
                               revision: {
@@ -42813,10 +42819,10 @@ export interface operations {
                                   | "image_asset";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "human_message";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_message";
                               session_id: string;
                               message_id: string;
                               event_id: string;
@@ -42868,10 +42874,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_message";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_invocation";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -42898,10 +42904,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_invocation";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_output";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -42952,15 +42958,15 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_output";
                             }
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "review_thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "review_comment";
                               thread_id: string;
                               comment_id: string;
                               revision: {
@@ -42977,10 +42983,10 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "repository_review_comment";
                               repository: string;
                               thread_id: string;
                               comment_id: string;
@@ -42998,18 +43004,18 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "repository_review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "work_comment";
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
                               version: number;
-                              /** @constant */
-                              type: "work_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_checkpoint";
                               session_id: string;
                               checkpoint_id: string;
                               version: {
@@ -43036,8 +43042,6 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_checkpoint";
                             }
                         )[];
                         workspace_comments?: {
@@ -43072,11 +43076,13 @@ export interface operations {
                           previous?:
                             | (
                                 | {
-                                    thread_id: string;
                                     /** @constant */
                                     type: "thread";
+                                    thread_id: string;
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "human_message";
                                     thread_id: string;
                                     message_id: string;
                                     revision: {
@@ -43095,10 +43101,10 @@ export interface operations {
                                         | "image_asset";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "human_message";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "agent_message";
                                     session_id: string;
                                     message_id: string;
                                     event_id: string;
@@ -43150,10 +43156,10 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "agent_message";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "tool_invocation";
                                     session_id: string;
                                     tool_id: string;
                                     snapshot: {
@@ -43180,10 +43186,10 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "tool_invocation";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "tool_output";
                                     session_id: string;
                                     tool_id: string;
                                     snapshot: {
@@ -43234,15 +43240,15 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "tool_output";
                                   }
                                 | {
-                                    thread_id: string;
                                     /** @constant */
                                     type: "review_thread";
+                                    thread_id: string;
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "review_comment";
                                     thread_id: string;
                                     comment_id: string;
                                     revision: {
@@ -43259,10 +43265,10 @@ export interface operations {
                                         | "status_page";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "review_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "repository_review_comment";
                                     repository: string;
                                     thread_id: string;
                                     comment_id: string;
@@ -43280,18 +43286,18 @@ export interface operations {
                                         | "status_page";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "repository_review_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "work_comment";
                                     task_id: string;
                                     comment_id: string;
                                     /** Format: uint64 */
                                     version: number;
-                                    /** @constant */
-                                    type: "work_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "agent_checkpoint";
                                     session_id: string;
                                     checkpoint_id: string;
                                     version: {
@@ -43318,8 +43324,6 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "agent_checkpoint";
                                   }
                               )
                             | null;
@@ -43327,21 +43331,23 @@ export interface operations {
                           edit?: boolean;
                         }[];
                       };
-                      /** @constant */
-                      type: "submit";
                     }
                   | {
+                      /** @constant */
+                      type: "create_comment_discussion";
                       thread_id: string;
                       title: string;
                       source: {
                         /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                         target:
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "human_message";
                               thread_id: string;
                               message_id: string;
                               revision: {
@@ -43360,10 +43366,10 @@ export interface operations {
                                   | "image_asset";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "human_message";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_message";
                               session_id: string;
                               message_id: string;
                               event_id: string;
@@ -43415,10 +43421,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_message";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_invocation";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -43445,10 +43451,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_invocation";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_output";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -43499,15 +43505,15 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_output";
                             }
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "review_thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "review_comment";
                               thread_id: string;
                               comment_id: string;
                               revision: {
@@ -43524,10 +43530,10 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "repository_review_comment";
                               repository: string;
                               thread_id: string;
                               comment_id: string;
@@ -43545,18 +43551,18 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "repository_review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "work_comment";
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
                               version: number;
-                              /** @constant */
-                              type: "work_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_checkpoint";
                               session_id: string;
                               checkpoint_id: string;
                               version: {
@@ -43583,8 +43589,6 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_checkpoint";
                             };
                         /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                         part?: string | null;
@@ -43598,20 +43602,22 @@ export interface operations {
                         /** @description Retained display evidence, validated against the selected bytes. */
                         quote: string;
                       };
-                      /** @constant */
-                      type: "create_comment_discussion";
                     }
                   | {
+                      /** @constant */
+                      type: "create_agent_discussion";
                       thread_id: string;
                       title: string;
                       /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                       target:
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "human_message";
                             thread_id: string;
                             message_id: string;
                             revision: {
@@ -43630,10 +43636,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "human_message";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_message";
                             session_id: string;
                             message_id: string;
                             event_id: string;
@@ -43685,10 +43691,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_message";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_invocation";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -43715,10 +43721,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_invocation";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_output";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -43769,15 +43775,15 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_output";
                           }
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "review_thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "review_comment";
                             thread_id: string;
                             comment_id: string;
                             revision: {
@@ -43794,10 +43800,10 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "repository_review_comment";
                             repository: string;
                             thread_id: string;
                             comment_id: string;
@@ -43815,18 +43821,18 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "repository_review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "work_comment";
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
                             version: number;
-                            /** @constant */
-                            type: "work_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_checkpoint";
                             session_id: string;
                             checkpoint_id: string;
                             version: {
@@ -43853,13 +43859,11 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_checkpoint";
                           };
-                      /** @constant */
-                      type: "create_agent_discussion";
                     }
                   | {
+                      /** @constant */
+                      type: "create";
                       thread_id: string;
                       title: string;
                       baseline?:
@@ -43907,10 +43911,10 @@ export interface operations {
                               }
                           )
                         | null;
-                      /** @constant */
-                      type: "create";
                     }
                   | {
+                      /** @constant */
+                      type: "rename";
                       thread_id: string;
                       expected: {
                         /** @enum {string} */
@@ -43929,10 +43933,10 @@ export interface operations {
                         id: string;
                       };
                       title: string;
-                      /** @constant */
-                      type: "rename";
                     }
                   | {
+                      /** @constant */
+                      type: "lifecycle";
                       thread_id: string;
                       expected: {
                         /** @enum {string} */
@@ -43957,10 +43961,10 @@ export interface operations {
                         | "archive"
                         | "tombstone"
                         | "restore";
-                      /** @constant */
-                      type: "lifecycle";
                     }
                   | {
+                      /** @constant */
+                      type: "message";
                       emojis?: {
                         source: string;
                         shortcode: string;
@@ -44017,10 +44021,10 @@ export interface operations {
                         id: string;
                       } | null;
                       body?: string | null;
-                      /** @constant */
-                      type: "message";
                     }
                   | {
+                      /** @constant */
+                      type: "link";
                       thread_id: string;
                       expected_thread: {
                         /** @enum {string} */
@@ -44041,15 +44045,19 @@ export interface operations {
                       link_id: string;
                       target:
                         | {
+                            /** @constant */
+                            type: "comment_reply";
                             reply: {
                               /** @description Exact user message capture containing a successful context delivery. */
                               prompt:
                                 | {
-                                    thread_id: string;
                                     /** @constant */
                                     type: "thread";
+                                    thread_id: string;
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "human_message";
                                     thread_id: string;
                                     message_id: string;
                                     revision: {
@@ -44068,10 +44076,10 @@ export interface operations {
                                         | "image_asset";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "human_message";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "agent_message";
                                     session_id: string;
                                     message_id: string;
                                     event_id: string;
@@ -44123,10 +44131,10 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "agent_message";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "tool_invocation";
                                     session_id: string;
                                     tool_id: string;
                                     snapshot: {
@@ -44153,10 +44161,10 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "tool_invocation";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "tool_output";
                                     session_id: string;
                                     tool_id: string;
                                     snapshot: {
@@ -44207,15 +44215,15 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "tool_output";
                                   }
                                 | {
-                                    thread_id: string;
                                     /** @constant */
                                     type: "review_thread";
+                                    thread_id: string;
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "review_comment";
                                     thread_id: string;
                                     comment_id: string;
                                     revision: {
@@ -44232,10 +44240,10 @@ export interface operations {
                                         | "status_page";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "review_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "repository_review_comment";
                                     repository: string;
                                     thread_id: string;
                                     comment_id: string;
@@ -44253,18 +44261,18 @@ export interface operations {
                                         | "status_page";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "repository_review_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "work_comment";
                                     task_id: string;
                                     comment_id: string;
                                     /** Format: uint64 */
                                     version: number;
-                                    /** @constant */
-                                    type: "work_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "agent_checkpoint";
                                     session_id: string;
                                     checkpoint_id: string;
                                     version: {
@@ -44291,18 +44299,18 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "agent_checkpoint";
                                   };
                               answer: {
                                 /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                                 target:
                                   | {
-                                      thread_id: string;
                                       /** @constant */
                                       type: "thread";
+                                      thread_id: string;
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "human_message";
                                       thread_id: string;
                                       message_id: string;
                                       revision: {
@@ -44321,10 +44329,10 @@ export interface operations {
                                           | "image_asset";
                                         id: string;
                                       };
-                                      /** @constant */
-                                      type: "human_message";
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "agent_message";
                                       session_id: string;
                                       message_id: string;
                                       event_id: string;
@@ -44376,10 +44384,10 @@ export interface operations {
                                           | "catalog_conflict";
                                         id: string;
                                       };
-                                      /** @constant */
-                                      type: "agent_message";
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "tool_invocation";
                                       session_id: string;
                                       tool_id: string;
                                       snapshot: {
@@ -44406,10 +44414,10 @@ export interface operations {
                                           | "catalog_conflict";
                                         id: string;
                                       };
-                                      /** @constant */
-                                      type: "tool_invocation";
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "tool_output";
                                       session_id: string;
                                       tool_id: string;
                                       snapshot: {
@@ -44460,15 +44468,15 @@ export interface operations {
                                           | "catalog_conflict";
                                         id: string;
                                       };
-                                      /** @constant */
-                                      type: "tool_output";
                                     }
                                   | {
-                                      thread_id: string;
                                       /** @constant */
                                       type: "review_thread";
+                                      thread_id: string;
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "review_comment";
                                       thread_id: string;
                                       comment_id: string;
                                       revision: {
@@ -44485,10 +44493,10 @@ export interface operations {
                                           | "status_page";
                                         id: string;
                                       };
-                                      /** @constant */
-                                      type: "review_comment";
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "repository_review_comment";
                                       repository: string;
                                       thread_id: string;
                                       comment_id: string;
@@ -44506,18 +44514,18 @@ export interface operations {
                                           | "status_page";
                                         id: string;
                                       };
-                                      /** @constant */
-                                      type: "repository_review_comment";
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "work_comment";
                                       task_id: string;
                                       comment_id: string;
                                       /** Format: uint64 */
                                       version: number;
-                                      /** @constant */
-                                      type: "work_comment";
                                     }
                                   | {
+                                      /** @constant */
+                                      type: "agent_checkpoint";
                                       session_id: string;
                                       checkpoint_id: string;
                                       version: {
@@ -44544,8 +44552,6 @@ export interface operations {
                                           | "catalog_conflict";
                                         id: string;
                                       };
-                                      /** @constant */
-                                      type: "agent_checkpoint";
                                     };
                                 /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                                 part?: string | null;
@@ -44561,11 +44567,13 @@ export interface operations {
                               };
                               comments: (
                                 | {
-                                    thread_id: string;
                                     /** @constant */
                                     type: "thread";
+                                    thread_id: string;
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "human_message";
                                     thread_id: string;
                                     message_id: string;
                                     revision: {
@@ -44584,10 +44592,10 @@ export interface operations {
                                         | "image_asset";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "human_message";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "agent_message";
                                     session_id: string;
                                     message_id: string;
                                     event_id: string;
@@ -44639,10 +44647,10 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "agent_message";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "tool_invocation";
                                     session_id: string;
                                     tool_id: string;
                                     snapshot: {
@@ -44669,10 +44677,10 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "tool_invocation";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "tool_output";
                                     session_id: string;
                                     tool_id: string;
                                     snapshot: {
@@ -44723,15 +44731,15 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "tool_output";
                                   }
                                 | {
-                                    thread_id: string;
                                     /** @constant */
                                     type: "review_thread";
+                                    thread_id: string;
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "review_comment";
                                     thread_id: string;
                                     comment_id: string;
                                     revision: {
@@ -44748,10 +44756,10 @@ export interface operations {
                                         | "status_page";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "review_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "repository_review_comment";
                                     repository: string;
                                     thread_id: string;
                                     comment_id: string;
@@ -44769,18 +44777,18 @@ export interface operations {
                                         | "status_page";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "repository_review_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "work_comment";
                                     task_id: string;
                                     comment_id: string;
                                     /** Format: uint64 */
                                     version: number;
-                                    /** @constant */
-                                    type: "work_comment";
                                   }
                                 | {
+                                    /** @constant */
+                                    type: "agent_checkpoint";
                                     session_id: string;
                                     checkpoint_id: string;
                                     version: {
@@ -44807,23 +44815,23 @@ export interface operations {
                                         | "catalog_conflict";
                                       id: string;
                                     };
-                                    /** @constant */
-                                    type: "agent_checkpoint";
                                   }
                               )[];
                             };
-                            /** @constant */
-                            type: "comment_reply";
                           }
                         | {
+                            /** @constant */
+                            type: "comment_batch";
                             request_id: string;
                             comments: (
                               | {
-                                  thread_id: string;
                                   /** @constant */
                                   type: "thread";
+                                  thread_id: string;
                                 }
                               | {
+                                  /** @constant */
+                                  type: "human_message";
                                   thread_id: string;
                                   message_id: string;
                                   revision: {
@@ -44842,10 +44850,10 @@ export interface operations {
                                       | "image_asset";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "human_message";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "agent_message";
                                   session_id: string;
                                   message_id: string;
                                   event_id: string;
@@ -44897,10 +44905,10 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "agent_message";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "tool_invocation";
                                   session_id: string;
                                   tool_id: string;
                                   snapshot: {
@@ -44927,10 +44935,10 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "tool_invocation";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "tool_output";
                                   session_id: string;
                                   tool_id: string;
                                   snapshot: {
@@ -44981,15 +44989,15 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "tool_output";
                                 }
                               | {
-                                  thread_id: string;
                                   /** @constant */
                                   type: "review_thread";
+                                  thread_id: string;
                                 }
                               | {
+                                  /** @constant */
+                                  type: "review_comment";
                                   thread_id: string;
                                   comment_id: string;
                                   revision: {
@@ -45006,10 +45014,10 @@ export interface operations {
                                       | "status_page";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "review_comment";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "repository_review_comment";
                                   repository: string;
                                   thread_id: string;
                                   comment_id: string;
@@ -45027,18 +45035,18 @@ export interface operations {
                                       | "status_page";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "repository_review_comment";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "work_comment";
                                   task_id: string;
                                   comment_id: string;
                                   /** Format: uint64 */
                                   version: number;
-                                  /** @constant */
-                                  type: "work_comment";
                                 }
                               | {
+                                  /** @constant */
+                                  type: "agent_checkpoint";
                                   session_id: string;
                                   checkpoint_id: string;
                                   version: {
@@ -45065,8 +45073,6 @@ export interface operations {
                                       | "catalog_conflict";
                                     id: string;
                                   };
-                                  /** @constant */
-                                  type: "agent_checkpoint";
                                 }
                             )[];
                             message?: {
@@ -45101,10 +45107,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             } | null;
-                            /** @constant */
-                            type: "comment_batch";
                           }
                         | {
+                            /** @constant */
+                            type: "capture_gap";
                             source_state: {
                               /** @enum {string} */
                               kind:
@@ -45189,10 +45195,10 @@ export interface operations {
                                 id: string;
                               } | null;
                             };
-                            /** @constant */
-                            type: "capture_gap";
                           }
                         | {
+                            /** @constant */
+                            type: "session";
                             session_id: string;
                             snapshot: {
                               /** @enum {string} */
@@ -45219,10 +45225,10 @@ export interface operations {
                               id: string;
                             };
                             primary: boolean;
-                            /** @constant */
-                            type: "session";
                           }
                         | {
+                            /** @constant */
+                            type: "code";
                             /** @description Native IDs and portable evidence remain distinct; neither is a device path. */
                             anchor:
                               | {
@@ -45297,10 +45303,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             } | null;
-                            /** @constant */
-                            type: "code";
                           }
                         | {
+                            /** @constant */
+                            type: "review";
                             review_id: string;
                             snapshot: {
                               /** @enum {string} */
@@ -45316,8 +45322,6 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review";
                           };
                       observed_primary?: {
                         /** @enum {string} */
@@ -45335,10 +45339,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       } | null;
-                      /** @constant */
-                      type: "link";
                     }
                   | {
+                      /** @constant */
+                      type: "detach";
                       thread_id: string;
                       expected_thread: {
                         /** @enum {string} */
@@ -45372,16 +45376,16 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "detach";
                     };
-                /** @constant */
-                domain: "thread";
               }
             | {
+                /** @constant */
+                domain: "reaction";
                 /** @description A typed reaction command never accepts an actor from an API caller. */
                 intent:
                   | {
+                      /** @constant */
+                      type: "set";
                       emoji?: {
                         source: string;
                         shortcode: string;
@@ -45390,11 +45394,13 @@ export interface operations {
                       /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                       target:
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "human_message";
                             thread_id: string;
                             message_id: string;
                             revision: {
@@ -45413,10 +45419,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "human_message";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_message";
                             session_id: string;
                             message_id: string;
                             event_id: string;
@@ -45468,10 +45474,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_message";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_invocation";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -45498,10 +45504,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_invocation";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_output";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -45552,15 +45558,15 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_output";
                           }
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "review_thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "review_comment";
                             thread_id: string;
                             comment_id: string;
                             revision: {
@@ -45577,10 +45583,10 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "repository_review_comment";
                             repository: string;
                             thread_id: string;
                             comment_id: string;
@@ -45598,18 +45604,18 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "repository_review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "work_comment";
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
                             version: number;
-                            /** @constant */
-                            type: "work_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_checkpoint";
                             session_id: string;
                             checkpoint_id: string;
                             version: {
@@ -45636,8 +45642,6 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_checkpoint";
                           };
                       value:
                         | {
@@ -45649,11 +45653,13 @@ export interface operations {
                             type: "dislike";
                           }
                         | {
-                            sequence: string;
                             /** @constant */
                             type: "emoji";
+                            sequence: string;
                           }
                         | {
+                            /** @constant */
+                            type: "custom";
                             emoji_id: string;
                             version: {
                               /** @enum {string} */
@@ -45671,8 +45677,6 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "custom";
                           };
                       observed: {
                         /** @enum {string} */
@@ -45690,290 +45694,20 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       }[];
-                      /** @constant */
-                      type: "set";
                     }
                   | {
-                      /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
-                      target:
-                        | {
-                            thread_id: string;
-                            /** @constant */
-                            type: "thread";
-                          }
-                        | {
-                            thread_id: string;
-                            message_id: string;
-                            revision: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "thread_version"
-                                | "conversation_metadata"
-                                | "thread_event"
-                                | "human_message_revision"
-                                | "thread_link"
-                                | "reaction"
-                                | "reaction_retraction"
-                                | "reaction_slot"
-                                | "custom_emoji_version"
-                                | "image_asset";
-                              id: string;
-                            };
-                            /** @constant */
-                            type: "human_message";
-                          }
-                        | {
-                            session_id: string;
-                            message_id: string;
-                            event_id: string;
-                            batch: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "session_snapshot"
-                                | "turn_snapshot"
-                                | "message_snapshot"
-                                | "tool_snapshot"
-                                | "intent"
-                                | "observation_batch"
-                                | "event_batch"
-                                | "transcript_manifest"
-                                | "transcript_page"
-                                | "transcript_chunk"
-                                | "content"
-                                | "checkpoint_version"
-                                | "association"
-                                | "alias"
-                                | "relation_page"
-                                | "source_state"
-                                | "projection_catalog"
-                                | "catalog_conflict";
-                              id: string;
-                            };
-                            content: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "session_snapshot"
-                                | "turn_snapshot"
-                                | "message_snapshot"
-                                | "tool_snapshot"
-                                | "intent"
-                                | "observation_batch"
-                                | "event_batch"
-                                | "transcript_manifest"
-                                | "transcript_page"
-                                | "transcript_chunk"
-                                | "content"
-                                | "checkpoint_version"
-                                | "association"
-                                | "alias"
-                                | "relation_page"
-                                | "source_state"
-                                | "projection_catalog"
-                                | "catalog_conflict";
-                              id: string;
-                            };
-                            /** @constant */
-                            type: "agent_message";
-                          }
-                        | {
-                            session_id: string;
-                            tool_id: string;
-                            snapshot: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "session_snapshot"
-                                | "turn_snapshot"
-                                | "message_snapshot"
-                                | "tool_snapshot"
-                                | "intent"
-                                | "observation_batch"
-                                | "event_batch"
-                                | "transcript_manifest"
-                                | "transcript_page"
-                                | "transcript_chunk"
-                                | "content"
-                                | "checkpoint_version"
-                                | "association"
-                                | "alias"
-                                | "relation_page"
-                                | "source_state"
-                                | "projection_catalog"
-                                | "catalog_conflict";
-                              id: string;
-                            };
-                            /** @constant */
-                            type: "tool_invocation";
-                          }
-                        | {
-                            session_id: string;
-                            tool_id: string;
-                            snapshot: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "session_snapshot"
-                                | "turn_snapshot"
-                                | "message_snapshot"
-                                | "tool_snapshot"
-                                | "intent"
-                                | "observation_batch"
-                                | "event_batch"
-                                | "transcript_manifest"
-                                | "transcript_page"
-                                | "transcript_chunk"
-                                | "content"
-                                | "checkpoint_version"
-                                | "association"
-                                | "alias"
-                                | "relation_page"
-                                | "source_state"
-                                | "projection_catalog"
-                                | "catalog_conflict";
-                              id: string;
-                            };
-                            content: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "session_snapshot"
-                                | "turn_snapshot"
-                                | "message_snapshot"
-                                | "tool_snapshot"
-                                | "intent"
-                                | "observation_batch"
-                                | "event_batch"
-                                | "transcript_manifest"
-                                | "transcript_page"
-                                | "transcript_chunk"
-                                | "content"
-                                | "checkpoint_version"
-                                | "association"
-                                | "alias"
-                                | "relation_page"
-                                | "source_state"
-                                | "projection_catalog"
-                                | "catalog_conflict";
-                              id: string;
-                            };
-                            /** @constant */
-                            type: "tool_output";
-                          }
-                        | {
-                            thread_id: string;
-                            /** @constant */
-                            type: "review_thread";
-                          }
-                        | {
-                            thread_id: string;
-                            comment_id: string;
-                            revision: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "anchor"
-                                | "comment_body"
-                                | "comment_revision"
-                                | "thread_event"
-                                | "event_page"
-                                | "thread_snapshot"
-                                | "relation_page"
-                                | "status_page";
-                              id: string;
-                            };
-                            /** @constant */
-                            type: "review_comment";
-                          }
-                        | {
-                            repository: string;
-                            thread_id: string;
-                            comment_id: string;
-                            revision: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "anchor"
-                                | "comment_body"
-                                | "comment_revision"
-                                | "thread_event"
-                                | "event_page"
-                                | "thread_snapshot"
-                                | "relation_page"
-                                | "status_page";
-                              id: string;
-                            };
-                            /** @constant */
-                            type: "repository_review_comment";
-                          }
-                        | {
-                            task_id: string;
-                            comment_id: string;
-                            /** Format: uint64 */
-                            version: number;
-                            /** @constant */
-                            type: "work_comment";
-                          }
-                        | {
-                            session_id: string;
-                            checkpoint_id: string;
-                            version: {
-                              /** @enum {string} */
-                              kind:
-                                | "index_page"
-                                | "session_snapshot"
-                                | "turn_snapshot"
-                                | "message_snapshot"
-                                | "tool_snapshot"
-                                | "intent"
-                                | "observation_batch"
-                                | "event_batch"
-                                | "transcript_manifest"
-                                | "transcript_page"
-                                | "transcript_chunk"
-                                | "content"
-                                | "checkpoint_version"
-                                | "association"
-                                | "alias"
-                                | "relation_page"
-                                | "source_state"
-                                | "projection_catalog"
-                                | "catalog_conflict";
-                              id: string;
-                            };
-                            /** @constant */
-                            type: "agent_checkpoint";
-                          };
-                      observed: {
-                        /** @enum {string} */
-                        kind:
-                          | "index_page"
-                          | "thread_version"
-                          | "conversation_metadata"
-                          | "thread_event"
-                          | "human_message_revision"
-                          | "thread_link"
-                          | "reaction"
-                          | "reaction_retraction"
-                          | "reaction_slot"
-                          | "custom_emoji_version"
-                          | "image_asset";
-                        id: string;
-                      }[];
                       /** @constant */
                       type: "clear";
-                    }
-                  | {
                       /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                       target:
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "human_message";
                             thread_id: string;
                             message_id: string;
                             revision: {
@@ -45992,10 +45726,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "human_message";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_message";
                             session_id: string;
                             message_id: string;
                             event_id: string;
@@ -46047,10 +45781,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_message";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_invocation";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -46077,10 +45811,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_invocation";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_output";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -46131,15 +45865,15 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_output";
                           }
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "review_thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "review_comment";
                             thread_id: string;
                             comment_id: string;
                             revision: {
@@ -46156,10 +45890,10 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "repository_review_comment";
                             repository: string;
                             thread_id: string;
                             comment_id: string;
@@ -46177,18 +45911,18 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "repository_review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "work_comment";
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
                             version: number;
-                            /** @constant */
-                            type: "work_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_checkpoint";
                             session_id: string;
                             checkpoint_id: string;
                             version: {
@@ -46215,8 +45949,278 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
+                          };
+                      observed: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "conversation_metadata"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      }[];
+                    }
+                  | {
+                      /** @constant */
+                      type: "resolve_conflict";
+                      /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                      target:
+                        | {
+                            /** @constant */
+                            type: "thread";
+                            thread_id: string;
+                          }
+                        | {
+                            /** @constant */
+                            type: "human_message";
+                            thread_id: string;
+                            message_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "conversation_metadata"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            };
+                          }
+                        | {
+                            /** @constant */
+                            type: "agent_message";
+                            session_id: string;
+                            message_id: string;
+                            event_id: string;
+                            batch: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                          }
+                        | {
+                            /** @constant */
+                            type: "tool_invocation";
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                          }
+                        | {
+                            /** @constant */
+                            type: "tool_output";
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                          }
+                        | {
+                            /** @constant */
+                            type: "review_thread";
+                            thread_id: string;
+                          }
+                        | {
+                            /** @constant */
+                            type: "review_comment";
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                          }
+                        | {
+                            /** @constant */
+                            type: "repository_review_comment";
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                          }
+                        | {
+                            /** @constant */
+                            type: "work_comment";
+                            task_id: string;
+                            comment_id: string;
+                            /** Format: uint64 */
+                            version: number;
+                          }
+                        | {
                             /** @constant */
                             type: "agent_checkpoint";
+                            session_id: string;
+                            checkpoint_id: string;
+                            version: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
                           };
                       value?:
                         | (
@@ -46229,11 +46233,13 @@ export interface operations {
                                 type: "dislike";
                               }
                             | {
-                                sequence: string;
                                 /** @constant */
                                 type: "emoji";
+                                sequence: string;
                               }
                             | {
+                                /** @constant */
+                                type: "custom";
                                 emoji_id: string;
                                 version: {
                                   /** @enum {string} */
@@ -46251,8 +46257,6 @@ export interface operations {
                                     | "image_asset";
                                   id: string;
                                 };
-                                /** @constant */
-                                type: "custom";
                               }
                           )
                         | null;
@@ -46272,15 +46276,15 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       }[];
-                      /** @constant */
-                      type: "resolve_conflict";
                     };
-                /** @constant */
-                domain: "reaction";
               }
             | {
+                /** @constant */
+                domain: "emoji";
                 intent:
                   | {
+                      /** @constant */
+                      type: "define";
                       emoji_id: string;
                       expected?: {
                         /** @enum {string} */
@@ -46301,10 +46305,10 @@ export interface operations {
                       shortcode: string;
                       label: string;
                       bytes: number[];
-                      /** @constant */
-                      type: "define";
                     }
                   | {
+                      /** @constant */
+                      type: "retire";
                       emoji_id: string;
                       expected: {
                         /** @enum {string} */
@@ -46322,11 +46326,7 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "retire";
                     };
-                /** @constant */
-                domain: "emoji";
               };
         };
       };
@@ -47955,129 +47955,120 @@ export interface operations {
                 kind: "redo";
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "delete_branch";
+                branch: string;
               }
             | {
-                commit: string;
                 /** @constant */
                 kind: "abandon";
+                commit: string;
               }
             | {
-                selections: {
-                  source: string;
-                  path: string;
-                  hunks?: string[] | null;
-                }[];
                 /** @constant */
                 kind: "discard";
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
               }
             | {
-                path: string;
-                content: string;
                 /** @constant */
                 kind: "resolve";
+                path: string;
+                content: string;
               }
             | {
-                commit: string;
-                target: string;
-                /** @enum {string} */
-                placement: "above" | "below";
                 /** @constant */
                 kind: "move";
-              }
-            | {
                 commit: string;
                 target: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+              }
+            | {
                 /** @constant */
                 kind: "squash";
+                commit: string;
+                target: string;
               }
             | {
-                commit: string;
                 /** @constant */
                 kind: "uncommit";
+                commit: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "rebase";
+                branch: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "squash_branch";
+                branch: string;
               }
             | {
-                name: string;
-                target: string;
                 /** @constant */
                 kind: "setup";
+                name: string;
+                target: string;
               }
             | {
-                name: string;
                 /** @constant */
                 kind: "create";
+                name: string;
               }
             | {
-                workspace: string;
                 /** @constant */
                 kind: "switch";
+                workspace: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "apply";
+                branch: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "unapply";
+                branch: string;
               }
             | {
-                branches: string[];
                 /** @constant */
                 kind: "unapply_branches";
+                branches: string[];
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "set_target";
+                branch: string;
               }
             | {
-                workspace: string;
-                name: string;
-                target: string;
                 /** @constant */
                 kind: "update";
+                workspace: string;
+                name: string;
+                target: string;
               }
             | {
-                workspace: string;
                 /** @constant */
                 kind: "delete";
+                workspace: string;
               }
             | {
+                /** @constant */
+                kind: "transfer";
                 target: string;
                 selections: {
                   source: string;
                   path: string;
                   hunks?: string[] | null;
                 }[];
-                /** @constant */
-                kind: "transfer";
               }
             | {
-                commit: string;
-                message: string;
-                selections: {
-                  source: string;
-                  path: string;
-                  hunks?: string[] | null;
-                }[];
                 /** @constant */
                 kind: "split";
-              }
-            | {
                 commit: string;
                 message: string;
                 selections: {
@@ -48085,44 +48076,55 @@ export interface operations {
                   path: string;
                   hunks?: string[] | null;
                 }[];
+              }
+            | {
                 /** @constant */
                 kind: "edit";
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
               }
             | {
-                name: string;
-                parent?: string | null;
                 /** @constant */
                 kind: "create_stack";
+                name: string;
+                parent?: string | null;
               }
             | {
-                commit: string;
-                name: string;
-                /** @enum {string} */
-                placement: "above" | "below";
                 /** @constant */
                 kind: "create_branch";
+                commit: string;
+                name: string;
+                /** @enum {string} */
+                placement: "above" | "below";
               }
             | {
-                branch: string;
-                name: string;
                 /** @constant */
                 kind: "rename_branch";
+                branch: string;
+                name: string;
               }
             | {
-                commit: string;
-                message: string;
                 /** @constant */
                 kind: "reword";
+                commit: string;
+                message: string;
               }
             | {
+                /** @constant */
+                kind: "empty";
                 commit: string;
                 /** @enum {string} */
                 placement: "above" | "below";
                 message: string;
-                /** @constant */
-                kind: "empty";
               }
             | {
+                /** @constant */
+                kind: "commit";
                 branch: string;
                 message: string;
                 selections: {
@@ -48130,8 +48132,6 @@ export interface operations {
                   path: string;
                   hunks?: string[] | null;
                 }[];
-                /** @constant */
-                kind: "commit";
               };
         };
       };
@@ -48293,129 +48293,120 @@ export interface operations {
                 kind: "redo";
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "delete_branch";
+                branch: string;
               }
             | {
-                commit: string;
                 /** @constant */
                 kind: "abandon";
+                commit: string;
               }
             | {
-                selections: {
-                  source: string;
-                  path: string;
-                  hunks?: string[] | null;
-                }[];
                 /** @constant */
                 kind: "discard";
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
               }
             | {
-                path: string;
-                content: string;
                 /** @constant */
                 kind: "resolve";
+                path: string;
+                content: string;
               }
             | {
-                commit: string;
-                target: string;
-                /** @enum {string} */
-                placement: "above" | "below";
                 /** @constant */
                 kind: "move";
-              }
-            | {
                 commit: string;
                 target: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+              }
+            | {
                 /** @constant */
                 kind: "squash";
+                commit: string;
+                target: string;
               }
             | {
-                commit: string;
                 /** @constant */
                 kind: "uncommit";
+                commit: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "rebase";
+                branch: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "squash_branch";
+                branch: string;
               }
             | {
-                name: string;
-                target: string;
                 /** @constant */
                 kind: "setup";
+                name: string;
+                target: string;
               }
             | {
-                name: string;
                 /** @constant */
                 kind: "create";
+                name: string;
               }
             | {
-                workspace: string;
                 /** @constant */
                 kind: "switch";
+                workspace: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "apply";
+                branch: string;
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "unapply";
+                branch: string;
               }
             | {
-                branches: string[];
                 /** @constant */
                 kind: "unapply_branches";
+                branches: string[];
               }
             | {
-                branch: string;
                 /** @constant */
                 kind: "set_target";
+                branch: string;
               }
             | {
-                workspace: string;
-                name: string;
-                target: string;
                 /** @constant */
                 kind: "update";
+                workspace: string;
+                name: string;
+                target: string;
               }
             | {
-                workspace: string;
                 /** @constant */
                 kind: "delete";
+                workspace: string;
               }
             | {
+                /** @constant */
+                kind: "transfer";
                 target: string;
                 selections: {
                   source: string;
                   path: string;
                   hunks?: string[] | null;
                 }[];
-                /** @constant */
-                kind: "transfer";
               }
             | {
-                commit: string;
-                message: string;
-                selections: {
-                  source: string;
-                  path: string;
-                  hunks?: string[] | null;
-                }[];
                 /** @constant */
                 kind: "split";
-              }
-            | {
                 commit: string;
                 message: string;
                 selections: {
@@ -48423,44 +48414,55 @@ export interface operations {
                   path: string;
                   hunks?: string[] | null;
                 }[];
+              }
+            | {
                 /** @constant */
                 kind: "edit";
+                commit: string;
+                message: string;
+                selections: {
+                  source: string;
+                  path: string;
+                  hunks?: string[] | null;
+                }[];
               }
             | {
-                name: string;
-                parent?: string | null;
                 /** @constant */
                 kind: "create_stack";
+                name: string;
+                parent?: string | null;
               }
             | {
-                commit: string;
-                name: string;
-                /** @enum {string} */
-                placement: "above" | "below";
                 /** @constant */
                 kind: "create_branch";
+                commit: string;
+                name: string;
+                /** @enum {string} */
+                placement: "above" | "below";
               }
             | {
-                branch: string;
-                name: string;
                 /** @constant */
                 kind: "rename_branch";
+                branch: string;
+                name: string;
               }
             | {
-                commit: string;
-                message: string;
                 /** @constant */
                 kind: "reword";
+                commit: string;
+                message: string;
               }
             | {
+                /** @constant */
+                kind: "empty";
                 commit: string;
                 /** @enum {string} */
                 placement: "above" | "below";
                 message: string;
-                /** @constant */
-                kind: "empty";
               }
             | {
+                /** @constant */
+                kind: "commit";
                 branch: string;
                 message: string;
                 selections: {
@@ -48468,8 +48470,6 @@ export interface operations {
                   path: string;
                   hunks?: string[] | null;
                 }[];
-                /** @constant */
-                kind: "commit";
               };
         };
       };
@@ -48733,29 +48733,29 @@ export interface operations {
       content: {
         "application/json":
           | {
-              api_url: string;
-              token: string;
               /** @constant */
               kind: "add_token";
+              api_url: string;
+              token: string;
             }
           | {
-              account: string;
               /** @constant */
               kind: "forget";
+              account: string;
             }
           | {
               /** @constant */
               kind: "begin_oauth";
             }
           | {
-              session: string;
               /** @constant */
               kind: "poll_oauth";
+              session: string;
             }
           | {
-              session: string;
               /** @constant */
               kind: "cancel_oauth";
+              session: string;
             };
       };
     };
@@ -48999,11 +48999,13 @@ export interface operations {
           account_id?: string | null;
           action:
             | {
-                auto_connect: boolean;
                 /** @constant */
                 kind: "detect";
+                auto_connect: boolean;
               }
             | {
+                /** @constant */
+                kind: "bind_account";
                 account: string;
                 connection: {
                   /** @enum {string} */
@@ -49019,19 +49021,19 @@ export interface operations {
                   target: string;
                   native_stacks: boolean;
                 };
-                /** @constant */
-                kind: "bind_account";
               }
             | {
                 /** @constant */
                 kind: "status";
               }
             | {
-                bookmark: string;
                 /** @constant */
                 kind: "restack_preview";
+                bookmark: string;
               }
             | {
+                /** @constant */
+                kind: "restack";
                 plan: {
                   account_id?: string | null;
                   request_id: string;
@@ -49058,10 +49060,10 @@ export interface operations {
                   target_head: string;
                   merged: string[];
                 };
-                /** @constant */
-                kind: "restack";
               }
             | {
+                /** @constant */
+                kind: "configure";
                 connection: {
                   /** @enum {string} */
                   provider: "github" | "gitlab" | "forgejo";
@@ -49076,16 +49078,16 @@ export interface operations {
                   target: string;
                   native_stacks: boolean;
                 };
-                /** @constant */
-                kind: "configure";
               }
             | {
-                bookmark: string;
-                draft: boolean;
                 /** @constant */
                 kind: "preview";
+                bookmark: string;
+                draft: boolean;
               }
             | {
+                /** @constant */
+                kind: "submit";
                 plan: {
                   account_id?: string | null;
                   request_id: string;
@@ -49143,81 +49145,79 @@ export interface operations {
                     )[];
                   }[];
                 };
-                /** @constant */
-                kind: "submit";
               }
             | {
-                request_id: string;
                 /** @constant */
                 kind: "recover";
+                request_id: string;
               }
             | {
-                request_id: string;
                 /** @constant */
                 kind: "operation_status";
+                request_id: string;
               }
             | {
-                /** Format: uint64 */
-                number: number;
                 /** @constant */
                 kind: "pull_request";
+                /** Format: uint64 */
+                number: number;
               }
             | {
+                /** @constant */
+                kind: "pr";
                 request_id: string;
                 /** Format: uint64 */
                 number: number;
                 action:
                   | {
+                      /** @constant */
+                      kind: "edit";
                       title: string;
                       body: string;
                       expected_body: string;
-                      /** @constant */
-                      kind: "edit";
                     }
                   | {
-                      draft: boolean;
                       /** @constant */
                       kind: "draft";
+                      draft: boolean;
                     }
                   | {
-                      method: string;
-                      expected_sha: string;
                       /** @constant */
                       kind: "merge";
+                      method: string;
+                      expected_sha: string;
                     }
                   | {
-                      receipt: string;
                       /** @constant */
                       kind: "merge_status";
+                      receipt: string;
                     }
                   | {
                       /** @constant */
                       kind: "checks";
                     }
                   | {
-                      run: string;
                       /** @constant */
                       kind: "jobs";
+                      run: string;
                     }
                   | {
-                      run: string;
-                      job: string;
                       /** @constant */
                       kind: "logs";
+                      run: string;
+                      job: string;
                     }
                   | {
-                      run: string;
-                      failed_only: boolean;
                       /** @constant */
                       kind: "rerun";
+                      run: string;
+                      failed_only: boolean;
                     }
                   | {
-                      run: string;
                       /** @constant */
                       kind: "cancel";
+                      run: string;
                     };
-                /** @constant */
-                kind: "pr";
               };
         };
       };
@@ -51624,12 +51624,14 @@ export interface operations {
           request_id: string;
           command:
             | {
-                title: string;
-                repositories: string[];
                 /** @constant */
                 type: "create";
+                title: string;
+                repositories: string[];
               }
             | {
+                /** @constant */
+                type: "codebase";
                 home: string;
                 thread: string;
                 expected: {
@@ -51649,8 +51651,6 @@ export interface operations {
                   id: string;
                 };
                 repositories: string[];
-                /** @constant */
-                type: "codebase";
               };
         };
       };
@@ -51795,11 +51795,11 @@ export interface operations {
                 view: "files";
               }
             | {
+                /** @constant */
+                view: "changes";
                 /** @enum {string} */
                 range: "since_last_commit" | "last_turn" | "branch";
                 base?: string | null;
-                /** @constant */
-                view: "changes";
               };
           path?: string | null;
           cursor?: string | null;
@@ -52071,6 +52071,8 @@ export interface operations {
           expected_revision: number;
           action:
             | {
+                /** @constant */
+                action: "configure";
                 settings: {
                   /**
                    * Format: uint64
@@ -52098,8 +52100,6 @@ export interface operations {
                   /** @default null */
                   target_peer?: string | null;
                 };
-                /** @constant */
-                action: "configure";
               }
             | {
                 /** @constant */
@@ -52110,14 +52110,14 @@ export interface operations {
                 action: "download";
               }
             | {
-                path: string;
                 /** @constant */
                 action: "import";
+                path: string;
               }
             | {
-                model: string;
                 /** @constant */
                 action: "remove";
+                model: string;
               }
             | {
                 /** @constant */
@@ -52128,15 +52128,15 @@ export interface operations {
                 action: "stop";
               }
             | {
-                name: string;
-                invitation: unknown;
                 /** @constant */
                 action: "pair";
+                name: string;
+                invitation: unknown;
               }
             | {
-                identity: string;
                 /** @constant */
                 action: "revoke";
+                identity: string;
               };
         };
       };
@@ -52634,20 +52634,20 @@ export interface operations {
       content: {
         "application/json":
           | {
-              request_id: string;
-              account?: string | null;
               /** @constant */
               action: "connect";
+              request_id: string;
+              account?: string | null;
             }
           | {
-              attempt: string;
               /** @constant */
               action: "cancel";
+              attempt: string;
             }
           | {
-              account: string;
               /** @constant */
               action: "sign_out";
+              account: string;
             };
       };
     };
@@ -55317,9 +55317,9 @@ export interface operations {
           } | null;
           action:
             | {
-                title: string;
                 /** @constant */
                 action: "rename";
+                title: string;
               }
             | {
                 /** @constant */
@@ -55338,14 +55338,14 @@ export interface operations {
                 action: "regenerate_title";
               }
             | {
-                job: string;
                 /** @constant */
                 action: "cancel";
+                job: string;
               }
             | {
-                job: string;
                 /** @constant */
                 action: "publish";
+                job: string;
               };
         };
       };
@@ -55831,11 +55831,13 @@ export interface operations {
             agent_target?:
               | (
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -55854,10 +55856,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -55909,10 +55911,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -55939,10 +55941,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -55993,15 +55995,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -56018,10 +56020,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -56039,18 +56041,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -56077,8 +56079,6 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_checkpoint";
                     }
                 )
               | null;
@@ -56173,11 +56173,13 @@ export interface operations {
                 /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                 target:
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -56196,10 +56198,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -56251,10 +56253,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -56281,10 +56283,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -56335,15 +56337,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -56360,10 +56362,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -56381,18 +56383,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -56419,8 +56421,6 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_checkpoint";
                     };
                 /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                 part?: string | null;
@@ -56471,11 +56471,13 @@ export interface operations {
             }[];
             references: (
               | {
-                  thread_id: string;
                   /** @constant */
                   type: "thread";
+                  thread_id: string;
                 }
               | {
+                  /** @constant */
+                  type: "human_message";
                   thread_id: string;
                   message_id: string;
                   revision: {
@@ -56494,10 +56496,10 @@ export interface operations {
                       | "image_asset";
                     id: string;
                   };
-                  /** @constant */
-                  type: "human_message";
                 }
               | {
+                  /** @constant */
+                  type: "agent_message";
                   session_id: string;
                   message_id: string;
                   event_id: string;
@@ -56549,10 +56551,10 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "agent_message";
                 }
               | {
+                  /** @constant */
+                  type: "tool_invocation";
                   session_id: string;
                   tool_id: string;
                   snapshot: {
@@ -56579,10 +56581,10 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "tool_invocation";
                 }
               | {
+                  /** @constant */
+                  type: "tool_output";
                   session_id: string;
                   tool_id: string;
                   snapshot: {
@@ -56633,15 +56635,15 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "tool_output";
                 }
               | {
-                  thread_id: string;
                   /** @constant */
                   type: "review_thread";
+                  thread_id: string;
                 }
               | {
+                  /** @constant */
+                  type: "review_comment";
                   thread_id: string;
                   comment_id: string;
                   revision: {
@@ -56658,10 +56660,10 @@ export interface operations {
                       | "status_page";
                     id: string;
                   };
-                  /** @constant */
-                  type: "review_comment";
                 }
               | {
+                  /** @constant */
+                  type: "repository_review_comment";
                   repository: string;
                   thread_id: string;
                   comment_id: string;
@@ -56679,18 +56681,18 @@ export interface operations {
                       | "status_page";
                     id: string;
                   };
-                  /** @constant */
-                  type: "repository_review_comment";
                 }
               | {
+                  /** @constant */
+                  type: "work_comment";
                   task_id: string;
                   comment_id: string;
                   /** Format: uint64 */
                   version: number;
-                  /** @constant */
-                  type: "work_comment";
                 }
               | {
+                  /** @constant */
+                  type: "agent_checkpoint";
                   session_id: string;
                   checkpoint_id: string;
                   version: {
@@ -56717,8 +56719,6 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "agent_checkpoint";
                 }
             )[];
             workspace_comments?: {
@@ -56753,11 +56753,13 @@ export interface operations {
               previous?:
                 | (
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "human_message";
                         thread_id: string;
                         message_id: string;
                         revision: {
@@ -56776,10 +56778,10 @@ export interface operations {
                             | "image_asset";
                           id: string;
                         };
-                        /** @constant */
-                        type: "human_message";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_message";
                         session_id: string;
                         message_id: string;
                         event_id: string;
@@ -56831,10 +56833,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_message";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_invocation";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -56861,10 +56863,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_invocation";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_output";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -56915,15 +56917,15 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_output";
                       }
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "review_thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "review_comment";
                         thread_id: string;
                         comment_id: string;
                         revision: {
@@ -56940,10 +56942,10 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "repository_review_comment";
                         repository: string;
                         thread_id: string;
                         comment_id: string;
@@ -56961,18 +56963,18 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "repository_review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "work_comment";
                         task_id: string;
                         comment_id: string;
                         /** Format: uint64 */
                         version: number;
-                        /** @constant */
-                        type: "work_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_checkpoint";
                         session_id: string;
                         checkpoint_id: string;
                         version: {
@@ -56999,8 +57001,6 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_checkpoint";
                       }
                   )
                 | null;
@@ -57430,15 +57430,17 @@ export interface operations {
           session_id: string;
           action:
             | {
+                /** @constant */
+                action: "configure";
                 preferences: {
                   model?: string | null;
                   effort?: string | null;
                   mode?: string | null;
                 };
-                /** @constant */
-                action: "configure";
               }
             | {
+                /** @constant */
+                action: "prompt";
                 comments?: {
                   emojis?: {
                     source: string;
@@ -57503,11 +57505,13 @@ export interface operations {
                       /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                       target:
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "human_message";
                             thread_id: string;
                             message_id: string;
                             revision: {
@@ -57526,10 +57530,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "human_message";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_message";
                             session_id: string;
                             message_id: string;
                             event_id: string;
@@ -57581,10 +57585,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_message";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_invocation";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -57611,10 +57615,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_invocation";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_output";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -57665,15 +57669,15 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_output";
                           }
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "review_thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "review_comment";
                             thread_id: string;
                             comment_id: string;
                             revision: {
@@ -57690,10 +57694,10 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "repository_review_comment";
                             repository: string;
                             thread_id: string;
                             comment_id: string;
@@ -57711,18 +57715,18 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "repository_review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "work_comment";
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
                             version: number;
-                            /** @constant */
-                            type: "work_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_checkpoint";
                             session_id: string;
                             checkpoint_id: string;
                             version: {
@@ -57749,8 +57753,6 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_checkpoint";
                           };
                       /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                       part?: string | null;
@@ -57801,11 +57803,13 @@ export interface operations {
                   }[];
                   references: (
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "human_message";
                         thread_id: string;
                         message_id: string;
                         revision: {
@@ -57824,10 +57828,10 @@ export interface operations {
                             | "image_asset";
                           id: string;
                         };
-                        /** @constant */
-                        type: "human_message";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_message";
                         session_id: string;
                         message_id: string;
                         event_id: string;
@@ -57879,10 +57883,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_message";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_invocation";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -57909,10 +57913,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_invocation";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_output";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -57963,15 +57967,15 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_output";
                       }
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "review_thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "review_comment";
                         thread_id: string;
                         comment_id: string;
                         revision: {
@@ -57988,10 +57992,10 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "repository_review_comment";
                         repository: string;
                         thread_id: string;
                         comment_id: string;
@@ -58009,18 +58013,18 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "repository_review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "work_comment";
                         task_id: string;
                         comment_id: string;
                         /** Format: uint64 */
                         version: number;
-                        /** @constant */
-                        type: "work_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_checkpoint";
                         session_id: string;
                         checkpoint_id: string;
                         version: {
@@ -58047,8 +58051,6 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_checkpoint";
                       }
                   )[];
                   workspace_comments?: {
@@ -58083,11 +58085,13 @@ export interface operations {
                     previous?:
                       | (
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "human_message";
                               thread_id: string;
                               message_id: string;
                               revision: {
@@ -58106,10 +58110,10 @@ export interface operations {
                                   | "image_asset";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "human_message";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_message";
                               session_id: string;
                               message_id: string;
                               event_id: string;
@@ -58161,10 +58165,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_message";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_invocation";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -58191,10 +58195,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_invocation";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_output";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -58245,15 +58249,15 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_output";
                             }
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "review_thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "review_comment";
                               thread_id: string;
                               comment_id: string;
                               revision: {
@@ -58270,10 +58274,10 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "repository_review_comment";
                               repository: string;
                               thread_id: string;
                               comment_id: string;
@@ -58291,18 +58295,18 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "repository_review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "work_comment";
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
                               version: number;
-                              /** @constant */
-                              type: "work_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_checkpoint";
                               session_id: string;
                               checkpoint_id: string;
                               version: {
@@ -58329,8 +58333,6 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_checkpoint";
                             }
                         )
                       | null;
@@ -58341,19 +58343,17 @@ export interface operations {
                 text: string;
                 /** Format: uint64 */
                 max_duration_ms: number;
-                /** @constant */
-                action: "prompt";
               }
             | {
-                permission_id: string;
-                option_id?: string | null;
                 /** @constant */
                 action: "permission";
+                permission_id: string;
+                option_id?: string | null;
               }
             | {
-                target: string;
                 /** @constant */
                 action: "cancel";
+                target: string;
               }
             | {
                 /** @constant */
@@ -59575,15 +59575,15 @@ export interface operations {
       content: {
         "application/json":
           | {
-              id: string;
-              name: string;
               /** @constant */
               action: "rename";
+              id: string;
+              name: string;
             }
           | {
-              id: string;
               /** @constant */
               action: "remove";
+              id: string;
             };
       };
     };
@@ -60566,11 +60566,13 @@ export interface operations {
             agent_target?:
               | (
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -60589,10 +60591,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -60644,10 +60646,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -60674,10 +60676,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -60728,15 +60730,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -60753,10 +60755,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -60774,18 +60776,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -60812,8 +60814,6 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_checkpoint";
                     }
                 )
               | null;
@@ -60908,11 +60908,13 @@ export interface operations {
                 /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                 target:
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "human_message";
                       thread_id: string;
                       message_id: string;
                       revision: {
@@ -60931,10 +60933,10 @@ export interface operations {
                           | "image_asset";
                         id: string;
                       };
-                      /** @constant */
-                      type: "human_message";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_message";
                       session_id: string;
                       message_id: string;
                       event_id: string;
@@ -60986,10 +60988,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_message";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_invocation";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -61016,10 +61018,10 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_invocation";
                     }
                   | {
+                      /** @constant */
+                      type: "tool_output";
                       session_id: string;
                       tool_id: string;
                       snapshot: {
@@ -61070,15 +61072,15 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "tool_output";
                     }
                   | {
-                      thread_id: string;
                       /** @constant */
                       type: "review_thread";
+                      thread_id: string;
                     }
                   | {
+                      /** @constant */
+                      type: "review_comment";
                       thread_id: string;
                       comment_id: string;
                       revision: {
@@ -61095,10 +61097,10 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "repository_review_comment";
                       repository: string;
                       thread_id: string;
                       comment_id: string;
@@ -61116,18 +61118,18 @@ export interface operations {
                           | "status_page";
                         id: string;
                       };
-                      /** @constant */
-                      type: "repository_review_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "work_comment";
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
                       version: number;
-                      /** @constant */
-                      type: "work_comment";
                     }
                   | {
+                      /** @constant */
+                      type: "agent_checkpoint";
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -61154,8 +61156,6 @@ export interface operations {
                           | "catalog_conflict";
                         id: string;
                       };
-                      /** @constant */
-                      type: "agent_checkpoint";
                     };
                 /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                 part?: string | null;
@@ -61206,11 +61206,13 @@ export interface operations {
             }[];
             references: (
               | {
-                  thread_id: string;
                   /** @constant */
                   type: "thread";
+                  thread_id: string;
                 }
               | {
+                  /** @constant */
+                  type: "human_message";
                   thread_id: string;
                   message_id: string;
                   revision: {
@@ -61229,10 +61231,10 @@ export interface operations {
                       | "image_asset";
                     id: string;
                   };
-                  /** @constant */
-                  type: "human_message";
                 }
               | {
+                  /** @constant */
+                  type: "agent_message";
                   session_id: string;
                   message_id: string;
                   event_id: string;
@@ -61284,10 +61286,10 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "agent_message";
                 }
               | {
+                  /** @constant */
+                  type: "tool_invocation";
                   session_id: string;
                   tool_id: string;
                   snapshot: {
@@ -61314,10 +61316,10 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "tool_invocation";
                 }
               | {
+                  /** @constant */
+                  type: "tool_output";
                   session_id: string;
                   tool_id: string;
                   snapshot: {
@@ -61368,15 +61370,15 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "tool_output";
                 }
               | {
-                  thread_id: string;
                   /** @constant */
                   type: "review_thread";
+                  thread_id: string;
                 }
               | {
+                  /** @constant */
+                  type: "review_comment";
                   thread_id: string;
                   comment_id: string;
                   revision: {
@@ -61393,10 +61395,10 @@ export interface operations {
                       | "status_page";
                     id: string;
                   };
-                  /** @constant */
-                  type: "review_comment";
                 }
               | {
+                  /** @constant */
+                  type: "repository_review_comment";
                   repository: string;
                   thread_id: string;
                   comment_id: string;
@@ -61414,18 +61416,18 @@ export interface operations {
                       | "status_page";
                     id: string;
                   };
-                  /** @constant */
-                  type: "repository_review_comment";
                 }
               | {
+                  /** @constant */
+                  type: "work_comment";
                   task_id: string;
                   comment_id: string;
                   /** Format: uint64 */
                   version: number;
-                  /** @constant */
-                  type: "work_comment";
                 }
               | {
+                  /** @constant */
+                  type: "agent_checkpoint";
                   session_id: string;
                   checkpoint_id: string;
                   version: {
@@ -61452,8 +61454,6 @@ export interface operations {
                       | "catalog_conflict";
                     id: string;
                   };
-                  /** @constant */
-                  type: "agent_checkpoint";
                 }
             )[];
             workspace_comments?: {
@@ -61488,11 +61488,13 @@ export interface operations {
               previous?:
                 | (
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "human_message";
                         thread_id: string;
                         message_id: string;
                         revision: {
@@ -61511,10 +61513,10 @@ export interface operations {
                             | "image_asset";
                           id: string;
                         };
-                        /** @constant */
-                        type: "human_message";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_message";
                         session_id: string;
                         message_id: string;
                         event_id: string;
@@ -61566,10 +61568,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_message";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_invocation";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -61596,10 +61598,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_invocation";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_output";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -61650,15 +61652,15 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_output";
                       }
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "review_thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "review_comment";
                         thread_id: string;
                         comment_id: string;
                         revision: {
@@ -61675,10 +61677,10 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "repository_review_comment";
                         repository: string;
                         thread_id: string;
                         comment_id: string;
@@ -61696,18 +61698,18 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "repository_review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "work_comment";
                         task_id: string;
                         comment_id: string;
                         /** Format: uint64 */
                         version: number;
-                        /** @constant */
-                        type: "work_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_checkpoint";
                         session_id: string;
                         checkpoint_id: string;
                         version: {
@@ -61734,8 +61736,6 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_checkpoint";
                       }
                   )
                 | null;
@@ -61884,15 +61884,17 @@ export interface operations {
           session_id: string;
           action:
             | {
+                /** @constant */
+                action: "configure";
                 preferences: {
                   model?: string | null;
                   effort?: string | null;
                   mode?: string | null;
                 };
-                /** @constant */
-                action: "configure";
               }
             | {
+                /** @constant */
+                action: "prompt";
                 comments?: {
                   emojis?: {
                     source: string;
@@ -61957,11 +61959,13 @@ export interface operations {
                       /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
                       target:
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "human_message";
                             thread_id: string;
                             message_id: string;
                             revision: {
@@ -61980,10 +61984,10 @@ export interface operations {
                                 | "image_asset";
                               id: string;
                             };
-                            /** @constant */
-                            type: "human_message";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_message";
                             session_id: string;
                             message_id: string;
                             event_id: string;
@@ -62035,10 +62039,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_message";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_invocation";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -62065,10 +62069,10 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_invocation";
                           }
                         | {
+                            /** @constant */
+                            type: "tool_output";
                             session_id: string;
                             tool_id: string;
                             snapshot: {
@@ -62119,15 +62123,15 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "tool_output";
                           }
                         | {
-                            thread_id: string;
                             /** @constant */
                             type: "review_thread";
+                            thread_id: string;
                           }
                         | {
+                            /** @constant */
+                            type: "review_comment";
                             thread_id: string;
                             comment_id: string;
                             revision: {
@@ -62144,10 +62148,10 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "repository_review_comment";
                             repository: string;
                             thread_id: string;
                             comment_id: string;
@@ -62165,18 +62169,18 @@ export interface operations {
                                 | "status_page";
                               id: string;
                             };
-                            /** @constant */
-                            type: "repository_review_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "work_comment";
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
                             version: number;
-                            /** @constant */
-                            type: "work_comment";
                           }
                         | {
+                            /** @constant */
+                            type: "agent_checkpoint";
                             session_id: string;
                             checkpoint_id: string;
                             version: {
@@ -62203,8 +62207,6 @@ export interface operations {
                                 | "catalog_conflict";
                               id: string;
                             };
-                            /** @constant */
-                            type: "agent_checkpoint";
                           };
                       /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
                       part?: string | null;
@@ -62255,11 +62257,13 @@ export interface operations {
                   }[];
                   references: (
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "human_message";
                         thread_id: string;
                         message_id: string;
                         revision: {
@@ -62278,10 +62282,10 @@ export interface operations {
                             | "image_asset";
                           id: string;
                         };
-                        /** @constant */
-                        type: "human_message";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_message";
                         session_id: string;
                         message_id: string;
                         event_id: string;
@@ -62333,10 +62337,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_message";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_invocation";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -62363,10 +62367,10 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_invocation";
                       }
                     | {
+                        /** @constant */
+                        type: "tool_output";
                         session_id: string;
                         tool_id: string;
                         snapshot: {
@@ -62417,15 +62421,15 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "tool_output";
                       }
                     | {
-                        thread_id: string;
                         /** @constant */
                         type: "review_thread";
+                        thread_id: string;
                       }
                     | {
+                        /** @constant */
+                        type: "review_comment";
                         thread_id: string;
                         comment_id: string;
                         revision: {
@@ -62442,10 +62446,10 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "repository_review_comment";
                         repository: string;
                         thread_id: string;
                         comment_id: string;
@@ -62463,18 +62467,18 @@ export interface operations {
                             | "status_page";
                           id: string;
                         };
-                        /** @constant */
-                        type: "repository_review_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "work_comment";
                         task_id: string;
                         comment_id: string;
                         /** Format: uint64 */
                         version: number;
-                        /** @constant */
-                        type: "work_comment";
                       }
                     | {
+                        /** @constant */
+                        type: "agent_checkpoint";
                         session_id: string;
                         checkpoint_id: string;
                         version: {
@@ -62501,8 +62505,6 @@ export interface operations {
                             | "catalog_conflict";
                           id: string;
                         };
-                        /** @constant */
-                        type: "agent_checkpoint";
                       }
                   )[];
                   workspace_comments?: {
@@ -62537,11 +62539,13 @@ export interface operations {
                     previous?:
                       | (
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "human_message";
                               thread_id: string;
                               message_id: string;
                               revision: {
@@ -62560,10 +62564,10 @@ export interface operations {
                                   | "image_asset";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "human_message";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_message";
                               session_id: string;
                               message_id: string;
                               event_id: string;
@@ -62615,10 +62619,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_message";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_invocation";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -62645,10 +62649,10 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_invocation";
                             }
                           | {
+                              /** @constant */
+                              type: "tool_output";
                               session_id: string;
                               tool_id: string;
                               snapshot: {
@@ -62699,15 +62703,15 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "tool_output";
                             }
                           | {
-                              thread_id: string;
                               /** @constant */
                               type: "review_thread";
+                              thread_id: string;
                             }
                           | {
+                              /** @constant */
+                              type: "review_comment";
                               thread_id: string;
                               comment_id: string;
                               revision: {
@@ -62724,10 +62728,10 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "repository_review_comment";
                               repository: string;
                               thread_id: string;
                               comment_id: string;
@@ -62745,18 +62749,18 @@ export interface operations {
                                   | "status_page";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "repository_review_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "work_comment";
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
                               version: number;
-                              /** @constant */
-                              type: "work_comment";
                             }
                           | {
+                              /** @constant */
+                              type: "agent_checkpoint";
                               session_id: string;
                               checkpoint_id: string;
                               version: {
@@ -62783,8 +62787,6 @@ export interface operations {
                                   | "catalog_conflict";
                                 id: string;
                               };
-                              /** @constant */
-                              type: "agent_checkpoint";
                             }
                         )
                       | null;
@@ -62795,19 +62797,17 @@ export interface operations {
                 text: string;
                 /** Format: uint64 */
                 max_duration_ms: number;
-                /** @constant */
-                action: "prompt";
               }
             | {
-                permission_id: string;
-                option_id?: string | null;
                 /** @constant */
                 action: "permission";
+                permission_id: string;
+                option_id?: string | null;
               }
             | {
-                target: string;
                 /** @constant */
                 action: "cancel";
+                target: string;
               }
             | {
                 /** @constant */
@@ -62968,11 +62968,11 @@ export interface operations {
                 view: "files";
               }
             | {
+                /** @constant */
+                view: "changes";
                 /** @enum {string} */
                 range: "since_last_commit" | "last_turn" | "branch";
                 base?: string | null;
-                /** @constant */
-                view: "changes";
               };
           path?: string | null;
           cursor?: string | null;
@@ -67393,6 +67393,8 @@ export interface operations {
           request_id: string;
           command:
             | {
+                /** @constant */
+                type: "save_profile";
                 expected?: string | null;
                 details: {
                   display_name: string;
@@ -67401,32 +67403,30 @@ export interface operations {
                   /** @description blob:<sha256>, HTTPS URL, emoji or fixed Community emoji SVG. */
                   avatar?: string | null;
                 };
-                /** @constant */
-                type: "save_profile";
               }
             | {
-                bytes: number[];
                 /** @constant */
                 type: "upload";
+                bytes: number[];
               }
             | {
-                bytes: number[];
                 /** @constant */
                 type: "upload_image";
+                bytes: number[];
               }
             | {
+                /** @constant */
+                type: "save_emoji";
                 id: string;
                 expected?: string | null;
                 shortcode: string;
                 asset: string;
-                /** @constant */
-                type: "save_emoji";
               }
             | {
-                id: string;
-                expected: string;
                 /** @constant */
                 type: "retire_emoji";
+                id: string;
+                expected: string;
               };
         };
       };

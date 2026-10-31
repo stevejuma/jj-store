@@ -1283,12 +1283,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "kind": {
           "type": "string",
           "const": "bookmark"
+        },
+        "name": {
+          "type": "string"
         }
       },
       "required": [
@@ -1300,12 +1300,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "kind": {
           "type": "string",
           "const": "workspace"
+        },
+        "name": {
+          "type": "string"
         }
       },
       "required": [
@@ -2358,12 +2358,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "id": {
-          "$ref": "#/components/schemas/OperationId"
-        },
         "kind": {
           "type": "string",
           "const": "operation"
+        },
+        "id": {
+          "$ref": "#/components/schemas/OperationId"
         }
       },
       "required": [
@@ -2375,12 +2375,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "id": {
-          "$ref": "#/components/schemas/CommitId"
-        },
         "kind": {
           "type": "string",
           "const": "commit"
+        },
+        "id": {
+          "$ref": "#/components/schemas/CommitId"
         }
       },
       "required": [
@@ -2392,15 +2392,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "file"
+        },
         "scope": {
           "type": "string"
         },
         "path": {
           "type": "string"
-        },
-        "kind": {
-          "type": "string",
-          "const": "file"
         }
       },
       "required": [
@@ -2886,12 +2886,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "thread_id": {
-          "$ref": "#/components/schemas/ThreadId"
-        },
         "type": {
           "type": "string",
           "const": "thread"
+        },
+        "thread_id": {
+          "$ref": "#/components/schemas/ThreadId"
         }
       },
       "required": [
@@ -2903,6 +2903,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "human_message"
+        },
         "thread_id": {
           "$ref": "#/components/schemas/ThreadId"
         },
@@ -2911,10 +2915,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "revision": {
           "$ref": "#/components/schemas/CollabObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "human_message"
         }
       },
       "required": [
@@ -2928,6 +2928,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "agent_message"
+        },
         "session_id": {
           "$ref": "#/components/schemas/AgentSessionId"
         },
@@ -2942,10 +2946,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "content": {
           "$ref": "#/components/schemas/AgentObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "agent_message"
         }
       },
       "required": [
@@ -2961,6 +2961,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "tool_invocation"
+        },
         "session_id": {
           "$ref": "#/components/schemas/AgentSessionId"
         },
@@ -2969,10 +2973,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "snapshot": {
           "$ref": "#/components/schemas/AgentObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "tool_invocation"
         }
       },
       "required": [
@@ -2986,6 +2986,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "tool_output"
+        },
         "session_id": {
           "$ref": "#/components/schemas/AgentSessionId"
         },
@@ -2997,10 +3001,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "content": {
           "$ref": "#/components/schemas/AgentObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "tool_output"
         }
       },
       "required": [
@@ -3015,12 +3015,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "thread_id": {
-          "$ref": "#/components/schemas/ReviewThreadId"
-        },
         "type": {
           "type": "string",
           "const": "review_thread"
+        },
+        "thread_id": {
+          "$ref": "#/components/schemas/ReviewThreadId"
         }
       },
       "required": [
@@ -3032,6 +3032,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "review_comment"
+        },
         "thread_id": {
           "$ref": "#/components/schemas/ReviewThreadId"
         },
@@ -3040,10 +3044,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "revision": {
           "$ref": "#/components/schemas/ReviewObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "review_comment"
         }
       },
       "required": [
@@ -3057,6 +3057,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "repository_review_comment"
+        },
         "repository": {
           "$ref": "#/components/schemas/RepositoryId"
         },
@@ -3068,10 +3072,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "revision": {
           "$ref": "#/components/schemas/ReviewObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "repository_review_comment"
         }
       },
       "required": [
@@ -3087,6 +3087,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "work_comment"
+        },
         "task_id": {
           "$ref": "#/components/schemas/TaskId"
         },
@@ -3097,10 +3101,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "type": "integer",
           "format": "uint64",
           "minimum": 0
-        },
-        "type": {
-          "type": "string",
-          "const": "work_comment"
         }
       },
       "required": [
@@ -3114,6 +3114,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "agent_checkpoint"
+        },
         "session_id": {
           "$ref": "#/components/schemas/AgentSessionId"
         },
@@ -3122,10 +3126,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "version": {
           "$ref": "#/components/schemas/AgentObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "agent_checkpoint"
         }
       },
       "required": [
@@ -3811,6 +3811,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "session_state"
+        },
         "sequence": {
           "type": "integer",
           "format": "uint64",
@@ -3821,10 +3825,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "state": {
           "$ref": "#/components/schemas/SessionState"
-        },
-        "type": {
-          "type": "string",
-          "const": "session_state"
         }
       },
       "required": [
@@ -3837,6 +3837,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "message"
+        },
         "reaction_target": {
           "anyOf": [
             {
@@ -3880,10 +3884,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "content": {
           "$ref": "#/components/schemas/AgentContent"
-        },
-        "type": {
-          "type": "string",
-          "const": "message"
         }
       },
       "required": [
@@ -3899,6 +3899,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "tool"
+        },
         "sequence": {
           "type": "integer",
           "format": "uint64",
@@ -3909,10 +3913,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "tool": {
           "$ref": "#/components/schemas/AgentToolActivity"
-        },
-        "type": {
-          "type": "string",
-          "const": "tool"
         }
       },
       "required": [
@@ -3925,6 +3925,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "permission"
+        },
         "sequence": {
           "type": "integer",
           "format": "uint64",
@@ -3945,10 +3949,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "state": {
           "$ref": "#/components/schemas/PermissionState"
-        },
-        "type": {
-          "type": "string",
-          "const": "permission"
         }
       },
       "required": [
@@ -3962,6 +3962,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "file_observed"
+        },
         "sequence": {
           "type": "integer",
           "format": "uint64",
@@ -3972,10 +3976,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "path": {
           "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "const": "file_observed"
         }
       },
       "required": [
@@ -3988,6 +3988,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "capture_gap"
+        },
         "sequence": {
           "type": "integer",
           "format": "uint64",
@@ -4005,10 +4009,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "type": "integer",
           "format": "uint64",
           "minimum": 0
-        },
-        "type": {
-          "type": "string",
-          "const": "capture_gap"
         }
       },
       "required": [
@@ -4475,12 +4475,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "session_id": {
-          "$ref": "#/components/schemas/AgentSessionId"
-        },
         "subject": {
           "type": "string",
           "const": "session"
+        },
+        "session_id": {
+          "$ref": "#/components/schemas/AgentSessionId"
         }
       },
       "required": [
@@ -4492,15 +4492,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "subject": {
+          "type": "string",
+          "const": "tool"
+        },
         "session_id": {
           "$ref": "#/components/schemas/AgentSessionId"
         },
         "tool_call_id": {
           "$ref": "#/components/schemas/ToolCallId"
-        },
-        "subject": {
-          "type": "string",
-          "const": "tool"
         }
       },
       "required": [
@@ -4513,12 +4513,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "operation_id": {
-          "$ref": "#/components/schemas/OperationId"
-        },
         "subject": {
           "type": "string",
           "const": "operation"
+        },
+        "operation_id": {
+          "$ref": "#/components/schemas/OperationId"
         }
       },
       "required": [
@@ -4530,12 +4530,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "commit_id": {
-          "$ref": "#/components/schemas/CommitId"
-        },
         "subject": {
           "type": "string",
           "const": "revision"
+        },
+        "commit_id": {
+          "$ref": "#/components/schemas/CommitId"
         }
       },
       "required": [
@@ -4547,12 +4547,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "checkpoint_id": {
-          "$ref": "#/components/schemas/AgentCheckpointId"
-        },
         "subject": {
           "type": "string",
           "const": "checkpoint"
+        },
+        "checkpoint_id": {
+          "$ref": "#/components/schemas/AgentCheckpointId"
         }
       },
       "required": [
@@ -5686,12 +5686,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "object": {
-          "$ref": "#/components/schemas/ObjectKey"
-        },
         "profile": {
           "type": "string",
           "const": "native_v1"
+        },
+        "object": {
+          "$ref": "#/components/schemas/ObjectKey"
         }
       },
       "required": [
@@ -5703,15 +5703,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "profile": {
+          "type": "string",
+          "const": "git_sha1_jj045"
+        },
         "kind": {
           "$ref": "#/components/schemas/GitObjectKindV1"
         },
         "id": {
           "$ref": "#/components/schemas/GitSha1Id"
-        },
-        "profile": {
-          "type": "string",
-          "const": "git_sha1_jj045"
         }
       },
       "required": [
@@ -6062,6 +6062,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "tool"
+        },
         "tool_call_id": {
           "$ref": "#/components/schemas/ToolCallId"
         },
@@ -6070,10 +6074,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "attempt_id": {
           "$ref": "#/components/schemas/ToolAttemptId"
-        },
-        "kind": {
-          "type": "string",
-          "const": "tool"
         }
       },
       "required": [
@@ -6087,15 +6087,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "message"
+        },
         "message_id": {
           "$ref": "#/components/schemas/MessageId"
         },
         "snapshot": {
           "$ref": "#/components/schemas/AgentObjectRef"
-        },
-        "kind": {
-          "type": "string",
-          "const": "message"
         }
       },
       "required": [
@@ -6108,15 +6108,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "plan"
+        },
         "block_id": {
           "$ref": "#/components/schemas/BlockId"
         },
         "snapshot": {
           "$ref": "#/components/schemas/AgentObjectRef"
-        },
-        "kind": {
-          "type": "string",
-          "const": "plan"
         }
       },
       "required": [
@@ -6519,6 +6519,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "state": {
+          "type": "string",
+          "const": "visible"
+        },
         "body_id": {
           "$ref": "#/components/schemas/ReviewObjectId"
         },
@@ -6530,10 +6534,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "sanitizer_version": {
           "type": "string"
-        },
-        "state": {
-          "type": "string",
-          "const": "visible"
         }
       },
       "required": [
@@ -6547,15 +6547,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "state": {
+          "type": "string",
+          "const": "tombstoned"
+        },
         "reason": {
           "type": [
             "string",
             "null"
           ]
-        },
-        "state": {
-          "type": "string",
-          "const": "tombstoned"
         }
       },
       "required": [
@@ -6566,12 +6566,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "reason": {
-          "type": "string"
-        },
         "state": {
           "type": "string",
           "const": "hidden"
+        },
+        "reason": {
+          "type": "string"
         }
       },
       "required": [
@@ -6730,6 +6730,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "action": {
+          "type": "string",
+          "const": "created"
+        },
         "anchor_id": {
           "$ref": "#/components/schemas/ReviewObjectId"
         },
@@ -6738,10 +6742,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "initial_revision_id": {
           "$ref": "#/components/schemas/ReviewObjectId"
-        },
-        "action": {
-          "type": "string",
-          "const": "created"
         }
       },
       "required": [
@@ -6754,6 +6754,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "action": {
+          "type": "string",
+          "const": "reply_added"
+        },
         "comment_id": {
           "$ref": "#/components/schemas/CommentId"
         },
@@ -6769,10 +6773,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "revision_id": {
           "$ref": "#/components/schemas/ReviewObjectId"
-        },
-        "action": {
-          "type": "string",
-          "const": "reply_added"
         }
       },
       "required": [
@@ -6785,6 +6785,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "action": {
+          "type": "string",
+          "const": "comment_revised"
+        },
         "comment_id": {
           "$ref": "#/components/schemas/CommentId"
         },
@@ -6793,10 +6797,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "revision_id": {
           "$ref": "#/components/schemas/ReviewObjectId"
-        },
-        "action": {
-          "type": "string",
-          "const": "comment_revised"
         }
       },
       "required": [
@@ -6809,6 +6809,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "action": {
+          "type": "string",
+          "const": "comment_conflict_resolved"
+        },
         "comment_id": {
           "$ref": "#/components/schemas/CommentId"
         },
@@ -6820,10 +6824,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "revision_id": {
           "$ref": "#/components/schemas/ReviewObjectId"
-        },
-        "action": {
-          "type": "string",
-          "const": "comment_conflict_resolved"
         }
       },
       "required": [
@@ -6836,6 +6836,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "action": {
+          "type": "string",
+          "const": "resolved"
+        },
         "action_id": {
           "$ref": "#/components/schemas/ReviewActionId"
         },
@@ -6844,10 +6848,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
             "string",
             "null"
           ]
-        },
-        "action": {
-          "type": "string",
-          "const": "resolved"
         }
       },
       "required": [
@@ -6859,6 +6859,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "action": {
+          "type": "string",
+          "const": "reopened"
+        },
         "action_id": {
           "$ref": "#/components/schemas/ReviewActionId"
         },
@@ -6867,10 +6871,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
             "string",
             "null"
           ]
-        },
-        "action": {
-          "type": "string",
-          "const": "reopened"
         }
       },
       "required": [
@@ -6891,12 +6891,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/ReviewCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/ReviewCommandReceipt"
         }
       },
       "required": [
@@ -6907,12 +6907,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -7090,12 +7090,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/ReviewCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/ReviewCommandReceipt"
         }
       },
       "required": [
@@ -7106,12 +7106,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -7122,12 +7122,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -7288,15 +7288,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "threads"
+        },
         "threads": {
           "type": "array",
           "items": {
             "$ref": "#/components/schemas/ThreadSummaryV1"
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "threads"
         }
       },
       "required": [
@@ -7307,6 +7307,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "events"
+        },
         "thread_id": {
           "$ref": "#/components/schemas/ThreadId"
         },
@@ -7315,10 +7319,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/ThreadEventItemV1"
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "events"
         }
       },
       "required": [
@@ -7330,6 +7330,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "reactions"
+        },
         "target": {
           "$ref": "#/components/schemas/ReactionTargetV1"
         },
@@ -7352,10 +7356,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/ReactionActorRowV1"
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "reactions"
         }
       },
       "required": [
@@ -7370,6 +7370,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "emojis"
+        },
         "versions": {
           "type": "object",
           "additionalProperties": false,
@@ -7384,10 +7388,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/CustomEmojiVersionV1"
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "emojis"
         }
       },
       "required": [
@@ -7682,12 +7682,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "target": {
-          "$ref": "#/components/schemas/ConversationMetadataTargetV1"
-        },
         "type": {
           "type": "string",
           "const": "conversation"
+        },
+        "target": {
+          "$ref": "#/components/schemas/ConversationMetadataTargetV1"
         }
       },
       "required": [
@@ -7721,12 +7721,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "type": {
           "type": "string",
           "const": "conversation"
+        },
+        "id": {
+          "type": "string"
         }
       },
       "required": [
@@ -7738,12 +7738,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "session": {
-          "$ref": "#/components/schemas/AgentSessionId"
-        },
         "type": {
           "type": "string",
           "const": "recorded"
+        },
+        "session": {
+          "$ref": "#/components/schemas/AgentSessionId"
         }
       },
       "required": [
@@ -7997,12 +7997,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "reply": {
-          "$ref": "#/components/schemas/CommentReplyLinkV1"
-        },
         "type": {
           "type": "string",
           "const": "comment_reply"
+        },
+        "reply": {
+          "$ref": "#/components/schemas/CommentReplyLinkV1"
         }
       },
       "required": [
@@ -8014,6 +8014,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "comment_batch"
+        },
         "request_id": {
           "$ref": "#/components/schemas/RequestId"
         },
@@ -8042,10 +8046,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
               "type": "null"
             }
           ]
-        },
-        "type": {
-          "type": "string",
-          "const": "comment_batch"
         }
       },
       "required": [
@@ -8059,6 +8059,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "capture_gap"
+        },
         "source_state": {
           "$ref": "#/components/schemas/AgentObjectRef"
         },
@@ -8067,10 +8071,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "binding": {
           "$ref": "#/components/schemas/ThreadBindingV1"
-        },
-        "type": {
-          "type": "string",
-          "const": "capture_gap"
         }
       },
       "required": [
@@ -8084,6 +8084,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "session"
+        },
         "session_id": {
           "$ref": "#/components/schemas/AgentSessionId"
         },
@@ -8092,10 +8096,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "primary": {
           "type": "boolean"
-        },
-        "type": {
-          "type": "string",
-          "const": "session"
         }
       },
       "required": [
@@ -8109,6 +8109,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "code"
+        },
         "anchor": {
           "$ref": "#/components/schemas/ThreadCodeAnchorV1"
         },
@@ -8124,10 +8128,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
               "type": "null"
             }
           ]
-        },
-        "type": {
-          "type": "string",
-          "const": "code"
         }
       },
       "required": [
@@ -8141,15 +8141,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "review"
+        },
         "review_id": {
           "$ref": "#/components/schemas/ReviewThreadId"
         },
         "snapshot": {
           "$ref": "#/components/schemas/ReviewObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "review"
         }
       },
       "required": [
@@ -8279,12 +8279,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "version": {
-          "$ref": "#/components/schemas/CollabObjectRef"
-        },
         "type": {
           "type": "string",
           "const": "metadata"
+        },
+        "version": {
+          "$ref": "#/components/schemas/CollabObjectRef"
         }
       },
       "required": [
@@ -8309,12 +8309,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "previous_title": {
-          "type": "string"
-        },
         "type": {
           "type": "string",
           "const": "renamed"
+        },
+        "previous_title": {
+          "type": "string"
         }
       },
       "required": [
@@ -8326,15 +8326,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "lifecycle"
+        },
         "previous_status": {
           "$ref": "#/components/schemas/ThreadStatusV12"
         },
         "action": {
           "$ref": "#/components/schemas/ThreadActionV1"
-        },
-        "type": {
-          "type": "string",
-          "const": "lifecycle"
         }
       },
       "required": [
@@ -8347,12 +8347,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "revision": {
-          "$ref": "#/components/schemas/CollabObjectRef"
-        },
         "type": {
           "type": "string",
           "const": "message"
+        },
+        "revision": {
+          "$ref": "#/components/schemas/CollabObjectRef"
         }
       },
       "required": [
@@ -8364,12 +8364,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "version": {
-          "$ref": "#/components/schemas/CollabObjectRef"
-        },
         "type": {
           "type": "string",
           "const": "link"
+        },
+        "version": {
+          "$ref": "#/components/schemas/CollabObjectRef"
         }
       },
       "required": [
@@ -8469,12 +8469,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "sequence": {
-          "type": "string"
-        },
         "type": {
           "type": "string",
           "const": "emoji"
+        },
+        "sequence": {
+          "type": "string"
         }
       },
       "required": [
@@ -8486,15 +8486,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "custom"
+        },
         "emoji_id": {
           "$ref": "#/components/schemas/CustomEmojiId"
         },
         "version": {
           "$ref": "#/components/schemas/CollabObjectRef"
-        },
-        "type": {
-          "type": "string",
-          "const": "custom"
         }
       },
       "required": [
@@ -8598,12 +8598,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/CollabCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/CollabCommandReceipt"
         }
       },
       "required": [
@@ -8614,12 +8614,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -8687,12 +8687,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "result": {
-          "$ref": "#/components/schemas/ThreadCommandResultV1"
-        },
         "domain": {
           "type": "string",
           "const": "thread"
+        },
+        "result": {
+          "$ref": "#/components/schemas/ThreadCommandResultV1"
         }
       },
       "required": [
@@ -8704,12 +8704,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "result": {
-          "$ref": "#/components/schemas/ReactionCommandResultV1"
-        },
         "domain": {
           "type": "string",
           "const": "reaction"
+        },
+        "result": {
+          "$ref": "#/components/schemas/ReactionCommandResultV1"
         }
       },
       "required": [
@@ -8721,12 +8721,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "version": {
-          "$ref": "#/components/schemas/CollabObjectRef"
-        },
         "domain": {
           "type": "string",
           "const": "emoji"
+        },
+        "version": {
+          "$ref": "#/components/schemas/CollabObjectRef"
         }
       },
       "required": [
@@ -8850,12 +8850,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/CollabCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/CollabCommandReceipt"
         }
       },
       "required": [
@@ -8866,12 +8866,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -8882,12 +8882,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -9745,12 +9745,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "bookmark": {
-          "type": "string"
-        },
         "on": {
           "type": "string",
           "const": "bookmark_changed"
+        },
+        "bookmark": {
+          "type": "string"
         }
       },
       "required": [
@@ -9911,12 +9911,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "type": {
           "type": "string",
           "const": "command"
+        },
+        "name": {
+          "type": "string"
         }
       },
       "required": [
@@ -9928,12 +9928,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "path": {
-          "type": "string"
-        },
         "type": {
           "type": "string",
           "const": "github_workflow"
+        },
+        "path": {
+          "type": "string"
         }
       },
       "required": [
@@ -9945,15 +9945,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "agent"
+        },
         "agent": {
           "type": "string"
         },
         "prompt": {
           "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "const": "agent"
         }
       },
       "required": [
@@ -10306,6 +10306,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "log"
+        },
         "step": {
           "type": [
             "string",
@@ -10317,10 +10321,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "text": {
           "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "const": "log"
         }
       },
       "required": [
@@ -10333,6 +10333,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "step"
+        },
         "step": {
           "type": "string"
         },
@@ -10344,10 +10348,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "additionalProperties": {
             "type": "string"
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "step"
         }
       },
       "required": [
@@ -10361,6 +10361,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "artifact"
+        },
         "name": {
           "type": "string"
         },
@@ -10375,10 +10379,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
             "minimum": 0,
             "maximum": 255
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "artifact"
         }
       },
       "required": [
@@ -10392,15 +10392,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "agent"
+        },
         "session": {
           "type": "string"
         },
         "request_id": {
           "$ref": "#/components/schemas/RequestId"
-        },
-        "type": {
-          "type": "string",
-          "const": "agent"
         }
       },
       "required": [
@@ -10556,12 +10556,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/WorkflowCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/WorkflowCommandReceipt"
         }
       },
       "required": [
@@ -10572,12 +10572,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -10743,12 +10743,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/WorkflowCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/WorkflowCommandReceipt"
         }
       },
       "required": [
@@ -10759,12 +10759,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -10775,12 +10775,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -11060,12 +11060,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/WorkCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/WorkCommandReceipt"
         }
       },
       "required": [
@@ -11076,12 +11076,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -11185,12 +11185,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/WorkCommandReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/WorkCommandReceipt"
         }
       },
       "required": [
@@ -11201,12 +11201,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -11217,12 +11217,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -11257,12 +11257,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "snapshot": {
-          "$ref": "#/components/schemas/HeadSnapshot"
-        },
         "type": {
           "type": "string",
           "const": "ready"
+        },
+        "snapshot": {
+          "$ref": "#/components/schemas/HeadSnapshot"
         }
       },
       "required": [
@@ -11285,15 +11285,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "reset"
+        },
         "reason": {
           "$ref": "#/components/schemas/EventResetReason"
         },
         "snapshot": {
           "$ref": "#/components/schemas/HeadSnapshot"
-        },
-        "type": {
-          "type": "string",
-          "const": "reset"
         }
       },
       "required": [
@@ -11735,6 +11735,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "file"
+        },
         "id": {
           "$ref": "#/components/schemas/FileId"
         },
@@ -11743,10 +11747,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "copy": {
           "$ref": "#/components/schemas/CopyReference"
-        },
-        "type": {
-          "type": "string",
-          "const": "file"
         }
       },
       "required": [
@@ -11760,12 +11760,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "id": {
-          "$ref": "#/components/schemas/SymlinkId"
-        },
         "type": {
           "type": "string",
           "const": "symlink"
+        },
+        "id": {
+          "$ref": "#/components/schemas/SymlinkId"
         }
       },
       "required": [
@@ -11777,12 +11777,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "id": {
-          "$ref": "#/components/schemas/TreeId"
-        },
         "type": {
           "type": "string",
           "const": "tree"
+        },
+        "id": {
+          "$ref": "#/components/schemas/TreeId"
         }
       },
       "required": [
@@ -11794,6 +11794,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "submodule"
+        },
         "id": {
           "type": "array",
           "items": {
@@ -11802,10 +11806,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
             "minimum": 0,
             "maximum": 255
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "submodule"
         }
       },
       "required": [
@@ -12902,6 +12902,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "workspace"
+        },
         "name": {
           "type": "string"
         },
@@ -12910,10 +12914,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/Target"
           }
-        },
-        "kind": {
-          "type": "string",
-          "const": "workspace"
         }
       },
       "required": [
@@ -12925,6 +12925,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "bookmark"
+        },
         "name": {
           "type": "string"
         },
@@ -12955,10 +12959,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/Target"
           }
-        },
-        "kind": {
-          "type": "string",
-          "const": "bookmark"
         }
       },
       "required": [
@@ -12973,6 +12973,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "change"
+        },
         "change": {
           "$ref": "#/components/schemas/ChangeId"
         },
@@ -12984,10 +12988,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/Target"
           }
-        },
-        "kind": {
-          "type": "string",
-          "const": "change"
         }
       },
       "required": [
@@ -13159,15 +13159,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "root"
+        },
         "operation": {
           "$ref": "#/components/schemas/OperationId"
         },
         "view": {
           "$ref": "#/components/schemas/ViewId"
-        },
-        "status": {
-          "type": "string",
-          "const": "root"
         }
       },
       "required": [
@@ -13179,6 +13179,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "select_parent"
+        },
         "operation": {
           "$ref": "#/components/schemas/OperationId"
         },
@@ -13187,10 +13191,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/OperationId"
           }
-        },
-        "status": {
-          "type": "string",
-          "const": "select_parent"
         }
       },
       "required": [
@@ -13609,15 +13609,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "exact"
+        },
         "from": {
           "$ref": "#/components/schemas/CommitId"
         },
         "to": {
           "$ref": "#/components/schemas/CommitId"
-        },
-        "status": {
-          "type": "string",
-          "const": "exact"
         }
       },
       "required": [
@@ -13629,6 +13629,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "select"
+        },
         "before": {
           "type": "array",
           "items": {
@@ -13640,10 +13644,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/CommitId"
           }
-        },
-        "status": {
-          "type": "string",
-          "const": "select"
         }
       },
       "required": [
@@ -14095,6 +14095,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "available"
+        },
         "attribution": {
           "$ref": "#/components/schemas/Attribution"
         },
@@ -14112,10 +14116,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "committer": {
           "$ref": "#/components/schemas/NativeSignature"
-        },
-        "status": {
-          "type": "string",
-          "const": "available"
         }
       },
       "required": [
@@ -14131,12 +14131,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "reason": {
-          "$ref": "#/components/schemas/LastChangeUnavailable"
-        },
         "status": {
           "type": "string",
           "const": "unavailable"
+        },
+        "reason": {
+          "$ref": "#/components/schemas/LastChangeUnavailable"
         }
       },
       "required": [
@@ -14342,6 +14342,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "text"
+        },
         "contents": {
           "type": "array",
           "items": {
@@ -14352,10 +14356,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "executable": {
           "type": "boolean"
-        },
-        "status": {
-          "type": "string",
-          "const": "text"
         }
       },
       "required": [
@@ -14367,12 +14367,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "reason": {
-          "$ref": "#/components/schemas/ConflictUnsupported"
-        },
         "status": {
           "type": "string",
           "const": "unsupported"
+        },
+        "reason": {
+          "$ref": "#/components/schemas/ConflictUnsupported"
         }
       },
       "required": [
@@ -14581,15 +14581,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "text"
+        },
         "hunks": {
           "type": "array",
           "items": {
             "$ref": "#/components/schemas/FileDiffHunk"
           }
-        },
-        "status": {
-          "type": "string",
-          "const": "text"
         }
       },
       "required": [
@@ -14600,12 +14600,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "reason": {
-          "$ref": "#/components/schemas/FileDiffUnavailable"
-        },
         "status": {
           "type": "string",
           "const": "unavailable"
+        },
+        "reason": {
+          "$ref": "#/components/schemas/FileDiffUnavailable"
         }
       },
       "required": [
@@ -14842,12 +14842,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "error": {
-          "$ref": "#/components/schemas/GraphError"
-        },
         "status": {
           "type": "string",
           "const": "failed"
+        },
+        "error": {
+          "$ref": "#/components/schemas/GraphError"
         }
       },
       "required": [
@@ -15045,12 +15045,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "index": {
-          "$ref": "#/components/schemas/IndexReport"
-        },
         "status": {
           "type": "string",
           "const": "ready"
+        },
+        "index": {
+          "$ref": "#/components/schemas/IndexReport"
         }
       },
       "required": [
@@ -15061,12 +15061,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "error": {
-          "$ref": "#/components/schemas/GraphError"
-        },
         "status": {
           "type": "string",
           "const": "failed"
+        },
+        "error": {
+          "$ref": "#/components/schemas/GraphError"
         }
       },
       "required": [
@@ -15128,12 +15128,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "preview": {
-          "$ref": "#/components/schemas/PreviewReport"
-        },
         "status": {
           "type": "string",
           "const": "prepared"
+        },
+        "preview": {
+          "$ref": "#/components/schemas/PreviewReport"
         }
       },
       "required": [
@@ -15144,12 +15144,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/Receipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/Receipt"
         }
       },
       "required": [
@@ -15492,12 +15492,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/Receipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/Receipt"
         }
       },
       "required": [
@@ -15508,12 +15508,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -15609,12 +15609,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/Receipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/Receipt"
         }
       },
       "required": [
@@ -15625,12 +15625,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -15641,12 +15641,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -15666,6 +15666,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "ready"
+        },
         "version": {
           "type": "integer",
           "format": "uint32",
@@ -15676,10 +15680,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/Change4"
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "ready"
         }
       },
       "required": [
@@ -15691,6 +15691,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "changed"
+        },
         "version": {
           "type": "integer",
           "format": "uint32",
@@ -15698,10 +15702,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "change": {
           "$ref": "#/components/schemas/Change4"
-        },
-        "type": {
-          "type": "string",
-          "const": "changed"
         }
       },
       "required": [
@@ -15713,6 +15713,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "reset"
+        },
         "version": {
           "type": "integer",
           "format": "uint32",
@@ -15726,10 +15730,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/Change4"
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "reset"
         }
       },
       "required": [
@@ -15903,6 +15903,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "committed"
+        },
         "request_id": {
           "$ref": "#/components/schemas/RequestId"
         },
@@ -15913,10 +15917,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "type": "integer",
           "format": "uint64",
           "minimum": 0
-        },
-        "status": {
-          "type": "string",
-          "const": "committed"
         }
       },
       "required": [
@@ -15929,12 +15929,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -15945,12 +15945,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -16002,6 +16002,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "committed"
+        },
         "request_id": {
           "$ref": "#/components/schemas/RequestId"
         },
@@ -16010,10 +16014,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "name": {
           "type": "string"
-        },
-        "status": {
-          "type": "string",
-          "const": "committed"
         }
       },
       "required": [
@@ -16026,12 +16026,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -16042,12 +16042,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -17777,6 +17777,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "file"
+        },
         "id": {
           "$ref": "#/components/schemas/GitSha1Id"
         },
@@ -17785,10 +17789,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "copy": {
           "$ref": "#/components/schemas/LocalCopyReference"
-        },
-        "type": {
-          "type": "string",
-          "const": "file"
         }
       },
       "required": [
@@ -17801,12 +17801,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "id": {
-          "$ref": "#/components/schemas/GitSha1Id"
-        },
         "type": {
           "type": "string",
           "const": "symlink"
+        },
+        "id": {
+          "$ref": "#/components/schemas/GitSha1Id"
         }
       },
       "required": [
@@ -17817,12 +17817,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "id": {
-          "$ref": "#/components/schemas/GitSha1Id"
-        },
         "type": {
           "type": "string",
           "const": "tree"
+        },
+        "id": {
+          "$ref": "#/components/schemas/GitSha1Id"
         }
       },
       "required": [
@@ -17833,6 +17833,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "submodule"
+        },
         "id": {
           "type": "array",
           "items": {
@@ -17841,10 +17845,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
             "minimum": 0,
             "maximum": 255
           }
-        },
-        "type": {
-          "type": "string",
-          "const": "submodule"
         }
       },
       "required": [
@@ -17901,6 +17901,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "available"
+        },
         "attribution": {
           "$ref": "#/components/schemas/LocalPathsAttribution"
         },
@@ -17918,10 +17922,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "committer": {
           "$ref": "#/components/schemas/NativeSignature"
-        },
-        "status": {
-          "type": "string",
-          "const": "available"
         }
       },
       "required": [
@@ -17937,12 +17937,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "reason": {
-          "$ref": "#/components/schemas/LocalPathsLastChangeUnavailable"
-        },
         "status": {
           "type": "string",
           "const": "unavailable"
+        },
+        "reason": {
+          "$ref": "#/components/schemas/LocalPathsLastChangeUnavailable"
         }
       },
       "required": [
@@ -18037,6 +18037,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "workspace"
+        },
         "name": {
           "type": "string"
         },
@@ -18045,10 +18049,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/LocalReferencesTarget"
           }
-        },
-        "kind": {
-          "type": "string",
-          "const": "workspace"
         }
       },
       "required": [
@@ -18060,6 +18060,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "bookmark"
+        },
         "name": {
           "type": "string"
         },
@@ -18090,10 +18094,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/LocalReferencesTarget"
           }
-        },
-        "kind": {
-          "type": "string",
-          "const": "bookmark"
         }
       },
       "required": [
@@ -18108,6 +18108,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "change"
+        },
         "change": {
           "$ref": "#/components/schemas/ChangeId"
         },
@@ -18119,10 +18123,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/LocalReferencesTarget"
           }
-        },
-        "kind": {
-          "type": "string",
-          "const": "change"
         }
       },
       "required": [
@@ -18240,15 +18240,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "root"
+        },
         "operation": {
           "$ref": "#/components/schemas/OperationId"
         },
         "view": {
           "$ref": "#/components/schemas/ViewId"
-        },
-        "status": {
-          "type": "string",
-          "const": "root"
         }
       },
       "required": [
@@ -18260,6 +18260,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "select_parent"
+        },
         "operation": {
           "$ref": "#/components/schemas/OperationId"
         },
@@ -18268,10 +18272,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/OperationId"
           }
-        },
-        "status": {
-          "type": "string",
-          "const": "select_parent"
         }
       },
       "required": [
@@ -18656,15 +18656,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "exact"
+        },
         "from": {
           "$ref": "#/components/schemas/GitSha1Id"
         },
         "to": {
           "$ref": "#/components/schemas/GitSha1Id"
-        },
-        "status": {
-          "type": "string",
-          "const": "exact"
         }
       },
       "required": [
@@ -18676,6 +18676,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "select"
+        },
         "before": {
           "type": "array",
           "items": {
@@ -18687,10 +18691,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "items": {
             "$ref": "#/components/schemas/GitSha1Id"
           }
-        },
-        "status": {
-          "type": "string",
-          "const": "select"
         }
       },
       "required": [
@@ -18867,15 +18867,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "text"
+        },
         "hunks": {
           "type": "array",
           "items": {
             "$ref": "#/components/schemas/LocalFileDiffHunk"
           }
-        },
-        "status": {
-          "type": "string",
-          "const": "text"
         }
       },
       "required": [
@@ -18886,12 +18886,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "reason": {
-          "$ref": "#/components/schemas/LocalFileDiffUnavailable"
-        },
         "status": {
           "type": "string",
           "const": "unavailable"
+        },
+        "reason": {
+          "$ref": "#/components/schemas/LocalFileDiffUnavailable"
         }
       },
       "required": [
@@ -19151,6 +19151,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "const": "text"
+        },
         "contents": {
           "type": "array",
           "items": {
@@ -19161,10 +19165,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "executable": {
           "type": "boolean"
-        },
-        "status": {
-          "type": "string",
-          "const": "text"
         }
       },
       "required": [
@@ -19176,12 +19176,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "reason": {
-          "$ref": "#/components/schemas/LocalConflictUnsupported"
-        },
         "status": {
           "type": "string",
           "const": "unsupported"
+        },
+        "reason": {
+          "$ref": "#/components/schemas/LocalConflictUnsupported"
         }
       },
       "required": [
@@ -19262,12 +19262,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "stats": {
-          "$ref": "#/components/schemas/LocalGraphStats"
-        },
         "status": {
           "type": "string",
           "const": "ready"
+        },
+        "stats": {
+          "$ref": "#/components/schemas/LocalGraphStats"
         }
       },
       "required": [
@@ -19278,12 +19278,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "error": {
-          "$ref": "#/components/schemas/GraphError"
-        },
         "status": {
           "type": "string",
           "const": "failed"
+        },
+        "error": {
+          "$ref": "#/components/schemas/GraphError"
         }
       },
       "required": [
@@ -19512,12 +19512,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/LocalWorkReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/LocalWorkReceipt"
         }
       },
       "required": [
@@ -19528,12 +19528,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -19544,12 +19544,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -20095,12 +20095,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "session_id": {
-          "$ref": "#/components/schemas/AgentSessionId"
-        },
         "subject": {
           "type": "string",
           "const": "session"
+        },
+        "session_id": {
+          "$ref": "#/components/schemas/AgentSessionId"
         }
       },
       "required": [
@@ -20112,15 +20112,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "subject": {
+          "type": "string",
+          "const": "operation"
+        },
         "repository": {
           "$ref": "#/components/schemas/RepositoryId"
         },
         "operation_id": {
           "$ref": "#/components/schemas/OperationId"
-        },
-        "subject": {
-          "type": "string",
-          "const": "operation"
         }
       },
       "required": [
@@ -20133,15 +20133,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "subject": {
+          "type": "string",
+          "const": "revision"
+        },
         "repository": {
           "$ref": "#/components/schemas/RepositoryId"
         },
         "commit_id": {
           "$ref": "#/components/schemas/GitSha1Id"
-        },
-        "subject": {
-          "type": "string",
-          "const": "revision"
         }
       },
       "required": [
@@ -20368,12 +20368,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/LocalReviewReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/LocalReviewReceipt"
         }
       },
       "required": [
@@ -20384,12 +20384,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -20400,12 +20400,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -20636,12 +20636,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "receipt": {
-          "$ref": "#/components/schemas/LocalCollabReceipt"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "receipt": {
+          "$ref": "#/components/schemas/LocalCollabReceipt"
         }
       },
       "required": [
@@ -20652,12 +20652,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -20668,12 +20668,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -21070,12 +21070,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "executable": {
-          "type": "boolean"
-        },
         "type": {
           "type": "string",
           "const": "file"
+        },
+        "executable": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -22623,6 +22623,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "edit"
+        },
         "title": {
           "type": "string"
         },
@@ -22631,10 +22635,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "expected_body": {
           "type": "string"
-        },
-        "kind": {
-          "type": "string",
-          "const": "edit"
         }
       },
       "required": [
@@ -22648,12 +22648,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "draft": {
-          "type": "boolean"
-        },
         "kind": {
           "type": "string",
           "const": "draft"
+        },
+        "draft": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -22665,15 +22665,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "merge"
+        },
         "method": {
           "type": "string"
         },
         "expected_sha": {
           "type": "string"
-        },
-        "kind": {
-          "type": "string",
-          "const": "merge"
         }
       },
       "required": [
@@ -22686,12 +22686,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "receipt": {
-          "type": "string"
-        },
         "kind": {
           "type": "string",
           "const": "merge_status"
+        },
+        "receipt": {
+          "type": "string"
         }
       },
       "required": [
@@ -22716,12 +22716,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "run": {
-          "type": "string"
-        },
         "kind": {
           "type": "string",
           "const": "jobs"
+        },
+        "run": {
+          "type": "string"
         }
       },
       "required": [
@@ -22733,15 +22733,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "logs"
+        },
         "run": {
           "type": "string"
         },
         "job": {
           "type": "string"
-        },
-        "kind": {
-          "type": "string",
-          "const": "logs"
         }
       },
       "required": [
@@ -22754,15 +22754,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "rerun"
+        },
         "run": {
           "type": "string"
         },
         "failed_only": {
           "type": "boolean"
-        },
-        "kind": {
-          "type": "string",
-          "const": "rerun"
         }
       },
       "required": [
@@ -22775,12 +22775,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "run": {
-          "type": "string"
-        },
         "kind": {
           "type": "string",
           "const": "cancel"
+        },
+        "run": {
+          "type": "string"
         }
       },
       "required": [
@@ -22845,12 +22845,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "report": {
-          "$ref": "#/components/schemas/ConversionReport"
-        },
         "status": {
           "type": "string",
           "const": "committed"
+        },
+        "report": {
+          "$ref": "#/components/schemas/ConversionReport"
         }
       },
       "required": [
@@ -22861,12 +22861,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "outcome_unknown"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -22877,12 +22877,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "request_id": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "status": {
           "type": "string",
           "const": "not_known"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -23032,12 +23032,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "snapshot": {
-          "$ref": "#/components/schemas/LocalRepositorySnapshot"
-        },
         "type": {
           "type": "string",
           "const": "ready"
+        },
+        "snapshot": {
+          "$ref": "#/components/schemas/LocalRepositorySnapshot"
         }
       },
       "required": [
@@ -23048,12 +23048,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     {
       "type": "object",
       "properties": {
-        "snapshot": {
-          "$ref": "#/components/schemas/LocalRepositorySnapshot"
-        },
         "type": {
           "type": "string",
           "const": "changed"
+        },
+        "snapshot": {
+          "$ref": "#/components/schemas/LocalRepositorySnapshot"
         }
       },
       "required": [
@@ -26349,12 +26349,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "title": {
-          "type": "string"
-        },
         "action": {
           "type": "string",
           "const": "rename"
+        },
+        "title": {
+          "type": "string"
         }
       },
       "required": [
@@ -26418,12 +26418,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "job": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "action": {
           "type": "string",
           "const": "cancel"
+        },
+        "job": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -26435,12 +26435,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "job": {
-          "$ref": "#/components/schemas/RequestId"
-        },
         "action": {
           "type": "string",
           "const": "publish"
+        },
+        "job": {
+          "$ref": "#/components/schemas/RequestId"
         }
       },
       "required": [
@@ -27809,12 +27809,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "profile": {
-          "$ref": "#/components/schemas/UserProfile"
-        },
         "type": {
           "type": "string",
           "const": "profile"
+        },
+        "profile": {
+          "$ref": "#/components/schemas/UserProfile"
         }
       },
       "required": [
@@ -27826,15 +27826,15 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "media"
+        },
         "asset": {
           "type": "string"
         },
         "preview": {
           "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "const": "media"
         }
       },
       "required": [
@@ -27847,12 +27847,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "emoji": {
-          "$ref": "#/components/schemas/LibraryEmoji"
-        },
         "type": {
           "type": "string",
           "const": "emoji"
+        },
+        "emoji": {
+          "$ref": "#/components/schemas/LibraryEmoji"
         }
       },
       "required": [
@@ -27864,6 +27864,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "identity"
+        },
         "token": {
           "$ref": "#/components/schemas/TokenId"
         },
@@ -27872,10 +27876,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         },
         "revoked": {
           "type": "boolean"
-        },
-        "type": {
-          "type": "string",
-          "const": "identity"
         }
       },
       "required": [

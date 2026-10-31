@@ -22,6 +22,11 @@ acceptance verifies shared geometry, navigation, state and lifecycle; static
 validation does not establish visual approval. Existing story identities and
 behavior assertions are preserved. Changed stories remain visual-pending.
 
+The Stacks refinement family awaits the declared production Stacks loader before
+querying loaded content. It preserves the production root, geometry assertions
+and diagnostic guards; real cold application and static-catalog acceptance
+remain separate qualification lanes.
+
 The shared root fills the available host width, including flex hosts, while
 retaining production scroll owners. Fixture adapters preserve live controller
 getters and late-discovered workspace bindings rather than snapshotting them.

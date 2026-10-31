@@ -1,5 +1,13 @@
 # Delivery and validation
 
+E-CONVERSATIONS-NPM-003 applies JST-DOC-002 to the regenerated OpenAPI and HTTP
+reference projections after locked object-property ordering changed. Their
+parsed public contract remains identical across all 204 paths. Explicit CLI,
+application and transport source reviews retain the existing manual behavior.
+Generated reference comparison, diagram rendering, the complete strict manual
+build and link/anchor closure remain required. This review does not qualify
+package publication or change M30's independent release gates.
+
 The M33 delivery checklist under `docs/maintenance` summarizes completed slices,
 current work, previews and remaining gates. Update its stable task IDs after
 verified implementation slices; canonical milestone ledgers retain status

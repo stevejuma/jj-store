@@ -114,8 +114,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed CLI cache and attachment loads against the jj-lib 0.46 workspace_store directory. Commands, errors, and the recorded JJ 0.45.1 install qualification stay the same.",
-      "fingerprint": "2d46e232f9b50f141f5454b6ee2d8034541fcd6cd484835e921cd6e5d4efe6f1"
+      "reason": "Reviewed safe owned Unix pipe registration and the real-pipe byte-drain/EOF regression. Desktop flags, launch admission, nonblocking lifetime and CLI documentation remain unchanged; strict deprecation diagnostics and the unsafe-code ban stay enforced.",
+      "fingerprint": "0d6bd9692ac8f04d8e91b2be36128c467156f07bd33b49cded18f004dd58746e"
     }
   },
   {
@@ -141,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "StoreSettings.css Prettier selector wrap only; outline and ghost action-row labels stay on theme foreground.",
-      "fingerprint": "3bdf5d086acba5755ae2b084157cc4b34fd31cab3ab5808b4b409ebca5d0725b"
+      "reason": "Reviewed regenerated API types from the structurally identical OpenAPI document. Property ordering changes only; browsing, editing, settings, conversion and their documented user behavior remain unchanged.",
+      "fingerprint": "e128c3b066377f8b2d4661b6a5d73a824803e374cc05fa345bbcc582e88271b6"
     }
   },
   {
@@ -159,8 +159,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed the updated executable example path; public HTTP/RPC DTOs and command fields remain unchanged by local AI client adoption.",
-      "fingerprint": "dd01364c68a7d85e1126d388d8d6ffc657b78f448acc758d4d9a77531124ef2f"
+      "reason": "Regenerated the locked OpenAPI artifact after property ordering changed. Parsed documents are structurally identical across all 204 paths; authorization, wire DTOs and the transport reference remain unchanged.",
+      "fingerprint": "78d2eabb59dd3a0c931579fd9beb88a263bcf85f3a3c53cbf986f212939440fd"
     }
   },
   {
