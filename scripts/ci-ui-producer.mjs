@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { isConversationsProducer } from "./ci-conversations-producer.mjs";
 
 /** Core UI inputs are same-run only and never authorize qualification reuse. */
 export function verifyUiProducer(run, jobs, expected, env = process.env) {
@@ -18,7 +19,7 @@ export function verifyUiProducer(run, jobs, expected, env = process.env) {
       ".github/workflows/ci-ui.yml",
       ".github/workflows/ci-heavy.yml",
       ".github/workflows/publish-release.yml",
-    ].includes(run.path),
+    ].includes(run.path) || isConversationsProducer(run),
     "Unapproved UI producer workflow",
   );
   const producers = jobs.filter(

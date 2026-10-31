@@ -120,6 +120,13 @@ repeated by the coordinator. Backend failures do not block unrelated consumers.
 Every producer, suite and shard remains mandatory for complete qualification and
 publication.
 
+The scoped Conversations npm workflow MUST be an admitted producer for that same
+unchanged graph only on canonical main dispatch or its package-scoped
+version-tag push. UI inputs MUST remain same-run/attempt, and heavy inputs MUST
+retain successful source resolution, the complete standard gate and every
+selected producer, with exact source/repository/run/attempt and payload checks.
+Unknown workflows, feature dispatches and unrelated tags MUST remain rejected.
+
 Standalone suites require an exact source SHA, producer run and attempt. Reuse
 requires a successful source-resolution job, standard gate and relevant artifact
 producers in the canonical qualification/publication workflow. Receipts bind

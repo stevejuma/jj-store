@@ -24,6 +24,45 @@ const jobs = [
   { name: "UI acceptance / UI acceptance inputs", conclusion: "success" },
 ];
 
+test("Conversations qualification admits canonical main or scoped-tag UI producers", () => {
+  const npmRun = {
+    ...run,
+    event: "workflow_dispatch",
+    path: ".github/workflows/npm-publish-jj-conversations.yml",
+    head_branch: "main",
+  };
+  assert.doesNotThrow(() => verifyUiProducer(npmRun, jobs, expected, env));
+  assert.doesNotThrow(() =>
+    verifyUiProducer(
+      { ...npmRun, event: "push", head_branch: "jj-conversations-v0.1.0" },
+      jobs,
+      expected,
+      env,
+    ),
+  );
+  for (const changed of [
+    { event: "pull_request" },
+    { head_branch: "feature" },
+    { event: "push", head_branch: "main" },
+    { event: "push", head_branch: "v0.1.0" },
+    { path: ".github/workflows/npm-publish-jj-history.yml" },
+  ])
+    assert.throws(() =>
+      verifyUiProducer({ ...npmRun, ...changed }, jobs, expected, env),
+    );
+  assert.throws(() =>
+    verifyUiProducer(npmRun, jobs, { ...expected, run: "13" }, env),
+  );
+  assert.throws(() =>
+    verifyUiProducer(
+      npmRun,
+      [{ ...jobs[0], conclusion: "failure" }],
+      expected,
+      env,
+    ),
+  );
+});
+
 test("UI inputs admit only successful same-run producers and never qualify release reuse", () => {
   assert.doesNotThrow(() => verifyUiProducer(run, jobs, expected, env));
   for (const changed of [
