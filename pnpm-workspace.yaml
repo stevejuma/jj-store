@@ -3,3 +3,6 @@ packages:
   - packages/jj-conversations
   - packages/jj-history
 linkWorkspacePackages: true
+
+patchedDependencies:
+  bits-ui@2.20.2: patches/bits-ui@2.20.2.patch
