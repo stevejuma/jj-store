@@ -17,7 +17,7 @@ image = { version = "0.25", default-features = false, features = ["png", "jpeg",
 pulldown-cmark = { version = "=0.13.5", default-features = false }
 ed25519-dalek = "=3.0.0"
 jj-agent.workspace = true
-rustix = { version = "=1.1.5", features = ["process"] }
+rustix = { version = "=1.1.6", features = ["process"] }
 notify = "8.2"
 jj-store-capture.workspace = true
 jj-store-conversations.workspace = true
