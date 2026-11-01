@@ -5,6 +5,7 @@ import {
   imageKey,
   validateArchives,
   laneImage,
+  workerArguments,
 } from "./validation/model.mjs";
 test("Docker is default and native must be explicit", () => {
   assert.equal(validationConfig({}, {}).runtime, "docker");
@@ -54,6 +55,53 @@ test("UI and Rust lanes select the complete toolchain they need", () => {
   assert.equal(laneImage("catalog:check"), "ui");
   assert.equal(laneImage("test:embedded-rustfs"), "full");
   assert.equal(laneImage("spec:check"), "full");
+  assert.equal(laneImage("check:boundaries"), "full");
+});
+
+test("spec-first worker pins a default parent and preserves explicit comparisons", () => {
+  const source = { revision: "a".repeat(40), parents: ["b".repeat(40)] };
+  assert.deepEqual(workerArguments("spec:first", [], source), [
+    "--head",
+    source.revision,
+    "--base",
+    source.parents[0],
+  ]);
+  assert.deepEqual(
+    workerArguments("spec:first", [], { ...source, base: "c".repeat(40) }),
+    ["--head", source.revision, "--base", "c".repeat(40)],
+  );
+  const explicitBase = ["--base", "d".repeat(40)];
+  assert.deepEqual(
+    workerArguments("spec:first", explicitBase, {
+      ...source,
+      base: "c".repeat(40),
+    }),
+    [...explicitBase, "--head", source.revision],
+  );
+  assert.deepEqual(explicitBase, ["--base", "d".repeat(40)]);
+  const explicitHead = ["--head", "e".repeat(40), "--base", "d".repeat(40)];
+  assert.deepEqual(
+    workerArguments("spec:first", explicitHead, source),
+    explicitHead,
+  );
+  assert.deepEqual(
+    workerArguments("spec:first", ["--head=" + source.revision], source),
+    ["--head=" + source.revision],
+  );
+  assert.deepEqual(
+    workerArguments("spec:first", ["--base=" + source.parents[0]], source),
+    ["--base=" + source.parents[0], "--head", source.revision],
+  );
+  assert.deepEqual(
+    workerArguments("spec:first", [], {
+      revision: source.revision,
+      parents: [],
+    }),
+    [],
+  );
+  assert.deepEqual(workerArguments("web:test", ["fixture"], source), [
+    "fixture",
+  ]);
 });
 
 test("snapshot preserves a dirty JJ commit and its direct parent", async () => {

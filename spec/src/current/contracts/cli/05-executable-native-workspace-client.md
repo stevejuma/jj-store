@@ -33,3 +33,9 @@ then attaches and describes history with the actual custom jj executable. It
 reopens the host with no in-memory repository directory. This qualifies dynamic
 routing; standalone process and initialization have separate cold executable
 acceptance below.
+
+Native lifecycle acceptance also evaluates set differences across two historical
+operations through the application read session. Cold and reused indexes must
+return exactly the selected history without changing native manifests or the
+primary cache generation. This shares the pinned JJ adapter with CLI consumers;
+command grammar, transport authorization and publication policy stay unchanged.

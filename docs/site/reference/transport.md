@@ -26,6 +26,11 @@ connection. [HTTP reference](http-api.md) is generated from the registered
 OpenAPI contract. Native RPC serves the custom JJ integration; both transports
 consume owned service interfaces and share authorization and semantic policy.
 
+Native RPC requires both a trusted certificate chain and a matching server
+hostname. Embedders that select a Rustls crypto provider before using RPC retain
+that choice; otherwise RPC initializes its declared Ring provider. Provider
+selection does not change endpoint restrictions or bearer authorization.
+
 ## Read sessions and pagination
 
 Open a read against an explicit authorized selection. Files, graphs and

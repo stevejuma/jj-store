@@ -17,6 +17,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 mod decorations;
 mod filter;
+mod mutable;
 pub(in crate::query) mod references;
 use references::{References, commit_weight, id};
 mod changes;
@@ -191,6 +192,6 @@ impl ReadonlyIndex for Reader {
         }))
     }
     fn start_modification(&self) -> Box<dyn MutableIndex> {
-        ReadonlyIndex::start_modification(&self.prepared.raw)
+        Box::new(mutable::Merged::new(self))
     }
 }

@@ -35,6 +35,11 @@ or tray actions reopen the window. Explicit Quit ends the owning process
 lifetime. An interrupted command retains normal unknown-outcome semantics—window
 closure cannot prove that a mutation was rejected.
 
+Capture-control and import operations release their private coordination locks
+when their owning guard ends. A descriptor briefly inherited while starting a
+subprocess cannot prolong a completed operation. Unknown outcomes still retain
+the original request and receipt for exact retry.
+
 ## Stack command recovery foundation
 
 The server now has a private journal primitive for exact stack preparations and

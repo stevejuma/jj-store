@@ -129,3 +129,95 @@ static catalog browser, production controller tests and an owned LocalTrusted
 reset distinct in the evidence ledger. The live reset must record that seeded
 hook capture currently lacks an exact code-association publication path; catalog
 association coverage cannot be presented as live Agent Context evidence.
+
+The [test quarantine index](25-test-quarantines.md) also tracks native cases.
+
+## Temporary story quarantine register
+
+The user explicitly authorized quarantining and disabling flaky tests during the
+2026-11-01 audit. Only the individual cases below carry the `quarantined` tag.
+The Vitest addon skips that tag and retains each case in its reported inventory.
+Other cases in the same files, runtime diagnostics, interactions and
+accessibility checks remain enabled. Quarantined coverage is not passing
+coverage and cannot complete M30 or replace the original acceptance gates.
+
+Evidence:
+[E-LOCAL-TEST-AUDIT-001](../../history/2026/11/01/E-LOCAL-TEST-AUDIT-001/index.md).
+The initial remote suite passed 1,046 of 1,048 Storybook cases. Both failures
+then passed unchanged in three independent fresh Docker runs: two selected cases
+passed per run; six other cases were deliberately filtered. The unchanged cases
+can pass outside the failing full-suite context; the underlying cause remains
+unproven and the product contract is not claimed repaired.
+
+| Quarantine  | Exact case                                                                                                                           | Owner                                                        | Observed failure and disabled coverage                                                                                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Q-STORY-001 | `catalog/components/store-application/StoreWorkspaces.stories.svelte` / `KeyboardSearchAndRepositoryOverview`                        | jj-store maintainers: workspace picker and catalog lifecycle | The full-suite run could not find `No matching workspaces.` after typing an unmatched query. Quarantine leaves the empty-state, keyboard selection and repository-overview sequence unqualified. |
+| Q-STORY-002 | `catalog/components/store-appearance/AppearanceOverlay.stories.svelte` / `SearchAndMenuShareTheAppSurfaceAcrossAllGeneratedPalettes` | jj-store maintainers: appearance runtime and overlay catalog | At `everforest-light`, the overlay retained `rgb(45, 53, 59)` while the app sample was `rgb(253, 246, 227)`. Quarantine leaves the open search/menu palette-transition sequence unqualified.     |
+
+To diagnose or re-enable a case, remove only its `quarantined` story tag in a
+disposable source change; retain all play assertions and diagnostic guards. Use
+the configured remote Docker runner with locked registry dependencies and no
+machine-local package archive overrides. Run each original target:
+
+```sh
+pnpm test:storybook catalog/components/store-application/StoreWorkspaces.stories.svelte -t KeyboardSearchAndRepositoryOverview
+pnpm test:storybook catalog/components/store-appearance/AppearanceOverlay.stories.svelte -t SearchAndMenuShareTheAppSurfaceAcrossAllGeneratedPalettes
+```
+
+The owner must identify and repair the underlying cause at its owning source
+boundary, retain the exact original assertions, and pass three fresh-process
+exact runs, both complete story families, and three complete cold four-shard
+interaction/accessibility runs with the tag removed. Record the actual counts
+and receipts in new evidence before removing the register entry. Any newly
+exposed failure remains blocking. Wider product, provider, platform,
+real-storage and visual-baseline qualification remain separate.
+
+### Reproducing the audit profile
+
+The audit uses four CPUs and 24 GiB, registry-locked dependencies and the saved
+remote transport/context. The following invocation leaves the saved local
+configuration and package archives untouched. Replace `test --no-fail-fast` with
+a targeted lane and its arguments when diagnosing an individual case.
+
+```sh
+node --input-type=module - test --no-fail-fast <<'JS'
+import { readFile } from "node:fs/promises";
+import { validationConfig } from "./scripts/validation/model.mjs";
+import { remoteRun } from "./scripts/validation/runs.mjs";
+const local = JSON.parse(await readFile(".local/validation/config.json", "utf8"));
+const [lane, ...args] = process.argv.slice(2);
+await remoteRun({
+  ...validationConfig(local),
+  runtime: "docker",
+  cpus: 4,
+  memoryGiB: 24,
+  archives: undefined,
+}, lane, args);
+JS
+```
+
+### Native Git test prerequisites
+
+The full remote validation image provides actual Git 2.55.0 for the existing
+`jj-git-sha1-0.45.1-v1` transport profile. It builds the released source archive
+from kernel.org after checking its pinned SHA-256 and verifies the installed
+version. HTTPS support and an SSH daemon with its privilege-separation directory
+support the existing generated-credential, loopback-only transport fixtures. The
+isolated image account is unlocked for those generated public-key logins; the
+fixture disables password authentication and supplies its own host keys. Tests
+still own and reap their own temporary servers; no default SSH service is
+started by the runner. A system Git with a different version is not substituted,
+and the native capability guard and credential assertions remain unchanged. This
+tooling correction does not promote Linux deployment or release gates.
+
+### Headless desktop account
+
+Desktop terminal permission acceptance requires an ordinary account. Root can
+execute a regular file with any execute bit and cannot qualify the negative
+owner-permission fixture. Build the headless desktop workspace through managed
+Cargo, discover every test executable from its `compiler-artifact` JSON output,
+and run the complete inventory with its standard harness under an isolated
+unprivileged container account. Retain existing prerequisite ignores and also
+run the workspace documentation tests. Record the source snapshot, account,
+exact permission regression and complete binary results. A root-only fixture
+failure is not quarantined or counted as passing desktop acceptance.

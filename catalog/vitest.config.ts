@@ -26,6 +26,8 @@ export default defineConfig({
         plugins: [
           storybookTest({
             configDir: fileURLToPath(new URL("../.storybook", import.meta.url)),
+            // Register: spec/src/current/governance/09-catalog-validation.md.
+            tags: { skip: ["quarantined"] },
           }),
         ],
         test: {

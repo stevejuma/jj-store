@@ -150,6 +150,7 @@ async fn file_history_retains_native_conflicted_merge_semantics() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "Q-RUST-002: intermittent Busy in full workspace; see spec/src/current/governance/25-test-quarantines.md"]
 async fn file_history_keeps_spaces_quotes_and_pattern_characters_literal() {
     let (root, policy) = fixture();
     let path = "notes [draft] \"quoted\".md";

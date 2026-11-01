@@ -395,3 +395,15 @@ and normally regenerated artifacts preserve the existing contracts. M30 retains
 the pending protected source merge, fresh complete heavy/client qualification,
 immutable artifact/provenance and actual npm/registry/GitHub release gates.
 Source acceptance and earlier failed runs do not qualify a public package.
+
+The full validation image includes actual Git 2.55.0, built from the official
+checksum-verified archive, and fixture-only SSH prerequisites for the declared
+native transport profile. The isolated test account supports generated-key
+authentication; fixtures disable password login and own their temporary servers.
+Registry-locked Docker audit results retain explicit quarantines and
+prerequisite skips; they do not qualify a release or substitute a different Git
+profile.
+
+Standalone dependency-boundary checks select the full toolchain for Cargo
+metadata. Spec-first defaults to the transferred first parent; explicit
+head/base comparisons remain selected without duplicate arguments.
