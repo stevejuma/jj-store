@@ -1,5 +1,7 @@
 # Application documentation
 
+JST-DOC-001 includes the reviewed npm-notification retry documentation.
+
 E-REUSABLE-PROGRESS-050 / Notes E-AI-057 records the copied session-layout
 Storybook review. Live integration waits for UI confirmation; grouped custody is
 parked and the capture watcher stays pending. E-REUSABLE-PROGRESS-049 / E-AI-056

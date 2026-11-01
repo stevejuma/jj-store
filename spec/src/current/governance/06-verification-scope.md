@@ -1,5 +1,11 @@
 # Verification scope
 
+E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
+Core candidate. Consumer reruns MUST select a successful matching UI producer
+and retain its source, attempt and checksum verification. Missing same-attempt
+artifacts, disconnected browsers and partial test execution remain failed
+qualification; focused passes do not waive complete hosted acceptance.
+
 Crate overview documentation checks the complete tracked Cargo-root inventory,
 first-party relative links, actual public entry points and Markdown formatting.
 The standalone desktop runbook maps to documentation and desktop chapters. The

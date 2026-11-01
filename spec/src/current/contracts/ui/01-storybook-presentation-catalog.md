@@ -1,5 +1,12 @@
 # Storybook presentation catalog
 
+E-DEPENDENCY-AUTOMATION-003 retains the existing Core 0.7.0 application inputs
+while refreshing Mira to 0.1.4. Its Bits UI 2.20.2 copy receives the identical
+published lifecycle/focus patch at this installation root. The Core 0.7.4
+candidate fails branch-regrouping accessibility; no selector, interaction or
+accessibility waiver is accepted. Earlier browser disconnects remain failed
+qualification until fresh current-head hosted UI acceptance completes.
+
 JST-UI-001 includes Visual Delta's released Storybook addon and portable
 Playwright suite. Native capture MUST use installed project browsers with actual
 macOS/Linux host provenance and OS/architecture-separated PNG paths. An ignored

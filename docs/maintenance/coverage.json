@@ -247,8 +247,8 @@
     ],
     "pages": ["docs/site/technical/conversations.md"],
     "review": {
-      "reason": "Reviewed the conversations npm workflow after limiting it to the package tests, exact pack, and idempotent registry verification. A matching tarball succeeds without provenance; a different tarball fails; repository-wide heavy qualification is no longer part of this publication.",
-      "fingerprint": "d534be878701238f8e979d35c2b1535d526cac4b154675534a6bc03bed4db1a7"
+      "reason": "Reviewed the separately retryable consumer notification after successful npm verification; package identity, tarball, provenance, release approval and idempotent publication are unchanged.",
+      "fingerprint": "6c874ac14e9cb04eb4f0c4f37940e5c7bea7955fd37fefc19d9e1aaed747b522"
     }
   },
   {
