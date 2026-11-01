@@ -13,6 +13,7 @@ import { join } from "node:path";
 import { createRequire } from "node:module";
 import { execFileSync, spawnSync } from "node:child_process";
 import { parse } from "yaml";
+import { botSpecificationExemption } from "./dependency-automation/spec-policy.mjs";
 
 const root = new URL("../", import.meta.url);
 const ci = parse(
@@ -34,6 +35,9 @@ test("bot PRs skip only change-specific governance", () => {
     const condition = new Function(
       "github",
       "startsWith",
+      "contains",
+      "fromJSON",
+      "vars",
       `return (${step.if});`,
     );
     const evaluate = (head_ref, author, event_name = "pull_request") =>
@@ -41,9 +45,19 @@ test("bot PRs skip only change-specific governance", () => {
         {
           event_name,
           head_ref,
-          event: { pull_request: { user: { login: author } } },
+          event: {
+            pull_request: {
+              user: {
+                login: author,
+                type: author.endsWith("[bot]") ? "Bot" : "User",
+              },
+            },
+          },
         },
         (text, prefix) => text.startsWith(prefix),
+        (list, item) => list.includes(item),
+        JSON.parse,
+        { LAPIS_DEPENDENCY_BOT_LOGIN: "" },
       );
     assert.equal(
       evaluate("changeset-release/main", "github-actions[bot]"),
@@ -60,12 +74,21 @@ test("bot PRs skip only change-specific governance", () => {
       false,
       name,
     );
+    for (const author of [
+      "dependabot[bot]",
+      "renovate[bot]",
+      "lapismd-dependency-bot[bot]",
+    ])
+      assert.equal(
+        evaluate("lapis-dependencies/lapis-first-party", author),
+        name === "Release intent gate",
+        `${name}: trusted dependency author ${author}`,
+      );
     for (const [branch, author] of [
       ["fix/storage", "maintainer"],
       ["changeset-release/other", "github-actions[bot]"],
       ["dependabot/cargo/jj-lib-0.46.0", "maintainer"],
       ["dependabot/cargo/jj-lib-0.46.0", "other[bot]"],
-      ["fix/storage", "dependabot[bot]"],
     ])
       assert.equal(
         evaluate(branch, author),
@@ -91,13 +114,24 @@ test("bot PRs skip only change-specific governance", () => {
   }
 });
 
-test("bot PRs retain static spec and planned test lanes", () => {
+test("bot PRs skip specification calls and retain planned functional and release lanes", () => {
   assert.equal(ci.jobs.governance.if, undefined);
   const staticStep = ci.jobs.governance.steps.find((step) =>
     step.run?.includes("pnpm spec:validate"),
   );
   assert.ok(staticStep);
   assert.equal(staticStep.if, undefined);
+  assert.match(staticStep.run, /pnpm check:architecture/);
+  assert.match(staticStep.run, /pnpm check:ui-ownership/);
+  assert.equal(
+    botSpecificationExemption({
+      CI: "true",
+      LAPIS_CI_EVENT: "pull_request",
+      LAPIS_CI_PR_AUTHOR: "lapismd-dependency-bot[bot]",
+      LAPIS_CI_PR_AUTHOR_TYPE: "Bot",
+    }),
+    true,
+  );
   for (const command of [
     "pnpm test:governance",
     "pnpm test:spec",

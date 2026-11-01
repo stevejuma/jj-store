@@ -16,12 +16,12 @@ buttons share the same local registry. No reference-checkout dependency or
 ownership-policy change is introduced. JST-UI-018 owns the new default and card
 eligibility behavior.
 
-The generated release/dependency PR exception in JST-ARCH-005 applies to the
-same-change topic, evidence and milestone obligations in
-JST-GOV-002/003/004/011. It covers only `changeset-release/main` and
-Dependabot-authored `dependabot/` PRs. Static spec validation and all planned
-quality, test and release gates remain required. Ordinary PRs retain governance;
-automation MUST NOT manufacture evidence to satisfy a skipped gate.
+The generated release/dependency PR exception in JST-ARCH-005 uses the trusted
+PR author, including the configured dependency App, rather than the rerun actor.
+It skips specification calls and same-change topic/evidence/milestone gates in
+JST-GOV-002/003/004/011. Functional, quality, audit and release gates remain;
+ordinary PRs and post-merge static validation retain their governance.
+Automation MUST NOT manufacture evidence to satisfy a skipped gate.
 
 Progressive Blame integration retains both the verified Blame slices and native
 Stacks history. Resolve shared ledger and documentation fingerprints without

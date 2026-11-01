@@ -245,3 +245,17 @@ jobs:
             github.run_attempt }}
           path: .release/conversations
       - run: node scripts/conversations-npm.mjs notes
+  notify-dependencies:
+    name: Notify dependency consumers
+    needs:
+      - verify-provenance
+      - identity
+    if: always() && needs.verify-provenance.result == 'success'
+    permissions:
+      contents: read
+    uses: lapismd/dependency-automation/.github/workflows/notify.yml@ea9d35b12b612467bbabf1c6271ffa41b5eda4ba
+    with:
+      automation-ref: ea9d35b12b612467bbabf1c6271ffa41b5eda4ba
+      source-sha: ${{ needs.identity.outputs.source }}
+    secrets:
+      app-private-key: ${{ secrets.LAPIS_DEPENDENCY_APP_PRIVATE_KEY }}

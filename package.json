@@ -17,7 +17,7 @@
     "check:progress": "node scripts/validation.mjs run check:progress",
     "test:governance": "node scripts/validation.mjs run test:governance",
     "test": "node scripts/validation.mjs run test",
-    "spec:build": "spec-validator build",
+    "spec:build": "node scripts/dependency-automation/spec-policy.mjs build",
     "spec:links": "python3 scripts/spec/book-audit.py",
     "spec:check": "node scripts/validation.mjs run spec:check",
     "spec:first": "node scripts/validation.mjs run spec:first",

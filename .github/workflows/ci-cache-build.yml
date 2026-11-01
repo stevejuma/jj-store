@@ -24,6 +24,11 @@ env:
   JJ_STORE_BUILD_TARGET_GIB: "24"
   JJ_STORE_BUILD_TOTAL_GIB: "36"
   JJ_STORE_BUILD_FREE_GIB: "6"
+  LAPIS_CI_EVENT: ${{ github.event_name }}
+  LAPIS_CI_PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+  LAPIS_CI_PR_AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+  LAPIS_CI_PR_HEAD: ${{ github.event.pull_request.head.ref }}
+  LAPIS_DEPENDENCY_BOT_LOGIN: ${{ vars.LAPIS_DEPENDENCY_BOT_LOGIN }}
 jobs:
   build:
     name: Cache build ${{ inputs.sample }}

@@ -128,7 +128,9 @@ integrity. A matching tarball with no provenance succeeds. Provenance is checked
 when the registry package has it. A different tarball for the same version
 fails, and an existing version is not uploaded again. `publish` finalizes the
 package-scoped GitHub release only after those registry checks. This flow
-publishes no Rust crate, native archive or application.
+publishes no Rust crate, native archive or application. A separate job may
+notify the dependency coordinator after registry verification succeeds. Retrying
+that notification cannot republish an archive or change release approval.
 
 Construct `ConversationClient` for one app/vault scope with a typed transport
 and lossless encoder. The client binds each request ID to immutable exact

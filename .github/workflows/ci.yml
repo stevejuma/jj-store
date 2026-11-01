@@ -39,6 +39,11 @@ env:
   JJ_STORE_BUILD_TARGET_GIB: "24"
   JJ_STORE_BUILD_TOTAL_GIB: "36"
   JJ_STORE_BUILD_FREE_GIB: "6"
+  LAPIS_CI_EVENT: ${{ github.event_name }}
+  LAPIS_CI_PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+  LAPIS_CI_PR_AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+  LAPIS_CI_PR_HEAD: ${{ github.event.pull_request.head.ref }}
+  LAPIS_DEPENDENCY_BOT_LOGIN: ${{ vars.LAPIS_DEPENDENCY_BOT_LOGIN }}
 jobs:
   plan:
     runs-on: ubuntu-22.04
@@ -146,13 +151,13 @@ jobs:
           pnpm spec:validate --only governance,summary,fileLimits,verification
       - name: Progress evidence gate
         if: |-
-          github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main' && !(github.event.pull_request.user.login == 'dependabot[bot]' &&
-            startsWith(github.head_ref, 'dependabot/'))
+          (github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main' && !(github.event.pull_request.user.login == 'dependabot[bot]' &&
+            startsWith(github.head_ref, 'dependabot/'))) && !(github.event.pull_request.user.type == 'Bot' && (contains(fromJSON('["dependabot[bot]","renovate[bot]","lapismd-dependency-bot[bot]"]'), github.event.pull_request.user.login) || (vars.LAPIS_DEPENDENCY_BOT_LOGIN != '' && github.event.pull_request.user.login == vars.LAPIS_DEPENDENCY_BOT_LOGIN)))
         run: pnpm check:progress
       - name: Spec-first gate
         if: |-
-          github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main' && !(github.event.pull_request.user.login == 'dependabot[bot]' &&
-            startsWith(github.head_ref, 'dependabot/'))
+          (github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main' && !(github.event.pull_request.user.login == 'dependabot[bot]' &&
+            startsWith(github.head_ref, 'dependabot/'))) && !(github.event.pull_request.user.type == 'Bot' && (contains(fromJSON('["dependabot[bot]","renovate[bot]","lapismd-dependency-bot[bot]"]'), github.event.pull_request.user.login) || (vars.LAPIS_DEPENDENCY_BOT_LOGIN != '' && github.event.pull_request.user.login == vars.LAPIS_DEPENDENCY_BOT_LOGIN)))
         run:
           pnpm spec:first --base "$JJ_STORE_CHECK_BASE" --head
           "$JJ_STORE_CHECK_REVISION"

@@ -31,18 +31,21 @@ receives the `jj-store` command and the crates that command links.
 Dependabot opens one grouped Cargo pull request for the root workspace and the
 embedded RustFS workspace.
 
-Generated `changeset-release/main` PRs and dependency PRs authored by
-`dependabot[bot]` on `dependabot/` branches are exempt from the
-JST-GOV-002/003/004/011 same-change topic, evidence and milestone-update gates.
-They also need no additional authored Changesets note. Version automation
-updates only release metadata and notes; it MUST NOT generate specification or
-evidence edits. Ordinary PRs, other Changesets branches and other bots retain
-the change-specific gates. Like lapis-notes, those gates run on PR events;
-post-merge and explicitly dispatched qualification still run static
-specification validation and all impact-selected tests. Generated release PRs
-dispatched explicitly because of GitHub token event restrictions retain all
-standard checks. Complete qualification is required before publication. Bot
-exemptions never waive package, security or publication gates.
+Generated `changeset-release/main` PRs and trusted dependency PRs from the
+LapisMD dependency App, Dependabot or Renovate MAY skip specification and
+same-change topic/evidence gates. Classification uses the PR author, never the
+actor rerunning a job. Runtime or peer manifest changes still receive the shared
+coordinator's deterministic Changeset; the existing release-intent gate remains
+active for the new App. Ordinary PRs and untrusted bots retain their
+change-specific gates. Post-merge and explicit qualification retain static
+specification validation. Bot exemptions never waive architecture, UI ownership,
+planned functional tests, security, packaging or publication gates.
+
+The shared coordinator proposes only published first-party npm versions. Rust,
+Git pins, container versions and native release qualification stay outside this
+rollout. Post-verification notifications only request reconciliation and cannot
+republish an artifact. No dependency automation merges PRs, signs artifacts,
+publishes packages or deploys applications.
 
 Native bundles support GNU/Linux and macOS on ARM64 and x86-64, and contain the
 server, collision-safe custom client, embedded RustFS helper, browser and Help.
