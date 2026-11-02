@@ -53,6 +53,13 @@ comparison action and retains the pinned snapshot, workspace and parent hash
 across reload. It never substitutes a commit/change ID or invents operation
 metadata.
 
+The audit temporarily quarantines only the comparison header's immediate
+resize-geometry assertions as
+[Q-BROWSER-001](../../governance/25-test-quarantines.md#q-browser-001-comparison-header-resize-geometry).
+Its exact ordering/bounds remain unqualified. Full native identity, clipboard,
+keyboard, accessibility, selection and reload acceptance stay enabled; the
+workspace-header contract above remains required.
+
 M9.5 adds Agent activity and Reviews to the same application shell and typed
 hash history. Agent and review pages encode only a full stable session or thread
 identity beside the selected operation. Their two-column canvases persist

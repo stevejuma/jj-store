@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed history discovery after it opens a stock jj 0.45 checkout without writing workspace_store/type. The local guides and the recorded JJ 0.45.1 qualification stay the same.",
-      "fingerprint": "e2ea48ac445a2e918943304bba08837fcdffa6850d7a0fac62d2722de290fda4"
+      "reason": "Reviewed historical revset index merging against the selected-operation contract. Updated the local technical guide to clarify exact visibility and read-only preparation; Git transport and conversion identity/authority guidance remain accurate and unchanged.",
+      "fingerprint": "ea28deab170bee94a0f3956c72d58c7a992a429c223c435b4ed993c4dd1b8402"
     }
   },
   {
@@ -70,8 +70,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed hmac 0.13 KeyInit imports for service cursor signatures. Cursor bytes, authorization, and service behavior are unchanged, so the architecture and transport pages stay accurate.",
-      "fingerprint": "7aa8f4af1876927142367b5b1cf531f560acde853e522766b3e09bfce18bd597"
+      "reason": "Reviewed mixed-feature Rustls initialization and host-provider preservation. Transport guidance now states provider fallback plus unchanged trust, hostname, endpoint and bearer checks; service architecture and conversion publication contracts remain unchanged.",
+      "fingerprint": "4fdf1bf4dce7eba767256c7ce530d4cd8e5c92b8e72ad741f65f02bd9b607284"
     }
   },
   {
@@ -101,8 +101,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed 165041c2..4d660d4c server delegation to shared bounded image preparation. Configuration reference documents fixed source/decode/asset bounds without inventing new runtime settings or altering stored formats.",
-      "fingerprint": "3d282c0026dad48e2420408eb35f39f3e7f3e1183c0b3443a9ec55ad24546a77"
+      "reason": "Reviewed capture-control and import journal guard release with inherited descriptors. Lifecycle guidance now states completed-operation lock release and exact unknown-outcome retry; TOML fields, environment names, reload, authority and credential rules remain unchanged.",
+      "fingerprint": "f0de42f796817d855e5035d460eac1a048898e2a28bb0dc0326fcb565098d28e"
     }
   },
   {

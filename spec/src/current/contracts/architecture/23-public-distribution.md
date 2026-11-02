@@ -395,3 +395,6 @@ and normally regenerated artifacts preserve the existing contracts. M30 retains
 the pending protected source merge, fresh complete heavy/client qualification,
 immutable artifact/provenance and actual npm/registry/GitHub release gates.
 Source acceptance and earlier failed runs do not qualify a public package.
+
+[Docker validation governance](../../governance/09-catalog-validation.md)
+retains exact toolchain prerequisites, comparison pins and quarantine limits.

@@ -83,8 +83,10 @@
   }}
 />
 
+<!-- Q-STORY-001: spec/src/current/governance/09-catalog-validation.md -->
 <Story
   name="Keyboard search and repository overview"
+  tags={["quarantined"]}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       portal = within(canvasElement.ownerDocument.body);

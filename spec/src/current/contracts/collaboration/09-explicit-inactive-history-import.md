@@ -1,5 +1,13 @@
 # Explicit inactive-history import
 
+A private journal guard explicitly releases its lock when its owning operation
+ends. A duplicate descriptor inherited by a child before exec MUST NOT extend
+the completed guard's lock lifetime. The owning guard still excludes another
+writer until release, and closing an old duplicate cannot unlock a later guard.
+Nonblocking acquisition, private-file binding and unknown-outcome policy remain
+unchanged. A deterministic duplicate-descriptor regression and the combined
+receipt/cold-process family qualify this lifetime boundary.
+
 The private version-1 import journal, native source enrollment and retained
 library scheduling support the typed public import/inspection flow. Browser
 management remains pending. Configured Codex startup uses the foreground

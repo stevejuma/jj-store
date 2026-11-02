@@ -354,3 +354,11 @@ The standalone history client overview and local manual describe injected text
 transport, explicit operation/handle lifetime and exact integer decoding. Source
 coverage includes schema generation and the owned native schema. Independent
 runtime/type archive checks remain separate from Notes and release acceptance.
+
+E-LOCAL-TEST-AUDIT-001 reviews the local, services and configuration source
+topics after historical-index, TLS-provider and private journal guard repairs.
+The manual clarifies exact historical scope visibility, host crypto-provider
+choice and completed capture-lock release. Configuration fields, environment
+variables, conversion identity and publication authority remain unchanged.
+JST-DOC-001/002 review fingerprints are refreshed only after those mapped pages
+are checked; blocked browser runs do not supply passing Help evidence.

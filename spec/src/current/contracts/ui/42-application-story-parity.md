@@ -39,3 +39,11 @@ viewport sizes and exercise the actual responsive application.
 
 Responsive repository and Stacks tabs skip duplicate width/section measurements
 so a visible overflow trigger remains mounted and usable during initial layout.
+
+E-LOCAL-TEST-AUDIT-001 records the user-authorized temporary quarantine of two
+intermittent story cases under JST-UI-001. The catalog quarantine register lists
+their exact identities, evidence, owners and re-enable gates. The Vitest addon
+reports the `quarantined` cases as skipped; every enabled interaction and
+accessibility check remains blocking. Story composition, play assertions and
+runtime diagnostics remain intact. Skipped coverage does not qualify the
+original full-suite or release gates, and visual approval remains separate.

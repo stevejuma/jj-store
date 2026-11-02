@@ -81,3 +81,10 @@ resolved independently. The shared factory instance within one invocation keeps
 staged object inventories consistent across backend/operation/head stores.
 Ordinary Git-backed workspaces continue to use upstream factories without
 resolving native credentials or connecting to the server.
+
+TLS entry points retain a host-installed Rustls crypto provider. When none is
+installed, the RPC implementation selects its declared Ring provider once before
+configuring Tonic, including when another dependency enables the AWS-LC backend
+too. Plaintext/Unix transports do not initialize TLS policy. Deployment CA,
+hostname verification, endpoint restrictions and bearer authorization remain
+unchanged; crypto implementation choice never becomes request/principal state.

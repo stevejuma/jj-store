@@ -11,6 +11,14 @@ the full native operation ID and preserves the pinned snapshot and logical
 workspace in the hash; the selector does not widen the set of permitted
 comparison parents.
 
+E-LOCAL-TEST-AUDIT-001 retains JST-API-001/002 operation-parent admission, full
+native identities, pinned reads and transport contracts unchanged. The
+comparison browser workflow still verifies exact IDs, selection and reload; only
+immediate header resize geometry is quarantined as
+[Q-BROWSER-001](../../governance/25-test-quarantines.md#q-browser-001-comparison-header-resize-geometry).
+The disabled bounds do not qualify responsive layout acceptance or alter the
+API.
+
 The response distinguishes head changes from visible commit changes. Visibility
 is the native commit-parent closure of each view's heads; predecessor-only
 objects remain historical dependencies rather than visible commits. Complete

@@ -18,3 +18,15 @@ ENV PATH=/usr/local/cargo/bin:$PATH
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential clang cmake libssl-dev protobuf-compiler && rm -rf /var/lib/apt/lists/*
 RUN rustup component add clippy rustfmt && cargo install --locked cargo-nextest --version 0.9.148 && cargo install --locked mdbook --version 0.5.4 && python3 -m venv /opt/docs && /opt/docs/bin/pip install uv==0.9.28
 ENV PATH=/opt/docs/bin:$PATH
+RUN apt-get update && apt-get install -y --no-install-recommends libcurl4-openssl-dev libexpat1-dev zlib1g-dev openssh-server xz-utils && rm -rf /var/lib/apt/lists/* && mkdir -p /run/sshd
+# The native transport profile checks the actual Git version before side effects.
+RUN curl --fail --location --retry 3 https://www.kernel.org/pub/software/scm/git/git-2.55.0.tar.xz -o /tmp/git.tar.xz \
+    && printf '%s  %s\n' '457fdb04dc8728e007d4688695e6912e6f680727920f2a40bf11eacc17505357' '/tmp/git.tar.xz' | sha256sum --check --strict \
+    && tar -xJf /tmp/git.tar.xz -C /tmp \
+    && make -C /tmp/git-2.55.0 -j4 prefix=/opt/git NO_TCLTK=YesPlease NO_GETTEXT=YesPlease install \
+    && test "$(/opt/git/bin/git --version)" = 'git version 2.55.0' \
+    && rm -rf /tmp/git.tar.xz /tmp/git-2.55.0
+ENV PATH=/opt/git/bin:$PATH
+# Fixture sshd disables password authentication and uses generated approved keys.
+# Ubuntu's locked root account otherwise refuses those public-key logins too.
+RUN passwd -d root

@@ -331,6 +331,7 @@ impl NativeRpc {
         }
         let mut server = tonic::transport::Server::builder();
         if let Some(identity) = identity {
+            crate::tls::ensure_provider();
             server =
                 server.tls_config(tonic::transport::ServerTlsConfig::new().identity(identity))?;
         }

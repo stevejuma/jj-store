@@ -1006,6 +1006,43 @@ async fn warm_filtered_graph_starts_while_another_operation_is_preparing() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn historical_revset_difference_preserves_exact_operation_visibility() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let (repo, b) = child(&repo, &a, "B").await;
+            let (repo, _) = child(&repo, &b, "C").await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let exec = executor(root.path(), q::Limits::default());
+            read.prepare_index(&exec, q::Cancellation::default())
+                .await
+                .unwrap();
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let mut query = log("at_operation(@-, all()) ~ at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut query {
+                *workspace = Some("fixture".into());
+            }
+            for _ in 0..2 {
+                let actual = read.graph(&exec, query.clone(), page(100)).await.unwrap();
+                let q::Nodes::Log(rows) = actual.data else {
+                    panic!("historical log rows")
+                };
+                assert_eq!(
+                    rows.iter().map(|row| row.commit.id).collect::<Vec<_>>(),
+                    vec![cid(b.id())],
+                    "merged indexes must not broaden either historical operation's visibility"
+                );
+                assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+            }
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn resident_indexes_preserve_multiple_historical_operation_scopes() {
     tokio::task::LocalSet::new()
         .run_until(async {

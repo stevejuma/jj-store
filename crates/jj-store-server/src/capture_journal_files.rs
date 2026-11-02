@@ -36,6 +36,13 @@ pub(crate) struct Gate {
     file: File,
     id: [u64; 2],
 }
+impl Drop for Gate {
+    fn drop(&mut self) {
+        // Closing only this descriptor can leave an inherited duplicate holding
+        // the same open-file description locked until the child reaches exec.
+        let _ = self.file.unlock();
+    }
+}
 fn unavailable<T>(result: std::io::Result<T>) -> Result<T> {
     result.map_err(|_| Error::Unavailable)
 }
@@ -235,5 +242,35 @@ impl Root {
         }
         self.check_selected(gate, Some(selected))?;
         Ok((bytes, selected))
+    }
+}
+
+#[cfg(all(test, unix))]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn guard_drop_releases_lock_while_a_duplicate_descriptor_is_alive() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = Root::create(
+            &directory.path().join("journal"),
+            Layout {
+                lock: "test.lock",
+                temporary: ".test-",
+                max_bytes: 1024,
+            },
+        )
+        .unwrap();
+        let owner = root.gate().unwrap();
+        // A child awaiting exec temporarily retains the same open-file
+        // description. A duplicate models that lifetime without fork timing.
+        let inherited = owner.file.try_clone().unwrap();
+        assert!(matches!(root.gate(), Err(Error::Unavailable)));
+        drop(owner);
+        let next = root.gate().expect("the owning guard released its lock");
+        drop(inherited);
+        assert!(matches!(root.gate(), Err(Error::Unavailable)));
+        drop(next);
+        assert!(root.gate().is_ok());
     }
 }

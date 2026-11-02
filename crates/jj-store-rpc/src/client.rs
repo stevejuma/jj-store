@@ -93,6 +93,7 @@ impl NativeClient {
             .connect_timeout(options.timeout)
             .timeout(options.timeout);
         if parsed.scheme() == "https" {
+            crate::tls::ensure_provider();
             let mut tls = ClientTlsConfig::new().with_native_roots();
             if let Some(pem) = &options.ca_certificate_pem {
                 tls = tls.ca_certificate(tonic::transport::Certificate::from_pem(pem));
