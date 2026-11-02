@@ -33,12 +33,13 @@ for Version Packages; version automation does not generate spec evidence.
 Ordinary PRs retain the spec and evidence requirements, and publication always
 requires qualification.
 
-## CI and manual qualification
+## CI and full qualification
 
-PRs run the standard Rust cohort and affected web checks after formatting,
-governance and tooling succeed. Server, CLI and capture package tests (including
-unit tests, except two required HTTP fixture captures), embedded RustFS, native
-platforms and cold application acceptance run in manual qualification. Affected
+PRs plan one source, then run formatting, governance, tooling, selected Rust and
+affected web checks independently. Every selected lane remains mandatory in the
+final protected gate. Server, CLI and capture package tests (including unit
+tests, except two required HTTP fixture captures), embedded RustFS, native
+platforms and cold application acceptance run in full qualification. Affected
 web checks include all three Storybook shards, both served-browser shards,
 static catalog and dual-engine Help; the protected `required` check rejects any
 failed or missing UI job. Main pushes always run all standard checks. Cargo
@@ -46,7 +47,7 @@ metadata selects changed standard packages plus reverse dependencies, including
 development, optional, target-specific and build edges. Manifests, lockfiles, CI
 configuration, fixtures and unknown inputs broaden selection. Clippy, doctests
 and archives use the same selected packages. The plan summary lists excluded
-manual packages and selection reasons.
+full-qualification packages and selection reasons.
 
 Archives carry source/package/test inventories and a digest. Partition coverage
 must be complete and disjoint; only verified empty partitions may run no tests.
@@ -78,13 +79,48 @@ gh workflow run ci-heavy.yml --ref main -f ref=COMMIT_SHA
 ```
 
 Omitting `ref` qualifies the workflow's selected revision. Qualification pins
-that revision once, runs all standard checks, then every heavy suite.
-Independent suites continue after failures, while missing build inputs block
-their consumers. No scheduled heavy runs are enabled. The separate
+that revision once and starts standard checks and independent heavy producers in
+parallel. Independent suites continue after failures, while missing build inputs
+block their consumers. Full validation is also scheduled daily at 02:17 UTC on
+canonical main, with its own non-canceling concurrency group. The separate
 `publish-release.yml` workflow calls this complete qualification at its exact
 source SHA before any publication. Changesets release orchestration remains
 disabled until initial qualification is ready; running qualification alone does
 not publish anything.
+
+Source Storybook starts without waiting for artifacts. Static catalog generation
+is independent of Rust preview compilation; app/Help wait only for their tools,
+fixtures and web assets. These partitions retain all seven UI test jobs once.
+Node-only jobs omit Rust/JJ/Python and sibling AI installation. Archived Rust
+consumers retain source fixtures, JJ, Python and pinned Nextest, but derive
+package selection from archive metadata and skip Cargo fetch, compiler
+components, offline-governance provisioning and sibling npm installation. Rust
+producers restore their dependency cache before fetching locked packages.
+
+Ordinary Rust uploads logs, inventories, JUnit and timing reports on every
+outcome, separately from the uncompressed executable archive upload. The
+protected gate downloads all four shard reports and rejects absent, duplicate,
+foreign-source/attempt and incomplete execution evidence. Verified empty
+partitions remain valid; an entirely empty selected Rust execution fails.
+
+Nightly/manual diagnostics execute the four registered quarantine bodies three
+times with retries off, preserving any failed repetition and its reports. These
+jobs are explicitly advisory and separate from complete qualification; they do
+not re-enable quarantines or certify repaired product behavior. The canonical
+human registers retain ownership and re-enable criteria. Scheduled diagnostic
+failures remain visible in job results and `qualification-results-quarantine-*`.
+
+`ci-health.yml` independently checks every six hours for a scheduled attempt
+within 30 hours and a complete success within 48 hours. It rejects partial
+success and reports unavailable API evidence separately. It neither publishes
+nor authorizes release evidence reuse. Only canonical main scheduled producers
+are admitted; cross-run consumers still require the successful standard gate.
+Same-run consumers can start after source resolution and their actual producers;
+the final complete gate still requires standard checks and every heavy lane.
+
+Rollout remains broad: narrower UI/backend family selection and measured shard
+or cache experiments must wait for a complete hosted full run and corresponding
+coverage evidence. Local tooling results alone do not satisfy that prerequisite.
 
 Six workflows can also run independently: `ci-heavy-backend.yml`,
 `ci-heavy-contracts.yml`, `ci-heavy-storage.yml`, `ci-heavy-ui.yml`,

@@ -99,10 +99,13 @@ jobs:
           scripts/ci-artifacts.mjs consume ${{ matrix.lane }}
         env:
           GH_TOKEN: ${{ github.token }}
+      - uses: ./.github/actions/native-git
       - uses: ./.github/actions/setup
         with:
           native-dependencies: "false"
           build-tools: ${{ matrix.lane == 'git-cycle' && 'true' || 'false' }}
+      - name: Prepare and verify the disposable JJ workspace for agent fixtures
+        run: node scripts/ci-jj-workspace.mjs
       - if: matrix.lane == 'cold' || matrix.lane == 'cold-profile'
         run: node scripts/ci-setup-acp.mjs
       - name: Install Chromium

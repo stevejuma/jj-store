@@ -82,10 +82,10 @@ test("standard checks never schedule heavy qualification and preserve the protec
     assert.equal(ci.on[trigger].inputs.full, undefined);
     assert.equal(ci.on[trigger].inputs.all_checks.type, "boolean");
   }
-  assert.deepEqual(jobs.tooling.needs, ["plan", "format"]);
-  assert.deepEqual(jobs.governance.needs, ["plan", "format"]);
+  assert.deepEqual(jobs.tooling.needs, ["plan"]);
+  assert.deepEqual(jobs.governance.needs, ["plan"]);
   for (const job of ["build", "web", "ui"])
-    assert.ok(jobs[job].needs.includes("fast"));
+    assert.deepEqual(jobs[job].needs, ["plan"]);
   for (const [id, job] of Object.entries(jobs)) {
     if (id !== "plan") {
       assert.ok(job.needs.includes("plan"));
@@ -99,6 +99,7 @@ test("standard checks never schedule heavy qualification and preserve the protec
   assert.deepEqual(
     jobs.web.steps.find((s) => s.uses === "./.github/actions/setup").with,
     {
+      capability: "node",
       "native-dependencies": "false",
       "build-tools": "false",
     },
@@ -108,23 +109,25 @@ test("manual and release qualification pin one source and require every lane", (
   const ci = parseYaml(readFileSync(".github/workflows/ci-heavy.yml", "utf8"));
   const { jobs } = ci;
   assert.deepEqual(Object.keys(ci.on).sort(), [
+    "schedule",
     "workflow_call",
     "workflow_dispatch",
   ]);
-  for (const trigger of Object.values(ci.on))
+  for (const trigger of [ci.on.workflow_call, ci.on.workflow_dispatch])
     assert.deepEqual(Object.keys(trigger.inputs), ["ref"]);
   assert.equal(jobs.standard.uses, "./.github/workflows/ci.yml");
   assert.equal(jobs.standard.with.all_checks, true);
   assert.equal(jobs.standard.with.ref, "${{ needs.resolve.outputs.source }}");
-  assert.ok(jobs.build.needs.includes("standard"));
+  assert.deepEqual(jobs.build.needs, ["resolve"]);
   for (const name of ["runtime", "contracts", "external", "native"])
-    assert.ok(jobs[name].needs.includes("standard"));
+    assert.deepEqual(jobs[name].needs, ["resolve"]);
   assert.deepEqual(jobs.assets.needs, ["resolve", "build"]);
   assert.equal(jobs.ui, undefined); // Standard checks already require all UI shards.
   assert.deepEqual(jobs.cold.needs, ["resolve", "assets", "runtime"]);
   assert.deepEqual(jobs.embedded.needs, ["resolve", "runtime"]);
   for (const [name, job] of Object.entries(jobs)) {
-    if (["resolve", "standard", "complete"].includes(name)) continue;
+    if (["resolve", "standard", "complete", "diagnostics"].includes(name))
+      continue;
     assert.equal(job.with.source, "${{ needs.resolve.outputs.source }}");
     assert.equal(job.if, undefined);
     assert.equal(job.needs.includes("backend"), false);

@@ -92,6 +92,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - uses: ./.github/actions/setup
+        with:
+          fetch-rust: "false"
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
         with:
           workspaces: . -> target
@@ -102,6 +104,8 @@ jobs:
           cache-on-failure: "false"
         id: rust-cache
         name: Restore Rust dependency cache
+      - name: Fetch locked dependencies after cache restoration
+        run: cargo fetch --locked
       - name: Run storage acceptance
         run:
           node scripts/ci-exec.mjs storage -- node scripts/ci-storage.mjs ${{

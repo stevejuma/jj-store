@@ -1,5 +1,12 @@
 # Verification scope
 
+E-CI-LATENCY-001 preserves JST-GOV-003/007: advisory diagnostics execute the
+original four quarantined bodies with retries off, retain each repetition and
+never replace enabled acceptance. CI dependency changes require all CI tooling
+regressions, workflow validation and an integrated hosted full run. Narrower PR
+selection remains disabled pending that run; local regressions establish neither
+full product qualification nor measured latency.
+
 E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
 Core candidate. Consumer reruns MUST select a successful matching UI producer
 and retain its source, attempt and checksum verification. Missing same-attempt

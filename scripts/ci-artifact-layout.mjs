@@ -11,7 +11,7 @@ export const payloads = {
     files: ["web-responses.json"],
   },
   "ui-web": { role: "ui", root: "web/dist" },
-  "ui-catalog": { role: "ui", root: "storybook-static" },
+  "ui-catalog": { role: "ui-catalog", root: "storybook-static" },
   "tests-heavy": {
     role: "build",
     root: ".release",

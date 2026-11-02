@@ -88,7 +88,10 @@ jobs:
           scripts/ci-artifacts.mjs consume backend
         env:
           GH_TOKEN: ${{ github.token }}
+      - uses: ./.github/actions/native-git
       - uses: ./.github/actions/setup
+        with:
+          capability: archive
       - name: Run archived backend tests
         run:
           node scripts/ci-exec.mjs tests -- node scripts/ci-tests.mjs run heavy

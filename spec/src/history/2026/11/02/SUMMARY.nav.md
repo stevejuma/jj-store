@@ -1,2 +1,4 @@
 - [E-REMOTE-TEST-PR-001](E-REMOTE-TEST-PR-001/index.md)
   {{#include E-REMOTE-TEST-PR-001/SUMMARY.nav.md}}
+- [E-CI-LATENCY-001](E-CI-LATENCY-001/index.md)
+  {{#include E-CI-LATENCY-001/SUMMARY.nav.md}}

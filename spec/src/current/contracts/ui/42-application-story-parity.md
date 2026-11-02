@@ -47,3 +47,11 @@ reports the `quarantined` cases as skipped; every enabled interaction and
 accessibility check remains blocking. Story composition, play assertions and
 runtime diagnostics remain intact. Skipped coverage does not qualify the
 original full-suite or release gates, and visual approval remains separate.
+
+E-CI-LATENCY-001 preserves JST-UI-002/005 responsive geometry and original story
+assertions. Q-STORY-001/002 remain excluded from ordinary Storybook; explicit
+nightly/manual diagnostics include their original tagged bodies. Q-BROWSER-001
+remains skipped by default and runs only under its exact diagnostic selector.
+Each family executes three times with retries off, retaining a failure even if a
+later repetition passes. No diagnostic result re-enables a quarantine or
+qualifies the missing responsive, accessibility or complete cold-browser gate.

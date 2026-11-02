@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "Q-STORY-001",
+      "kind": "stories",
+      "file": "catalog/components/store-application/StoreWorkspaces.stories.svelte",
+      "name": "Keyboard search and repository overview"
+    },
+    {
+      "id": "Q-STORY-002",
+      "kind": "stories",
+      "file": "catalog/components/store-appearance/AppearanceOverlay.stories.svelte",
+      "name": "Search and menu share the app surface across all generated palettes"
+    },
+    {
+      "id": "Q-BROWSER-001",
+      "kind": "browser",
+      "file": "web/tests/browser/comparison-parents.spec.ts",
+      "name": "comparison parent and workspace controls stay ordered after viewport resize"
+    },
+    {
+      "id": "Q-RUST-002",
+      "kind": "rust",
+      "binary": "admission",
+      "name": "file_history::file_history_keeps_spaces_quotes_and_pattern_characters_literal"
+    }
+  ]
+}

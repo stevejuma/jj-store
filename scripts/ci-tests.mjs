@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { selectedPackages } from "./ci-packages.mjs";
+import { selectedPackages, packageGraph } from "./ci-packages.mjs";
 import { cargoCommand } from "./managed-cargo.mjs";
 import { buildInventory, readInventory } from "./ci-inventory.mjs";
 import { timed } from "./ci-timing.mjs";
@@ -13,7 +13,24 @@ if (
   throw Error("invalid CI test selection");
 const archive = `.release/tests-${cohort}.tar.zst`;
 mkdirSync(".release", { recursive: true });
-const packages = selectedPackages(cohort);
+// Archive consumers use the build's metadata; never fetch or resolve dependencies.
+const metadata =
+  mode === "run" || mode === "inventory"
+    ? JSON.parse(
+        execFileSync(
+          "tar",
+          ["-xOf", archive, "target/nextest/cargo-metadata.json"],
+          { maxBuffer: 64 * 1024 * 1024, encoding: "utf8" },
+        ),
+      )
+    : null;
+const packages = metadata
+  ? selectedPackages(
+      cohort,
+      process.env.CI_PACKAGES,
+      packageGraph(metadata, metadata.workspace_root),
+    )
+  : selectedPackages(cohort);
 if (mode === "build") {
   timed(`Compile and archive ${cohort}`, () =>
     execFileSync(
@@ -49,6 +66,9 @@ if (mode === "build") {
         {
           source: inventory.source,
           cohort,
+          profile: cohort === "heavy" ? "heavy" : "ci",
+          packages: inventory.packages,
+          archive_sha256: inventory.archive_sha256,
           shard,
           expected,
           tests: inventory.partitions[shard - 1],

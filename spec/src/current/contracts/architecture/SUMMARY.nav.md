@@ -31,3 +31,4 @@
 
 - [Pinned history metadata](29-pinned-history-metadata.md)
 - [Planned thread file storage boundary](30-thread-files-plan.md)
+- [CI execution and scheduled validation](31-ci-execution.md)

@@ -1,0 +1,355 @@
+---
+schema: 1
+id: E-CI-LATENCY-001
+---
+
+# E-CI-LATENCY-001
+
+<!-- evidence-field:id markdown -->
+## Id
+
+E-CI-LATENCY-001
+<!-- /evidence-field -->
+
+<!-- evidence-field:tasks list -->
+## Tasks
+
+- M30
+<!-- /evidence-field -->
+
+<!-- evidence-field:requirements list -->
+## Requirements
+
+- JST-ARCH-005
+- JST-GOV-003
+- JST-GOV-007
+- JST-GOV-011
+- JST-API-001
+- JST-API-004
+- JST-UI-002
+- JST-UI-005
+<!-- /evidence-field -->
+
+<!-- evidence-field:date markdown -->
+## Date
+
+2026-11-02
+<!-- /evidence-field -->
+
+<!-- evidence-field:kind markdown -->
+## Kind
+
+verification
+<!-- /evidence-field -->
+
+<!-- evidence-field:files list -->
+## Files
+
+- .github/actions/qualification-report/action.yml
+- .github/actions/setup/action.yml
+- .github/workflows/ci-heavy-backend.yml
+- .github/workflows/ci-heavy-cold.yml
+- .github/workflows/ci-heavy-contracts.yml
+- .github/workflows/ci-heavy-native.yml
+- .github/workflows/ci-heavy-storage.yml
+- .github/workflows/ci-heavy-ui.yml
+- .github/workflows/ci-heavy.yml
+- .github/workflows/ci-qualification-build.yml
+- .github/workflows/ci-ui.yml
+- .github/workflows/ci.yml
+- catalog/vitest.config.ts
+- docs/releases.md
+- scripts/ci-artifact-layout.mjs
+- scripts/ci-artifacts.mjs
+- scripts/ci-artifact-io.mjs
+- scripts/ci-plan.mjs
+- scripts/ci-report.mjs
+- scripts/ci-report-summary.mjs
+- scripts/ci-source.mjs
+- scripts/ci-tests.mjs
+- scripts/ci-ui-producer.mjs
+- scripts/ci-ui.test.mjs
+- scripts/ci-workflows.test.mjs
+- scripts/ci.test.mjs
+- spec/src/current/contracts/architecture/23-public-distribution.md
+- spec/src/current/contracts/architecture/index.md
+- spec/src/current/governance/06-verification-scope.md
+- spec/src/current/progress/M30/index.md
+- web/tests/browser/comparison-parents.spec.ts
+- .config/ci-quarantine.json
+- .github/actions/native-git/action.yml
+- .github/workflows/ci-health.yml
+- scripts/ci-evidence.mjs
+- scripts/ci-evidence.test.mjs
+- scripts/ci-health.mjs
+- scripts/ci-jj-workspace.mjs
+- scripts/ci-quarantine.mjs
+- spec/src/current/contracts/architecture/31-ci-execution.md
+- spec/src/current/contracts/architecture/SUMMARY.nav.md
+- spec/src/current/progress/M30/history/M30/index.md
+- spec/src/current/contracts/api/16-browsing-ui-execution.md
+- spec/src/current/contracts/ui/42-application-story-parity.md
+<!-- /evidence-field -->
+
+<!-- evidence-field:tests list -->
+## Tests
+
+- scripts/ci-evidence.test.mjs#ordinary gate rejects absent, duplicate, foreign
+  and incomplete shard evidence
+- scripts/ci-evidence.test.mjs#schedule admission is confined to canonical main
+  and exact source; early same-run consumers retain producer checks
+- scripts/ci-evidence.test.mjs#diagnostic repetitions keep the first failure and
+  select only original quarantines
+- scripts/ci-workflows.test.mjs#aggregates reject missing, failed, canceled and
+  unexpectedly skipped prerequisites
+<!-- /evidence-field -->
+
+<!-- evidence-field:runs runs -->
+## Validation
+
+<!-- run -->
+### Run 1
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+node --test scripts/ci*.test.mjs scripts/validation.test.mjs scripts/release.test.mjs scripts/automation-governance.test.mjs
+```
+
+**Notes**
+
+Final integrated CI, validation, release-policy and automation regression run: 83 tests passed, including exact archive/package/profile/partition and JUnit binary/name identity binding. Initial sandbox subprocess restrictions and missing Rust/JJ prerequisites were resolved without weakening tests.
+<!-- /run -->
+
+<!-- run -->
+### Run 2
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+/tmp/actionlint-check/actionlint -shellcheck= -pyflakes=
+```
+
+**Notes**
+
+Checksum-verified pinned actionlint 1.7.12. All workflow schemas and expressions passed. Shellcheck and Pyflakes were not installed or run.
+<!-- /run -->
+
+<!-- run -->
+### Run 3
+
+```yaml
+result: fail
+failures: 1
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+node --test scripts/conversations-npm.test.mjs
+```
+
+**Notes**
+
+Included in an expanded run: the real Sigstore verification test was blocked by HTTP 403 fetching trust metadata. Signature/TLS verification remains enabled.
+<!-- /run -->
+
+<!-- run -->
+### Run 4
+
+```yaml
+result: fail
+failures: 1
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+JJ_STORE_QUARANTINE=Q-BROWSER-001 node node_modules/@playwright/test/cli.js test --list --config web/playwright.config.ts --grep "comparison parent and workspace controls stay ordered after viewport resize$"
+```
+
+**Notes**
+
+Local discovery requires compiled .scratch/web-responses.json captures. No fixture was fabricated and no original browser-body pass is claimed. Hosted diagnostics consume verified UI fixtures.
+<!-- /run -->
+
+<!-- run -->
+### Run 5
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+git fsck --no-reflogs
+```
+
+**Notes**
+
+Verified Git object/ref integrity after removing unintended navigation files generated by an incorrectly scoped navigation-helper call. Historical source content was restored; only explicit new CI topic/evidence navigation is retained.
+<!-- /run -->
+
+<!-- run -->
+### Run 6
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+node node_modules/@lapismd/spec-validator/dist/cli.js first --base @- --head @
+```
+
+**Notes**
+
+Spec-first gate passed: 32 protected files mapped to 5 canonical chapters.
+<!-- /run -->
+
+<!-- run -->
+### Run 7
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+node scripts/check-progress.mjs
+```
+
+**Notes**
+
+Progress evidence bookkeeping passed: 186 tasks and 1006 evidence records. M30 status remains unchanged.
+<!-- /run -->
+
+<!-- run -->
+### Run 8
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+node node_modules/@lapismd/spec-validator/dist/cli.js validate --only governance,summary,fileLimits,verification
+```
+
+**Notes**
+
+Four validators passed, covering 4579 chapters and 211 requirements.
+<!-- /run -->
+
+<!-- run -->
+### Run 9
+
+```yaml
+result: pass
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+git diff --check; node node_modules/prettier/bin/prettier.cjs --check scripts/ci*.mjs .github/actions/{native-git,setup,qualification-report}/action.yml .github/workflows/ci*.yml .config/ci-quarantine.json catalog/vitest.config.ts web/tests/browser/comparison-parents.spec.ts docs/releases.md
+```
+
+**Notes**
+
+Whitespace and formatting checks passed. Changed canonical API/UI and CI architecture/progress pages were also formatted.
+<!-- /run -->
+<!-- /evidence-field -->
+
+<!-- evidence-field:result markdown -->
+## Result
+
+pending
+<!-- /evidence-field -->
+
+<!-- evidence-field:remaining list -->
+## Remaining
+
+- Integrated hosted full run, native Git installation/cache qualification and
+  archived-consumer execution equivalence.
+- Original product Help/clipboard/browser-lifecycle/history-readiness diagnosis
+  and quarantine re-enable gates.
+- Narrower UI/backend selection and targeted heavy PR coverage remain gated on
+  successful hosted full coverage.
+- Measured cold/warm latency, shard/cache experiments and exact-release
+  qualification.
+<!-- /evidence-field -->
+
+<!-- evidence-field:versions markdown -->
+## Versions
+
+Node 24.19.0; pnpm 10.32.1 frozen install; Rust 1.99.0; JJ 0.45.1; actionlint 1.7.12; Nextest 0.9.148 retained.
+<!-- /evidence-field -->
+
+<!-- evidence-field:formats markdown -->
+## Formats
+
+Archive inventory format 1 and source/repository/run/attempt receipts retained. UI catalog has a separate producer role; quarantine registry version 1; ordinary reports include complete JUnit case identities and command outcomes.
+<!-- /evidence-field -->
+
+<!-- evidence-field:scope markdown -->
+## Scope
+
+Independent CI lanes with unchanged selection; source Storybook/static catalog/app prerequisites; capability setup and restore-before-fetch; archived metadata selection; ordinary failure evidence; canonical-main daily full schedule, freshness health and advisory original quarantine repetitions. No product assertion, quarantine identity or publication gate is removed.
+<!-- /evidence-field -->
+
+<!-- evidence-field:next markdown -->
+## Next
+
+Run integrated hosted full validation on the reviewed source; preserve runtime equivalence and timings before enabling narrower selection.
+<!-- /evidence-field -->
+
+<!-- evidence-field:contract_review yaml -->
+## Contract review
+
+```yaml
+status: changed
+reason: JST-ARCH-005 execution, admission and schedule policy updated in
+  architecture topics. JST-GOV-003/007/011 evidence and qualification
+  obligations remain unchanged.
+
+```
+<!-- /evidence-field -->
+
+<!-- evidence-field:milestone_review yaml -->
+## Milestone review
+
+```yaml
+status: unchanged
+reason: M30 remains In progress. Local CI regressions do not establish hosted
+  qualification, repaired product flakes or achieved latency targets.
+
+```
+<!-- /evidence-field -->
