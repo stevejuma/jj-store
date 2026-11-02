@@ -1,6 +1,11 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { selectedPackages, packageGraph } from "./ci-packages.mjs";
+import {
+  cohortProfile,
+  cohortShards,
+  selectedPackages,
+  packageGraph,
+} from "./ci-packages.mjs";
 import { cargoCommand } from "./managed-cargo.mjs";
 import { buildInventory, readInventory } from "./ci-inventory.mjs";
 import { timed } from "./ci-timing.mjs";
@@ -8,7 +13,7 @@ const mode = process.argv[2],
   cohort = process.argv[3] || "ordinary";
 if (
   !["build", "run", "inventory"].includes(mode) ||
-  !["ordinary", "heavy"].includes(cohort)
+  !["ordinary", "heavy", "targeted"].includes(cohort)
 )
   throw Error("invalid CI test selection");
 const archive = `.release/tests-${cohort}.tar.zst`;
@@ -53,7 +58,7 @@ if (mode === "build") {
   );
 } else {
   const shard = Number(process.env.CI_SHARD),
-    count = cohort === "heavy" ? 8 : 4;
+    count = cohortShards(cohort);
   if (!Number.isInteger(shard) || shard < 1 || shard > count)
     throw Error("invalid test shard");
   const inventory = await readInventory(archive, cohort, packages);
@@ -66,7 +71,7 @@ if (mode === "build") {
         {
           source: inventory.source,
           cohort,
-          profile: cohort === "heavy" ? "heavy" : "ci",
+          profile: cohortProfile(cohort),
           packages: inventory.packages,
           archive_sha256: inventory.archive_sha256,
           shard,
@@ -91,7 +96,7 @@ if (mode === "build") {
         "--workspace-remap",
         process.cwd(),
         "--profile",
-        cohort === "heavy" ? "heavy" : "ci",
+        cohortProfile(cohort),
         "--partition",
         `hash:${shard}/${count}`,
         "--no-tests",

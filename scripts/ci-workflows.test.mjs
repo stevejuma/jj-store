@@ -84,8 +84,15 @@ test("standard checks never schedule heavy qualification and preserve the protec
   }
   assert.deepEqual(jobs.tooling.needs, ["plan"]);
   assert.deepEqual(jobs.governance.needs, ["plan"]);
-  for (const job of ["build", "web", "ui"])
+  for (const job of ["build", "targeted_build", "web", "ui"])
     assert.deepEqual(jobs[job].needs, ["plan"]);
+  assert.equal(jobs.targeted.if, "needs.plan.outputs.backend == 'true'");
+  assert.deepEqual(jobs.targeted.needs, ["plan", "targeted_build"]);
+  assert.deepEqual(jobs.targeted.strategy.matrix.shard, [1, 2]);
+  assert.equal(
+    jobs.targeted.env.CI_PACKAGES,
+    "${{ needs.plan.outputs.backend_packages }}",
+  );
   for (const [id, job] of Object.entries(jobs)) {
     if (id !== "plan") {
       assert.ok(job.needs.includes("plan"));
@@ -208,6 +215,8 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
         "fast",
         "build",
         "rust",
+        "targeted_build",
+        "targeted",
         "web",
         "ui",
       ],
@@ -232,13 +241,15 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
     const jobs = Object.fromEntries(
       names.map((name) => [name, { result: "success" }]),
     );
-    assert.doesNotThrow(() => verify(stage, { rust: true, web: true }, jobs));
+    assert.doesNotThrow(() =>
+      verify(stage, { rust: true, web: true, backend: true }, jobs),
+    );
     for (const name of names) {
       for (const result of ["failure", "cancelled", "skipped"])
         assert.throws(() =>
           verify(
             stage,
-            { rust: true, web: true },
+            { rust: true, web: true, backend: true },
             { ...jobs, [name]: { result } },
           ),
         );
@@ -254,14 +265,16 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
         rust: { result: "skipped" },
         web: { result: "skipped" },
         ui: { result: "skipped" },
+        targeted_build: { result: "skipped" },
+        targeted: { result: "skipped" },
       };
       assert.doesNotThrow(() =>
-        verify(stage, { rust: false, web: false }, light),
+        verify(stage, { rust: false, web: false, backend: false }, light),
       );
       assert.throws(() =>
         verify(
           stage,
-          { rust: false, web: false },
+          { rust: false, web: false, backend: false },
           { ...light, rust: { result: "cancelled" } },
         ),
       );

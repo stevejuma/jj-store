@@ -386,8 +386,8 @@ readiness bounds, caller filters and independent native targets are preserved.
 
 Release-governance acceptance follows the declared validation lane through its
 public package command and still requires every release/CI test plus package
-checks. The standard cohort includes history service and vault packages; model
-impact verifies their full reverse dependency closure without reducing coverage.
+check. Affected backend closures add evidence-bound targeted checks without
+qualifying the complete heavy cohort, public artifacts or shadow UI skips.
 
 E-CONVERSATIONS-NPM-003 verifies the focused source repair for deprecated
 desktop owner-pipe registration and generated contract ordering. Safe owned I/O

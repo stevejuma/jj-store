@@ -16,3 +16,19 @@ three-repetition quarantine diagnostics MUST remain distinct from qualification
 and publication. Narrower PR selection remains disabled until full hosted
 coverage is established. No latency or reliability improvement is claimed from
 local tests alone.
+
+E-CI-SELECTION-001 adds selection schema version 1 in shadow mode. The plan
+records source UI, browser, Help, catalog and contract domains, selected package
+families, explicit deferred domains and selection reasons. Existing broad Rust
+and UI lanes continue to use their prior `rust` and `web` decisions. Unknown,
+shared, generated and explicit full-check inputs fail closed to every domain and
+all backend packages.
+
+Changes that reach `jj-store`, `jj-store-server` or `jj-store-capture` through
+the complete reverse dependency graph MUST run the affected backend packages as
+a blocking two-shard `targeted` cohort using the heavy test profile. Its
+archive, package inventory, source, digest, partitions, JUnit identities and
+successful commands MUST pass the same evidence gate as ordinary Rust. The
+complete heavy cohort remains an independent scheduled and release gate. Shadow
+UI domains MUST NOT narrow required PR lanes until hosted full coverage and
+representative selection observations support a separate promotion.

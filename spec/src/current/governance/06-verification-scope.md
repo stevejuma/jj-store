@@ -7,6 +7,13 @@ regressions, workflow validation and an integrated hosted full run. Narrower PR
 selection remains disabled pending that run; local regressions establish neither
 full product qualification nor measured latency.
 
+E-CI-SELECTION-001 keeps broad standard checks while recording a versioned
+shadow domain plan. Affected CLI, server and capture package closures add
+blocking targeted backend coverage with exact two-shard execution evidence.
+Shared and unknown ownership selects every backend package. These focused
+results do not replace complete scheduled or release qualification, and shadow
+UI decisions do not yet authorize skips.
+
 E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
 Core candidate. Consumer reruns MUST select a successful matching UI producer
 and retain its source, attempt and checksum verification. Missing same-attempt

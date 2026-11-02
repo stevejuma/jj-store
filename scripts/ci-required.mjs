@@ -8,7 +8,7 @@ const plan = Object.fromEntries(
 const jobs = JSON.parse(process.env.CI_JOBS);
 const stage = process.env.CI_STAGE || "root";
 if (stage === "root")
-  for (const field of ["rust", "web"]) {
+  for (const field of ["rust", "web", "backend"]) {
     if (![true, false, "true", "false"].includes(rawPlan[field]))
       throw Error(`Missing or invalid planned selection ${field}`);
   }
@@ -39,6 +39,8 @@ const conditional =
           fast: true,
           build: plan.rust,
           rust: plan.rust,
+          targeted_build: plan.backend,
+          targeted: plan.backend,
           web: plan.web,
           ui: plan.web,
         };

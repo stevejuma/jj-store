@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   selectProducerInventory,
+  verifyCohortEvidence,
   verifyOrdinaryEvidence,
 } from "./ci-evidence.mjs";
 import { nightlyHealth } from "./ci-health.mjs";
@@ -119,6 +120,26 @@ test("identical producer inventory copies are accepted but conflicts fail", () =
     /Conflicting/,
   );
 });
+
+test("targeted backend gate binds both shards to the selected heavy packages", () => {
+  const data = reports().slice(0, 2);
+  for (const [index, entry] of data.entries()) {
+    entry.report.suite = `targeted-${index + 1}`;
+    entry.inventory.cohort = "targeted";
+    entry.report.commands[0].label = "targeted-tests";
+  }
+  const targeted = {
+    ...expected,
+    cohort: "targeted",
+    profile: "heavy",
+    shards: 2,
+    partitions: expected.partitions.slice(0, 2),
+  };
+  for (const entry of data) entry.inventory.profile = "heavy";
+  assert.equal(verifyCohortEvidence(data, targeted), 2);
+  data[0].inventory.packages = ["jj-store-capture"];
+  assert.throws(() => verifyCohortEvidence(data, targeted));
+});
 const now = Date.parse("2026-11-02T12:00:00Z");
 const run = {
   id: 12,
@@ -211,6 +232,13 @@ test("ordinary reports and archive consumers retain their required evidence and 
       .with.capability,
     "archive",
   );
+  const targetedNativeGit = ci.jobs.targeted.steps.findIndex(
+    (step) => step.uses === "./.github/actions/native-git",
+  );
+  const targetedSetup = ci.jobs.targeted.steps.findIndex(
+    (step) => step.uses === "./.github/actions/setup",
+  );
+  assert.ok(targetedNativeGit >= 0 && targetedNativeGit < targetedSetup);
   assert.equal(
     ci.jobs.build.steps.find((step) =>
       step.uses?.startsWith("actions/upload-artifact@"),
