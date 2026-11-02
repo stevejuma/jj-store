@@ -2,6 +2,12 @@ import { appendFileSync } from "node:fs";
 import { sourceSha } from "./ci-inventory.mjs";
 import { cacheWritable, sourceOnMain } from "./ci-plan.mjs";
 const source = sourceSha();
+if (
+  process.env.GITHUB_EVENT_NAME === "schedule" &&
+  (process.env.GITHUB_REPOSITORY !== "stevejuma/jj-store" ||
+    process.env.GITHUB_REF !== "refs/heads/main")
+)
+  throw Error("Scheduled qualification requires canonical main");
 const cache_write = cacheWritable({
   event: process.env.GITHUB_EVENT_NAME,
   ref: process.env.GITHUB_REF,

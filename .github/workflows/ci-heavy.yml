@@ -1,5 +1,7 @@
-name: Manual qualification
+name: Full qualification
 on:
+  schedule:
+    - cron: "17 2 * * *"
   workflow_dispatch:
     inputs:
       ref:
@@ -59,7 +61,6 @@ jobs:
     name: Backend compilation
     needs:
       - resolve
-      - standard
     uses: ./.github/workflows/ci-qualification-build.yml
     with:
       source: ${{ needs.resolve.outputs.source }}
@@ -69,7 +70,6 @@ jobs:
     name: Embedded runtime
     needs:
       - resolve
-      - standard
     uses: ./.github/workflows/ci-qualification-build.yml
     with:
       source: ${{ needs.resolve.outputs.source }}
@@ -98,7 +98,6 @@ jobs:
     name: API contracts
     needs:
       - resolve
-      - standard
     uses: ./.github/workflows/ci-heavy-contracts.yml
     with:
       source: ${{ needs.resolve.outputs.source }}
@@ -107,7 +106,6 @@ jobs:
     name: External storage
     needs:
       - resolve
-      - standard
     uses: ./.github/workflows/ci-heavy-storage.yml
     with:
       source: ${{ needs.resolve.outputs.source }}
@@ -127,7 +125,6 @@ jobs:
     name: Native platforms
     needs:
       - resolve
-      - standard
     uses: ./.github/workflows/ci-heavy-native.yml
     with:
       source: ${{ needs.resolve.outputs.source }}
@@ -142,6 +139,62 @@ jobs:
     with:
       source: ${{ needs.resolve.outputs.source }}
       cache_write: ${{ needs.resolve.outputs.cache_write }}
+  diagnostics:
+    name: Quarantine diagnostics (${{ matrix.kind }})
+    needs: [resolve, standard]
+    if:
+      github.event_name == 'schedule' || github.event_name ==
+      'workflow_dispatch'
+    continue-on-error: true
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: [stories, browser, rust]
+    env:
+      CI_SOURCE: ${{ needs.resolve.outputs.source }}
+      JJ_STORE_CI_REPORTS: "1"
+      JJ_STORE_CI_PREBUILT: "1"
+      PLAYWRIGHT_JUNIT_OUTPUT_FILE:
+        ${{ github.workspace }}/.release/ci-results/quarantine.xml
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.resolve.outputs.source }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22
+      - name: Verify source and required UI inputs
+        run: |
+          if [ "$QUARANTINE_KIND" = browser ]; then
+            node scripts/ci-artifacts.mjs consume-ui browser
+          else
+            node scripts/ci-artifacts.mjs source-ui storybook
+          fi
+        env:
+          QUARANTINE_KIND: ${{ matrix.kind }}
+          GH_TOKEN: ${{ github.token }}
+      - uses: ./.github/actions/setup
+        with:
+          capability: ${{ matrix.kind == 'rust' && 'archive' || 'node' }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        if: matrix.kind == 'rust'
+        with:
+          name: tests-ordinary-${{ github.run_attempt }}
+          path: .release
+      - name: Install diagnostic browser
+        if: matrix.kind != 'rust'
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Execute original quarantined bodies three times with retries off
+        run:
+          node scripts/ci-exec.mjs quarantine -- node scripts/ci-quarantine.mjs
+          ${{ matrix.kind }}
+      - name: Preserve diagnostic failures and timings
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: quarantine-${{ matrix.kind }}
   complete:
     name: Complete qualification gate
     needs:
@@ -174,5 +227,7 @@ jobs:
           CI_PLAN: "{}"
           CI_JOBS: ${{ toJSON(needs) }}
 concurrency:
-  group: qualification-${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  group:
+    qualification-${{ github.event_name }}-${{ github.workflow }}-${{ inputs.ref
+    || github.ref }}
   cancel-in-progress: false

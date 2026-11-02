@@ -114,7 +114,7 @@ export function cacheWritable({ event, ref, repository, sourceOnMain }) {
   if (event === "pull_request")
     return /^refs\/pull\/\d+\/merge$/.test(ref ?? "");
   return (
-    ["push", "workflow_dispatch"].includes(event) &&
+    ["push", "workflow_dispatch", "schedule"].includes(event) &&
     ref === "refs/heads/main" &&
     sourceOnMain === true
   );
@@ -145,6 +145,7 @@ if (
   const result = impact(
     files,
     process.env.CI_ALL_CHECKS === "true" ||
+      process.env.CI_EVENT === "schedule" ||
       (process.env.CI_EVENT === "push" &&
         process.env.CI_REF === "refs/heads/main"),
     graph,

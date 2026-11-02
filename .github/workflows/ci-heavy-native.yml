@@ -82,7 +82,10 @@ jobs:
           scripts/ci-artifacts.mjs consume native
         env:
           GH_TOKEN: ${{ github.token }}
+      - uses: ./.github/actions/native-git
       - uses: ./.github/actions/setup
+        with:
+          fetch-rust: "false"
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
         with:
           workspaces: . -> target
@@ -93,6 +96,8 @@ jobs:
           cache-on-failure: "false"
         id: rust-cache
         name: Restore Rust dependency cache
+      - name: Fetch locked dependencies after cache restoration
+        run: cargo fetch --locked
       - name: Verify native compiler target
         run: |
           rustc -vV | grep -Fx 'host: ${{ matrix.target }}'

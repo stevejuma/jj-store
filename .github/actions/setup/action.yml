@@ -1,6 +1,14 @@
 name: Release toolchain
 description: Pinned tools and local-source Rust integration dependencies
 inputs:
+  capability:
+    description:
+      Full, archived Rust consumer, or source-only Node/browser dependencies
+    default: full
+  fetch-rust:
+    description:
+      Fetch Rust dependencies now (disable when restoring a cache first)
+    default: "true"
   native-dependencies:
     description: Install credential-store headers for native crate builds
     default: "true"
@@ -10,11 +18,19 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Validate setup capability
+      shell: bash
+      run: |
+        case "$SETUP_CAPABILITY" in full|archive|node) ;; *) exit 1 ;; esac
+      env:
+        SETUP_CAPABILITY: ${{ inputs.capability }}
     - name: Select hosted validation runtime
       shell: bash
       run: echo "JJ_STORE_VALIDATION_RUNTIME=native" >> "$GITHUB_ENV"
     - name: Install Linux native credential-store build dependencies
-      if: runner.os == 'Linux' && inputs.native-dependencies == 'true'
+      if:
+        inputs.capability == 'full' && runner.os == 'Linux' &&
+        inputs.native-dependencies == 'true'
       shell: bash
       run: |
         sudo apt-get update
@@ -25,6 +41,7 @@ runs:
         node-version: 22
         cache: pnpm
     - name: Materialize pinned shared Rust sources into sibling Cargo paths
+      if: inputs.capability != 'node'
       run: |
         node scripts/ci-lapis-source.mjs
         node scripts/ci-redaction-source.mjs
@@ -32,28 +49,38 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
     - name: Install pinned upstream JJ for repository fixtures
+      if: inputs.capability != 'node'
       run: node scripts/ci-setup-jj.mjs
       shell: bash
-    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+    - if: inputs.capability != 'node'
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: "3.12"
-    - uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f
+    - if: inputs.capability != 'node'
+      uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f
       with:
         toolchain: "1.99.0"
-        components: rustfmt,clippy
+        components: ${{ inputs.capability == 'full' && 'rustfmt,clippy' || '' }}
     - uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8
-      if: inputs.build-tools == 'true'
+      if: inputs.capability == 'full' && inputs.build-tools == 'true'
       with:
         tool: cargo-nextest@0.9.148,mdbook@0.5.4,uv@0.9.28
+    - uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8
+      if: inputs.capability == 'archive'
+      with:
+        tool: cargo-nextest@0.9.148
     - run: pnpm install --frozen-lockfile --ignore-pnpmfile
       shell: bash
     - name: Provision registry metadata for offline governance installs
+      if: inputs.capability == 'full'
       run: node scripts/ci-provision-offline-governance.mjs
       shell: bash
     - name: Fetch locked Rust dependencies for offline governance checks
+      if: inputs.capability == 'full' && inputs.fetch-rust == 'true'
       run: cargo fetch --locked
       shell: bash
     - name: Install shared AI development packaging dependencies
+      if: inputs.capability == 'full'
       run: pnpm install --frozen-lockfile
       working-directory: ../lapis-ai
       shell: bash

@@ -83,7 +83,7 @@ async function comparisonFixture(page: Page) {
 
 // Q-BROWSER-001: original geometry assertions retained; register in
 // spec/src/current/governance/25-test-quarantines.md.
-test.skip(
+(process.env.JJ_STORE_QUARANTINE === "Q-BROWSER-001" ? test : test.skip)(
   "comparison parent and workspace controls stay ordered after viewport resize",
   {
     annotation: {

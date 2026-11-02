@@ -1,0 +1,48 @@
+name: Supported native Git
+description: Checksum-verified Git 2.55.0 and SSH prerequisites for native tests
+runs:
+  using: composite
+  steps:
+    - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+      id: git-cache
+      with:
+        path: ${{ runner.temp }}/jj-native-git
+        key: native-git-2.55.0-${{ runner.os }}-${{ runner.arch }}-457fdb04
+    - name: Prepare isolated SSH fixture prerequisites
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        if [ ! -x /usr/sbin/sshd ]; then
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y openssh-client openssh-server
+        fi
+        sudo mkdir -p /run/sshd
+    - name: Install Linux Git build prerequisites
+      if: runner.os == 'Linux' && steps.git-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y libcurl4-openssl-dev libexpat1-dev zlib1g-dev xz-utils openssh-client
+    - name: Build pinned Git in a private tool directory
+      if: steps.git-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        build_dir="$(mktemp -d "$RUNNER_TEMP/native-git-build.XXXXXX")"
+        trap 'rm -rf "$build_dir"' EXIT
+        curl --fail --location --retry 3 https://www.kernel.org/pub/software/scm/git/git-2.55.0.tar.xz -o "$build_dir/git.tar.xz"
+        printf '%s  %s\n' 457fdb04dc8728e007d4688695e6912e6f680727920f2a40bf11eacc17505357 "$build_dir/git.tar.xz" | shasum -a 256 --check --strict
+        tar -xJf "$build_dir/git.tar.xz" -C "$build_dir"
+        make -C "$build_dir/git-2.55.0" -j2 prefix="$RUNNER_TEMP/jj-native-git" NO_TCLTK=YesPlease NO_GETTEXT=YesPlease install
+    - name: Verify resolved Git and SSH tools
+      shell: bash
+      run: |
+        set -euo pipefail
+        export PATH="$RUNNER_TEMP/jj-native-git/bin:$PATH"
+        test "$(git --version)" = 'git version 2.55.0'
+        test "$(command -v git)" = "$RUNNER_TEMP/jj-native-git/bin/git"
+        command -v ssh
+        command -v ssh-keygen
+        test -x /usr/sbin/sshd
+        ssh -V
+        echo "$RUNNER_TEMP/jj-native-git/bin" >> "$GITHUB_PATH"

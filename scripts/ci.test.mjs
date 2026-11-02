@@ -161,7 +161,9 @@ test("browser and storage suites preserve coverage and consume only their inputs
   assert.equal(heavy.ui, undefined); // UI is mandatory in standard checks.
   const lanes = [
     ...cold.strategy.matrix.include,
-    ...ui.strategy.matrix.include,
+    ...JSON.parse(
+      [...ui.strategy.matrix.include.matchAll(/'(\[.*?\])'/g)].at(-1)[1],
+    ),
   ];
   for (const [lane, shards] of [
     ["cold", ["1/4", "2/4", "3/4", "4/4"]],
@@ -419,7 +421,9 @@ test("Git revision reader pins content and all merge parents", () => {
   }
 });
 
-// Retain this historical evidence anchor: qualification is now manual-only.
+// Compilation is independent; complete qualification still requires policy and tests.
+// Historical evidence retains this test identity; producer builds now start early,
+// while complete qualification and publication still require all standard checks.
 test("failed early or ordinary lanes cannot start expensive qualification", () => {
   const standard = parseYaml(
     readFileSync(".github/workflows/ci.yml", "utf8"),
@@ -428,8 +432,9 @@ test("failed early or ordinary lanes cannot start expensive qualification", () =
     readFileSync(".github/workflows/ci-heavy.yml", "utf8"),
   ).jobs;
   for (const name of ["build", "web"])
-    assert.ok(standard[name].needs.includes("fast"));
-  assert.ok(heavy.build.needs.includes("standard"));
+    assert.deepEqual(standard[name].needs, ["plan"]);
+  assert.deepEqual(heavy.build.needs, ["resolve"]);
+  assert.ok(heavy.complete.needs.includes("standard"));
   assert.equal(heavy.build.if, undefined);
   assert.equal(standard.heavy, undefined);
 });

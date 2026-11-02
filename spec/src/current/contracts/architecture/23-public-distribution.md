@@ -103,31 +103,31 @@ acceptance assertions remain required. The complete qualification gate includes
 the runtime producer.
 
 Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
-calls. It first plans impact and checks formatting, then runs independent
-tooling and governance jobs before standard Rust and affected web checks. The
-standard Rust cohort excludes server, CLI and capture packages, including their
-unit tests. Core UI acceptance (Storybook, served application, static catalog
-and dual-engine Help) runs with affected web checks and is required for PRs. Its
-focused producer compiles only the preview/documentation tools and native HTTP
-fixture capture needed by these tests; it does not run backend qualification or
-build embedded RustFS. Cold application and native-platform acceptance remain
-manual qualification. The stable protected `required` check validates every
-planned standard lane and rejects missing, failed, canceled or unexpectedly
-skipped prerequisites. Main pushes and `all_checks` select the complete standard
-cohort. Superseded PR runs are canceled. No automatic or scheduled standard run
-starts heavy qualification.
+calls. It plans impact, then starts independent formatting, tooling, governance,
+standard Rust and affected web checks. The standard Rust cohort excludes server,
+CLI and capture packages, including their unit tests. Core UI acceptance
+(Storybook, served application, static catalog and dual-engine Help) runs with
+affected web checks and is required for PRs. Its focused producer compiles only
+the preview/documentation tools and native HTTP fixture capture needed by these
+tests; it does not run backend qualification or build embedded RustFS. Cold
+application and native-platform acceptance remain full qualification. The stable
+protected `required` check validates every planned standard lane and rejects
+missing, failed, canceled or unexpectedly skipped prerequisites. Main pushes and
+`all_checks` select the complete standard cohort. Superseded PR runs are
+canceled. No automatic or scheduled standard run starts heavy qualification; a
+separate canonical-main daily schedule invokes the complete heavy coordinator.
 
 Manual qualification resolves its source once to an immutable commit and runs
-all standard checks before heavy work. Six manual/reusable workflows own backend
-Rust, API contracts, storage acceptance, UI acceptance, cold application and
-native compatibility. A shared producer definition builds backend tools/tests,
-embedded runtime and browser assets. Runtime, API, external storage and native
-checks start independently after standard checks; assets need backend tools,
-embedded tests need runtime, and browser consumers wait only for their required
-artifacts. UI acceptance is already required by standard checks and is not
-repeated by the coordinator. Backend failures do not block unrelated consumers.
-Every producer, suite and shard remains mandatory for complete qualification and
-publication.
+all standard checks and independent heavy producers in parallel. Six
+manual/reusable workflows own backend Rust, API contracts, storage acceptance,
+UI acceptance, cold application and native compatibility. A shared producer
+definition builds backend tools/tests, embedded runtime and browser assets.
+Runtime, API, external storage and native checks start independently after
+source validation; assets need backend tools, embedded tests need runtime, and
+browser consumers wait only for their required artifacts. UI acceptance is
+already required by standard checks and is not repeated by the coordinator.
+Backend failures do not block unrelated consumers. Every producer, suite and
+shard remains mandatory for complete qualification and publication.
 
 The scoped Conversations npm workflow MUST be an admitted producer for that same
 unchanged graph only on canonical main dispatch or its package-scoped

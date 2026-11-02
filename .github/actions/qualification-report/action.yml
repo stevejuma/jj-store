@@ -22,7 +22,9 @@ runs:
         path: |
           .release/ci-results
           .scratch/rustfs-contract.json
+          target/nextest/ci/*.xml
           target/nextest/heavy/*.xml
+          .release/tests-*.tar.zst.json
           web/test-results*
           test-results
         include-hidden-files: true

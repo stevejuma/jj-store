@@ -55,6 +55,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - uses: ./.github/actions/setup
+        with:
+          fetch-rust: "false"
       - name: Install embedded runtime protocol compiler
         if: inputs.kind == 'runtime'
         run: |
@@ -70,6 +72,8 @@ jobs:
         id: cache-build
         name: Restore Rust dependency cache
         if: inputs.kind == 'build'
+      - name: Fetch locked dependencies after cache restoration
+        run: cargo fetch --locked
       - name: Report Rust cache match
         run: 'echo "Rust cache exact hit: $CACHE_HIT" >> "$GITHUB_STEP_SUMMARY"'
         env:
