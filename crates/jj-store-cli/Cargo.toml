@@ -44,7 +44,7 @@ tempfile = "3"
 dirs = "7"
 shlex = "2.0"
 tokio = { version = "1", features = ["rt-multi-thread", "time", "sync", "process", "io-util"] }
-rustix = { version = "=1.1.5", features = ["process"] }
+rustix = { version = "=1.1.6", features = ["process"] }
 tonic = { version = "0.14", features = ["transport"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
