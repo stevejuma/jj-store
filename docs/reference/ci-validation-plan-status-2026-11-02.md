@@ -50,7 +50,11 @@ Canonical specifications and evidence remain authoritative.
   validation, freshness, and quarantine diagnostics.
 - `E-CI-SELECTION-001` covers shadow domain planning, blocking targeted backend
   checks, safe fallback, and exact execution evidence.
+- `E-CI-EVIDENCE-001` binds targeted verification to the heavy-profile JUnit
+  path and proves stale ordinary-profile output cannot satisfy the gate.
 
-The second stack's hosted selection, ordinary Rust, and targeted backend lanes
-passed. Existing UI workflow failures remain part of slices 0 and 5 and do not
-establish a failure of the new selection or targeted-backend workflow.
+The second stack's hosted selection and ordinary Rust lanes passed. Its first
+targeted backend execution passed but exposed a verifier path mismatch; this
+change repairs that gate without changing selection. Existing UI workflow
+failures remain part of slices 0 and 5 and do not establish a failure of the new
+selection or targeted-backend workflow.

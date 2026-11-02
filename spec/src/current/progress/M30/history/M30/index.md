@@ -34,6 +34,8 @@ not a completion gate selection.
 | 2026-11-02 | pending | Original outcome | |
 [E-CI-SELECTION-001](../../../../../history/2026/11/02/E-CI-SELECTION-001/index.md)
 | 2026-11-02 | pending | Original outcome |
+[E-CI-EVIDENCE-001](../../../../../history/2026/11/02/E-CI-EVIDENCE-001/index.md)
+| 2026-11-02 | pending | Original outcome |
 
 <!-- generated-navigation -->
 

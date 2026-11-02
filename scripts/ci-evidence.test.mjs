@@ -126,6 +126,7 @@ test("targeted backend gate binds both shards to the selected heavy packages", (
   for (const [index, entry] of data.entries()) {
     entry.report.suite = `targeted-${index + 1}`;
     entry.inventory.cohort = "targeted";
+    entry.report.results.junit[0].path = "target/nextest/heavy/junit-heavy.xml";
     entry.report.commands[0].label = "targeted-tests";
   }
   const targeted = {
@@ -137,6 +138,17 @@ test("targeted backend gate binds both shards to the selected heavy packages", (
   };
   for (const entry of data) entry.inventory.profile = "heavy";
   assert.equal(verifyCohortEvidence(data, targeted), 2);
+  const stale = structuredClone(data);
+  stale[0].report.results.junit[0].path = "target/nextest/ci/junit.xml";
+  assert.throws(
+    () => verifyCohortEvidence(stale, targeted),
+    /Missing or duplicate JUnit/,
+  );
+  const additionalStale = structuredClone(data);
+  additionalStale[0].report.results.junit.push(
+    reports()[0].report.results.junit[0],
+  );
+  assert.equal(verifyCohortEvidence(additionalStale, targeted), 2);
   data[0].inventory.packages = ["jj-store-capture"];
   assert.throws(() => verifyCohortEvidence(data, targeted));
 });

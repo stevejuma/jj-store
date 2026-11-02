@@ -32,3 +32,9 @@ successful commands MUST pass the same evidence gate as ordinary Rust. The
 complete heavy cohort remains an independent scheduled and release gate. Shadow
 UI domains MUST NOT narrow required PR lanes until hosted full coverage and
 representative selection observations support a separate promotion.
+
+E-CI-EVIDENCE-001 binds each cohort to the exact JUnit path owned by its
+declared Nextest profile. The runner MUST remove that path before execution, and
+the evidence gate MUST reject a report from another profile even when its test
+identities and counts match. This repair does not change package selection,
+partitions, test identities or release boundaries.

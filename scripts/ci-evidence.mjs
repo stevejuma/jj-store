@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { cohortProfile } from "./ci-packages.mjs";
+import { cohortProfile, profileJunitPath } from "./ci-packages.mjs";
 
 export function verifyCohortEvidence(reports, expected) {
   const tests = new Set();
@@ -43,8 +43,8 @@ export function verifyCohortEvidence(reports, expected) {
       assert.ok(!tests.has(identity), "Duplicate test across shards");
       tests.add(identity);
     }
-    const junit = report.results.junit.filter((entry) =>
-      entry.path.startsWith("target/nextest/ci/"),
+    const junit = report.results.junit.filter(
+      (entry) => entry.path === profileJunitPath(expected.profile),
     );
     assert.equal(
       junit.length,

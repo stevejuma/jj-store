@@ -14,6 +14,11 @@ Shared and unknown ownership selects every backend package. These focused
 results do not replace complete scheduled or release qualification, and shadow
 UI decisions do not yet authorize skips.
 
+E-CI-EVIDENCE-001 keeps targeted execution and verification on one declared
+heavy-profile evidence path. The focused regression proves that a stale
+ordinary-profile report cannot satisfy that gate; complete scheduled and release
+qualification remain independent and outstanding.
+
 E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
 Core candidate. Consumer reruns MUST select a successful matching UI producer
 and retain its source, attempt and checksum verification. Missing same-attempt

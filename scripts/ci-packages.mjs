@@ -11,6 +11,11 @@ export const cohortShards = (cohort) =>
   cohort === "heavy" ? 8 : cohort === "targeted" ? 2 : 4;
 export const cohortProfile = (cohort) =>
   cohort === "heavy" || cohort === "targeted" ? "heavy" : "ci";
+export function profileJunitPath(profile) {
+  if (profile === "ci") return "target/nextest/ci/junit.xml";
+  if (profile === "heavy") return "target/nextest/heavy/junit-heavy.xml";
+  throw Error("Unknown CI test profile");
+}
 const portable = (path) => path.split(sep).join("/");
 export function packageGraph(data, root = process.cwd()) {
   if (!Array.isArray(data?.workspace_members))

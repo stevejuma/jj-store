@@ -1,8 +1,9 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import {
   cohortProfile,
   cohortShards,
+  profileJunitPath,
   selectedPackages,
   packageGraph,
 } from "./ci-packages.mjs";
@@ -86,6 +87,10 @@ if (mode === "build") {
   console.log(
     `Verified source and archive; shard ${shard}/${count} expects ${expected} runnable tests.`,
   );
+  // A shard result is valid only when this invocation produced it. Removing
+  // the selected profile's report prevents an interrupted run from publishing
+  // a stale JUnit file copied into the archive or retained by a retry.
+  rmSync(profileJunitPath(cohortProfile(cohort)), { force: true });
   timed(`Run ${cohort} shard ${shard}/${count}`, () =>
     execFileSync(
       ...cargoCommand([
