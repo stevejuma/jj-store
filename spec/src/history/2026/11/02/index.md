@@ -11,3 +11,5 @@ Browse the child pages below.
 - [E-CI-LATENCY-001](E-CI-LATENCY-001/index.md)
 
 - [E-CI-SELECTION-001](E-CI-SELECTION-001/index.md)
+
+- [E-CI-CLIPBOARD-STABILITY-001](E-CI-CLIPBOARD-STABILITY-001/index.md)

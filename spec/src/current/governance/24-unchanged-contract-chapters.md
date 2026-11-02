@@ -14,3 +14,8 @@ IDs, passing completed validation, immutable history and explicit milestone
 review remain required. Revision-pinned reads and all-parent/range integrity
 checks still apply. E-CONFIRMATION-CHAPTERS-001 records the regression and
 checks.
+
+E-CI-CLIPBOARD-STABILITY-001 retains JST-GOV-002/011 governance. The browser
+test refactor updates its mapped CI contract, records failed prerequisites and
+passing focused checks, preserves incomplete M30 gates and supplies a fresh
+milestone review. Product presentation and clipboard behavior are unchanged.

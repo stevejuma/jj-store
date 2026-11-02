@@ -126,10 +126,11 @@ test("comparison parent dropdown searches descriptions and sends the full record
       exact: true,
     });
   await copy.click();
-  await expect(copy).toHaveAttribute("data-copied", "true");
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    second,
-  );
+  // The source story owns the transient copied-state assertion. This cold flow
+  // observes the durable browser effect across live-refresh remounts instead.
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe(second);
   await copy.press("Enter");
   await expect(picker).toHaveAttribute("aria-expanded", "true");
   expect(selections).toEqual([]);

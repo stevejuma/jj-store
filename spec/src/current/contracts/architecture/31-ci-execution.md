@@ -38,3 +38,10 @@ declared Nextest profile. The runner MUST remove that path before execution, and
 the evidence gate MUST reject a report from another profile even when its test
 identities and counts match. This repair does not change package selection,
 partitions, test identities or release boundaries.
+
+E-CI-CLIPBOARD-STABILITY-001 preserves the comparison-parent product contract
+while separating two acceptance responsibilities. Source Storybook MUST retain
+the transient copied-state and exact-write assertions. Cold application browser
+acceptance MUST observe the actual clipboard value across live-refresh remounts
+instead of requiring the transient component instance to survive. No retry,
+selection, identity or application behavior changes.
