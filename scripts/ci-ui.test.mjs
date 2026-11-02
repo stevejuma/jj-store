@@ -271,6 +271,6 @@ test("UI partitions preserve every original lane once and source jobs use Node s
   ))
     assert.match(
       step.if,
-      /inputs.capability (?:== '(?:full|archive)'|!= 'node')/,
+      /inputs.capability (?:== '(?:full|archive|tooling)'|!= '(?:node|format)')/,
     );
 });

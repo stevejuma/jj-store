@@ -84,6 +84,22 @@ test("standard checks never schedule heavy qualification and preserve the protec
   }
   assert.deepEqual(jobs.tooling.needs, ["plan"]);
   assert.deepEqual(jobs.governance.needs, ["plan"]);
+  assert.equal(
+    jobs.format.steps.find((step) => step.uses === "./.github/actions/setup")
+      .with.capability,
+    "format",
+  );
+  assert.equal(
+    jobs.tooling.steps.find((step) => step.uses === "./.github/actions/setup")
+      .with.capability,
+    "tooling",
+  );
+  assert.equal(
+    jobs.governance.steps.find(
+      (step) => step.uses === "./.github/actions/setup",
+    ).with.capability,
+    "node",
+  );
   for (const job of ["build", "targeted_build", "web", "catalog_unit", "ui"])
     assert.deepEqual(jobs[job].needs, ["plan"]);
   assert.equal(jobs.targeted.if, "needs.plan.outputs.backend == 'true'");
@@ -125,6 +141,19 @@ test("standard checks never schedule heavy qualification and preserve the protec
   assert.match(jobs.web.if, /outputs\.contracts/);
   assert.equal(jobs.catalog_unit.if, "needs.plan.outputs.catalog == 'true'");
   assert.match(jobs.ui.if, /outputs\.ui_browser/);
+  const setup = parseYaml(
+    readFileSync(".github/actions/setup/action.yml", "utf8"),
+  );
+  const validation = setup.runs.steps.find(
+    (step) => step.name === "Validate setup capability",
+  );
+  for (const capability of ["full", "tooling", "format", "archive", "node"])
+    assert.match(validation.run, new RegExp(`\\b${capability}\\b`));
+  const rust = setup.runs.steps.find((step) =>
+    step.uses?.startsWith("dtolnay/rust-toolchain@"),
+  );
+  assert.match(rust.with.components, /format.*rustfmt/);
+  assert.match(rust.with.components, /full.*rustfmt,clippy/);
 });
 test("manual and release qualification pin one source and require every lane", () => {
   const ci = parseYaml(readFileSync(".github/workflows/ci-heavy.yml", "utf8"));

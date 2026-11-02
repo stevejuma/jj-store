@@ -168,13 +168,13 @@ distinct from elapsed time. Missing reports or interrupted execution cannot
 establish acceptance. Standalone reruns distinguish execution-only archive reuse
 from suites that still compile contracts or native targets.
 
-Shared setup omits native headers and build-only tools for early and web checks.
-The Ubuntu amd64 governance runner installs actionlint from its pinned official
-Linux release archive, verifies the tracked SHA-256 before extraction and
-exposes only the verified executable directory through the runner's PATH file.
-Standard CI retains fail-fast; heavy qualification collects all independent
-results. Unrun tests never establish acceptance. Job names identify the tested
-cohort, browser suite or native platform and shard.
+E-CI-SETUP-001 gives formatting only Node/Rustfmt, governance only Node, and
+tooling Cargo/JJ/Python, pinned sources and offline fixtures without Clippy or
+build tools. Full/archive profiles retain their prior inputs. Governance
+installs actionlint from its checksum-pinned official archive. Standard CI
+retains fail-fast; heavy qualification collects independent results. Unrun tests
+never establish acceptance. Job names identify the cohort, suite, platform and
+shard.
 
 Cold browser acceptance is partitioned into four complete Playwright shards,
 each with its own disposable server/storage fixture. Profile restart acceptance

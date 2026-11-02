@@ -104,6 +104,7 @@ jobs:
           ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
+          capability: format
           native-dependencies: "false"
           build-tools: "false"
       - name: Rust and source formatting
@@ -122,6 +123,7 @@ jobs:
           ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
+          capability: tooling
           native-dependencies: "false"
           build-tools: "false"
       - name: Governance fixtures
@@ -142,6 +144,7 @@ jobs:
           ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
+          capability: node
           native-dependencies: "false"
           build-tools: "false"
       - run: node scripts/ci-range.mjs

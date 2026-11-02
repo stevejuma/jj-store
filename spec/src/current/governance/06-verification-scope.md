@@ -27,6 +27,11 @@ PR pass records only its selected Rust, web, catalog, Storybook, application,
 Help and contract surfaces; it MUST NOT be described as a full-suite or release
 qualification pass.
 
+E-CI-SETUP-001 changes setup capability admission without changing any selected
+test. The setup/workflow regressions and actionlint are the complete local
+surface; hosted timing remains required before claiming a latency improvement.
+Manual full and heavy qualification inputs are unchanged.
+
 E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
 Core candidate. Consumer reruns MUST select a successful matching UI producer
 and retain its source, attempt and checksum verification. Missing same-attempt

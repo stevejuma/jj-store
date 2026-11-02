@@ -4,6 +4,8 @@
   {{#include E-CI-EVIDENCE-001/SUMMARY.nav.md}}
 - [E-CI-ACTIVE-SELECTION-001](E-CI-ACTIVE-SELECTION-001/index.md)
   {{#include E-CI-ACTIVE-SELECTION-001/SUMMARY.nav.md}}
+- [E-CI-SETUP-001](E-CI-SETUP-001/index.md)
+  {{#include E-CI-SETUP-001/SUMMARY.nav.md}}
 - [E-CI-LATENCY-001](E-CI-LATENCY-001/index.md)
   {{#include E-CI-LATENCY-001/SUMMARY.nav.md}}
 - [E-CI-SELECTION-001](E-CI-SELECTION-001/index.md)

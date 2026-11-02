@@ -69,3 +69,11 @@ Each segment MUST start a fresh browser process, run without retries and emit a
 distinct JUnit report. Across the three jobs the twelve segments MUST cover the
 source Storybook inventory exactly once; a failed segment MUST fail its owning
 job without replaying that segment or starting later work as a retry.
+
+E-CI-SETUP-001 assigns the always-running policy jobs explicit least-capability
+profiles. Formatting receives Node and Rustfmt only; governance receives Node
+only; tooling retains Node, Cargo, JJ, Python, pinned sibling sources, offline
+governance fixtures and locked dependency fetches. These profiles MUST NOT
+install native credential headers, general build tools or Clippy. Full builds,
+archive consumers and manually dispatched qualification retain their existing
+setup profiles and inputs.

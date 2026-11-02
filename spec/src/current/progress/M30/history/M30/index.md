@@ -42,6 +42,8 @@ not a completion gate selection.
 | 2026-11-02 | pending | Original outcome | |
 [E-CI-STORYBOOK-LIFETIME-001](../../../../../history/2026/11/02/E-CI-STORYBOOK-LIFETIME-001/index.md)
 | 2026-11-02 | pending | Original outcome |
+[E-CI-SETUP-001](../../../../../history/2026/11/02/E-CI-SETUP-001/index.md) |
+2026-11-02 | pending | Original outcome |
 
 <!-- generated-navigation -->
 
