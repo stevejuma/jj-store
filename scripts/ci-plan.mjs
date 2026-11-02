@@ -78,10 +78,16 @@ export function impact(
       reasons.push(`${file}: source UI input`);
       continue;
     }
-    if (/^(?:catalog\/|\.storybook\/)/.test(file)) {
-      domains.catalog = domains.ui_browser = true;
+    if (/^catalog\//.test(file)) {
+      domains.catalog = true;
       web = true;
       reasons.push(`${file}: catalog input`);
+      continue;
+    }
+    if (/^\.storybook\//.test(file)) {
+      domains.ui_source = domains.catalog = true;
+      web = true;
+      reasons.push(`${file}: Storybook configuration`);
       continue;
     }
     if (/^docs\/site\//.test(file)) {
@@ -150,8 +156,8 @@ export function impact(
     backend_packages: excluded,
     excluded,
     selection: {
-      version: 1,
-      mode: "shadow",
+      version: 2,
+      mode: "active",
       domains,
       packages: { standard: packages, targeted_backend: excluded },
       deferred,
@@ -223,6 +229,7 @@ if (
     rust: result.rust,
     web: result.web,
     backend: result.backend,
+    ...result.selection.domains,
     packages: JSON.stringify(result.packages),
     backend_packages: JSON.stringify(result.backend_packages),
     selection: JSON.stringify(result.selection),
@@ -234,6 +241,11 @@ if (
   if (process.env.GITHUB_STEP_SUMMARY)
     appendFileSync(
       process.env.GITHUB_STEP_SUMMARY,
-      `## Standard check selection\n\nSelection schema: v${result.selection.version} (${result.selection.mode}).\n\nSource: \`${source}\`\n\nSelected packages: ${result.packages.join(", ") || "none"}\n\nTargeted backend packages: ${result.backend_packages.join(", ") || "none"}\n\nFull qualification cohort: ${heavyPackages.join(", ")}\n\nWeb checks: ${result.web}. Cache writes: ${cache_write}.\n\nDeferred shadow domains: ${result.selection.deferred.join(", ") || "none"}.\n\n${result.reasons.map((r) => "- " + r.replace(/[\r\n]/g, " ")).join("\n")}\n`,
+      `## Standard check selection\n\nSelection schema: v${result.selection.version} (${result.selection.mode}).\n\nSource: \`${source}\`\n\nSelected packages: ${result.packages.join(", ") || "none"}\n\nTargeted backend packages: ${result.backend_packages.join(", ") || "none"}\n\nFull qualification cohort: ${heavyPackages.join(", ")}\n\nWeb checks: ${result.web}. Cache writes: ${cache_write}.\n\nSelected PR domains: ${
+        Object.entries(result.selection.domains)
+          .filter(([, selected]) => selected)
+          .map(([name]) => name)
+          .join(", ") || "none"
+      }.\n\nDeferred PR domains: ${result.selection.deferred.join(", ") || "none"}.\n\n${result.reasons.map((r) => "- " + r.replace(/[\r\n]/g, " ")).join("\n")}\n`,
     );
 }

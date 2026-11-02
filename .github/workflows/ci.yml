@@ -54,6 +54,11 @@ jobs:
       rust: ${{ steps.plan.outputs.rust }}
       web: ${{ steps.plan.outputs.web }}
       backend: ${{ steps.plan.outputs.backend }}
+      ui_source: ${{ steps.plan.outputs.ui_source }}
+      ui_browser: ${{ steps.plan.outputs.ui_browser }}
+      help: ${{ steps.plan.outputs.help }}
+      catalog: ${{ steps.plan.outputs.catalog }}
+      contracts: ${{ steps.plan.outputs.contracts }}
       packages: ${{ steps.plan.outputs.packages }}
       backend_packages: ${{ steps.plan.outputs.backend_packages }}
       selection: ${{ steps.plan.outputs.selection }}
@@ -384,24 +389,55 @@ jobs:
           build-tools: "false"
       - run: |
           pnpm web:check
-          pnpm catalog:check
           pnpm web:test
-          pnpm catalog:test
       - name: Preserve test results and timing evidence
         if: always()
         uses: ./.github/actions/qualification-report
         with:
           name: web-unit
-    if: needs.plan.outputs.web == 'true'
+    if: >-
+      needs.plan.outputs.ui_source == 'true' || needs.plan.outputs.ui_browser ==
+      'true' || needs.plan.outputs.help == 'true' ||
+      needs.plan.outputs.contracts == 'true'
     name: Web type checks and unit tests
+  catalog_unit:
+    needs: [plan]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.source }}
+      - uses: ./.github/actions/setup
+        with:
+          capability: node
+          native-dependencies: "false"
+          build-tools: "false"
+      - run: |
+          pnpm catalog:check
+          pnpm catalog:test
+      - name: Preserve test results and timing evidence
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: catalog-unit
+    if: needs.plan.outputs.catalog == 'true'
+    name: Catalog type checks and unit tests
   ui:
     name: UI acceptance
     needs: [plan]
-    if: needs.plan.outputs.web == 'true'
+    if: >-
+      needs.plan.outputs.ui_source == 'true' || needs.plan.outputs.ui_browser ==
+      'true' || needs.plan.outputs.help == 'true' || needs.plan.outputs.catalog
+      == 'true'
     uses: ./.github/workflows/ci-ui.yml
     with:
       source: ${{ needs.plan.outputs.source }}
       cache_write: ${{ needs.plan.outputs.cache_write }}
+      ui_source: ${{ needs.plan.outputs.ui_source == 'true' }}
+      ui_browser: ${{ needs.plan.outputs.ui_browser == 'true' }}
+      help: ${{ needs.plan.outputs.help == 'true' }}
+      catalog: ${{ needs.plan.outputs.catalog == 'true' }}
   required:
     name: required
     needs:
@@ -415,6 +451,7 @@ jobs:
       - targeted_build
       - targeted
       - web
+      - catalog_unit
       - ui
     if: always()
     runs-on: ubuntu-22.04

@@ -70,8 +70,8 @@ test("affected packages include reverse transitive normal build dev optional and
   assert.deepEqual(selected.excluded, ["jj-store"]);
   assert.equal(selected.backend, true);
   assert.deepEqual(selected.backend_packages, ["jj-store"]);
-  assert.equal(selected.selection.version, 1);
-  assert.equal(selected.selection.mode, "shadow");
+  assert.equal(selected.selection.version, 2);
+  assert.equal(selected.selection.mode, "active");
 });
 test("shared inputs and unknown ownership conservatively select all standard consumers", () => {
   for (const file of [
@@ -234,7 +234,17 @@ test("shadow domains separate Help catalog contracts and targeted backend", () =
   assert.equal(help.backend, false);
   const catalog = impact(["catalog/src/example.ts"], false, g);
   assert.equal(catalog.selection.domains.catalog, true);
-  assert.equal(catalog.selection.domains.ui_browser, true);
+  assert.equal(catalog.selection.domains.ui_browser, false);
+  assert.deepEqual(catalog.selection.deferred.sort(), [
+    "contracts",
+    "help",
+    "ui_browser",
+    "ui_source",
+  ]);
+  const storybook = impact([".storybook/preview.ts"], false, g);
+  assert.equal(storybook.selection.domains.ui_source, true);
+  assert.equal(storybook.selection.domains.catalog, true);
+  assert.equal(storybook.selection.domains.ui_browser, false);
   const contract = impact(["crates/jj-store-rpc/src/lib.rs"], false, g);
   assert.equal(contract.selection.domains.contracts, true);
   assert.equal(contract.selection.domains.ui_source, true);
@@ -242,6 +252,23 @@ test("shadow domains separate Help catalog contracts and targeted backend", () =
   assert.deepEqual(server.backend_packages, ["jj-store", "jj-store-server"]);
   assert.equal(server.selection.domains.help, true);
   assert.ok(server.selection.deferred.includes("catalog"));
+});
+test("active domains separate Help catalog contracts and targeted backend", () => {
+  const g = workspaceGraph();
+  const catalog = impact(["catalog/src/example.ts"], false, g);
+  assert.equal(catalog.selection.version, 2);
+  assert.equal(catalog.selection.mode, "active");
+  assert.deepEqual(catalog.selection.domains, {
+    ui_source: false,
+    ui_browser: false,
+    help: false,
+    catalog: true,
+    contracts: false,
+  });
+  const storybook = impact([".storybook/preview.ts"], false, g);
+  assert.equal(storybook.selection.domains.ui_source, true);
+  assert.equal(storybook.selection.domains.catalog, true);
+  assert.equal(storybook.selection.domains.ui_browser, false);
 });
 function fixture(t) {
   const dir = mkdtempSync(join(tmpdir(), "ci-impact-"));

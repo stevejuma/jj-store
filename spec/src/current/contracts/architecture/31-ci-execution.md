@@ -45,3 +45,20 @@ the transient copied-state and exact-write assertions. Cold application browser
 acceptance MUST observe the actual clipboard value across live-refresh remounts
 instead of requiring the transient component instance to survive. No retry,
 selection, identity or application behavior changes.
+
+E-CI-ACTIVE-SELECTION-001 promotes selection schema version 2 to active
+pull-request behavior by explicit user authorization. The stable `required` gate
+MUST validate the planned source UI, application browser, Help, catalog and
+contract booleans and MUST accept a skipped lane only when its exact domain is
+unselected. Catalog-only changes run catalog units and browser acceptance;
+Storybook configuration runs source Storybook and catalog acceptance; Help,
+application browser and contract checks remain independently selectable.
+
+Shared, generated, unknown and explicit `all_checks` inputs still select every
+domain and all eligible packages. `workflow_dispatch` with `all_checks=true` and
+the `ci-heavy.yml` coordinator retain every standard UI/Rust lane and the
+complete heavy qualification surface for manual or scheduled execution. Focused
+PR success is not complete qualification, and activating selection does not
+claim a latency or reliability result. The previously required fresh hosted
+heavy run is now a subsequent qualification action rather than a prerequisite
+for smaller PR checks.

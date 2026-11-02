@@ -19,6 +19,14 @@ heavy-profile evidence path. The focused regression proves that a stale
 ordinary-profile report cannot satisfy that gate; complete scheduled and release
 qualification remain independent and outstanding.
 
+E-CI-ACTIVE-SELECTION-001 authorizes domain-scoped pull-request checks before
+the outstanding hosted heavy qualification. The active planner fails closed for
+shared and unknown inputs, the aggregate rejects every unplanned skip, and
+explicit full/manual execution retains all standard and heavy lanes. A focused
+PR pass records only its selected Rust, web, catalog, Storybook, application,
+Help and contract surfaces; it MUST NOT be described as a full-suite or release
+qualification pass.
+
 E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
 Core candidate. Consumer reruns MUST select a successful matching UI producer
 and retain its source, attempt and checksum verification. Missing same-attempt

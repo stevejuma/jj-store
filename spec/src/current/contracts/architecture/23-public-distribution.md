@@ -103,19 +103,19 @@ acceptance assertions remain required. The complete qualification gate includes
 the runtime producer.
 
 Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
-calls. It plans impact, then starts independent formatting, tooling, governance,
-standard Rust and affected web checks. The standard Rust cohort excludes server,
-CLI and capture packages, including their unit tests. Core UI acceptance
-(Storybook, served application, static catalog and dual-engine Help) runs with
-affected web checks and is required for PRs. Its focused producer compiles only
-the preview/documentation tools and native HTTP fixture capture needed by these
-tests; it does not run backend qualification or build embedded RustFS. Cold
-application and native-platform acceptance remain full qualification. The stable
-protected `required` check validates every planned standard lane and rejects
-missing, failed, canceled or unexpectedly skipped prerequisites. Main pushes and
-`all_checks` select the complete standard cohort. Superseded PR runs are
-canceled. No automatic or scheduled standard run starts heavy qualification; a
-separate canonical-main daily schedule invokes the complete heavy coordinator.
+calls. It starts independent policy, standard Rust and affected web checks; the
+standard cohort excludes server, CLI and capture. E-CI-ACTIVE-SELECTION-001
+makes source Storybook, served application, static catalog and Help independent
+schema-version-2 domains, with separate web and catalog units. The app/Help
+producer builds only their preview tools and fixtures; cold/native acceptance
+remains full qualification.
+
+The stable `required` check validates every planned domain and rejects missing,
+failed, canceled or unexpected skips. Shared/generated/unknown inputs, main and
+`all_checks` select everything. Explicit full and heavy dispatches preserve all
+seven UI jobs. Smaller PR checks before the outstanding hosted heavy run are
+authorized, but focused success never establishes complete/release
+qualification.
 
 Manual qualification resolves its source once to an immutable commit and runs
 all standard checks and independent heavy producers in parallel. Six
