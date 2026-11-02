@@ -19,3 +19,9 @@ non-success responses preserve the original intent. The CLI does not silently
 retry an unknown command or create an instruction-only conversation turn.
 Commands share the HTTP/native/local authorization, immutable metadata and
 receipt policy in the conversation metadata contracts.
+
+Recovered metadata publication may reference a source object that the active
+agent root still retains or has already compacted. A retained source MUST bind
+the exact published session; a foreign session binding MUST fail without
+changing the metadata revision. Recovery retries the frozen publication receipt
+without running inference again.

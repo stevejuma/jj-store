@@ -2,25 +2,26 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { cohortProfile, profileJunitPath } from "./ci-packages.mjs";
 
-export function verifyOrdinaryEvidence(reports, expected) {
+export function verifyCohortEvidence(reports, expected) {
   const tests = new Set();
   let executed = 0;
-  for (let shard = 1; shard <= 4; shard++) {
+  for (let shard = 1; shard <= expected.shards; shard++) {
     const matches = reports.filter(
-      (entry) => entry.report.suite === `ordinary-${shard}`,
+      (entry) => entry.report.suite === `${expected.cohort}-${shard}`,
     );
     assert.equal(
       matches.length,
       1,
-      `Missing or duplicate ordinary shard ${shard}`,
+      `Missing or duplicate ${expected.cohort} shard ${shard}`,
     );
     const { report, inventory } = matches[0];
     for (const key of ["source", "run", "attempt"])
       assert.equal(report[key], expected[key], `Report ${key} mismatch`);
     assert.equal(inventory.source, expected.source);
-    assert.equal(inventory.cohort, "ordinary");
-    assert.equal(inventory.profile, "ci");
+    assert.equal(inventory.cohort, expected.cohort);
+    assert.equal(inventory.profile, expected.profile);
     assert.equal(
       inventory.archive_sha256,
       expected.archive_sha256,
@@ -42,8 +43,8 @@ export function verifyOrdinaryEvidence(reports, expected) {
       assert.ok(!tests.has(identity), "Duplicate test across shards");
       tests.add(identity);
     }
-    const junit = report.results.junit.filter((entry) =>
-      entry.path.startsWith("target/nextest/ci/"),
+    const junit = report.results.junit.filter(
+      (entry) => entry.path === profileJunitPath(expected.profile),
     );
     assert.equal(
       junit.length,
@@ -74,7 +75,10 @@ export function verifyOrdinaryEvidence(reports, expected) {
     assert.ok(
       report.commands?.some(
         (command) =>
-          command.label === "rust-tests" &&
+          command.label ===
+            (expected.cohort === "targeted"
+              ? "targeted-tests"
+              : "rust-tests") &&
           command.exit_code === 0 &&
           !command.signal,
       ),
@@ -85,6 +89,13 @@ export function verifyOrdinaryEvidence(reports, expected) {
   assert.ok(executed > 0, "Nonempty Rust selection executed no tests");
   return executed;
 }
+export const verifyOrdinaryEvidence = (reports, expected) =>
+  verifyCohortEvidence(reports, {
+    ...expected,
+    cohort: "ordinary",
+    profile: "ci",
+    shards: 4,
+  });
 
 export function selectProducerInventory(inventories) {
   assert.ok(inventories.length > 0, "Missing producer inventory");
@@ -99,8 +110,12 @@ export function selectProducerInventory(inventories) {
 }
 
 function main() {
+  const cohort = process.argv[2] || "ordinary";
+  if (!["ordinary", "targeted"].includes(cohort))
+    throw Error("Unsupported evidence cohort");
+  const shards = cohort === "targeted" ? 2 : 4;
   const root = ".release/downloaded";
-  assert.ok(existsSync(root), "Missing ordinary reports");
+  assert.ok(existsSync(root), `Missing ${cohort} reports`);
   const reports = readdirSync(root).flatMap((name) => {
     const dir = join(root, name);
     const paths = readdirSync(dir, { recursive: true }).filter((path) =>
@@ -111,7 +126,7 @@ function main() {
     const reportPath = join(dir, paths[0]);
     const inventoryPath = reportPath.replace(/timing\.json$/, "inventory.json");
     const report = JSON.parse(readFileSync(reportPath, "utf8"));
-    if (!/^ordinary-[1-4]$/.test(report.suite)) return [];
+    if (!new RegExp(`^${cohort}-[1-${shards}]$`).test(report.suite)) return [];
     assert.ok(
       existsSync(inventoryPath),
       `Missing inventory for ${report.suite}`,
@@ -121,7 +136,7 @@ function main() {
     ];
   });
   const inventories = readdirSync(root, { recursive: true }).filter((path) =>
-    path.endsWith("/tests-ordinary.tar.zst.json"),
+    path.endsWith(`/tests-${cohort}.tar.zst.json`),
   );
   const producer = selectProducerInventory(
     inventories.map((path) =>
@@ -129,12 +144,15 @@ function main() {
     ),
   );
   assert.equal(producer.source, process.env.CI_SOURCE);
-  assert.equal(producer.cohort, "ordinary");
+  assert.equal(producer.cohort, cohort);
   assert.deepEqual(
     producer.packages,
     JSON.parse(process.env.CI_PACKAGES).sort(),
   );
-  const count = verifyOrdinaryEvidence(reports, {
+  const count = verifyCohortEvidence(reports, {
+    cohort,
+    profile: cohortProfile(cohort),
+    shards,
     archive_sha256: producer.archive_sha256,
     packages: producer.packages,
     partitions: producer.partitions,
@@ -143,7 +161,7 @@ function main() {
     attempt: process.env.GITHUB_RUN_ATTEMPT,
   });
   console.log(
-    `Verified complete ordinary evidence: ${count} executions across four disjoint shards.`,
+    `Verified complete ${cohort} evidence: ${count} executions across ${shards} disjoint shards.`,
   );
 }
 if (

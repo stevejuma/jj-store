@@ -7,6 +7,22 @@ on:
         type: string
         required: true
         description: Exact source commit SHA to build and test
+      ui_source:
+        type: boolean
+        default: true
+        description: Run source Storybook acceptance
+      ui_browser:
+        type: boolean
+        default: true
+        description: Run application browser acceptance
+      help:
+        type: boolean
+        default: true
+        description: Run Help browser acceptance
+      catalog:
+        type: boolean
+        default: true
+        description: Run catalog acceptance
   workflow_call:
     inputs:
       source:
@@ -15,6 +31,18 @@ on:
       cache_write:
         type: string
         default: "false"
+      ui_source:
+        type: boolean
+        required: true
+      ui_browser:
+        type: boolean
+        required: true
+      help:
+        type: boolean
+        required: true
+      catalog:
+        type: boolean
+        required: true
 permissions:
   contents: read
   actions: read
@@ -40,6 +68,7 @@ jobs:
     name: UI acceptance inputs
     runs-on: ubuntu-22.04
     timeout-minutes: 60
+    if: inputs.ui_browser || inputs.help
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -103,15 +132,26 @@ jobs:
         with:
           name: ui-inputs
   tests:
-    name: Core UI tests
+    name: Application browser
     needs: prepare
+    if: inputs.ui_browser
     uses: ./.github/workflows/ci-heavy-ui.yml
     with:
       source: ${{ inputs.source }}
       input_profile: ui
-      suite: application
+      suite: browser
+  help:
+    name: Help browser
+    needs: prepare
+    if: inputs.help
+    uses: ./.github/workflows/ci-heavy-ui.yml
+    with:
+      source: ${{ inputs.source }}
+      input_profile: ui
+      suite: help
   storybook:
     name: Source Storybook
+    if: inputs.ui_source
     uses: ./.github/workflows/ci-heavy-ui.yml
     with:
       source: ${{ inputs.source }}
@@ -121,6 +161,7 @@ jobs:
     name: Static catalog inputs
     runs-on: ubuntu-22.04
     timeout-minutes: 30
+    if: inputs.catalog
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -156,6 +197,7 @@ jobs:
   catalog-tests:
     name: Static catalog acceptance
     needs: catalog
+    if: inputs.catalog
     uses: ./.github/workflows/ci-heavy-ui.yml
     with:
       source: ${{ inputs.source }}

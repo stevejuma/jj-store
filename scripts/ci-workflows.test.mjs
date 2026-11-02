@@ -84,8 +84,31 @@ test("standard checks never schedule heavy qualification and preserve the protec
   }
   assert.deepEqual(jobs.tooling.needs, ["plan"]);
   assert.deepEqual(jobs.governance.needs, ["plan"]);
-  for (const job of ["build", "web", "ui"])
+  assert.equal(
+    jobs.format.steps.find((step) => step.uses === "./.github/actions/setup")
+      .with.capability,
+    "format",
+  );
+  assert.equal(
+    jobs.tooling.steps.find((step) => step.uses === "./.github/actions/setup")
+      .with.capability,
+    "tooling",
+  );
+  assert.equal(
+    jobs.governance.steps.find(
+      (step) => step.uses === "./.github/actions/setup",
+    ).with.capability,
+    "node",
+  );
+  for (const job of ["build", "targeted_build", "web", "catalog_unit", "ui"])
     assert.deepEqual(jobs[job].needs, ["plan"]);
+  assert.equal(jobs.targeted.if, "needs.plan.outputs.backend == 'true'");
+  assert.deepEqual(jobs.targeted.needs, ["plan", "targeted_build"]);
+  assert.deepEqual(jobs.targeted.strategy.matrix.shard, [1, 2]);
+  assert.equal(
+    jobs.targeted.env.CI_PACKAGES,
+    "${{ needs.plan.outputs.backend_packages }}",
+  );
   for (const [id, job] of Object.entries(jobs)) {
     if (id !== "plan") {
       assert.ok(job.needs.includes("plan"));
@@ -104,6 +127,33 @@ test("standard checks never schedule heavy qualification and preserve the protec
       "build-tools": "false",
     },
   );
+  for (const domain of [
+    "ui_source",
+    "ui_browser",
+    "help",
+    "catalog",
+    "contracts",
+  ])
+    assert.equal(
+      jobs.plan.outputs[domain],
+      `\${{ steps.plan.outputs.${domain} }}`,
+    );
+  assert.match(jobs.web.if, /outputs\.contracts/);
+  assert.equal(jobs.catalog_unit.if, "needs.plan.outputs.catalog == 'true'");
+  assert.match(jobs.ui.if, /outputs\.ui_browser/);
+  const setup = parseYaml(
+    readFileSync(".github/actions/setup/action.yml", "utf8"),
+  );
+  const validation = setup.runs.steps.find(
+    (step) => step.name === "Validate setup capability",
+  );
+  for (const capability of ["full", "tooling", "format", "archive", "node"])
+    assert.match(validation.run, new RegExp(`\\b${capability}\\b`));
+  const rust = setup.runs.steps.find((step) =>
+    step.uses?.startsWith("dtolnay/rust-toolchain@"),
+  );
+  assert.match(rust.with.components, /format.*rustfmt/);
+  assert.match(rust.with.components, /full.*rustfmt,clippy/);
 });
 test("manual and release qualification pin one source and require every lane", () => {
   const ci = parseYaml(readFileSync(".github/workflows/ci-heavy.yml", "utf8"));
@@ -196,6 +246,38 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
       },
       stdio: "pipe",
     });
+  const planned = (overrides = {}) => {
+    const domains = {
+      ui_source: false,
+      ui_browser: false,
+      help: false,
+      catalog: false,
+      contracts: false,
+      ...Object.fromEntries(
+        Object.entries(overrides).filter(([key]) =>
+          ["ui_source", "ui_browser", "help", "catalog", "contracts"].includes(
+            key,
+          ),
+        ),
+      ),
+    };
+    return {
+      rust: overrides.rust ?? false,
+      web: Object.values(domains).some(Boolean),
+      backend: overrides.backend ?? false,
+      ...domains,
+      selection: JSON.stringify({ version: 2, mode: "active", domains }),
+    };
+  };
+  const fullPlan = planned({
+    rust: true,
+    backend: true,
+    ui_source: true,
+    ui_browser: true,
+    help: true,
+    catalog: true,
+    contracts: true,
+  });
   for (const [stage, names] of [
     ["early", ["plan", "format", "tooling", "governance"]],
     [
@@ -208,7 +290,10 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
         "fast",
         "build",
         "rust",
+        "targeted_build",
+        "targeted",
         "web",
+        "catalog_unit",
         "ui",
       ],
     ],
@@ -232,39 +317,49 @@ test("aggregates reject missing, failed, canceled and unexpectedly skipped prere
     const jobs = Object.fromEntries(
       names.map((name) => [name, { result: "success" }]),
     );
-    assert.doesNotThrow(() => verify(stage, { rust: true, web: true }, jobs));
+    assert.doesNotThrow(() => verify(stage, fullPlan, jobs));
     for (const name of names) {
       for (const result of ["failure", "cancelled", "skipped"])
         assert.throws(() =>
-          verify(
-            stage,
-            { rust: true, web: true },
-            { ...jobs, [name]: { result } },
-          ),
+          verify(stage, fullPlan, { ...jobs, [name]: { result } }),
         );
       const missing = { ...jobs };
       delete missing[name];
-      assert.throws(() => verify(stage, { rust: true, web: true }, missing));
+      assert.throws(() => verify(stage, fullPlan, missing));
     }
     if (stage === "root") {
-      assert.throws(() => verify(stage, {}, jobs), /planned selection/);
+      assert.throws(() => verify(stage, {}, jobs), /selection/);
       const light = {
         ...jobs,
         build: { result: "skipped" },
         rust: { result: "skipped" },
         web: { result: "skipped" },
+        catalog_unit: { result: "skipped" },
         ui: { result: "skipped" },
+        targeted_build: { result: "skipped" },
+        targeted: { result: "skipped" },
+      };
+      assert.doesNotThrow(() => verify(stage, planned(), light));
+      assert.throws(() =>
+        verify(stage, planned(), { ...light, rust: { result: "cancelled" } }),
+      );
+      const catalogOnly = {
+        ...light,
+        catalog_unit: { result: "success" },
+        ui: { result: "success" },
       };
       assert.doesNotThrow(() =>
-        verify(stage, { rust: false, web: false }, light),
+        verify(stage, planned({ catalog: true }), catalogOnly),
       );
+      assert.throws(() => verify(stage, { ...fullPlan, web: false }, jobs));
       assert.throws(() =>
         verify(
           stage,
-          { rust: false, web: false },
-          { ...light, rust: { result: "cancelled" } },
+          { ...fullPlan, selection: JSON.stringify({ version: 1 }) },
+          jobs,
         ),
       );
+      assert.throws(() => verify(stage, { ...fullPlan, catalog: false }, jobs));
     }
   }
 });

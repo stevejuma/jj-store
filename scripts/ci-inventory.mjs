@@ -9,6 +9,7 @@ import {
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import assert from "node:assert/strict";
+import { cohortProfile, cohortShards } from "./ci-packages.mjs";
 export async function archiveHash(path) {
   const hash = createHash("sha256");
   for await (const chunk of createReadStream(path)) hash.update(chunk);
@@ -56,7 +57,7 @@ export function verifyInventory(data, { source, cohort, packages, hash }) {
     [...packages].sort(),
     "Archive package mismatch",
   );
-  assert.equal(data.partitions.length, cohort === "heavy" ? 8 : 4);
+  assert.equal(data.partitions.length, cohortShards(cohort));
   assert.equal(new Set(data.tests).size, data.tests.length);
   assert.equal(new Set(data.runnable).size, data.runnable.length);
   assert.ok(data.runnable.every((id) => data.tests.includes(id)));
@@ -103,7 +104,7 @@ export async function buildInventory(archive, cohort, packages) {
               "--binaries-metadata",
               paths[1],
               "--profile",
-              cohort === "heavy" ? "heavy" : "ci",
+              cohortProfile(cohort),
               "--message-format",
               "json",
               ...(partition ? ["--partition", partition] : []),
@@ -113,7 +114,7 @@ export async function buildInventory(archive, cohort, packages) {
         ),
       );
     const full = list(),
-      count = cohort === "heavy" ? 8 : 4;
+      count = cohortShards(cohort);
     assert.deepEqual(
       full.packages,
       [...packages].sort(),

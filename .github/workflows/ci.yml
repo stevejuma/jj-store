@@ -53,7 +53,15 @@ jobs:
       source: ${{ steps.plan.outputs.source }}
       rust: ${{ steps.plan.outputs.rust }}
       web: ${{ steps.plan.outputs.web }}
+      backend: ${{ steps.plan.outputs.backend }}
+      ui_source: ${{ steps.plan.outputs.ui_source }}
+      ui_browser: ${{ steps.plan.outputs.ui_browser }}
+      help: ${{ steps.plan.outputs.help }}
+      catalog: ${{ steps.plan.outputs.catalog }}
+      contracts: ${{ steps.plan.outputs.contracts }}
       packages: ${{ steps.plan.outputs.packages }}
+      backend_packages: ${{ steps.plan.outputs.backend_packages }}
+      selection: ${{ steps.plan.outputs.selection }}
       cache_write: ${{ steps.plan.outputs.cache_write }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -96,6 +104,7 @@ jobs:
           ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
+          capability: format
           native-dependencies: "false"
           build-tools: "false"
       - name: Rust and source formatting
@@ -114,6 +123,7 @@ jobs:
           ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
+          capability: tooling
           native-dependencies: "false"
           build-tools: "false"
       - name: Governance fixtures
@@ -134,6 +144,7 @@ jobs:
           ref: ${{ needs.plan.outputs.source }}
       - uses: ./.github/actions/setup
         with:
+          capability: node
           native-dependencies: "false"
           build-tools: "false"
       - run: node scripts/ci-range.mjs
@@ -286,6 +297,86 @@ jobs:
         with:
           name: ordinary-${{ matrix.shard }}
     name: Standard Rust tests (shard ${{ matrix.shard }}/4)
+  targeted_build:
+    needs: [plan]
+    if: needs.plan.outputs.backend == 'true'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    env:
+      CARGO_TARGET_DIR: target
+      CI_PACKAGES: ${{ needs.plan.outputs.backend_packages }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.source }}
+      - uses: ./.github/actions/setup
+        with:
+          fetch-rust: "false"
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
+        with:
+          workspaces: . -> target
+          save-if: ${{ needs.plan.outputs.cache_write == 'true' }}
+          key: targeted-backend-1.99-debug
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+        name: Restore targeted backend dependency cache
+      - name: Fetch locked dependencies after cache restoration
+        run: cargo fetch --locked
+      - run:
+          node scripts/ci-exec.mjs targeted-build -- node scripts/ci-build.mjs
+          targeted
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: tests-targeted-${{ github.run_attempt }}
+          compression-level: 0
+          path: .release/tests-targeted.tar.zst*
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+      - name: Preserve test results and timing evidence
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: targeted-build
+    name: Build affected backend tests
+  targeted:
+    needs:
+      - plan
+      - targeted_build
+    if: needs.plan.outputs.backend == 'true'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      matrix:
+        shard:
+          - 1
+          - 2
+    env:
+      CARGO_TARGET_DIR: target
+      CI_SHARD: ${{ matrix.shard }}
+      CI_PACKAGES: ${{ needs.plan.outputs.backend_packages }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.source }}
+      - uses: ./.github/actions/native-git
+      - uses: ./.github/actions/setup
+        with:
+          capability: archive
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: tests-targeted-${{ github.run_attempt }}
+          path: .release
+      - run:
+          node scripts/ci-exec.mjs targeted-tests -- node scripts/ci-tests.mjs
+          run targeted
+      - name: Preserve test results and timing evidence
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: targeted-${{ matrix.shard }}
+    name: Affected backend tests (shard ${{ matrix.shard }}/2)
   web:
     needs: [plan]
     runs-on: ubuntu-22.04
@@ -301,24 +392,55 @@ jobs:
           build-tools: "false"
       - run: |
           pnpm web:check
-          pnpm catalog:check
           pnpm web:test
-          pnpm catalog:test
       - name: Preserve test results and timing evidence
         if: always()
         uses: ./.github/actions/qualification-report
         with:
           name: web-unit
-    if: needs.plan.outputs.web == 'true'
+    if: >-
+      needs.plan.outputs.ui_source == 'true' || needs.plan.outputs.ui_browser ==
+      'true' || needs.plan.outputs.help == 'true' ||
+      needs.plan.outputs.contracts == 'true'
     name: Web type checks and unit tests
+  catalog_unit:
+    needs: [plan]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.source }}
+      - uses: ./.github/actions/setup
+        with:
+          capability: node
+          native-dependencies: "false"
+          build-tools: "false"
+      - run: |
+          pnpm catalog:check
+          pnpm catalog:test
+      - name: Preserve test results and timing evidence
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: catalog-unit
+    if: needs.plan.outputs.catalog == 'true'
+    name: Catalog type checks and unit tests
   ui:
     name: UI acceptance
     needs: [plan]
-    if: needs.plan.outputs.web == 'true'
+    if: >-
+      needs.plan.outputs.ui_source == 'true' || needs.plan.outputs.ui_browser ==
+      'true' || needs.plan.outputs.help == 'true' || needs.plan.outputs.catalog
+      == 'true'
     uses: ./.github/workflows/ci-ui.yml
     with:
       source: ${{ needs.plan.outputs.source }}
       cache_write: ${{ needs.plan.outputs.cache_write }}
+      ui_source: ${{ needs.plan.outputs.ui_source == 'true' }}
+      ui_browser: ${{ needs.plan.outputs.ui_browser == 'true' }}
+      help: ${{ needs.plan.outputs.help == 'true' }}
+      catalog: ${{ needs.plan.outputs.catalog == 'true' }}
   required:
     name: required
     needs:
@@ -329,7 +451,10 @@ jobs:
       - fast
       - build
       - rust
+      - targeted_build
+      - targeted
       - web
+      - catalog_unit
       - ui
     if: always()
     runs-on: ubuntu-22.04
@@ -349,6 +474,18 @@ jobs:
         run: node scripts/ci-evidence.mjs
         env:
           CI_PACKAGES: ${{ needs.plan.outputs.packages }}
+          CI_SOURCE: ${{ needs.plan.outputs.source }}
+      - name: Download targeted backend shard evidence
+        if: needs.plan.outputs.backend == 'true'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          pattern: qualification-results-targeted-*-${{ github.run_attempt }}
+          path: .release/downloaded
+      - name: Verify targeted backend shard execution evidence
+        if: needs.plan.outputs.backend == 'true'
+        run: node scripts/ci-evidence.mjs targeted
+        env:
+          CI_PACKAGES: ${{ needs.plan.outputs.backend_packages }}
           CI_SOURCE: ${{ needs.plan.outputs.source }}
       - name: Report cache and execution timings
         run: node scripts/ci-report.mjs

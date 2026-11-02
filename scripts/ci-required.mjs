@@ -7,11 +7,44 @@ const plan = Object.fromEntries(
 );
 const jobs = JSON.parse(process.env.CI_JOBS);
 const stage = process.env.CI_STAGE || "root";
-if (stage === "root")
-  for (const field of ["rust", "web"]) {
+if (stage === "root") {
+  let selection;
+  try {
+    selection = JSON.parse(rawPlan.selection);
+  } catch {
+    throw Error("Missing or invalid active selection schema");
+  }
+  if (selection.version !== 2 || selection.mode !== "active")
+    throw Error("Missing or invalid active selection schema");
+  for (const field of [
+    "rust",
+    "web",
+    "backend",
+    "ui_source",
+    "ui_browser",
+    "help",
+    "catalog",
+    "contracts",
+  ]) {
     if (![true, false, "true", "false"].includes(rawPlan[field]))
       throw Error(`Missing or invalid planned selection ${field}`);
+    if (
+      field !== "rust" &&
+      field !== "web" &&
+      field !== "backend" &&
+      selection.domains?.[field] !== plan[field]
+    )
+      throw Error(`Active selection domain mismatch ${field}`);
   }
+  const selectedWeb =
+    plan.ui_source ||
+    plan.ui_browser ||
+    plan.help ||
+    plan.catalog ||
+    plan.contracts;
+  if (plan.web !== selectedWeb)
+    throw Error("Planned web selection disagrees with active domains");
+}
 if (!["root", "heavy", "early"].includes(stage))
   throw Error("Unknown CI stage");
 const conditional =
@@ -39,8 +72,11 @@ const conditional =
           fast: true,
           build: plan.rust,
           rust: plan.rust,
-          web: plan.web,
-          ui: plan.web,
+          targeted_build: plan.backend,
+          targeted: plan.backend,
+          web: plan.ui_source || plan.ui_browser || plan.help || plan.contracts,
+          catalog_unit: plan.catalog,
+          ui: plan.ui_source || plan.ui_browser || plan.help || plan.catalog,
         };
 for (const [name, job] of Object.entries(jobs)) {
   const required = conditional[name] ?? true;

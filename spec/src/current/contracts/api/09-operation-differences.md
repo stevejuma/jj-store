@@ -19,6 +19,12 @@ immediate header resize geometry is quarantined as
 The disabled bounds do not qualify responsive layout acceptance or alter the
 API.
 
+E-CI-CLIPBOARD-STABILITY-001 retains JST-API-001/002 operation-parent admission,
+full native identity and pinned-read contracts. Cold browser acceptance now
+observes the exact clipboard value across live-refresh remounts; source
+Storybook retains copied-feedback coverage. Selection, URL state, API requests
+and operation identities are unchanged.
+
 The response distinguishes head changes from visible commit changes. Visibility
 is the native commit-parent closure of each view's heads; predecessor-only
 objects remain historical dependencies rather than visible commits. Complete

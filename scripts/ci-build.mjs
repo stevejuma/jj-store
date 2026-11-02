@@ -3,7 +3,8 @@ import { selectedPackages } from "./ci-packages.mjs";
 import { timed } from "./ci-timing.mjs";
 import { cargoCommand } from "./managed-cargo.mjs";
 const cohort = process.argv[2];
-if (!["ordinary", "heavy"].includes(cohort)) throw Error("unknown cohort");
+if (!["ordinary", "heavy", "targeted"].includes(cohort))
+  throw Error("unknown cohort");
 const packages = selectedPackages(cohort);
 const selectors = packages.flatMap((name) => ["-p", name]);
 process.env.CI_PACKAGES = JSON.stringify(packages);

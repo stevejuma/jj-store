@@ -40,7 +40,7 @@ on:
       suite:
         type: string
         default: all
-        description: all, source, application or catalog
+        description: all, source, application, browser, help or catalog
       input_profile:
         type: string
         default: qualification
@@ -81,6 +81,11 @@ jobs:
           '[{"lane":"browser","shard":"1/2","name":"Application browser (shard
           1/2)"},{"lane":"browser","shard":"2/2","name":"Application browser
           (shard 2/2)"},{"lane":"help","name":"Help (Chromium and WebKit)"}]' ||
+          inputs.suite == 'browser' &&
+          '[{"lane":"browser","shard":"1/2","name":"Application browser (shard
+          1/2)"},{"lane":"browser","shard":"2/2","name":"Application browser
+          (shard 2/2)"}]' || inputs.suite == 'help' &&
+          '[{"lane":"help","name":"Help (Chromium and WebKit)"}]' ||
           inputs.suite == 'catalog' && '[{"lane":"catalog","name":"Static
           catalog browser"}]' ||
           '[{"lane":"storybook","shard":"1/3","name":"Storybook interactions
@@ -106,7 +111,7 @@ jobs:
           fetch-depth: 0
       - name: Validate suite and source-only selection
         run: |
-          node --input-type=module -e "import assert from 'node:assert/strict'; assert.ok(['all','source','application','catalog'].includes(process.env.CI_UI_SUITE));"
+          node --input-type=module -e "import assert from 'node:assert/strict'; assert.ok(['all','source','application','browser','help','catalog'].includes(process.env.CI_UI_SUITE));"
         env:
           CI_UI_SUITE: ${{ inputs.suite }}
       - name: Verify source Storybook admission

@@ -10,19 +10,37 @@ const shard = process.env.JJ_STORE_BROWSER_SHARD;
 if (shard && !/^[1-9]\d*\/[1-9]\d*$/.test(shard))
   throw Error("invalid browser shard");
 const shardArgs = shard ? [`--shard=${shard}`] : [];
-if (lane === "storybook")
-  pnpm(
-    "test:storybook",
-    ...shardArgs,
-    ...(process.env.JJ_STORE_CI_REPORTS === "1"
-      ? [
-          "--reporter=default",
-          "--reporter=junit",
-          "--outputFile=.release/ci-results/storybook.xml",
-        ]
-      : []),
+function storybookSegments(value) {
+  if (!value) return [null];
+  const [index, total] = value.split("/").map(Number);
+  if (index > total) throw Error("invalid browser shard");
+  return Array.from(
+    { length: 4 },
+    (_, offset) => `${index + offset * total}/${total * 4}`,
   );
-else if (lane === "browser" && prebuilt) {
+}
+if (lane === "storybook") {
+  for (const segment of storybookSegments(shard)) {
+    console.log(
+      segment
+        ? `Starting isolated Storybook browser segment ${segment}`
+        : "Starting Storybook browser suite",
+    );
+    pnpm(
+      "test:storybook",
+      ...(segment ? [`--shard=${segment}`] : []),
+      ...(process.env.JJ_STORE_CI_REPORTS === "1"
+        ? [
+            "--reporter=default",
+            "--reporter=junit",
+            `--outputFile=.release/ci-results/${
+              segment ? `storybook-${segment.replace("/", "-")}` : "storybook"
+            }.xml`,
+          ]
+        : []),
+    );
+  }
+} else if (lane === "browser" && prebuilt) {
   pnpm(
     "exec",
     "playwright",

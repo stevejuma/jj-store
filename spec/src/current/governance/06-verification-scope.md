@@ -7,6 +7,31 @@ regressions, workflow validation and an integrated hosted full run. Narrower PR
 selection remains disabled pending that run; local regressions establish neither
 full product qualification nor measured latency.
 
+E-CI-SELECTION-001 keeps broad standard checks while recording a versioned
+shadow domain plan. Affected CLI, server and capture package closures add
+blocking targeted backend coverage with exact two-shard execution evidence.
+Shared and unknown ownership selects every backend package. These focused
+results do not replace complete scheduled or release qualification, and shadow
+UI decisions do not yet authorize skips.
+
+E-CI-EVIDENCE-001 keeps targeted execution and verification on one declared
+heavy-profile evidence path. The focused regression proves that a stale
+ordinary-profile report cannot satisfy that gate; complete scheduled and release
+qualification remain independent and outstanding.
+
+E-CI-ACTIVE-SELECTION-001 authorizes domain-scoped pull-request checks before
+the outstanding hosted heavy qualification. The active planner fails closed for
+shared and unknown inputs, the aggregate rejects every unplanned skip, and
+explicit full/manual execution retains all standard and heavy lanes. A focused
+PR pass records only its selected Rust, web, catalog, Storybook, application,
+Help and contract surfaces; it MUST NOT be described as a full-suite or release
+qualification pass.
+
+E-CI-SETUP-001 changes setup capability admission without changing any selected
+test. The setup/workflow regressions and actionlint are the complete local
+surface; hosted timing remains required before claiming a latency improvement.
+Manual full and heavy qualification inputs are unchanged.
+
 E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
 Core candidate. Consumer reruns MUST select a successful matching UI producer
 and retain its source, attempt and checksum verification. Missing same-attempt

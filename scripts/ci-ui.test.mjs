@@ -135,21 +135,54 @@ test("core UI runs alongside preflight, gates PRs and can run alone without full
   const standard = workflow("ci").jobs,
     ui = workflow("ci-ui");
   assert.deepEqual(standard.ui.needs, ["plan"]);
-  assert.equal(standard.ui.if, "needs.plan.outputs.web == 'true'");
+  assert.match(standard.ui.if, /outputs\.ui_source/);
+  assert.match(standard.ui.if, /outputs\.catalog/);
   assert.equal(standard.ui.uses, "./.github/workflows/ci-ui.yml");
+  assert.equal(
+    standard.ui.with.ui_source,
+    "${{ needs.plan.outputs.ui_source == 'true' }}",
+  );
+  assert.equal(
+    standard.ui.with.ui_browser,
+    "${{ needs.plan.outputs.ui_browser == 'true' }}",
+  );
+  assert.equal(
+    standard.ui.with.help,
+    "${{ needs.plan.outputs.help == 'true' }}",
+  );
+  assert.equal(
+    standard.ui.with.catalog,
+    "${{ needs.plan.outputs.catalog == 'true' }}",
+  );
+  assert.match(standard.web.if, /outputs\.contracts/);
+  assert.equal(
+    standard.catalog_unit.if,
+    "needs.plan.outputs.catalog == 'true'",
+  );
   assert.ok(standard.required.needs.includes("ui"));
+  assert.ok(standard.required.needs.includes("catalog_unit"));
   assert.deepEqual(Object.keys(ui.on).sort(), [
     "workflow_call",
     "workflow_dispatch",
   ]);
   assert.equal(ui.on.workflow_dispatch.inputs.source.required, true);
+  for (const domain of ["ui_source", "ui_browser", "help", "catalog"])
+    assert.equal(ui.on.workflow_dispatch.inputs[domain].default, true);
+  assert.equal(ui.jobs.prepare.if, "inputs.ui_browser || inputs.help");
   assert.equal(ui.jobs.tests.needs, "prepare");
+  assert.equal(ui.jobs.tests.if, "inputs.ui_browser");
   assert.equal(ui.jobs.tests.with.input_profile, "ui");
-  assert.equal(ui.jobs.tests.with.suite, "application");
+  assert.equal(ui.jobs.tests.with.suite, "browser");
+  assert.equal(ui.jobs.help.needs, "prepare");
+  assert.equal(ui.jobs.help.if, "inputs.help");
+  assert.equal(ui.jobs.help.with.suite, "help");
   assert.equal(ui.jobs.storybook.needs, undefined);
+  assert.equal(ui.jobs.storybook.if, "inputs.ui_source");
   assert.equal(ui.jobs.storybook.with.suite, "source");
   assert.equal(ui.jobs.catalog.needs, undefined);
+  assert.equal(ui.jobs.catalog.if, "inputs.catalog");
   assert.equal(ui.jobs["catalog-tests"].needs, "catalog");
+  assert.equal(ui.jobs["catalog-tests"].if, "inputs.catalog");
   assert.equal(ui.jobs["catalog-tests"].with.suite, "catalog");
   assert.equal(ui.jobs.tests.uses, "./.github/workflows/ci-heavy-ui.yml");
   assert.equal(
@@ -204,10 +237,16 @@ test("UI partitions preserve every original lane once and source jobs use Node s
   const arrays = [...expression.matchAll(/'(\[.*?\])'/g)].map((m) =>
     JSON.parse(m[1]),
   );
-  assert.equal(arrays.length, 4);
+  assert.equal(arrays.length, 6);
   const identity = (lane) => JSON.stringify([lane.lane, lane.shard ?? null]);
-  const partitioned = arrays.slice(0, 3).flat().map(identity).sort();
-  assert.deepEqual(partitioned, arrays[3].map(identity).sort());
+  const source = arrays[0].map(identity);
+  const application = arrays[1].map(identity);
+  const browser = arrays[2].map(identity);
+  const help = arrays[3].map(identity);
+  const catalog = arrays[4].map(identity);
+  const partitioned = [...source, ...application, ...catalog].sort();
+  assert.deepEqual([...browser, ...help].sort(), application.sort());
+  assert.deepEqual(partitioned, arrays[5].map(identity).sort());
   assert.equal(new Set(partitioned).size, 7);
   const steps = ui.jobs.tests.steps;
   assert.equal(
@@ -232,6 +271,6 @@ test("UI partitions preserve every original lane once and source jobs use Node s
   ))
     assert.match(
       step.if,
-      /inputs.capability (?:== '(?:full|archive)'|!= 'node')/,
+      /inputs.capability (?:== '(?:full|archive|tooling)'|!= '(?:node|format)')/,
     );
 });
