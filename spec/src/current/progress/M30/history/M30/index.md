@@ -44,6 +44,8 @@ not a completion gate selection.
 | 2026-11-02 | pending | Original outcome |
 [E-CI-SETUP-001](../../../../../history/2026/11/02/E-CI-SETUP-001/index.md) |
 2026-11-02 | pending | Original outcome |
+[E-CI-TARGETED-SHARDS-001](../../../../../history/2026/11/02/E-CI-TARGETED-SHARDS-001/index.md)
+| 2026-11-02 | pass | Original outcome |
 
 <!-- generated-navigation -->
 

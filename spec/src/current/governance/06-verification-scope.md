@@ -32,6 +32,12 @@ test. The setup/workflow regressions and actionlint are the complete local
 surface; hosted timing remains required before claiming a latency improvement.
 Manual full and heavy qualification inputs are unchanged.
 
+E-CI-TARGETED-SHARDS-001 compares the retained two-shard cohort with a hosted
+four-shard trial. Focused inventory, evidence and workflow regressions plus
+actionlint are the local surface. The measured trial did not improve complete PR
+wall time and therefore does not change the production partition count; full
+standard/heavy qualification remains independent.
+
 E-DEPENDENCY-AUTOMATION-003 records the Mira-only compatible intake and the held
 Core candidate. Consumer reruns MUST select a successful matching UI producer
 and retain its source, attempt and checksum verification. Missing same-attempt
