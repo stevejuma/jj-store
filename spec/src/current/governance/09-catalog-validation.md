@@ -221,3 +221,13 @@ unprivileged container account. Retain existing prerequisite ignores and also
 run the workspace documentation tests. Record the source snapshot, account,
 exact permission regression and complete binary results. A root-only fixture
 failure is not quarantined or counted as passing desktop acceptance.
+
+### Standalone metadata checks
+
+Dependency-boundary checks require the full image's actual Cargo toolchain for
+workspace metadata. Spec-first pairs the transferred source revision with its
+transferred first parent unless the caller supplies an explicit comparison.
+Explicit head/base arguments, including equal-sign forms, remain selected
+without duplicate options. A source with no available comparison parent retains
+the validator's ordinary context inference. These prerequisites do not weaken
+source identity, specification, dependency or authorization gates.
