@@ -9,7 +9,12 @@ import {
 import { createReadStream } from "node:fs";
 import { execFileSync, spawn } from "node:child_process";
 import { join } from "node:path";
-import { hash, validateArchives, laneInvocations } from "./model.mjs";
+import {
+  hash,
+  validateArchives,
+  laneInvocations,
+  workerArguments,
+} from "./model.mjs";
 import { execute } from "./process.mjs";
 const root = "/work/jj-store",
   input = "/input",
@@ -156,14 +161,8 @@ try {
     await prepareFull(root, input, source, request.lane);
   }
   const { runNative } = await import(join(root, "scripts/validation.mjs"));
-  const args = [...request.args];
+  const args = workerArguments(request.lane, request.args, source);
   await mkdir(join(root, ".release/ci-results"), { recursive: true });
-  if (request.lane === "spec:first" && !args.includes("--head"))
-    args.push(
-      "--head",
-      source.revision,
-      ...(source.base ? ["--base", source.base] : []),
-    );
   if (request.lane.startsWith("test:visual")) {
     process.env.VISUAL_DELTA_CAPTURE_PROFILE = "container-linux";
     process.env.VISUAL_DELTA_NO_LOCAL_CONFIG = "1";

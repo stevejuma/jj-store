@@ -118,3 +118,10 @@ simultaneous native jobs/streams; per-query byte/work/shape limits remain
 independent. It is not an OS memory reservation. Snapshot admission, response
 delivery, native RPC and background jobs also need explicit composition at the
 serving boundary.
+
+JJ 0.46 historical revsets merge readonly indexes through their concrete backend
+type. The owned prepared reader supplies a private mutable adapter that unwraps
+compatible prepared/default readers at that boundary and retains their
+memory-admission owners until the merge reader exits. Historical set operations
+keep their original selected visibility; merging cannot modify the primary cache
+generation, publish native state or relax query admission.

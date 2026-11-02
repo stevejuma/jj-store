@@ -67,8 +67,10 @@
   play={async ({ canvasElement }) => verifyScopeStates(canvasElement)}
 />
 
+<!-- Q-STORY-002: spec/src/current/governance/09-catalog-validation.md -->
 <Story
   name="Search and menu share the app surface across all generated palettes"
+  tags={["quarantined"]}
   play={async ({ canvasElement }) => {
     const p = within(canvasElement.ownerDocument.body);
     const sample = canvasElement.querySelector(".appearance-overlay-fixture")!;

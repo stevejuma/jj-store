@@ -9,6 +9,7 @@ mod copy_families;
 mod inventory;
 pub mod review;
 pub mod server;
+mod tls;
 mod work;
 pub mod wire {
     tonic::include_proto!("jj_store.native.v1");

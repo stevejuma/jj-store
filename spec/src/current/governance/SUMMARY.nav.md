@@ -24,3 +24,4 @@
 - [Change map](spec-governance.md)
 
 - [Unchanged-contract chapter lookup](24-unchanged-contract-chapters.md)
+- [Temporary test quarantines](25-test-quarantines.md)

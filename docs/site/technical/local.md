@@ -35,6 +35,10 @@ storage, WAL, application services or execution runtimes. The default `native`
 profile retains all existing readers and mutations; `companion` alone remains
 the smaller metadata-only profile.
 
+Native historical revsets can combine separately prepared operation scopes while
+retaining each selection's exact visibility. Reading or preparing those scopes
+does not reconcile or publish repository heads.
+
 The embedding host implements `local_browser::Access`, rechecking physical
 source identity and current authorization, and supplies a registration
 generation. Create a bounded `local_browser::Executor`, select an explicit
