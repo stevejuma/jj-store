@@ -65,13 +65,13 @@ Privacy policy and compiled cache identities distinguish the released rule set.
 Source admission, immutable identities, manifest CAS and WAL receipts remain
 authoritative; distribution and derived caches cannot publish repository state.
 
-CI partitions existing checks by dependency cohort and impact. Ordinary and
-heavy tests use distinct archived builds and independent runners. Ignored child
-fixtures run only through their acceptance parent. Releases require all
-qualification lanes, package-contained inputs, real-storage recovery, native
-installation, documentation and container provenance. Required checks validate
-planned skips as well as failures. Fork jobs cannot acquire publication secrets
-or populate trusted release caches. Interrupted tests never establish a pass.
+E-CI-TARGETED-SHARDS-001 retains the affected-backend heavy cohort at two hash
+partitions after a four-partition hosted trial. Build archives remain distinct;
+ignored child fixtures run only through their acceptance parent. Releases still
+require all qualification lanes, contained packages, real-storage recovery,
+native installation, documentation and container provenance. Required checks
+validate planned skips and failures. Fork jobs cannot acquire publication
+secrets or write trusted caches; interrupted tests never establish a pass.
 
 Canonical `main` changes go through pull requests. GitHub Actions' `required`
 check MUST pass against an up-to-date base before merge; conversation resolution

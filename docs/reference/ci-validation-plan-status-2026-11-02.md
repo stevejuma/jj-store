@@ -58,6 +58,8 @@ Canonical specifications and evidence remain authoritative.
   retaining complete standard and heavy manual workflows.
 - `E-CI-SETUP-001` assigns least-capability setup profiles to the always-running
   policy jobs without changing selected tests.
+- `E-CI-TARGETED-SHARDS-001` records the measured four-partition latency trial
+  and retains two shards because overall wall time did not improve.
 
 The second stack's hosted selection and ordinary Rust lanes passed. Its first
 targeted backend execution passed but exposed a verifier path mismatch; this

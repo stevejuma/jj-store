@@ -77,3 +77,10 @@ governance fixtures and locked dependency fetches. These profiles MUST NOT
 install native credential headers, general build tools or Clippy. Full builds,
 archive consumers and manually dispatched qualification retain their existing
 setup profiles and inputs.
+
+E-CI-TARGETED-SHARDS-001 records a four-partition hosted trial against the same
+selected source and inventory. It reduced the slowest test command from 1126.407
+to 824.422 seconds, but increased affected runner execution by 39.8% and the
+complete PR run from 2017 to 2042 seconds. The retained contract remains two
+disjoint partitions with the same producer archive, selected packages, heavy
+profile and exact source/digest evidence.
