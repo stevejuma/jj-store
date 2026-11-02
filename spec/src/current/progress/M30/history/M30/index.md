@@ -39,6 +39,8 @@ not a completion gate selection.
 [E-CI-CLIPBOARD-STABILITY-001](../../../../../history/2026/11/02/E-CI-CLIPBOARD-STABILITY-001/index.md)
 | 2026-11-02 | pending | Original outcome |
 [E-CI-ACTIVE-SELECTION-001](../../../../../history/2026/11/02/E-CI-ACTIVE-SELECTION-001/index.md)
+| 2026-11-02 | pending | Original outcome | |
+[E-CI-STORYBOOK-LIFETIME-001](../../../../../history/2026/11/02/E-CI-STORYBOOK-LIFETIME-001/index.md)
 | 2026-11-02 | pending | Original outcome |
 
 <!-- generated-navigation -->

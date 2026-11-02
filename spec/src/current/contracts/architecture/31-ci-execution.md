@@ -62,3 +62,10 @@ PR success is not complete qualification, and activating selection does not
 claim a latency or reliability result. The previously required fresh hosted
 heavy run is now a subsequent qualification action rather than a prerequisite
 for smaller PR checks.
+
+E-CI-STORYBOOK-LIFETIME-001 retains the three required source Storybook jobs
+while dividing each job's declared shard into four disjoint twelve-way segments.
+Each segment MUST start a fresh browser process, run without retries and emit a
+distinct JUnit report. Across the three jobs the twelve segments MUST cover the
+source Storybook inventory exactly once; a failed segment MUST fail its owning
+job without replaying that segment or starting later work as a retry.

@@ -19,3 +19,9 @@ E-CI-CLIPBOARD-STABILITY-001 retains JST-GOV-002/011 governance. The browser
 test refactor updates its mapped CI contract, records failed prerequisites and
 passing focused checks, preserves incomplete M30 gates and supplies a fresh
 milestone review. Product presentation and clipboard behavior are unchanged.
+
+E-CI-STORYBOOK-LIFETIME-001 retains JST-GOV-002/011 governance. The protected CI
+orchestration change updates its mapped architecture contract, records the
+failed and passing commands, preserves incomplete M30 gates and supplies a fresh
+milestone review. It does not change confirmation lookup, ownership mapping or
+generated-automation exceptions.
