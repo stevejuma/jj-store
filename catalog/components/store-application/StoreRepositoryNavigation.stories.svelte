@@ -3,7 +3,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Repository navigation",
+    title: "JJ Store/Repository/navigation",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     args: { initialPage: "files", initiallyCollapsed: false },

@@ -11,7 +11,7 @@
         subject: "web/src/lib/ui/store-settings/StoreComputeSettings.svelte",
       },
     },
-    title: "JJ Store/Compute model picker",
+    title: "JJ Store/Compute/model picker",
     component: Fixture,
     tags: ["visual-pending", "component"],
     args: { memoryLimit: null, selectedModel: gemma, installedModel: true },

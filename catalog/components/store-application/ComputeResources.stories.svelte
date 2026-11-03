@@ -9,7 +9,7 @@
         subject: "web/src/lib/ui/store-settings/StoreComputeSettings.svelte",
       },
     },
-    title: "JJ Store/Compute resources",
+    title: "JJ Store/Compute/resources",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

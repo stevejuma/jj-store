@@ -6,7 +6,7 @@
   import RepositoryFixture from "../../fixtures/RepositoryFixture.svelte";
   import { IDS } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Repository",
+    title: "JJ Store/Repository/History",
     component: CommunityProjectsRepositoryLog,
     tags: ["visual-pending", "component"],
     parameters: {

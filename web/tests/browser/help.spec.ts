@@ -126,6 +126,32 @@ test("standalone deep links, mobile navigation and external link isolation", asy
   expect(box?.width).toBe(390);
   await page.getByRole("button", { name: "Close Help" }).click();
 });
+test("Help navigation separates selected and hovered row surfaces", async ({
+  page,
+}) => {
+  await page.goto("/help/getting-started/install/");
+  const navigation = page.locator(".md-sidebar--primary");
+  const selected = navigation.getByRole("link", {
+    name: "Installation and setup",
+    exact: true,
+  });
+  const hovered = navigation.getByRole("link", {
+    name: "Choose a repository context",
+    exact: true,
+  });
+  await expect(selected).toHaveClass(/md-nav__link--active/);
+  await hovered.hover();
+  const [selectedBox, hoveredBox] = await Promise.all([
+    selected.boundingBox(),
+    hovered.boundingBox(),
+  ]);
+  expect(selectedBox).not.toBeNull();
+  expect(hoveredBox).not.toBeNull();
+  expect(
+    hoveredBox!.y - (selectedBox!.y + selectedBox!.height),
+  ).toBeGreaterThanOrEqual(3);
+  await expect(hovered).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+});
 test("failed Help shows the response error in an app toast and recovers through Retry", async ({
   page,
 }) => {

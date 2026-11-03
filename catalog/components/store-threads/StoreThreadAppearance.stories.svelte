@@ -6,7 +6,7 @@
   import Fixture from "../../fixtures/StoreThreadsFixture.svelte";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Threads",
+    title: "JJ Store/Threads/Appearance",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: {

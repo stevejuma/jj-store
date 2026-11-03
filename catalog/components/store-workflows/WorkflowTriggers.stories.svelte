@@ -3,7 +3,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import WorkflowsFixture from "../../fixtures/WorkflowsFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Workflow triggers",
+    title: "JJ Store/Workflows/triggers",
     component: WorkflowsFixture,
     parameters: {
       jjStoreStory: { kind: "application" },

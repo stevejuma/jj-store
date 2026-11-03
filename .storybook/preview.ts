@@ -48,6 +48,31 @@ const preview: Preview = {
     a11y: { test: "error" },
     backgrounds: { disable: true },
     themes: { disable: true },
+    options: {
+      storySort: {
+        order: [
+          "JJ Store",
+          [
+            "Application",
+            "Projects",
+            "Repository",
+            "Stacks",
+            "Workflows",
+            "Agents",
+            "Threads",
+            "Conversations",
+            "Compute",
+            "Search",
+            "Settings",
+            "Appearance",
+            "Forge",
+            "Components",
+            "Catalog",
+            "*",
+          ],
+        ],
+      },
+    },
   },
   decorators: [
     withThemeByDataAttribute({

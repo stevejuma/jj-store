@@ -9,7 +9,7 @@
     runCommit,
   } from "../../fixtures/workflow-run-source.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Workflow run",
+    title: "JJ Store/Workflows/run",
     component: Fixture,
     tags: ["visual-pending", "component"],
     parameters: {

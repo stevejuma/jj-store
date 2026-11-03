@@ -3,7 +3,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/ShellOverlayFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Shell overlay scroll ownership",
+    title: "JJ Store/Application/Shell overlay scroll ownership",
     component: Fixture,
     tags: ["visual-pending", "prototype"],
     parameters: {

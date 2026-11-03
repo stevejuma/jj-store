@@ -5,7 +5,7 @@
   import StoreServerSwitcher from "../../../web/src/lib/ui/store-connections/StoreServerSwitcher.svelte";
   import Fixture from "../../fixtures/ServerConnectionsFixture.svelte";
   const { Story } = defineMeta({
-    title: "Store/Server connections",
+    title: "JJ Store/Settings/Server connections",
     component: StoreServerSwitcher,
     tags: ["autodocs", "visual-pending", "component"],
     parameters: {

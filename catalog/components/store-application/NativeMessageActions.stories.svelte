@@ -3,7 +3,7 @@
   import { expect, userEvent, waitFor, within, fn } from "storybook/test";
   import Fixture from "../../fixtures/NativeReviewConversationFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Native message actions",
+    title: "JJ Store/Agents/Native message actions",
     component: Fixture,
     tags: ["visual-pending", "component"],
     parameters: {

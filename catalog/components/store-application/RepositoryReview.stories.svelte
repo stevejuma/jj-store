@@ -6,7 +6,7 @@
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   import { expectColumnCanvasFillsBody } from "./column-canvas-story-assertions.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Review refinements",
+    title: "JJ Store/Repository/Review refinements",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false },

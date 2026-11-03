@@ -3,7 +3,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentInboxTreeFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent inbox repository tree",
+    title: "JJ Store/Agents/Agent inbox repository tree",
     component: Fixture,
     tags: ["visual-pending", "component"],
     parameters: {

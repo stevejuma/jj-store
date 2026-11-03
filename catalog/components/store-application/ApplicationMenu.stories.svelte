@@ -5,7 +5,7 @@
   import Fixture from "../../fixtures/RuntimeReloadFixture.svelte";
   import { expectMobileApplicationToolbar } from "./application-menu-story-assertions.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Application menu",
+    title: "JJ Store/Application/Application menu",
     component: Fixture,
     args: { application: true },
     tags: ["visual-pending", "application"],

@@ -3,7 +3,7 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentChatGptFixture.svelte";
   const { Story } = defineMeta({
-    title: "Application/ChatGPT accounts",
+    title: "JJ Store/Settings/ChatGPT accounts",
     component: Fixture,
     parameters: {
       jjStoreStory: {

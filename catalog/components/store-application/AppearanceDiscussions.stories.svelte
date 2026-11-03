@@ -3,7 +3,7 @@
   import Fixture from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   import { appearanceToolDiscussionPlay } from "./appearance-tool-discussion-play.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Appearance discussions",
+    title: "JJ Store/Appearance/discussions",
     component: Fixture,
     tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: true },

@@ -4,7 +4,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Native review detail",
+    title: "JJ Store/Repository/Native review detail",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     args: { initialPage: "reviews", initiallyCollapsed: true },

@@ -14,7 +14,7 @@
   import { expectSelectionSurfaceCoversRow } from "./collaboration-story-assertions.js";
 
   const { Story } = defineMeta({
-    title: "JJ Store/Collaboration",
+    title: "JJ Store/Repository/Collaboration",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: true },

@@ -21,7 +21,7 @@
     }
   }
   const { Story } = defineMeta({
-    title: "JJ Store/Desktop chrome",
+    title: "JJ Store/Application/Desktop chrome",
     component: StoreApplication,
     tags: ["visual-pending", "application"],
     parameters: {

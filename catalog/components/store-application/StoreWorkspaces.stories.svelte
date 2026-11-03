@@ -18,7 +18,7 @@
     },
   ];
   const { Story } = defineMeta({
-    title: "JJ Store/Workspaces",
+    title: "JJ Store/Conversations/Workspaces",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     args: { initialPage: "files", initiallyCollapsed: false, workingCopies },

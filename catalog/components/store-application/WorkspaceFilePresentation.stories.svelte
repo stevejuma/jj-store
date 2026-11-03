@@ -19,7 +19,7 @@
     });
   }
   const { Story } = defineMeta({
-    title: "JJ Store/Conversation workspace files",
+    title: "JJ Store/Conversations/Conversation workspace files",
     component: Fixture,
     beforeEach: async () => {
       await Promise.all([

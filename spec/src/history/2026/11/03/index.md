@@ -35,3 +35,5 @@ Browse the child pages below.
 - [E-CI-QUALIFICATION-001](E-CI-QUALIFICATION-001/index.md)
 
 - [E-PUBLIC-SURFACES-001](E-PUBLIC-SURFACES-001/index.md)
+
+- [E-UI-CATALOG-HELP-001](E-UI-CATALOG-HELP-001/index.md)

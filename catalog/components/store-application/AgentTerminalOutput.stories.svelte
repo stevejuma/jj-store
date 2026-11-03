@@ -10,7 +10,7 @@
           "web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte",
       },
     },
-    title: "JJ Store/Agent terminal output",
+    title: "JJ Store/Agents/Agent terminal output",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

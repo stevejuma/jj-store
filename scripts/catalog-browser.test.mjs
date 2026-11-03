@@ -147,7 +147,7 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     page.setDefaultTimeout(10000);
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("websocket", (socket) => unexpected.push(socket.url()));
-    const url = `${origin}/iframe.html?id=jj-store-application--expanded-workspace&viewMode=story`;
+    const url = `${origin}/iframe.html?id=jj-store-repository-application--expanded-workspace&viewMode=story`;
     await page.goto(url);
     await expect(
       page.getByRole("button", {
@@ -240,7 +240,7 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
       page.getByRole("region", { name: "Changed files", exact: true }),
     ).toHaveCount(0);
     await page.goto(
-      `${origin}/iframe.html?id=jj-store-application--docs&viewMode=docs`,
+      `${origin}/iframe.html?id=jj-store-repository-application--docs&viewMode=docs`,
     );
     // Autodocs renders a primary preview plus each of the four named stories.
     await expect(page.locator("iframe[title]")).toHaveCount(5);
@@ -272,7 +272,7 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     await page.screenshot({ path: ".scratch/catalog-files-mobile.png" });
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(
-      `${origin}/iframe.html?id=jj-store-application--full-app&viewMode=story`,
+      `${origin}/iframe.html?id=jj-store-repository-application--full-app&viewMode=story`,
     );
     await expect(
       page.getByRole("button", {

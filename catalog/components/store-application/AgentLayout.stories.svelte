@@ -6,7 +6,7 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentLayoutFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent layout",
+    title: "JJ Store/Agents/Agent layout",
     component: Fixture,
     beforeEach: async () => {
       await Promise.all([

@@ -1,5 +1,10 @@
 # Bundled application documentation
 
+E-UI-CATALOG-HELP-001 confirms the browser/API contract is unchanged while the
+primary Help navigation adds row clearance. The exact built-browser assertion
+uses the existing `/help/` asset route and application-owned preview executable;
+it adds no request, response, CSP, credential or admission behavior.
+
 Help's loading, readiness and bounded error protocol is restricted to its exact
 same-origin frame. Internal document reads remain under the existing `/help/`
 asset allowlist and CSP. Skeletons and application Retry toasts add no public

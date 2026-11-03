@@ -3,7 +3,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Task scrolling",
+    title: "JJ Store/Projects/Task scrolling",
     component: ProjectsHubFixture,
     tags: ["visual-pending", "application"],
     args: { detail: true, longTaskDetail: true },

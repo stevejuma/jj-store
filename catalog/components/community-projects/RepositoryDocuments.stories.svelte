@@ -10,7 +10,7 @@
           "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDocuments.svelte",
       },
     },
-    title: "JJ Store/Repository document previews",
+    title: "JJ Store/Repository/document previews",
     component: Documents,
     tags: ["visual-pending", "component"],
     args: {

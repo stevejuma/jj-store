@@ -26,7 +26,10 @@ compared within each component's directly owned row container and in rendered
 vertical order, so nested listings and independent columns cannot produce false
 overlap failures. The production web manifest includes only flat, regular
 `agent-icons/*.svg` files from the public icon directory; source attribution
-documents and all other public files remain outside the served allowlist.
+documents and all other public files remain outside the served allowlist. Direct
+Storybook URLs in this cold harness MUST track the generated paths of their
+current grouped titles; a grouping or title change updates those consumers in
+the same change.
 
 The owned native agent timeline and grouped tool-call presentation adapt
 Community's adjacent-call grouping and per-call wrapper composition. Their

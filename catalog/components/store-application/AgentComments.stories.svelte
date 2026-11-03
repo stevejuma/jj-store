@@ -3,7 +3,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentLayoutFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent session comments",
+    title: "JJ Store/Agents/Agent session comments",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: {

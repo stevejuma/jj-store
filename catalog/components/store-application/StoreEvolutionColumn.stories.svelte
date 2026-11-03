@@ -5,7 +5,7 @@
   import { IDS } from "../../fixtures/repository.js";
   import Fixture from "../../fixtures/StoreEvolutionStatesFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Evolution column",
+    title: "JJ Store/Repository/Evolution column",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: {

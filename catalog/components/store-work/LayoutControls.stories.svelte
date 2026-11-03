@@ -9,7 +9,7 @@
         subject: "web/src/lib/ui/store-work/StoreWorkLayoutControls.svelte",
       },
     },
-    title: "JJ Store/Layout selection",
+    title: "JJ Store/Projects/Layout selection",
     component: StoreWorkLayoutControls,
     tags: ["visual-pending", "component"],
   });

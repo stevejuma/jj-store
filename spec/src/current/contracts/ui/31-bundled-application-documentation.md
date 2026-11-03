@@ -42,9 +42,11 @@ the selected page's path after navigation.
 
 Help's sidebar links, section hover and Close button use the app sidebar's
 theme-derived interaction treatments, including prominent Buzz selections.
-Overlay/content separators use a subtle foreground tint rather than a neutral
-grey border. The sticky documentation header retains an opaque palette surface
-so scrolling content cannot show through it, including with glass/Buzz chrome.
+Adjacent primary and secondary navigation rows retain 0.25rem vertical clearance
+so selected and hovered surfaces never touch. Overlay/content separators use a
+subtle foreground tint rather than a neutral grey border. The sticky
+documentation header retains an opaque palette surface so scrolling content
+cannot show through it, including with glass/Buzz chrome.
 
 Repository Files render the selected row window before commit headers, per-path
 attribution and landing documents. Those independent reads retain the explicit

@@ -7,7 +7,7 @@
   } from "../../fixtures/queued-message-checks.js";
   import Fixture from "../../fixtures/QueuedAgentMessagesFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Queued agent messages",
+    title: "JJ Store/Agents/Queued agent messages",
     component: Fixture,
     tags: ["visual-pending", "component"],
     parameters: {

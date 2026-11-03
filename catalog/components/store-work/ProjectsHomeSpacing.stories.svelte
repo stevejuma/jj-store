@@ -4,7 +4,7 @@
   import { page as browser } from "vitest/browser";
   import Fixture from "../../fixtures/ProjectsHomeSpacingFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Projects home spacing",
+    title: "JJ Store/Projects/home spacing",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

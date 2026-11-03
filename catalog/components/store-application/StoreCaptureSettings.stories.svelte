@@ -6,7 +6,7 @@
     disabledCaptureConfiguration,
   } from "./capture-configuration-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import {
     loadingCaptureSettings,
     busyCaptureSettings,
@@ -114,6 +114,7 @@
 
 <Story
   name="Coverage pause resume rescan and import"
+  args={{ delayRescanObservation: true }}
   play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(
@@ -135,8 +136,14 @@
     await expect(
       c.getByRole("button", { name: /Import history for/ }),
     ).toBeDisabled();
-    await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
-    await userEvent.click(c.getByRole("tab", { name: "Sources" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Finish rescan refresh" }),
+    );
+    await waitFor(() =>
+      expect(
+        c.getByRole("button", { name: /Import history for/ }),
+      ).toBeEnabled(),
+    );
     await userEvent.click(
       c.getByRole("button", { name: /Import history for/ }),
     );

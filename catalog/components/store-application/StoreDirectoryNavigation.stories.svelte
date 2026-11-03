@@ -5,7 +5,7 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/RepositoryDirectoryNavigationFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Directory navigation",
+    title: "JJ Store/Repository/Directory navigation",
     component: Fixture,
     beforeEach: async () => {
       await views.files();

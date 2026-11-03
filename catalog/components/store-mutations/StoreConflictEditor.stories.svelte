@@ -8,7 +8,7 @@
 
   const { Story } = defineMeta({
     parameters: { jjStoreStory: { kind: "application" } },
-    title: "JJ Store/Mutations/Conflict editor",
+    title: "JJ Store/Repository/Mutations/Conflict editor",
     component: StoreConflictEditor,
     tags: ["visual-pending", "application"],
     beforeEach: () => {

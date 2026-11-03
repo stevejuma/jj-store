@@ -11,7 +11,7 @@
   import Legacy from "../../fixtures/AgentLegacyTranscriptFixture.svelte";
   import AgentLayout from "../../fixtures/AgentLayoutFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent transcript settings",
+    title: "JJ Store/Agents/Agent transcript settings",
     tags: ["visual-pending", "application"],
     parameters: {
       jjStoreStory: { kind: "application" },

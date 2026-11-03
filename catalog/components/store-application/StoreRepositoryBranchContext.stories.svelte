@@ -6,7 +6,7 @@
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
 
   const { Story } = defineMeta({
-    title: "JJ Store/Connected application/Branch context",
+    title: "JJ Store/Repository/Connected application/Branch context",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false },

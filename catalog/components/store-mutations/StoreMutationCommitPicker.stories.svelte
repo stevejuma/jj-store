@@ -10,7 +10,7 @@
           "web/src/lib/ui/store-mutations/StoreMutationCommitPicker.svelte",
       },
     },
-    title: "JJ Store/Mutations/Commit picker",
+    title: "JJ Store/Repository/Mutations/Commit picker",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });
