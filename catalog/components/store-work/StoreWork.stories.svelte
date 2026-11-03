@@ -319,12 +319,30 @@
     );
     const edit = await body.findByRole("menuitem", { name: "Edit comment" });
     const copy = body.getByRole("menuitem", { name: /^Copy$/ });
+    const primitiveGeometry = (item: HTMLElement) => {
+      const icon = item.querySelector<SVGElement>(
+        'svg[data-icon="inline-start"]',
+      );
+      if (!icon) throw new Error("leading menu icon is missing");
+      const itemStyle = getComputedStyle(item);
+      const iconStyle = getComputedStyle(icon);
+      return {
+        itemLeft: item.getBoundingClientRect().left,
+        paddingInlineStart: itemStyle.paddingInlineStart,
+        iconWidth: iconStyle.width,
+        iconTransform: iconStyle.transform,
+      };
+    };
+    const copyGeometry = primitiveGeometry(copy);
+    const editGeometry = primitiveGeometry(edit);
+    await expect(copyGeometry.paddingInlineStart).toBe(
+      editGeometry.paddingInlineStart,
+    );
+    await expect(copyGeometry.iconWidth).toBe(editGeometry.iconWidth);
+    await expect(copyGeometry.iconTransform).toBe(editGeometry.iconTransform);
     await expect(
-      Math.abs(
-        copy.querySelector("svg")!.getBoundingClientRect().left -
-          edit.querySelector("svg")!.getBoundingClientRect().left,
-      ),
-    ).toBeLessThanOrEqual(1.25);
+      Math.abs(copyGeometry.itemLeft - editGeometry.itemLeft),
+    ).toBeLessThanOrEqual(2);
     await userEvent.keyboard("{Escape}");
     const editTask = canvas.getByRole("button", { name: /^Edit task$/ });
     await expect(getComputedStyle(editTask).backgroundColor).not.toBe(

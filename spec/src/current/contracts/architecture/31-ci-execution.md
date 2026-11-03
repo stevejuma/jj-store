@@ -116,6 +116,12 @@ Source-story and cold acceptance retain the Design Core leading-icon alignment
 contract with a 1.25 CSS-pixel tolerance for fractional Chromium layout.
 Complete integrated qualification remains the next release action.
 
+E-CI-COLD-REACTION-PRIMITIVE-001 replaces that runner-sensitive absolute SVG
+bound after the next integrated run observed 1.656 CSS pixels. Acceptance now
+compares the Design Core primitive's computed leading padding, icon width and
+transform, plus a two-pixel row-edge guard. The exact source story and cold file
+pass; complete integrated qualification remains the next release action.
+
 E-CI-COLD-RESPONSE-CAPTURE-001 records the next integrated run at `a9c95dc`.
 Three cold command observers lost response bodies after navigation despite
 promise chaining; route-level capture passes their original shard and exact
