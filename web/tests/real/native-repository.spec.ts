@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { captureJsonResponse } from "./capture-json-response.js";
 
 const repository = required("JJ_STORE_REAL_REPOSITORY");
 const runtime = required("JJ_STORE_REAL_RUNTIME");
@@ -266,16 +267,14 @@ test("browser mutation previews and publishes one native request", async ({
     preview: { request_id: requests[0].request_id },
   });
   await expect(dialog.getByText("Preview prepared")).toBeVisible();
-  const applied = page.waitForResponse(
-    (response) =>
-      response.request().method() === "POST" &&
-      new URL(response.url()).pathname.endsWith("/mutations") &&
-      response.request().postDataJSON().request_id === requests[0].request_id,
+  const response = await captureJsonResponse<{
+    status: string;
+    receipt: { request_id: string };
+  }>(page, "**/mutations", () =>
+    dialog.getByRole("button", { name: "Apply command" }).click(),
   );
-  await dialog.getByRole("button", { name: "Apply command" }).click();
-  const response = await applied;
-  expect(response.ok()).toBe(true);
-  expect(await response.json()).toMatchObject({
+  expect(response.ok).toBe(true);
+  expect(response.outcome).toMatchObject({
     status: "committed",
     receipt: { request_id: requests[0].request_id },
   });

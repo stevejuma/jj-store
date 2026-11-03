@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { captureJsonResponse } from "./capture-json-response.js";
 const runtime = process.env.JJ_STORE_REAL_RUNTIME;
 const fixture = runtime
   ? JSON.parse(readFileSync(`${runtime}/runtime.json`, "utf8"))
@@ -98,18 +99,12 @@ test("merged_native_threads_create_send_and_reload_independent_of_local_browsing
     exact: true,
   });
   await composer.fill("Native message after the local browser merge");
-  const committed = page
-    .waitForResponse(
-      (response) =>
-        response.url().endsWith("/threads/commands") &&
-        response.request().method() === "POST",
-    )
-    .then(async (response) => ({
-      ok: response.ok(),
-      outcome: await response.json(),
-    }));
-  await page.getByRole("button", { name: "Send message", exact: true }).click();
-  const receipt = await committed;
+  const receipt = await captureJsonResponse<{ status: string }>(
+    page,
+    "**/threads/commands",
+    () =>
+      page.getByRole("button", { name: "Send message", exact: true }).click(),
+  );
   expect(receipt.ok).toBe(true);
   expect(receipt.outcome.status).toBe("committed");
   const messages = page.getByRole("log", {

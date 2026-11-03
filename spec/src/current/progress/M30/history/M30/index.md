@@ -58,6 +58,10 @@ not a completion gate selection.
 | 2026-11-03 | pass | Original outcome |
 [E-CI-COLD-REACTION-GEOMETRY-001](../../../../../history/2026/11/03/E-CI-COLD-REACTION-GEOMETRY-001/index.md)
 | 2026-11-03 | pass | Original outcome |
+[E-CI-COLD-RESPONSE-CAPTURE-001](../../../../../history/2026/11/03/E-CI-COLD-RESPONSE-CAPTURE-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-COLD-REACTION-PRIMITIVE-001](../../../../../history/2026/11/03/E-CI-COLD-REACTION-PRIMITIVE-001/index.md)
+| 2026-11-03 | pass | Original outcome |
 
 <!-- generated-navigation -->
 

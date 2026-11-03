@@ -149,3 +149,8 @@ local cold-browser gate. The harness consumes the successful native Thread
 receipt before the mutation's refresh can discard the Playwright response body,
 then still proves the same merged messages and reload behavior. No provider,
 receipt, refresh or presentation contract changes.
+
+E-CI-COLD-RESPONSE-CAPTURE-001 moves that observation to the request route so
+the successful body is read before the application receives it. Hosted cold
+navigation can no longer evict the body first; the real command, committed
+receipt, merged messages and reload assertions remain unchanged.
