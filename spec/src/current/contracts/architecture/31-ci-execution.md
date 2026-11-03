@@ -119,8 +119,10 @@ Complete integrated qualification remains the next release action.
 E-CI-COLD-REACTION-PRIMITIVE-001 replaces that runner-sensitive absolute SVG
 bound after the next integrated run observed 1.656 CSS pixels. Acceptance now
 compares the Design Core primitive's computed leading padding, icon width and
-transform, plus a two-pixel row-edge guard. The exact source story and cold file
-pass; complete integrated qualification remains the next release action.
+transform. Run 41634440310 then proved that its extra absolute row-edge guard
+still measured portal/group placement. E-CI-COLD-REACTION-STYLE-001 compares
+only exact computed primitive properties, not fractional geometry; complete
+integrated qualification remains open.
 
 E-CI-COLD-RESPONSE-CAPTURE-001 records the next integrated run at `a9c95dc`.
 Three cold command observers lost response bodies after navigation despite
