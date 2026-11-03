@@ -270,16 +270,16 @@ test("browser mutation previews and publishes one native request", async ({
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
   await dialog.getByRole("textbox", { name: "Markdown editor" }).fill(message);
-  const previewed = page.waitForResponse(
-    (response) =>
-      response.request().method() === "POST" &&
-      new URL(response.url()).pathname.endsWith("/mutations/preview") &&
-      response.request().postDataJSON().request_id === requests[0]?.request_id,
+  const previewResponse = await captureJsonResponse<{
+    status: string;
+    preview: { request_id: string };
+  }>(page, "**/mutations/preview", () =>
+    dialog.getByRole("button", { name: "Preview change" }).click(),
   );
-  await dialog.getByRole("button", { name: "Preview change" }).click();
-  const previewResponse = await previewed;
-  expect(previewResponse.ok()).toBe(true);
-  expect(await previewResponse.json()).toMatchObject({
+  expect(previewResponse.ok, JSON.stringify(previewResponse.outcome)).toBe(
+    true,
+  );
+  expect(previewResponse.outcome).toMatchObject({
     status: "prepared",
     preview: { request_id: requests[0].request_id },
   });
