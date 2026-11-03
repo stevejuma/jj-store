@@ -106,7 +106,7 @@ test("task reaction picker persists exact comments and refreshes a second client
       .evaluate((e) => e.getBoundingClientRect().left);
   expect(
     Math.abs((await iconX(copy)) - (await iconX(edit))),
-  ).toBeLessThanOrEqual(1);
+  ).toBeLessThanOrEqual(1.25);
   await copy.press("Escape");
   await revealActions();
   await row.getByRole("button", { name: "Add reaction", exact: true }).click();

@@ -104,3 +104,14 @@ failure exposed on that freshness slice. Completed-change interactions MUST
 select the fixture's exact accessible repository/turn identity, not a panel's
 incidental DOM position. Product behavior and the twelve-way inventory remain
 unchanged; fresh required checks are still mandatory.
+
+E-CI-COLD-PROJECT-ROUTE-001 repairs the project-preview failure from the same
+integrated run. The cold test resolves a current operation on Branches, then
+enters Overview with that operation and `main` explicitly pinned instead of
+depending on cross-page selection retention. One reaction-geometry failure and
+complete qualification remain open.
+
+E-CI-COLD-REACTION-GEOMETRY-001 repairs the final focused failure from that run.
+Source-story and cold acceptance retain the Design Core leading-icon alignment
+contract with a 1.25 CSS-pixel tolerance for fractional Chromium layout.
+Complete integrated qualification remains the next release action.

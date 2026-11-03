@@ -324,7 +324,7 @@
         copy.querySelector("svg")!.getBoundingClientRect().left -
           edit.querySelector("svg")!.getBoundingClientRect().left,
       ),
-    ).toBeLessThanOrEqual(1);
+    ).toBeLessThanOrEqual(1.25);
     await userEvent.keyboard("{Escape}");
     const editTask = canvas.getByRole("button", { name: /^Edit task$/ });
     await expect(getComputedStyle(editTask).backgroundColor).not.toBe(

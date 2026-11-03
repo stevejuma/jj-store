@@ -17,12 +17,24 @@ test("repository documents linked projects and Activity filters retain native sc
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`/#/repos/${home}/branches`);
   await page.getByRole("option", { name: "main", exact: true }).click();
-  await page.getByRole("tab", { name: "Overview", exact: true }).click();
+  await expect
+    .poll(() => new URLSearchParams(page.url().split("?")[1]).get("bookmark"))
+    .toBe("main");
+  const pin = new URLSearchParams(page.url().split("?")[1]).get("at_op")!;
+  await page.goto(`/#/repos/${home}/files?at_op=${pin}&bookmark=main`);
+  await expect(
+    page.getByRole("tab", { name: "Overview", exact: true }),
+  ).toHaveAttribute("aria-selected", "true");
+  await expect(
+    page.getByRole("combobox", {
+      name: "Repository bookmark or change",
+      exact: true,
+    }),
+  ).toContainText("main");
   const documents = page.getByRole("region", {
     name: "Repository document preview",
   });
   await expect(documents).toBeVisible();
-  const pin = new URLSearchParams(page.url().split("?")[1]).get("at_op")!;
   for (const label of [
     "README",
     "Code of conduct",
