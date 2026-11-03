@@ -133,8 +133,12 @@ async fn blame_close_waits_for_the_owned_read_to_exit() {
     };
     tokio::time::timeout(std::time::Duration::from_secs(5), async {
         while !matches!(
-            host.status(&main, "vault", handle).await,
-            Err(Error::Denied)
+            tokio::time::timeout(
+                std::time::Duration::from_millis(100),
+                host.status(&main, "vault", handle),
+            )
+            .await,
+            Ok(Err(Error::Denied))
         ) {
             tokio::task::yield_now().await;
         }
