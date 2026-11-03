@@ -50,6 +50,8 @@ not a completion gate selection.
 | 2026-11-03 | pass | Original outcome | |
 [E-CI-COLD-REFRESH-001](../../../../../history/2026/11/03/E-CI-COLD-REFRESH-001/index.md)
 | 2026-11-03 | pass | Original outcome |
+[E-CI-STORY-TURN-SELECTION-001](../../../../../history/2026/11/03/E-CI-STORY-TURN-SELECTION-001/index.md)
+| 2026-11-03 | pass | Original outcome |
 
 <!-- generated-navigation -->
 

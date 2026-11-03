@@ -41,8 +41,10 @@
         ).toHaveLength(2),
       { timeout: 10000 },
     );
-    const panels = c.getAllByRole("region", { name: /Changes in aaaaaaaa/ });
-    const panel = panels[1]!;
+    const panel = c.getByRole("region", {
+      name: "Changes in aaaaaaaa · turn turn",
+      exact: true,
+    });
     const p = within(panel);
     await expect(p.getByText("Edited 20 files")).toBeVisible();
     await waitFor(() => expect(p.getByText("+40")).toBeVisible());
