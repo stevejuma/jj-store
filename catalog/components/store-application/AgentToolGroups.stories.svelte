@@ -8,7 +8,7 @@
   import { agentCommentReplies } from "./agent-comment-replies-play.js";
   import Fixture from "../../fixtures/AgentToolGroupsFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent tool groups",
+    title: "JJ Store/Agents/Agent tool groups",
     component: Fixture,
     beforeEach: async () => {
       await views.agentsRecorded();

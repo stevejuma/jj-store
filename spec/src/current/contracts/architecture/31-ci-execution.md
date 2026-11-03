@@ -145,6 +145,15 @@ Changes to Storybook configuration, catalog sources or production web sources
 MUST select this Pages check. Interaction, accessibility and visual approval
 remain separate gates; a static Storybook build does not satisfy them.
 
+E-CI-CAPTURE-TAB-OVERFLOW-001 records the first post-merge publication check at
+`e1244f1755682e6c0b6ab881c965977973438914`. Combined Pages run 41714722555
+passed, but standard run 41714722392 failed its sole root application-browser
+job when responsive fitting moved a capture tab into `More` during Playwright's
+stability wait. The test-only repair bounds that direct attempt and follows the
+existing overflow path; product and publication contracts are unchanged. A
+failed standard run cannot admit a main-image workflow, manifest or signature.
+Fresh hosted standard, image, tagged and visual evidence remains required.
+
 The tracked workflow inventory MUST give every workflow an explicit current
 owner as a standard, qualification, experiment or publication entry point.
 Reusable and gated release workflows are not obsolete merely because they have

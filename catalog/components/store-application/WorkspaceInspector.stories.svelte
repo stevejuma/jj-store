@@ -5,7 +5,7 @@
   import { page as browser } from "vitest/browser";
   import Fixture from "../../fixtures/WorkspaceFilesFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Conversation workspace inspector",
+    title: "JJ Store/Conversations/Conversation workspace inspector",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

@@ -10,7 +10,7 @@
           "web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte",
       },
     },
-    title: "JJ Store/Transcript Markdown",
+    title: "JJ Store/Conversations/Transcript Markdown",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

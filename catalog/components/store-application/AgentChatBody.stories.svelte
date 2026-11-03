@@ -69,7 +69,7 @@
     expect(input).toHaveTextContent("Keep this draft");
   }
   const { Story } = defineMeta({
-    title: "JJ Store/Commentable agent chat body",
+    title: "JJ Store/Conversations/Commentable agent chat body",
     component: StoreAgentChatBody,
     tags: ["visual-pending", "prototype"],
     args: { items: [] },

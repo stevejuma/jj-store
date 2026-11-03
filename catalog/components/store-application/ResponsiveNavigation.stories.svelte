@@ -9,7 +9,7 @@
         subject: "web/src/lib/ui/store-application/StoreViewTabs.svelte",
       },
     },
-    title: "JJ Store/Responsive navigation",
+    title: "JJ Store/Application/Responsive navigation",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

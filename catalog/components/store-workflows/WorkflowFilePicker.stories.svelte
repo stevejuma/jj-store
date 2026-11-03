@@ -9,7 +9,7 @@
         subject: "web/src/lib/ui/store-workflows/WorkflowFilePicker.svelte",
       },
     },
-    title: "JJ Store/Workflow YAML files",
+    title: "JJ Store/Workflows/YAML files",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

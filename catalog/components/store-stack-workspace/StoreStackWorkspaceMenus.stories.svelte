@@ -12,7 +12,7 @@
     workspacePortal,
   } from "../../fixtures/stack-workspace/story-actions.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Stack Workspace/Menus",
+    title: "JJ Store/Stacks/Workspace/Menus",
     component: StackWorkspaceFixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

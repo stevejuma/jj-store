@@ -11,7 +11,7 @@
   } from "storybook/test";
   import Fixture from "../../fixtures/ConversationContinuityFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Conversation continuity",
+    title: "JJ Store/Conversations/Conversation continuity",
     component: Fixture,
     tags: ["visual-pending", "component"],
     parameters: {

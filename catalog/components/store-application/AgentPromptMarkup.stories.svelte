@@ -9,7 +9,7 @@
     { id: "part_2", type: "text", text: "Keep the review anchors exact." },
   ]);
   const { Story } = defineMeta({
-    title: "JJ Store/Agent prompt markup",
+    title: "JJ Store/Agents/Agent prompt markup",
     component: Fixture,
     args: { conversationView: "classic" },
     tags: ["visual-pending", "component"],

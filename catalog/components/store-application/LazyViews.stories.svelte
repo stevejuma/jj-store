@@ -9,7 +9,7 @@
         subject: "web/src/lib/ui/store-application/StoreLazyView.svelte",
       },
     },
-    title: "JJ Store/Lazy views",
+    title: "JJ Store/Application/Lazy views",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

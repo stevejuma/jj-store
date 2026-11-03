@@ -28,6 +28,7 @@
     feedbackControls = false,
     configurationFailure = "",
     delayedObservations = false,
+    delayRescanObservation = false,
     busyObservations = false,
     multipleHarnesses = false,
     multipleRepositories = false,
@@ -40,6 +41,7 @@
     feedbackControls?: boolean;
     configurationFailure?: "" | "stale" | "unknown";
     delayedObservations?: boolean;
+    delayRescanObservation?: boolean;
     busyObservations?: boolean;
     multipleHarnesses?: boolean;
     multipleRepositories?: boolean;
@@ -140,6 +142,11 @@
       };
     },
     async rescan() {
+      if (delayRescanObservation) {
+        readGate = new Promise<void>((resolve) => {
+          releaseReads = resolve;
+        });
+      }
       value.runtime!.discovery.rescan_pending = true;
       return { version: 1, accepted: true, status: structuredClone(value) };
     },
@@ -198,6 +205,10 @@
         });
         void management.refresh();
       }}>Delay capture refresh</Button
+    ></FixtureControls
+  >{/if}
+{#if delayRescanObservation}<FixtureControls floating={false}
+    ><Button onclick={() => releaseReads()}>Finish rescan refresh</Button
     ></FixtureControls
   >{/if}
 {#if busyObservations}<FixtureControls floating={false}

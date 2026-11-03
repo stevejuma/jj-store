@@ -5,7 +5,7 @@
   import DetailFixture from "../../fixtures/RepositoryUnavailableDetailFixture.svelte";
 
   const { Story } = defineMeta({
-    title: "JJ Store/Repository unavailable banners",
+    title: "JJ Store/Repository/unavailable banners",
     component: Fixture,
     tags: ["visual-pending", "application"],
     args: { collaborationState: "failed", initiallyCollapsed: false },

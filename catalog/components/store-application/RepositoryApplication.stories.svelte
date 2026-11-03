@@ -4,7 +4,7 @@
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Application",
+    title: "JJ Store/Repository/Application",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     parameters: {

@@ -6,7 +6,7 @@
   import { playMobileSettings } from "./settings-shell-play.js";
   import StoreApplication from "../../fixtures/StoreApplicationFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Shell",
+    title: "JJ Store/Application/Shell",
     component: StoreApplication,
     beforeEach: async () => {
       await views.repositorySettings();

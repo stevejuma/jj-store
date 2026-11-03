@@ -5,7 +5,7 @@
   import Agent from "../../fixtures/WorkspaceFilesFixture.svelte";
   import Thread from "../../fixtures/StoreThreadsFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Document caret parity",
+    title: "JJ Store/Conversations/Document caret parity",
     tags: ["visual-pending", "prototype"],
     parameters: {
       jjStoreStory: {

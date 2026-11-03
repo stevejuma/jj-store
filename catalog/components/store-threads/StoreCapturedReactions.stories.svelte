@@ -11,7 +11,7 @@
           "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
       },
     },
-    title: "JJ Store/Captured message reactions",
+    title: "JJ Store/Threads/Captured reactions",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

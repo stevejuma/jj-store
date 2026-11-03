@@ -4,7 +4,7 @@
   import WorkflowsFixture from "../../fixtures/WorkflowsFixture.svelte";
   const initialHash = "#/workflows?tab=history";
   const { Story } = defineMeta({
-    title: "JJ Store/Workflow sidebar actions",
+    title: "JJ Store/Workflows/sidebar actions",
     component: WorkflowsFixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

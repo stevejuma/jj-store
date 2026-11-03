@@ -10,7 +10,7 @@
           "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
       },
     },
-    title: "JJ Store/Conversation Markdown",
+    title: "JJ Store/Conversations/Conversation Markdown",
     component: CommunityMarkdownContent,
     tags: ["visual-pending", "component"],
     args: { content: "A brief inline comment.", fullWidth: true },

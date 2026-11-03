@@ -4,7 +4,7 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/DisclosurePersistenceFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Page disclosure persistence",
+    title: "JJ Store/Projects/Page disclosure persistence",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

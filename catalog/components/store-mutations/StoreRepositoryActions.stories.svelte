@@ -11,7 +11,7 @@
         subject: "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
       },
     },
-    title: "JJ Store/Mutations/Repository actions",
+    title: "JJ Store/Repository/Mutations/Repository actions",
     component: StoreRepositoryActions,
     tags: ["visual-pending", "component"],
   });

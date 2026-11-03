@@ -116,7 +116,7 @@ html[data-store-prominent="true"]:is(
 .md-sidebar--secondary .md-nav__title {
   padding-inline: 0;
 }
-.md-sidebar--secondary .md-nav__item + .md-nav__item {
+.md-sidebar .md-nav__item + .md-nav__item {
   margin-top: 0.25rem;
 }
 .md-nav--secondary .md-nav__link {

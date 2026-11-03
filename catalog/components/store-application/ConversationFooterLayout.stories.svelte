@@ -4,7 +4,7 @@
   import Fixture from "../../fixtures/WorkspaceFilesFixture.svelte";
 
   const { Story } = defineMeta({
-    title: "JJ Store/Conversation footer layout",
+    title: "JJ Store/Conversations/Conversation footer layout",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: {

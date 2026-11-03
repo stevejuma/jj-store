@@ -4,7 +4,7 @@
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
   import { expectReviewRowUsesWidth } from "../../fixtures/projects-hub-layout.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Projects directory",
+    title: "JJ Store/Projects/directory",
     component: ProjectsHubFixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

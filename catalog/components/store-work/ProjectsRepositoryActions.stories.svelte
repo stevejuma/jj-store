@@ -6,7 +6,7 @@
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
   import { homeB } from "../../fixtures/projects-hub-fixture.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Project repository actions",
+    title: "JJ Store/Projects/repository actions",
     component: ProjectsHubFixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

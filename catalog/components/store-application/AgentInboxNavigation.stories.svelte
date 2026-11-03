@@ -5,7 +5,7 @@
   import SkeletonFixture from "../../fixtures/AgentsSkeletonFixture.svelte";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent inbox navigation",
+    title: "JJ Store/Agents/Agent inbox navigation",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

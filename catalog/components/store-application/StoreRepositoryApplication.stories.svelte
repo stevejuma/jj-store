@@ -9,7 +9,7 @@
   import { IDS } from "../../fixtures/repository.js";
   import { expectSourceHighlight } from "./source-highlight-assertions.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Connected application",
+    title: "JJ Store/Repository/Connected application/Overview",
     component: StoreRepositoryApplication,
     tags: ["visual-pending", "application"],
     args: { initiallyCollapsed: false },

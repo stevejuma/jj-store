@@ -22,22 +22,35 @@ async function selectTab(page: Page, name: string) {
       ),
   );
   const tab = page.getByRole("tab", { name, exact: true });
-  if (await tab.isVisible()) await tab.click();
-  else {
-    await page
-      .getByRole("button", {
-        name: "More agents settings sections",
-        exact: true,
-      })
-      .click();
-    await page.getByRole("menuitem", { name, exact: true }).click();
-    await expect(
-      page.getByRole("menu", {
-        name: "More agents settings sections",
-        exact: true,
-      }),
-    ).toHaveCount(0);
+  let directClickError: unknown;
+  if (await tab.isVisible()) {
+    try {
+      await tab.click({ timeout: 1000 });
+      return;
+    } catch (error) {
+      directClickError = error;
+    }
   }
+  const more = page.getByRole("button", {
+    name: "More agents settings sections",
+    exact: true,
+  });
+  if (!(await more.isVisible())) {
+    if (await tab.isVisible()) {
+      // The fit may replace a direct tab while Playwright waits for stability.
+      await tab.evaluate((element: HTMLElement) => element.click());
+      return;
+    }
+    throw directClickError ?? new Error(`No visible ${name} settings tab`);
+  }
+  await more.click();
+  await page.getByRole("menuitem", { name, exact: true }).click();
+  await expect(
+    page.getByRole("menu", {
+      name: "More agents settings sections",
+      exact: true,
+    }),
+  ).toHaveCount(0);
 }
 async function openSettings(page: Page) {
   await page

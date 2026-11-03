@@ -8,7 +8,7 @@
     workspaceCanvas,
   } from "../../fixtures/stack-workspace/story-actions.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Stack Workspace/Inline",
+    title: "JJ Store/Stacks/Workspace/Inline",
     component: StackWorkspaceFixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

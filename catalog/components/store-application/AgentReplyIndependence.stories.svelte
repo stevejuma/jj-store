@@ -14,7 +14,7 @@
     sendInlineComments,
   } from "../../fixtures/agent-inline-comment-play.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Independent agent replies",
+    title: "JJ Store/Agents/Independent agent replies",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

@@ -3,7 +3,7 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/UnavailableContentFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Unavailable content",
+    title: "JJ Store/Application/Unavailable content",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

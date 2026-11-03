@@ -13,7 +13,7 @@
         subject: "web/src/lib/ui/store-connections/StoreServerSwitcher.svelte",
       },
     },
-    title: "Store/Server connection owners",
+    title: "JJ Store/Settings/Server connection owners",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

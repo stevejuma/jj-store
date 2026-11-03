@@ -12,7 +12,7 @@
     expectTaskTitleRow,
   } from "../../fixtures/projects-hub-layout.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Projects hub",
+    title: "JJ Store/Projects/hub",
     component: ProjectsHubFixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

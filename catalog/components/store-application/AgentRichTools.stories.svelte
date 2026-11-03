@@ -10,7 +10,7 @@
           "web/src/lib/ui/community-agent-activity/CommunityAgentTranscriptTools.svelte",
       },
     },
-    title: "JJ Store/Rich agent tools",
+    title: "JJ Store/Agents/Rich agent tools",
     component: Fixture,
     tags: ["visual-pending", "component"],
   });

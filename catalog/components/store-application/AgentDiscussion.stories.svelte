@@ -12,7 +12,7 @@
     sendInlineComments,
   } from "../../fixtures/agent-inline-comment-play.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent message discussion",
+    title: "JJ Store/Agents/Agent message discussion",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

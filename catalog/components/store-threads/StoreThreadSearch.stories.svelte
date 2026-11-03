@@ -3,7 +3,7 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/StoreThreadsFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Thread inbox search",
+    title: "JJ Store/Threads/Inbox search",
     component: Fixture,
     tags: ["visual-pending", "application"],
     args: { searchable: true },

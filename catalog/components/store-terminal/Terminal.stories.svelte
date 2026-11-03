@@ -9,7 +9,7 @@
   } from "storybook/test";
   import Fixture from "../../fixtures/TerminalFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Desktop terminal",
+    title: "JJ Store/Compute/terminal",
     component: Fixture,
     tags: ["visual-pending", "component"],
     parameters: {

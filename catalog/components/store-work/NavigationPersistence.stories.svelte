@@ -4,7 +4,7 @@
   import { expect, userEvent, within } from "storybook/test";
   import Fixture from "../../fixtures/NavigationPersistenceFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Navigation persistence",
+    title: "JJ Store/Projects/Navigation persistence",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

@@ -4,7 +4,7 @@
   import StoreWorkflows from "../../../web/src/lib/ui/store-workflows/StoreWorkflows.svelte";
   import WorkflowsFixture from "../../fixtures/WorkflowsFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Workflow cards",
+    title: "JJ Store/Workflows/cards",
     component: StoreWorkflows,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

@@ -1,5 +1,11 @@
 # Delivery and validation
 
+E-UI-CATALOG-HELP-001 applies JST-DOC-003 to the generated manual's navigation
+geometry. Both navigation rails preserve clearance between adjacent interactive
+rows, while the strict bounded closure, links, anchors and bundled asset route
+remain unchanged. Focused browser acceptance does not qualify the independent
+packaged WKWebView release gate.
+
 E-CONVERSATIONS-NPM-003 applies JST-DOC-002 to the regenerated OpenAPI and HTTP
 reference projections after locked object-property ordering changed. Their
 parsed public contract remains identical across all 204 paths. Explicit CLI,

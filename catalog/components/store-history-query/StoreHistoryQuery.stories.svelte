@@ -4,7 +4,7 @@
   import StoreHistoryQuery from "../../../web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte";
   import HistoryQueryFixture from "../../fixtures/HistoryQueryFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/History query",
+    title: "JJ Store/Repository/History query",
     component: StoreHistoryQuery,
     tags: ["visual-pending", "component"],
     parameters: {

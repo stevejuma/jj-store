@@ -1,0 +1,17 @@
+export const storeStorySections = [
+  "Application",
+  "Projects",
+  "Repository",
+  "Stacks",
+  "Workflows",
+  "Agents",
+  "Threads",
+  "Conversations",
+  "Compute",
+  "Search",
+  "Settings",
+  "Appearance",
+  "Forge",
+  "Components",
+  "Catalog",
+] as const;

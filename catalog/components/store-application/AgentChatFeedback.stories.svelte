@@ -6,7 +6,7 @@
   import { agentMessageTimestamp } from "../../../web/src/lib/collaboration/presentation.js";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
-    title: "JJ Store/Agent chat feedback",
+    title: "JJ Store/Agents/Agent chat feedback",
     component: Fixture,
     tags: ["visual-pending", "application"],
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },

@@ -14,6 +14,16 @@ macOS/Linux host provenance and OS/architecture-separated PNG paths. An ignored
 changing shared Docker defaults or CI configuration. Compare-only verification
 MUST preserve baseline files; baseline creation and approval remain explicit.
 
+Owned `JJ Store` stories MUST appear below a stable product-domain section
+rather than directly below the catalog root. The ordered sections cover
+Application, Projects, Repository, Stacks, Workflows, Agents, Threads,
+Conversations, Compute, Search, Settings, Appearance, Forge, Components and
+Catalog; a story title MAY add deeper feature groups below its domain. Storybook
+sorts these sections explicitly and rejects a new or renamed story whose first
+domain is not in that order. This catalog navigation hierarchy changes generated
+Storybook story paths only; it does not change application routes, fixtures,
+interaction acceptance or visual-review status.
+
 The native macOS ARM64 Chromium PNG reference set lives under
 `tests/visual/storybook.spec.ts-snapshots/profiles/native/darwin-arm64`. The
 public preset discovers these files and injects image parameters at build time;

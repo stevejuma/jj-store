@@ -10,7 +10,7 @@
           "web/src/lib/ui/store-notifications/StoreNotificationHost.svelte",
       },
     },
-    title: "JJ Store/Notifications",
+    title: "JJ Store/Application/Notifications",
     component: NotificationsFixture,
     tags: ["visual-pending", "component"],
   });

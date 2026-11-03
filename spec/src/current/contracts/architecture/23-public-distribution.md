@@ -1,10 +1,10 @@
 # Public distribution and release orchestration
 
-E-DEPENDENCY-AUTOMATION-003 selects published Mira 0.1.4 and its verified Bits
-UI 2.20.2 root patch while retaining Core 0.7.0 and root Bits UI 2.19.5. The
-Core 0.7.4 candidate fails branch-regrouping accessibility and remains held. The
-private root is a consumer; development-only intake does not publish npm
-workspaces. Frozen installs and source/attempt-bound artifacts remain required.
+E-DEPENDENCY-AUTOMATION-003 retains Core 0.7.0 and root Bits UI 2.19.5 while
+publishing Mira 0.1.4 with its verified Bits UI 2.20.2 patch. Core 0.7.4 stays
+held after its accessibility failure; the private root remains a non-publishing
+consumer. Frozen installs and source/attempt-bound artifacts remain required.
+E-UI-CATALOG-HELP-001 leaves JST-ARCH-005 publication gates unchanged.
 
 E-VAULT-BACKUP-021 retains exact source and sibling pins when Docker validation
 runs from a separate Jujutsu workspace. The explicit generic Rust lane uses

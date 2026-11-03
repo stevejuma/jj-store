@@ -8,7 +8,7 @@
     run = "51".repeat(16),
     base = `#/repos/${repository}/actions`;
   const { Story } = defineMeta({
-    title: "JJ Store/Repository Actions",
+    title: "JJ Store/Workflows/Repository actions",
     component: WorkflowsFixture,
     tags: ["visual-pending", "application"],
     parameters: {

@@ -13,7 +13,7 @@
           "web/src/lib/ui/store-application/StoreComparisonParentPicker.svelte",
       },
     },
-    title: "JJ Store/Comparison parent picker",
+    title: "JJ Store/Repository/Comparison parent picker",
     component: StoreComparisonParentPicker,
     tags: ["visual-pending", "component"],
     args: {
