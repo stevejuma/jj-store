@@ -1,6 +1,10 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { version, validateTag } from "./release-metadata.mjs";
+import {
+  nativeReleaseAssetNames,
+  version,
+  validateTag,
+} from "./release-metadata.mjs";
 const tag = process.env.RELEASE_TAG,
   source = process.env.RELEASE_SOURCE;
 validateTag(tag, version());
@@ -29,9 +33,18 @@ if (!existing)
     "-f",
     `sha=${source}`,
   ]);
-const checksumFiles = readdirSync("dist").filter((n) => n.endsWith(".sha256"));
-if (checksumFiles.length !== 4)
-  throw Error("expected four native archive checksums");
+const expectedAssets = nativeReleaseAssetNames(version());
+const distFiles = new Set(readdirSync("dist"));
+const checksumFiles = [...distFiles]
+  .filter((n) => n.endsWith(".sha256"))
+  .sort();
+const expectedChecksums = expectedAssets.map((name) => `${name}.sha256`).sort();
+if (
+  checksumFiles.length !== expectedChecksums.length ||
+  checksumFiles.some((name, index) => name !== expectedChecksums[index]) ||
+  expectedAssets.some((name) => !distFiles.has(name))
+)
+  throw Error("expected four native bundles and four server executables");
 writeFileSync(
   "dist/SHA256SUMS",
   checksumFiles

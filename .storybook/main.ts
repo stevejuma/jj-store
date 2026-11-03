@@ -25,6 +25,7 @@ const config: StorybookConfig = {
   core: { disableTelemetry: true },
   viteFinal: async (config) =>
     mergeConfig(config, {
+      base: process.env.STORYBOOK_BASE_PATH ?? "/",
       resolve: { dedupe: ["svelte"] },
       server: {
         host: "127.0.0.1",

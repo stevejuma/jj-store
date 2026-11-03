@@ -22,6 +22,12 @@ acceptance verifies shared geometry, navigation, state and lifecycle; static
 validation does not establish visual approval. Existing story identities and
 behavior assertions are preserved. Changed stories remain visual-pending.
 
+The public Pages artifact builds this same production-owned source Storybook at
+the repository subpath and links it from the site root. Static publication does
+not replace interaction, accessibility, parity or visual-baseline acceptance;
+catalog fixtures remain outside production and every existing quarantine stays
+explicit.
+
 The Stacks refinement family awaits the declared production Stacks loader before
 querying loaded content. It preserves the production root, geometry assertions
 and diagnostic guards; real cold application and static-catalog acceptance

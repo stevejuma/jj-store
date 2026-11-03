@@ -135,3 +135,37 @@ passed the complete gate with every selected standard and heavy job successful;
 only the independent advisory cache comparison was skipped. This does not
 establish schedule-event freshness or close quarantine, latency, reliability,
 publication, provider, platform or visual gates.
+
+E-PUBLIC-SURFACES-001 makes the Pages artifact one source-bound documentation
+surface: the specification remains at the site root, the application manual at
+`/manual/`, and the production-owned source Storybook at `/storybook/` with its
+matching static assets and subpath base. Pull requests MUST build and validate
+all three without deploying; canonical main publishes the combined artifact.
+Changes to Storybook configuration, catalog sources or production web sources
+MUST select this Pages check. Interaction, accessibility and visual approval
+remain separate gates; a static Storybook build does not satisfy them.
+
+The tracked workflow inventory MUST give every workflow an explicit current
+owner as a standard, qualification, experiment or publication entry point.
+Reusable and gated release workflows are not obsolete merely because they have
+no direct run. An unclassified workflow fails the governance regression; file
+removal still requires proving that callers, documentation and release recovery
+no longer depend on it.
+
+Qualified version finalization MUST attach both the complete native bundle and
+the standalone `jj-store` server executable for GNU/Linux and macOS on ARM64 and
+x86-64. Every one of those eight assets has an immutable individual checksum and
+appears in `SHA256SUMS`; retries compare existing bytes and refuse replacement.
+The standalone executable does not include browser, Help, `jj-store-jj` or
+embedded RustFS assets, so the complete bundle remains the recommended
+installation. These asset guarantees do not close actual registry, container,
+signing, platform or publication gates.
+
+After the exact-source standard workflow succeeds on canonical `main`, the
+container publisher MUST build both Linux architectures, run container
+acceptance and vulnerability scanning, and publish an immutable
+`sha-<first-12-source-hex>` index plus rolling `main`. Architecture staging tags
+retain the same bounded identity with an architecture suffix. This development
+image does not establish complete qualification. Qualified publication MUST also
+tag its independently qualified index with the exact immutable Git version tag
+and advance `latest` only after all release gates pass.
