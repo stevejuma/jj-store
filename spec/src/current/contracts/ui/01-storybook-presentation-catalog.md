@@ -214,7 +214,10 @@ original request after comment edits or removal. Read-only access retains counts
 and tombstones have no picker or counts. Task Edit and Add subtask actions use
 the shared outline Button surface and semantic hover tokens. Leading Copy
 submenu icons align through the Design Core primitive, without consumer CSS
-overrides.
+overrides. Source-story and cold-browser acceptance compare the primitive's
+computed leading padding and column gap, plus the icon width, leading margin and
+transform. This rejects material indentation without depending on portal/group
+placement or fractional SVG geometry.
 
 The Threads surface composes Community channel navigation, workspace
 header/conversation, reply panel, member details and rich reactions. Its
@@ -249,3 +252,10 @@ browser. Production browsing, search, typed mutations and conflict editing share
 the same components and asynchronous controller contract. Reusable components
 receive presentation data and callbacks, while HTTP and in-memory controllers
 supply interchangeable sources. Deterministic fixtures remain catalog-only.
+
+Completed agent-change stories with more than one retained turn select the panel
+under test by its exact accessible repository and turn identity. DOM ordering
+cannot substitute for that identity. E-CI-STORY-TURN-SELECTION-001 retains the
+same JST-UI-001 and JST-COLLAB-034 through JST-COLLAB-036 assertions for
+current-turn totals, files, controls and the concurrently visible earlier turn;
+it changes no production presentation or saved-change contract.

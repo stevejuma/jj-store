@@ -29,6 +29,42 @@ not a completion gate selection.
 | [E-UI-CI-002](../../../../../history/2026/10/15/E-UI-CI-002/index.md)                                 | 2026-10-15 | pass            | Original outcome |
 | [E-UI-CI-003](../../../../../history/2026/10/15/E-UI-CI-003/index.md)                                 | 2026-10-15 | pending         | Original outcome |
 
+|
+[E-CI-LATENCY-001](../../../../../history/2026/11/02/E-CI-LATENCY-001/index.md)
+| 2026-11-02 | pending | Original outcome | |
+[E-CI-SELECTION-001](../../../../../history/2026/11/02/E-CI-SELECTION-001/index.md)
+| 2026-11-02 | pending | Original outcome |
+[E-CI-EVIDENCE-001](../../../../../history/2026/11/02/E-CI-EVIDENCE-001/index.md)
+| 2026-11-02 | pending | Original outcome | |
+[E-CI-CLIPBOARD-STABILITY-001](../../../../../history/2026/11/02/E-CI-CLIPBOARD-STABILITY-001/index.md)
+| 2026-11-02 | pending | Original outcome |
+[E-CI-ACTIVE-SELECTION-001](../../../../../history/2026/11/02/E-CI-ACTIVE-SELECTION-001/index.md)
+| 2026-11-02 | pending | Original outcome | |
+[E-CI-STORYBOOK-LIFETIME-001](../../../../../history/2026/11/02/E-CI-STORYBOOK-LIFETIME-001/index.md)
+| 2026-11-02 | pending | Original outcome |
+[E-CI-SETUP-001](../../../../../history/2026/11/02/E-CI-SETUP-001/index.md) |
+2026-11-02 | pending | Original outcome |
+[E-CI-TARGETED-SHARDS-001](../../../../../history/2026/11/02/E-CI-TARGETED-SHARDS-001/index.md)
+| 2026-11-02 | pass | Original outcome | |
+[E-CI-COLD-RESPONSE-001](../../../../../history/2026/11/03/E-CI-COLD-RESPONSE-001/index.md)
+| 2026-11-03 | pass | Original outcome | |
+[E-CI-COLD-REFRESH-001](../../../../../history/2026/11/03/E-CI-COLD-REFRESH-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-STORY-TURN-SELECTION-001](../../../../../history/2026/11/03/E-CI-STORY-TURN-SELECTION-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-STORY-TURN-TYPECHECK-001](../../../../../history/2026/11/03/E-CI-STORY-TURN-TYPECHECK-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-COLD-PROJECT-ROUTE-001](../../../../../history/2026/11/03/E-CI-COLD-PROJECT-ROUTE-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-COLD-REACTION-GEOMETRY-001](../../../../../history/2026/11/03/E-CI-COLD-REACTION-GEOMETRY-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-COLD-RESPONSE-CAPTURE-001](../../../../../history/2026/11/03/E-CI-COLD-RESPONSE-CAPTURE-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-COLD-REACTION-PRIMITIVE-001](../../../../../history/2026/11/03/E-CI-COLD-REACTION-PRIMITIVE-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-COLD-REACTION-STYLE-001](../../../../../history/2026/11/03/E-CI-COLD-REACTION-STYLE-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+
 <!-- generated-navigation -->
 
 ## Pages

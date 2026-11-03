@@ -27,7 +27,10 @@ export default defineConfig({
           storybookTest({
             configDir: fileURLToPath(new URL("../.storybook", import.meta.url)),
             // Register: spec/src/current/governance/09-catalog-validation.md.
-            tags: { skip: ["quarantined"] },
+            tags:
+              process.env.JJ_STORE_QUARANTINE === "stories"
+                ? { include: ["quarantined"], skip: [] }
+                : { skip: ["quarantined"] },
           }),
         ],
         test: {

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { verifyInventory, testsFromList } from "./ci-inventory.mjs";
+import { cohortProfile } from "./ci-packages.mjs";
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
 const fixture = () => ({
@@ -33,6 +34,28 @@ test("verified empty shards are allowed only with exact source packages digest a
     assert.throws(() =>
       verifyInventory({ ...fixture(), ...changed }, expected),
     );
+});
+test("targeted backend inventory uses two complete disjoint shards", () => {
+  assert.equal(cohortProfile("targeted"), "heavy");
+  const targeted = {
+    ...fixture(),
+    cohort: "targeted",
+    packages: ["jj-store-server"],
+    partitions: [["a"], ["b"]],
+  };
+  assert.doesNotThrow(() =>
+    verifyInventory(targeted, {
+      ...expected,
+      cohort: "targeted",
+      packages: ["jj-store-server"],
+    }),
+  );
+  assert.throws(() =>
+    verifyInventory(
+      { ...targeted, partitions: [["a"], []] },
+      { ...expected, cohort: "targeted", packages: ["jj-store-server"] },
+    ),
+  );
 });
 test("Nextest inventories retain ignored tests without requiring their standalone execution", () => {
   const data = {

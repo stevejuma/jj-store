@@ -65,13 +65,13 @@ Privacy policy and compiled cache identities distinguish the released rule set.
 Source admission, immutable identities, manifest CAS and WAL receipts remain
 authoritative; distribution and derived caches cannot publish repository state.
 
-CI partitions existing checks by dependency cohort and impact. Ordinary and
-heavy tests use distinct archived builds and independent runners. Ignored child
-fixtures run only through their acceptance parent. Releases require all
-qualification lanes, package-contained inputs, real-storage recovery, native
-installation, documentation and container provenance. Required checks validate
-planned skips as well as failures. Fork jobs cannot acquire publication secrets
-or populate trusted release caches. Interrupted tests never establish a pass.
+E-CI-TARGETED-SHARDS-001 retains the affected-backend heavy cohort at two hash
+partitions after a four-partition hosted trial. Build archives remain distinct;
+ignored child fixtures run only through their acceptance parent. Releases still
+require all qualification lanes, contained packages, real-storage recovery,
+native installation, documentation and container provenance. Required checks
+validate planned skips and failures. Fork jobs cannot acquire publication
+secrets or write trusted caches; interrupted tests never establish a pass.
 
 Canonical `main` changes go through pull requests. GitHub Actions' `required`
 check MUST pass against an up-to-date base before merge; conversation resolution
@@ -103,31 +103,31 @@ acceptance assertions remain required. The complete qualification gate includes
 the runtime producer.
 
 Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
-calls. It first plans impact and checks formatting, then runs independent
-tooling and governance jobs before standard Rust and affected web checks. The
-standard Rust cohort excludes server, CLI and capture packages, including their
-unit tests. Core UI acceptance (Storybook, served application, static catalog
-and dual-engine Help) runs with affected web checks and is required for PRs. Its
-focused producer compiles only the preview/documentation tools and native HTTP
-fixture capture needed by these tests; it does not run backend qualification or
-build embedded RustFS. Cold application and native-platform acceptance remain
-manual qualification. The stable protected `required` check validates every
-planned standard lane and rejects missing, failed, canceled or unexpectedly
-skipped prerequisites. Main pushes and `all_checks` select the complete standard
-cohort. Superseded PR runs are canceled. No automatic or scheduled standard run
-starts heavy qualification.
+calls. It starts independent policy, standard Rust and affected web checks; the
+standard cohort excludes server, CLI and capture. E-CI-ACTIVE-SELECTION-001
+makes source Storybook, served application, static catalog and Help independent
+schema-version-2 domains, with separate web and catalog units. The app/Help
+producer builds only their preview tools and fixtures; cold/native acceptance
+remains full qualification.
+
+The stable `required` check validates every planned domain and rejects missing,
+failed, canceled or unexpected skips. Shared/generated/unknown inputs, main and
+`all_checks` select everything. Explicit full and heavy dispatches preserve all
+seven UI jobs. Smaller PR checks before the outstanding hosted heavy run are
+authorized, but focused success never establishes complete/release
+qualification.
 
 Manual qualification resolves its source once to an immutable commit and runs
-all standard checks before heavy work. Six manual/reusable workflows own backend
-Rust, API contracts, storage acceptance, UI acceptance, cold application and
-native compatibility. A shared producer definition builds backend tools/tests,
-embedded runtime and browser assets. Runtime, API, external storage and native
-checks start independently after standard checks; assets need backend tools,
-embedded tests need runtime, and browser consumers wait only for their required
-artifacts. UI acceptance is already required by standard checks and is not
-repeated by the coordinator. Backend failures do not block unrelated consumers.
-Every producer, suite and shard remains mandatory for complete qualification and
-publication.
+all standard checks and independent heavy producers in parallel. Six
+manual/reusable workflows own backend Rust, API contracts, storage acceptance,
+UI acceptance, cold application and native compatibility. A shared producer
+definition builds backend tools/tests, embedded runtime and browser assets.
+Runtime, API, external storage and native checks start independently after
+source validation; assets need backend tools, embedded tests need runtime, and
+browser consumers wait only for their required artifacts. UI acceptance is
+already required by standard checks and is not repeated by the coordinator.
+Backend failures do not block unrelated consumers. Every producer, suite and
+shard remains mandatory for complete qualification and publication.
 
 The scoped Conversations npm workflow MUST be an admitted producer for that same
 unchanged graph only on canonical main dispatch or its package-scoped
@@ -168,13 +168,13 @@ distinct from elapsed time. Missing reports or interrupted execution cannot
 establish acceptance. Standalone reruns distinguish execution-only archive reuse
 from suites that still compile contracts or native targets.
 
-Shared setup omits native headers and build-only tools for early and web checks.
-The Ubuntu amd64 governance runner installs actionlint from its pinned official
-Linux release archive, verifies the tracked SHA-256 before extraction and
-exposes only the verified executable directory through the runner's PATH file.
-Standard CI retains fail-fast; heavy qualification collects all independent
-results. Unrun tests never establish acceptance. Job names identify the tested
-cohort, browser suite or native platform and shard.
+E-CI-SETUP-001 gives formatting only Node/Rustfmt, governance only Node, and
+tooling Cargo/JJ/Python, pinned sources and offline fixtures without Clippy or
+build tools. Full/archive profiles retain their prior inputs. Governance
+installs actionlint from its checksum-pinned official archive. Standard CI
+retains fail-fast; heavy qualification collects independent results. Unrun tests
+never establish acceptance. Job names identify the cohort, suite, platform and
+shard.
 
 Cold browser acceptance is partitioned into four complete Playwright shards,
 each with its own disposable server/storage fixture. Profile restart acceptance
@@ -386,8 +386,8 @@ readiness bounds, caller filters and independent native targets are preserved.
 
 Release-governance acceptance follows the declared validation lane through its
 public package command and still requires every release/CI test plus package
-checks. The standard cohort includes history service and vault packages; model
-impact verifies their full reverse dependency closure without reducing coverage.
+check. Affected backend closures add evidence-bound targeted checks without
+qualifying the complete heavy cohort, public artifacts or shadow UI skips.
 
 E-CONVERSATIONS-NPM-003 verifies the focused source repair for deprecated
 desktop owner-pipe registration and generated contract ordering. Safe owned I/O

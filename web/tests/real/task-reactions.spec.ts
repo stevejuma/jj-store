@@ -99,14 +99,31 @@ test("task reaction picker persists exact comments and refreshes a second client
     name: "Edit comment",
     exact: true,
   });
-  const iconX = (scope: typeof copy) =>
-    scope
-      .locator("svg")
-      .first()
-      .evaluate((e) => e.getBoundingClientRect().left);
-  expect(
-    Math.abs((await iconX(copy)) - (await iconX(edit))),
-  ).toBeLessThanOrEqual(1);
+  const primitiveGeometry = (scope: typeof copy) =>
+    scope.evaluate((item) => {
+      const icon = item.querySelector<SVGElement>(
+        'svg[data-icon="inline-start"]',
+      );
+      if (!icon) throw new Error("leading menu icon is missing");
+      const itemStyle = getComputedStyle(item);
+      const iconStyle = getComputedStyle(icon);
+      return {
+        paddingInlineStart: itemStyle.paddingInlineStart,
+        columnGap: itemStyle.columnGap,
+        iconWidth: iconStyle.width,
+        iconMarginInlineStart: iconStyle.marginInlineStart,
+        iconTransform: iconStyle.transform,
+      };
+    });
+  const copyGeometry = await primitiveGeometry(copy);
+  const editGeometry = await primitiveGeometry(edit);
+  expect(copyGeometry.paddingInlineStart).toBe(editGeometry.paddingInlineStart);
+  expect(copyGeometry.columnGap).toBe(editGeometry.columnGap);
+  expect(copyGeometry.iconWidth).toBe(editGeometry.iconWidth);
+  expect(copyGeometry.iconMarginInlineStart).toBe(
+    editGeometry.iconMarginInlineStart,
+  );
+  expect(copyGeometry.iconTransform).toBe(editGeometry.iconTransform);
   await copy.press("Escape");
   await revealActions();
   await row.getByRole("button", { name: "Add reaction", exact: true }).click();

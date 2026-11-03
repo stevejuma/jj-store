@@ -7,6 +7,15 @@ export const heavyPackages = [
   "jj-store-server",
   "jj-store-capture",
 ];
+export const cohortShards = (cohort) =>
+  cohort === "heavy" ? 8 : cohort === "targeted" ? 2 : 4;
+export const cohortProfile = (cohort) =>
+  cohort === "heavy" || cohort === "targeted" ? "heavy" : "ci";
+export function profileJunitPath(profile) {
+  if (profile === "ci") return "target/nextest/ci/junit.xml";
+  if (profile === "heavy") return "target/nextest/heavy/junit-heavy.xml";
+  throw Error("Unknown CI test profile");
+}
 const portable = (path) => path.split(sep).join("/");
 export function packageGraph(data, root = process.cwd()) {
   if (!Array.isArray(data?.workspace_members))
@@ -85,9 +94,14 @@ export function workspaceGraph(root = process.cwd()) {
   return packageGraph(data, root);
 }
 export function cohortPackages(graph, cohort) {
-  if (!["ordinary", "heavy"].includes(cohort)) throw Error("Unknown cohort");
+  if (!["ordinary", "heavy", "targeted"].includes(cohort))
+    throw Error("Unknown cohort");
   return graph.packages
-    .filter((p) => heavyPackages.includes(p.name) === (cohort === "heavy"))
+    .filter(
+      (p) =>
+        heavyPackages.includes(p.name) ===
+        (cohort === "heavy" || cohort === "targeted"),
+    )
     .map((p) => p.name)
     .sort();
 }

@@ -161,7 +161,9 @@ test("browser and storage suites preserve coverage and consume only their inputs
   assert.equal(heavy.ui, undefined); // UI is mandatory in standard checks.
   const lanes = [
     ...cold.strategy.matrix.include,
-    ...ui.strategy.matrix.include,
+    ...JSON.parse(
+      [...ui.strategy.matrix.include.matchAll(/'(\[.*?\])'/g)].at(-1)[1],
+    ),
   ];
   for (const [lane, shards] of [
     ["cold", ["1/4", "2/4", "3/4", "4/4"]],
@@ -210,13 +212,22 @@ test("browser orchestration selects one suite per lane and forwards real shard a
   writeFileSync(
     join(root, "pnpm"),
     `#!/usr/bin/env node
-require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(process.argv.slice(2))+'\\n');
+const args = process.argv.slice(2);
+require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(args)+'\\n');
+if (process.env.BROWSER_FAIL_SHARD && args.includes('--shard=' + process.env.BROWSER_FAIL_SHARD)) process.exit(17);
 `,
     { mode: 0o755 },
   );
-  const invoke = (lane, shard = "", reports = "0") => {
+  const calls = () =>
+    readFileSync(log, "utf8")
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map(JSON.parse);
+  const invoke = (lane, shard = "", reports = "0", failure = "") => {
     writeFileSync(log, "");
     execFileSync(process.execPath, ["scripts/ci-browser.mjs", lane], {
+      stdio: failure ? "ignore" : "pipe",
       env: {
         ...process.env,
         CI: "true",
@@ -224,14 +235,33 @@ require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(p
         JJ_STORE_CI_PREBUILT: "1",
         JJ_STORE_BROWSER_SHARD: shard,
         BROWSER_CALL_LOG: log,
+        BROWSER_FAIL_SHARD: failure,
         PATH: `${root}:${process.env.PATH}`,
       },
     });
-    return readFileSync(log, "utf8").trim().split("\n").map(JSON.parse);
+    return calls();
   };
-  assert.deepEqual(invoke("storybook", "2/3"), [
-    ["test:storybook", "--shard=2/3"],
-  ]);
+  assert.deepEqual(
+    ["1/3", "2/3", "3/3"].flatMap((value) =>
+      invoke("storybook", value).map((args) => args[1]),
+    ),
+    [
+      "--shard=1/12",
+      "--shard=4/12",
+      "--shard=7/12",
+      "--shard=10/12",
+      "--shard=2/12",
+      "--shard=5/12",
+      "--shard=8/12",
+      "--shard=11/12",
+      "--shard=3/12",
+      "--shard=6/12",
+      "--shard=9/12",
+      "--shard=12/12",
+    ],
+  );
+  assert.throws(() => invoke("storybook", "2/3", "0", "2/12"));
+  assert.deepEqual(calls(), [["test:storybook", "--shard=2/12"]]);
   assert.deepEqual(invoke("browser", "1/2"), [
     [
       "exec",
@@ -251,10 +281,31 @@ require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(p
   assert.deepEqual(invoke("storybook", "2/3", "1"), [
     [
       "test:storybook",
-      "--shard=2/3",
+      "--shard=2/12",
       "--reporter=default",
       "--reporter=junit",
-      "--outputFile=.release/ci-results/storybook.xml",
+      "--outputFile=.release/ci-results/storybook-2-12.xml",
+    ],
+    [
+      "test:storybook",
+      "--shard=5/12",
+      "--reporter=default",
+      "--reporter=junit",
+      "--outputFile=.release/ci-results/storybook-5-12.xml",
+    ],
+    [
+      "test:storybook",
+      "--shard=8/12",
+      "--reporter=default",
+      "--reporter=junit",
+      "--outputFile=.release/ci-results/storybook-8-12.xml",
+    ],
+    [
+      "test:storybook",
+      "--shard=11/12",
+      "--reporter=default",
+      "--reporter=junit",
+      "--outputFile=.release/ci-results/storybook-11-12.xml",
     ],
   ]);
   assert.deepEqual(invoke("catalog", "", "1"), [
@@ -419,7 +470,9 @@ test("Git revision reader pins content and all merge parents", () => {
   }
 });
 
-// Retain this historical evidence anchor: qualification is now manual-only.
+// Compilation is independent; complete qualification still requires policy and tests.
+// Historical evidence retains this test identity; producer builds now start early,
+// while complete qualification and publication still require all standard checks.
 test("failed early or ordinary lanes cannot start expensive qualification", () => {
   const standard = parseYaml(
     readFileSync(".github/workflows/ci.yml", "utf8"),
@@ -428,8 +481,9 @@ test("failed early or ordinary lanes cannot start expensive qualification", () =
     readFileSync(".github/workflows/ci-heavy.yml", "utf8"),
   ).jobs;
   for (const name of ["build", "web"])
-    assert.ok(standard[name].needs.includes("fast"));
-  assert.ok(heavy.build.needs.includes("standard"));
+    assert.deepEqual(standard[name].needs, ["plan"]);
+  assert.deepEqual(heavy.build.needs, ["resolve"]);
+  assert.ok(heavy.complete.needs.includes("standard"));
   assert.equal(heavy.build.if, undefined);
   assert.equal(standard.heavy, undefined);
 });

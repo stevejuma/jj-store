@@ -68,6 +68,10 @@ test("affected packages include reverse transitive normal build dev optional and
   const selected = impact(["crates/leaf/src/lib.rs"], false, graph());
   assert.deepEqual(selected.packages, ["consumer", "leaf"]);
   assert.deepEqual(selected.excluded, ["jj-store"]);
+  assert.equal(selected.backend, true);
+  assert.deepEqual(selected.backend_packages, ["jj-store"]);
+  assert.equal(selected.selection.version, 2);
+  assert.equal(selected.selection.mode, "active");
 });
 test("shared inputs and unknown ownership conservatively select all standard consumers", () => {
   for (const file of [
@@ -85,6 +89,7 @@ test("shared inputs and unknown ownership conservatively select all standard con
     const plan = impact([file], false, graph());
     assert.deepEqual(plan.packages, ["consumer", "core", "leaf"], file);
     assert.equal(plan.web, true, file);
+    assert.deepEqual(plan.backend_packages, ["jj-store"], file);
   }
   for (const file of [
     "crates/leaf/tests/fixtures/input.json",
@@ -102,11 +107,22 @@ test("empty and documentation selections stay light while force runs all standar
     const plan = impact(files, false, graph());
     assert.equal(plan.rust, false);
     assert.equal(plan.web, false);
+    assert.equal(plan.backend, false);
     assert.deepEqual(plan.packages, []);
     assert.equal(impact(files, true, graph()).packages.length, 3);
     assert.equal(impact(files, true, graph()).web, true);
   }
   assert.equal(impact(["web/src/new.ts"], false, graph()).web, true);
+  assert.deepEqual(
+    impact(["web/src/new.ts"], false, graph()).selection.domains,
+    {
+      ui_source: true,
+      ui_browser: true,
+      help: false,
+      catalog: false,
+      contracts: false,
+    },
+  );
   for (const source of [
     "packages/jj-conversations/src/client.ts",
     "packages/jj-history/src/index.ts",
@@ -205,6 +221,54 @@ test("invalid metadata and invalid or partial cohort requests fail closed", () =
     root,
   );
   assert.throws(() => selectedPackages("heavy", '["jj-store"]', g));
+  assert.deepEqual(selectedPackages("targeted", '["jj-store"]', g), [
+    "jj-store",
+  ]);
+});
+
+test("shadow domains separate Help catalog contracts and targeted backend", () => {
+  const g = workspaceGraph();
+  const help = impact(["docs/site/guides/browsing.md"], false, g);
+  assert.equal(help.selection.domains.help, true);
+  assert.equal(help.selection.domains.ui_source, false);
+  assert.equal(help.backend, false);
+  const catalog = impact(["catalog/src/example.ts"], false, g);
+  assert.equal(catalog.selection.domains.catalog, true);
+  assert.equal(catalog.selection.domains.ui_browser, false);
+  assert.deepEqual(catalog.selection.deferred.sort(), [
+    "contracts",
+    "help",
+    "ui_browser",
+    "ui_source",
+  ]);
+  const storybook = impact([".storybook/preview.ts"], false, g);
+  assert.equal(storybook.selection.domains.ui_source, true);
+  assert.equal(storybook.selection.domains.catalog, true);
+  assert.equal(storybook.selection.domains.ui_browser, false);
+  const contract = impact(["crates/jj-store-rpc/src/lib.rs"], false, g);
+  assert.equal(contract.selection.domains.contracts, true);
+  assert.equal(contract.selection.domains.ui_source, true);
+  const server = impact(["crates/jj-store-server/src/lib.rs"], false, g);
+  assert.deepEqual(server.backend_packages, ["jj-store", "jj-store-server"]);
+  assert.equal(server.selection.domains.help, true);
+  assert.ok(server.selection.deferred.includes("catalog"));
+});
+test("active domains separate Help catalog contracts and targeted backend", () => {
+  const g = workspaceGraph();
+  const catalog = impact(["catalog/src/example.ts"], false, g);
+  assert.equal(catalog.selection.version, 2);
+  assert.equal(catalog.selection.mode, "active");
+  assert.deepEqual(catalog.selection.domains, {
+    ui_source: false,
+    ui_browser: false,
+    help: false,
+    catalog: true,
+    contracts: false,
+  });
+  const storybook = impact([".storybook/preview.ts"], false, g);
+  assert.equal(storybook.selection.domains.ui_source, true);
+  assert.equal(storybook.selection.domains.catalog, true);
+  assert.equal(storybook.selection.domains.ui_browser, false);
 });
 function fixture(t) {
   const dir = mkdtempSync(join(tmpdir(), "ci-impact-"));

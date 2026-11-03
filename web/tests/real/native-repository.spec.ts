@@ -1,7 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page, type Request } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { captureJsonResponse } from "./capture-json-response.js";
 
 const repository = required("JJ_STORE_REAL_REPOSITORY");
 const runtime = required("JJ_STORE_REAL_RUNTIME");
@@ -17,6 +18,21 @@ function required(name: string) {
 function routeQuery(url: string) {
   const query = new URL(url).hash.split("?", 2)[1] ?? "";
   return new URLSearchParams(query);
+}
+
+function requestIdle(page: Page) {
+  const pending = new Set<Request>();
+  let settled = Date.now();
+  page.on("request", (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.startsWith("/v1/") && path !== "/v1/events") pending.add(request);
+  });
+  const finished = (request: Request) => {
+    if (pending.delete(request)) settled = Date.now();
+  };
+  page.on("requestfinished", finished);
+  page.on("requestfailed", finished);
+  return () => pending.size === 0 && Date.now() - settled >= 500;
 }
 
 function publishFromExternalCli() {
@@ -155,7 +171,7 @@ test("external publication refreshes automatically and preserves selection", asy
   const publishedOperation = publishFromExternalCli();
   expect(publishedOperation).toMatch(/^[0-9a-f]{128}$/u);
   await expect
-    .poll(() => routeQuery(page.url()).get("at_op"))
+    .poll(() => routeQuery(page.url()).get("at_op"), { timeout: 15000 })
     .toBe(publishedOperation);
   expect(publishedOperation).not.toBe(oldOperation);
   await expect(main).toBeVisible();
@@ -235,6 +251,7 @@ test("native conflict selection previews and publishes one atomic resolution", a
 test("browser mutation previews and publishes one native request", async ({
   page,
 }) => {
+  const idle = requestIdle(page);
   const message = `Create a durable browser mutation ${Date.now()}`;
   const requests: any[] = [];
   page.on("request", (request) => {
@@ -247,35 +264,35 @@ test("browser mutation previews and publishes one native request", async ({
   await page
     .getByRole("button", { name: "Add repository browser", exact: true })
     .click();
+  await expect.poll(idle, { timeout: 30000 }).toBe(true);
   const previousOperation = routeQuery(page.url()).get("at_op");
   await page.getByRole("button", { name: "Application menu" }).click();
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
   await dialog.getByRole("textbox", { name: "Markdown editor" }).fill(message);
-  const previewed = page.waitForResponse(
-    (response) =>
-      response.request().method() === "POST" &&
-      new URL(response.url()).pathname.endsWith("/mutations/preview") &&
-      response.request().postDataJSON().request_id === requests[0]?.request_id,
+  const previewResponse = await captureJsonResponse<{
+    status: string;
+    preview: { request_id: string };
+  }>(page, "**/mutations/preview", () =>
+    dialog.getByRole("button", { name: "Preview change" }).click(),
   );
-  await dialog.getByRole("button", { name: "Preview change" }).click();
-  const previewResponse = await previewed;
-  expect(previewResponse.ok()).toBe(true);
-  expect(await previewResponse.json()).toMatchObject({
+  expect(previewResponse.ok, JSON.stringify(previewResponse.outcome)).toBe(
+    true,
+  );
+  expect(previewResponse.outcome).toMatchObject({
     status: "prepared",
     preview: { request_id: requests[0].request_id },
   });
   await expect(dialog.getByText("Preview prepared")).toBeVisible();
-  const applied = page.waitForResponse(
-    (response) =>
-      response.request().method() === "POST" &&
-      new URL(response.url()).pathname.endsWith("/mutations") &&
-      response.request().postDataJSON().request_id === requests[0].request_id,
+  await expect.poll(idle, { timeout: 30000 }).toBe(true);
+  const response = await captureJsonResponse<{
+    status: string;
+    receipt: { request_id: string };
+  }>(page, "**/mutations", () =>
+    dialog.getByRole("button", { name: "Apply command" }).click(),
   );
-  await dialog.getByRole("button", { name: "Apply command" }).click();
-  const response = await applied;
-  expect(response.ok()).toBe(true);
-  expect(await response.json()).toMatchObject({
+  expect(response.ok, JSON.stringify(response.outcome)).toBe(true);
+  expect(response.outcome).toMatchObject({
     status: "committed",
     receipt: { request_id: requests[0].request_id },
   });

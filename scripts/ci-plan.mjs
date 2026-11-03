@@ -18,10 +18,22 @@ export function impact(
   const selected = new Set(),
     reasons = [],
     standard = cohortPackages(graph, "ordinary");
+  const domains = {
+    ui_source: false,
+    ui_browser: false,
+    help: false,
+    catalog: false,
+    contracts: false,
+  };
+  const selectAllDomains = () => {
+    for (const name of Object.keys(domains)) domains[name] = true;
+  };
   let all = full,
     web = full;
+  if (full) selectAllDomains();
   if (files.length && inputs.uncertain?.length) {
     all = web = true;
+    selectAllDomains();
     reasons.push(
       `Unmodelled dynamic source inputs: ${inputs.uncertain.join(", ")}`,
     );
@@ -37,6 +49,7 @@ export function impact(
       file.endsWith("/build.rs")
     ) {
       all = web = true;
+      selectAllDomains();
       reasons.push(`${file}: shared build, test or contract input`);
       continue;
     }
@@ -51,15 +64,42 @@ export function impact(
         );
       }
       if (/^crates\/jj-store-(?:model|http|rpc)\//.test(file)) web = true;
+      if (/^crates\/jj-store-(?:model|http|rpc)\//.test(file)) {
+        domains.contracts = domains.ui_source = domains.ui_browser = true;
+      }
+      if (/^crates\/jj-store-(?:server|cli)\//.test(file))
+        domains.ui_browser = domains.help = true;
+      if (/^crates\/jj-store\//.test(file)) domains.ui_browser = true;
       continue;
     }
-    if (
-      /^(?:web\/|catalog\/|\.storybook\/|docs\/site\/|packages\/jj-(?:conversations|history)\/)/.test(
-        file,
-      )
-    ) {
+    if (/^web\//.test(file)) {
+      domains.ui_source = domains.ui_browser = true;
       web = true;
-      reasons.push(`${file}: web/catalog input`);
+      reasons.push(`${file}: source UI input`);
+      continue;
+    }
+    if (/^catalog\//.test(file)) {
+      domains.catalog = true;
+      web = true;
+      reasons.push(`${file}: catalog input`);
+      continue;
+    }
+    if (/^\.storybook\//.test(file)) {
+      domains.ui_source = domains.catalog = true;
+      web = true;
+      reasons.push(`${file}: Storybook configuration`);
+      continue;
+    }
+    if (/^docs\/site\//.test(file)) {
+      domains.help = true;
+      web = true;
+      reasons.push(`${file}: Help input`);
+      continue;
+    }
+    if (/^packages\/jj-(?:conversations|history)\//.test(file)) {
+      domains.ui_source = domains.ui_browser = domains.contracts = true;
+      web = true;
+      reasons.push(`${file}: generated web contract input`);
       continue;
     }
     if (
@@ -75,6 +115,7 @@ export function impact(
       continue;
     }
     all = web = true;
+    selectAllDomains();
     reasons.push(`${file}: unknown ownership; all standard checks`);
   }
   const closure = reverseClosure(graph, selected);
@@ -88,16 +129,42 @@ export function impact(
         "jj-store",
       ].includes(name),
     )
-  )
+  ) {
     web = true;
+    domains.ui_source = domains.ui_browser = domains.contracts = true;
+  }
   const packages = all
     ? standard
     : closure.filter((name) => standard.includes(name));
-  const excluded = closure.filter((name) => heavyPackages.includes(name));
+  const availableHeavy = graph.packages
+    .map((pkg) => pkg.name)
+    .filter((name) => heavyPackages.includes(name));
+  const excluded = all
+    ? availableHeavy
+    : closure.filter((name) => heavyPackages.includes(name));
   for (const name of closure)
     if (!selected.has(name))
       reasons.push(`${name}: depends on changed package or shared source`);
-  return { rust: packages.length > 0, web, packages, excluded, reasons };
+  const deferred = Object.entries(domains)
+    .filter(([, selected]) => !selected)
+    .map(([name]) => name);
+  return {
+    rust: packages.length > 0,
+    web,
+    backend: excluded.length > 0,
+    packages,
+    backend_packages: excluded,
+    excluded,
+    selection: {
+      version: 2,
+      mode: "active",
+      domains,
+      packages: { standard: packages, targeted_backend: excluded },
+      deferred,
+      reasons,
+    },
+    reasons,
+  };
 }
 export function changedFiles(base, head, root = process.cwd()) {
   // Treat renames as deletion + addition so both owners are considered.
@@ -114,7 +181,7 @@ export function cacheWritable({ event, ref, repository, sourceOnMain }) {
   if (event === "pull_request")
     return /^refs\/pull\/\d+\/merge$/.test(ref ?? "");
   return (
-    ["push", "workflow_dispatch"].includes(event) &&
+    ["push", "workflow_dispatch", "schedule"].includes(event) &&
     ref === "refs/heads/main" &&
     sourceOnMain === true
   );
@@ -145,6 +212,7 @@ if (
   const result = impact(
     files,
     process.env.CI_ALL_CHECKS === "true" ||
+      process.env.CI_EVENT === "schedule" ||
       (process.env.CI_EVENT === "push" &&
         process.env.CI_REF === "refs/heads/main"),
     graph,
@@ -160,7 +228,11 @@ if (
     source,
     rust: result.rust,
     web: result.web,
+    backend: result.backend,
+    ...result.selection.domains,
     packages: JSON.stringify(result.packages),
+    backend_packages: JSON.stringify(result.backend_packages),
+    selection: JSON.stringify(result.selection),
     cache_write,
   }))
     appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}\n`);
@@ -169,6 +241,11 @@ if (
   if (process.env.GITHUB_STEP_SUMMARY)
     appendFileSync(
       process.env.GITHUB_STEP_SUMMARY,
-      `## Standard check selection\n\nSource: \`${source}\`\n\nSelected packages: ${result.packages.join(", ") || "none"}\n\nManual cohort: ${heavyPackages.join(", ")}\n\nAffected manual packages: ${result.excluded.join(", ") || "none"}\n\nWeb checks: ${result.web}. Cache writes: ${cache_write}.\n\n${result.reasons.map((r) => "- " + r.replace(/[\r\n]/g, " ")).join("\n")}\n`,
+      `## Standard check selection\n\nSelection schema: v${result.selection.version} (${result.selection.mode}).\n\nSource: \`${source}\`\n\nSelected packages: ${result.packages.join(", ") || "none"}\n\nTargeted backend packages: ${result.backend_packages.join(", ") || "none"}\n\nFull qualification cohort: ${heavyPackages.join(", ")}\n\nWeb checks: ${result.web}. Cache writes: ${cache_write}.\n\nSelected PR domains: ${
+        Object.entries(result.selection.domains)
+          .filter(([, selected]) => selected)
+          .map(([name]) => name)
+          .join(", ") || "none"
+      }.\n\nDeferred PR domains: ${result.selection.deferred.join(", ") || "none"}.\n\n${result.reasons.map((r) => "- " + r.replace(/[\r\n]/g, " ")).join("\n")}\n`,
     );
 }

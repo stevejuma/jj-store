@@ -26,6 +26,15 @@ entity IDs. Status and retry share that identity, even after refresh. Linked
 repository navigation uses the normal target session and token checks, never the
 home metadata grant.
 
+E-CI-COLD-RESPONSE-001 confirms this contract is unchanged. The cold-browser
+harness consumes the successful command response body immediately, before the
+receipt-triggered reload can make Playwright discard it, and then retains the
+same request identity, committed status and reloaded WorkStore assertions.
+
+E-CI-COLD-RESPONSE-CAPTURE-001 consumes that body inside a one-shot test route
+before forwarding the real response. Repeated project/task/comment commands,
+receipts, automatic reloads and unknown-outcome behavior remain unchanged.
+
 Recoverable Projects collection reads keep their independent snapshots and
 available rows while the browser reports the original failure through a scoped
 application toast. Retry reuses the existing refresh/read owner; moving error

@@ -100,3 +100,12 @@ the existing bounded blocking-worker admission. Request identities, original
 receipts, route schemas, origin/protocol checks, deadline handling and folder
 admission under JST-API-001/002 remain unchanged. No UI behavior changes with
 this Rust composition refactor.
+
+E-CI-COLD-RESPONSE-001 confirms the local command contract is unchanged. The
+mixed cold-browser harness consumes the native Thread command body before its
+accepted refresh can discard the Playwright response, then still verifies the
+same committed status, merged messages and reload behavior.
+
+E-CI-COLD-RESPONSE-CAPTURE-001 confirms route-level response capture changes
+only the cold harness. It forwards the real native Thread response after reading
+its JSON and preserves the same request identity, receipt and browser state.

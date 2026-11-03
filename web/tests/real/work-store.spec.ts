@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
+import { captureJsonResponse } from "./capture-json-response.js";
 const home = process.env.JJ_STORE_REAL_REPOSITORY!;
 const runtime = process.env.JJ_STORE_REAL_RUNTIME!;
 const root = process.env.JJ_STORE_REAL_ROOT!;
@@ -85,15 +86,14 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
     await page.getByRole("option").click();
   }
   async function save(scope: Page | Locator, label: string) {
-    const committed = page.waitForResponse(
-      (response) =>
-        response.url().endsWith("/work/commands") &&
-        response.request().method() === "POST",
+    const response = await captureJsonResponse<{
+      status: string;
+      receipt: { request_id: string };
+    }>(page, "**/work/commands", () =>
+      scope.getByRole("button", { name: label, exact: true }).click(),
     );
-    await scope.getByRole("button", { name: label, exact: true }).click();
-    const response = await committed;
-    expect(response.ok()).toBe(true);
-    const outcome = await response.json();
+    expect(response.ok).toBe(true);
+    const { outcome } = response;
     expect(outcome.status).toBe("committed");
     expect(outcome.receipt.request_id).toMatch(/^[0-9a-f]{32}$/u);
   }

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
-import { verifyUiProducer } from "./ci-ui-producer.mjs";
+import { verifyUiProducer, verifyUiSource } from "./ci-ui-producer.mjs";
 import { verifyProducer, verifyReceipt } from "./ci-artifacts.mjs";
 import { payloads, uiLanePayloads } from "./ci-artifact-layout.mjs";
 
@@ -129,22 +129,61 @@ test("UI receipts require complete source-bound payload inventories", () => {
   assert.deepEqual(uiLanePayloads.help, uiLanePayloads.browser);
 });
 
-test("core UI follows preflight, gates PRs and can run alone without full qualification", () => {
+test("core UI runs alongside preflight, gates PRs and can run alone without full qualification", () => {
   const workflow = (name) =>
     parse(readFileSync(`.github/workflows/${name}.yml`, "utf8"));
   const standard = workflow("ci").jobs,
     ui = workflow("ci-ui");
-  assert.deepEqual(standard.ui.needs, ["plan", "fast"]);
-  assert.equal(standard.ui.if, "needs.plan.outputs.web == 'true'");
+  assert.deepEqual(standard.ui.needs, ["plan"]);
+  assert.match(standard.ui.if, /outputs\.ui_source/);
+  assert.match(standard.ui.if, /outputs\.catalog/);
   assert.equal(standard.ui.uses, "./.github/workflows/ci-ui.yml");
+  assert.equal(
+    standard.ui.with.ui_source,
+    "${{ needs.plan.outputs.ui_source == 'true' }}",
+  );
+  assert.equal(
+    standard.ui.with.ui_browser,
+    "${{ needs.plan.outputs.ui_browser == 'true' }}",
+  );
+  assert.equal(
+    standard.ui.with.help,
+    "${{ needs.plan.outputs.help == 'true' }}",
+  );
+  assert.equal(
+    standard.ui.with.catalog,
+    "${{ needs.plan.outputs.catalog == 'true' }}",
+  );
+  assert.match(standard.web.if, /outputs\.contracts/);
+  assert.equal(
+    standard.catalog_unit.if,
+    "needs.plan.outputs.catalog == 'true'",
+  );
   assert.ok(standard.required.needs.includes("ui"));
+  assert.ok(standard.required.needs.includes("catalog_unit"));
   assert.deepEqual(Object.keys(ui.on).sort(), [
     "workflow_call",
     "workflow_dispatch",
   ]);
   assert.equal(ui.on.workflow_dispatch.inputs.source.required, true);
+  for (const domain of ["ui_source", "ui_browser", "help", "catalog"])
+    assert.equal(ui.on.workflow_dispatch.inputs[domain].default, true);
+  assert.equal(ui.jobs.prepare.if, "inputs.ui_browser || inputs.help");
   assert.equal(ui.jobs.tests.needs, "prepare");
+  assert.equal(ui.jobs.tests.if, "inputs.ui_browser");
   assert.equal(ui.jobs.tests.with.input_profile, "ui");
+  assert.equal(ui.jobs.tests.with.suite, "browser");
+  assert.equal(ui.jobs.help.needs, "prepare");
+  assert.equal(ui.jobs.help.if, "inputs.help");
+  assert.equal(ui.jobs.help.with.suite, "help");
+  assert.equal(ui.jobs.storybook.needs, undefined);
+  assert.equal(ui.jobs.storybook.if, "inputs.ui_source");
+  assert.equal(ui.jobs.storybook.with.suite, "source");
+  assert.equal(ui.jobs.catalog.needs, undefined);
+  assert.equal(ui.jobs.catalog.if, "inputs.catalog");
+  assert.equal(ui.jobs["catalog-tests"].needs, "catalog");
+  assert.equal(ui.jobs["catalog-tests"].if, "inputs.catalog");
+  assert.equal(ui.jobs["catalog-tests"].with.suite, "catalog");
   assert.equal(ui.jobs.tests.uses, "./.github/workflows/ci-heavy-ui.yml");
   assert.equal(
     Object.values(ui.jobs).some((job) => job.uses?.endsWith("/ci-heavy.yml")),
@@ -160,4 +199,78 @@ test("core UI follows preflight, gates PRs and can run alone without full qualif
   assert.match(build, /docs_reference/);
   assert.match(build, /browser-fixtures/);
   assert.doesNotMatch(build, /ci-build|nextest|embedded-rustfs/);
+});
+
+test("source Storybook admission does not admit missing artifact producers", () => {
+  assert.doesNotThrow(() => verifyUiSource(run, expected, env));
+  for (const role of ["ui", "ui-catalog"]) {
+    assert.throws(() => verifyUiProducer(run, [], expected, env, role));
+    assert.throws(() => verifyUiProducer(run, jobs, expected, env, "unknown"));
+  }
+  const catalog = [
+    { name: "UI acceptance / Static catalog inputs", conclusion: "success" },
+  ];
+  assert.doesNotThrow(() =>
+    verifyUiProducer(run, catalog, expected, env, "ui-catalog"),
+  );
+  assert.throws(() => verifyUiProducer(run, jobs, expected, env, "ui-catalog"));
+  assert.throws(() => verifyUiProducer(run, catalog, expected, env, "ui"));
+  for (const conclusion of ["failure", "cancelled", "skipped", null])
+    assert.throws(() =>
+      verifyUiProducer(
+        run,
+        [{ ...catalog[0], conclusion }],
+        expected,
+        env,
+        "ui-catalog",
+      ),
+    );
+  assert.throws(() => verifyUiSource(run, { ...expected, attempt: "1" }, env));
+  assert.throws(() =>
+    verifyUiSource({ ...run, event: "schedule" }, expected, env),
+  );
+});
+
+test("UI partitions preserve every original lane once and source jobs use Node setup", () => {
+  const ui = parse(readFileSync(".github/workflows/ci-heavy-ui.yml", "utf8"));
+  const expression = ui.jobs.tests.strategy.matrix.include;
+  const arrays = [...expression.matchAll(/'(\[.*?\])'/g)].map((m) =>
+    JSON.parse(m[1]),
+  );
+  assert.equal(arrays.length, 6);
+  const identity = (lane) => JSON.stringify([lane.lane, lane.shard ?? null]);
+  const source = arrays[0].map(identity);
+  const application = arrays[1].map(identity);
+  const browser = arrays[2].map(identity);
+  const help = arrays[3].map(identity);
+  const catalog = arrays[4].map(identity);
+  const partitioned = [...source, ...application, ...catalog].sort();
+  assert.deepEqual([...browser, ...help].sort(), application.sort());
+  assert.deepEqual(partitioned, arrays[5].map(identity).sort());
+  assert.equal(new Set(partitioned).size, 7);
+  const steps = ui.jobs.tests.steps;
+  assert.equal(
+    steps.find((s) => s.run?.includes("source-ui storybook")).if,
+    "matrix.lane == 'storybook' && inputs.input_profile == 'ui'",
+  );
+  assert.equal(
+    steps.find((s) => s.run?.includes("consume-ui")).if,
+    "matrix.lane != 'storybook' || inputs.input_profile != 'ui'",
+  );
+  assert.equal(
+    steps.find((s) => s.uses === "./.github/actions/setup").with.capability,
+    "node",
+  );
+  const setup = parse(readFileSync(".github/actions/setup/action.yml", "utf8"));
+  for (const step of setup.runs.steps.filter(
+    (s) =>
+      /rust-toolchain|setup-python|install-action/.test(s.uses ?? "") ||
+      /ci-lapis-source|ci-redaction-source|ci-setup-jj|cargo fetch|ci-provision|shared AI/.test(
+        (s.run ?? "") + (s.name ?? ""),
+      ),
+  ))
+    assert.match(
+      step.if,
+      /inputs.capability (?:== '(?:full|archive|tooling)'|!= '(?:node|format)')/,
+    );
 });

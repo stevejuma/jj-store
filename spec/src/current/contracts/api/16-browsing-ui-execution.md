@@ -163,3 +163,10 @@ representation.
 Tag collections use released TagList without changing pinned read or mutation
 contracts. The commit selector separates its native picker trigger from the
 interactive overflow list; opening tags never selects a commit or native row.
+
+E-CI-LATENCY-001 changes CI fixture preparation and admission only. JST-API-001
+and JST-API-004 retain existing DTOs, authorization, read pins and budgets.
+App/Help consumers still require source/attempt-bound preview tools, native
+response captures and complete built assets; source-only Storybook admission
+cannot authorize a missing API/browser artifact producer. Hosted API and cold
+application qualification remain outstanding until their real fixtures execute.

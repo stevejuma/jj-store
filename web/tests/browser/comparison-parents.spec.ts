@@ -83,7 +83,7 @@ async function comparisonFixture(page: Page) {
 
 // Q-BROWSER-001: original geometry assertions retained; register in
 // spec/src/current/governance/25-test-quarantines.md.
-test.skip(
+(process.env.JJ_STORE_QUARANTINE === "Q-BROWSER-001" ? test : test.skip)(
   "comparison parent and workspace controls stay ordered after viewport resize",
   {
     annotation: {
@@ -126,10 +126,11 @@ test("comparison parent dropdown searches descriptions and sends the full record
       exact: true,
     });
   await copy.click();
-  await expect(copy).toHaveAttribute("data-copied", "true");
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    second,
-  );
+  // The source story owns the transient copied-state assertion. This cold flow
+  // observes the durable browser effect across live-refresh remounts instead.
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe(second);
   await copy.press("Enter");
   await expect(picker).toHaveAttribute("aria-expanded", "true");
   expect(selections).toEqual([]);
