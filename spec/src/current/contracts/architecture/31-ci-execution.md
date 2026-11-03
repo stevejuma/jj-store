@@ -104,3 +104,9 @@ failure exposed on that freshness slice. Completed-change interactions MUST
 select the fixture's exact accessible repository/turn identity, not a panel's
 incidental DOM position. Product behavior and the twelve-way inventory remain
 unchanged; fresh required checks are still mandatory.
+
+E-CI-COLD-PROJECT-ROUTE-001 repairs the project-preview failure from the same
+integrated run. The cold test resolves a current operation on Branches, then
+enters Overview with that operation and `main` explicitly pinned instead of
+depending on cross-page selection retention. One reaction-geometry failure and
+complete qualification remain open.

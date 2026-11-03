@@ -57,3 +57,10 @@ repository expansion persist in versioned browser local storage. Explicit
 collapsed choices win over automatic expansion of an active child, including
 after Settings closes or the application reloads. Storage contains disclosure
 flags only; unavailable or malformed storage falls back to normal navigation.
+
+Cold repository-document acceptance enters Overview with the explicit operation
+and bookmark whose documents it verifies. Selecting a bookmark on Branches does
+not imply that a later page change retains it: ordinary page changes continue to
+clear incompatible selections. The pinned Overview route must retain its
+reference, render all landing documents and carry the same operation into
+repository-linked Projects.
