@@ -53,12 +53,12 @@ rollout. Post-verification notifications only request reconciliation and cannot
 republish an artifact. No dependency automation merges PRs, signs artifacts,
 publishes packages or deploys applications.
 
-Native bundles support GNU/Linux and macOS on ARM64 and x86-64, and contain the
-server, collision-safe custom client, embedded RustFS helper, browser and Help.
-The authenticated container contains the server and browser/Help, uses external
-RustFS, runs without root and requires explicit TLS and installation policy.
-LocalTrusted remains literal-loopback only. Desktop, Windows, live provider and
-additional storage topology gates retain their separate milestones.
+GNU/Linux and macOS bundles support ARM64 and x86-64 with the server, client,
+RustFS helper, browser and Help. Each target also has a checksummed standalone
+server asset; the bundle remains the normal installation. Main checks publish
+scanned `sha-<12-hex>` and `main` container tags; qualified releases add the Git
+tag and `latest`. Images use external RustFS and TLS; LocalTrusted, desktop,
+Windows, provider and other storage gates stay separate.
 
 Rust 1.99 and released Kingfisher libraries replace checkout-only dependencies.
 Privacy policy and compiled cache identities distinguish the released rule set.

@@ -176,14 +176,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
+      - id: image_tag
+        env:
+          RELEASE_SOURCE: ${{ inputs.source }}
+          IMAGE_ARCH: ${{ matrix.arch }}
+        run:
+          echo "value=$(node scripts/image-tags.mjs release-architecture
+          "$RELEASE_SOURCE" "$IMAGE_ARCH")" >> "$GITHUB_OUTPUT"
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
         id: push
         with:
           context: .
           push: true
-          tags:
-            ghcr.io/stevejuma/jj-store:source-${{ inputs.source }}-${{
-            matrix.arch }}
+          tags: ghcr.io/stevejuma/jj-store:${{ steps.image_tag.outputs.value }}
           platforms: ${{ matrix.platform }}
           provenance: mode=max
           sbom: true

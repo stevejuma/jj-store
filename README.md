@@ -1,47 +1,70 @@
 # jj-store
 
-Native Jujutsu repository storage, collaboration, workflows and a browser UI,
-backed by RustFS. Immutable native objects and manifest-selected publication
-remain authoritative; indexes and adapters are rebuildable.
+`jj-store` is a native object store and collaboration service for
+[Jujutsu](https://github.com/jj-vcs/jj). It keeps immutable JJ objects in
+RustFS, publishes repository state through manifest compare-and-swap, and adds a
+custom CLI, structured APIs, search, projects, reviews, agent history,
+workflows, and a browser application.
 
-The initial **0.1.0** distribution is experimental. The
+The project is experimental. Native storage and the LocalTrusted application are
+implemented, but some replication, provider, desktop, platform, visual, and
+public-release gates are still open. The
 [capability guide](https://stevejuma.github.io/jj-store/manual/reference/capabilities/)
-and [milestone ledger](spec/src/current/progress/index.md) record qualification
-and remaining platform, replication, provider and desktop gates.
+and [milestone ledger](spec/src/current/progress/index.md) are the source of
+truth for what is qualified.
 
-- [Specification](https://stevejuma.github.io/jj-store/)
-- [Application manual](https://stevejuma.github.io/jj-store/manual/)
-- [Native downloads](https://github.com/stevejuma/jj-store/releases)
-- [Server image](https://github.com/stevejuma/jj-store/pkgs/container/jj-store)
-- [Changesets and release recovery](docs/releases.md)
-- [Security reporting](SECURITY.md)
+## Explore
 
-## Install
+- [Application manual](https://stevejuma.github.io/jj-store/manual/) — install,
+  operate, and use jj-store
+- [Storybook](https://stevejuma.github.io/jj-store/storybook/) — maintained UI
+  components and interaction states
+- [Specification](https://stevejuma.github.io/jj-store/) — contracts,
+  requirements, milestones, and evidence
+- [GitHub releases](https://github.com/stevejuma/jj-store/releases) — native
+  bundles, standalone server executables, and checksums
+- [Container image](https://github.com/stevejuma/jj-store/pkgs/container/jj-store)
 
-Download the GNU/Linux or macOS archive for ARM64 or x86-64, verify
-`SHA256SUMS`, and extract it outside a checkout. Retain the bundle layout:
-`bin/jj-store`, `bin/jj-store-jj`, `bin/jj-store-rustfs`, and `web/` with
-matching Help assets. Add its `bin` directory to PATH or use explicit executable
-paths. The existing upstream `jj` command stays available. macOS command-line
-bundles are unsigned; desktop/DMG distribution has separate qualification.
+## What it provides
 
-Rust **1.99** or newer supports Cargo installation:
+- Native JJ object, operation, view, manifest, WAL, and receipt storage
+- LocalTrusted and authenticated server profiles
+- A collision-safe `jj-store-jj` client alongside the upstream `jj` command
+- Browser views for code, search, projects, tasks, reviews, agents, and
+  workflows
+- Repository-native WorkStore, AgentStore, ReviewStore, and WorkflowStore data
+- Rebuildable search and adapter projections that never become repository
+  authority
 
-```sh
-cargo install jj-store --locked
-cargo install jj-store-embedded-rustfs --locked
-jj-store --version
-jj-store-jj store --help
+The manifest is the only publication authority. Uploaded objects and WAL
+candidates remain invisible until selected by committed references, and a
+timeout is treated as an unknown outcome rather than a proven conflict.
+
+## Install a native bundle
+
+Releases target GNU/Linux and macOS on ARM64 and x86-64. Download the archive
+for your platform, verify it against `SHA256SUMS`, and extract it outside a
+repository checkout. Keep the bundle together:
+
+```text
+bin/jj-store
+bin/jj-store-jj
+bin/jj-store-rustfs
+web/
 ```
 
-Cargo installs executable tools. Complete downloads also supply the browser and
-Help. The storage helper is separately compiled to preserve native allocator
-boundaries. Kingfisher's native dependency uses checksum-verified portable
-archives; consult that dependency for offline/source-build prerequisites.
+The release also exposes `jj-store-<version>-<target>` as a standalone server
+download. After checksum verification, make it executable with `chmod +x`. The
+full archive is recommended because it includes the matching browser, Help,
+custom client, and embedded-storage helper.
 
-## Local managed storage
+macOS command-line bundles are currently unsigned. Windows and desktop/DMG
+distribution have separate qualification gates.
 
-Choose a private state directory outside Git/JJ checkouts:
+## Run locally
+
+Choose a private state directory outside Git and JJ checkouts, then initialize
+the LocalTrusted profile:
 
 ```sh
 jj-store init --local --state-dir /absolute/private/jj-store
@@ -49,133 +72,58 @@ jj-store config check --config /absolute/private/jj-store/server.toml
 jj-store run --config /absolute/private/jj-store/server.toml
 ```
 
-Set `web_root` to the matching bundle's `web/` directory. LocalTrusted uses
-literal-loopback HTTP and an owner-only Unix socket. Follow the
-[native tutorial](docs/site/getting-started/native.md) and
-[project/task tutorial](docs/site/getting-started/work.md). Existing Git-backed
-JJ folders use the separately governed companion profile; conversion support has
-its own documented limits.
+Set `web_root` to the extracted bundle's `web/` directory. LocalTrusted listens
+only on literal loopback and uses an owner-only Unix socket. Start with the
+[native tutorial](https://stevejuma.github.io/jj-store/manual/getting-started/native/)
+and the
+[projects tutorial](https://stevejuma.github.io/jj-store/manual/getting-started/work/).
 
-## Authenticated Docker server
+For a shared deployment, use the authenticated TLS profile with external RustFS.
+The container runs without root and contains the server, browser, and Help
+assets. Successful canonical `main` builds publish immutable `sha-<12-hex>`
+images plus the rolling `main` tag; qualified releases publish the matching
+`v<version>` tag and advance `latest`. Prefer immutable tags or digests outside
+development. Configuration, installation policy, credentials, and TLS material
+must live outside the checkout; see the
+[configuration](https://stevejuma.github.io/jj-store/manual/reference/configuration/)
+and [security](https://stevejuma.github.io/jj-store/manual/reference/security/)
+guides.
 
-`ghcr.io/stevejuma/jj-store` supports Linux AMD64 and ARM64. Prefer a versioned
-digest. It contains the server, UI and Help and connects to external RustFS.
+## Develop
 
-Prepare an authenticated format-2 configuration, private installation/catalog,
-operator policy and TLS certificate/key. The installation directory must be
-owned by UID/GID **65532**, with private directory/file permissions. Set
-`web_root` to `/usr/share/jj-store/web`, use private TLS paths, and inject the
-environment references named by your storage configuration.
+Read [AGENTS.md](AGENTS.md) before changing implementation or specifications.
+The repository uses Jujutsu for version control and requires focused validation
+plus same-change Markdown evidence for protected behavior.
 
-```sh
-docker run --detach --name jj-store \
-  --read-only --cap-drop ALL --security-opt no-new-privileges \
-  --tmpfs /tmp:rw,noexec,nosuid,size=64m \
-  --mount type=bind,src=/absolute/private/jj-store,dst=/var/lib/jj-store \
-  --publish 7443:7443 \
-  --env JJ_STORE_S3_ACCESS_KEY --env JJ_STORE_S3_SECRET_KEY \
-  ghcr.io/stevejuma/jj-store:v0.1.0
-```
-
-The image runs without root and requires explicit configuration. Shared
-listeners require authenticated TLS. LocalTrusted cannot be exposed through a
-shared listener. See [configuration](docs/site/reference/configuration.md) and
-[access](docs/site/reference/security.md) for initialization, grants and
-revocation. `docker stop` requests graceful shutdown. Preserve installation
-state and authoritative RustFS data across upgrades; credentials stay outside
-source checkouts.
-
-## Optional agent execution
-
-Use the sibling [Lapis AI](https://github.com/lapismd/lapis-ai) checkout and run
-`pnpm ai:prepare` to build and stage its agent, tools and compute helpers. Rust
-clients currently use local Cargo path dependencies, with crates.io consumption
-planned after publication. Execution and model discovery require Control V3.
-Configure the verified bundle and admitted agents. Provider tools and
-credentials belong to the execution host. The default image includes no agent
-runner or workflow executor. Live-provider acceptance remains distinct from
-deterministic fixtures.
-
-## Develop and verify
-
-Use Rust 1.99.0, Node 22+, pnpm 10.32.1, Python 3.11+, uv, mdBook 0.5.4 and
-Playwright Chromium:
+The primary toolchain is Rust 1.99.0, Node 22+, pnpm 10.32.1, Python 3.11+, uv,
+mdBook 0.5.4, and Playwright Chromium. Install locked dependencies, then
+initialize the private development fixture once:
 
 ```sh
-pnpm install --frozen-lockfile --ignore-pnpmfile
+npx --yes pnpm@10.32.1 install --frozen-lockfile --ignore-pnpmfile
 uv sync --locked
-pnpm exec playwright install chromium
-pnpm dev:cargo -- build -p jj-store --bins --locked
-pnpm build:embedded-rustfs
-pnpm web:build
+npx --yes pnpm@10.32.1 exec playwright install chromium
+npx --yes pnpm@10.32.1 dev:restart
 ```
 
-Follow [AGENTS.md](AGENTS.md) for focused verification. PR checks run
-formatting, tooling and governance before standard Rust tests and affected web
-checks. The standard Rust cohort has 20 packages; server, CLI and capture tests,
-including their unit tests, run only during qualification (apart from the two
-HTTP fixture captures needed by browser tests). Affected web checks also run
-Storybook interactions, served-browser tests, the static catalog and Help in
-Chromium and WebKit. The protected `required` check covers the standard
-workflow. Main pushes and the `all_checks` dispatch option run all standard
-checks.
+Use `pnpm dev:ui` for UI work with Vite HMR. After Rust changes, use
+`pnpm dev:backend:build` and `pnpm dev:backend:restart`; `pnpm dev:reset` is the
+explicit destructive fixture reset. Managed Cargo entry points enforce disk and
+target ownership rules.
 
-Cargo metadata selects changed standard crates and their transitive dependents.
-The same package list controls strict Clippy, doctests and Nextest compilation.
-Shared manifests, fixtures and uncertain inputs select the complete cohort. Each
-run summarizes its source, selection and reasons. Archived inventories verify
-source, packages and disjoint test shards, including legitimate empty shards.
-Ignored acceptance children remain owned by their manual parent tests.
+Pull requests run impact-selected standard checks. Daily and manual complete
+qualification additionally covers the heavy Rust cohort, native platforms, real
+storage, and cold application suites at one immutable source revision. Focused
+success is not release qualification. The [release guide](docs/releases.md)
+explains Changesets, qualification, publication, and recovery.
 
-Rust dependency caches are saved after successful PR builds in GitHub's isolated
-PR scope. Trusted main runs can save shared caches; arbitrary manual source refs
-only restore them. Workspace artifacts and successful test results are not
-cached. Job summaries report exact cache hits, restore/save and transfer times,
-compilation and test durations.
+## Contributing
 
-[Manual qualification](.github/workflows/ci-heavy.yml) first runs all standard
-checks (including core UI), then all heavy tests, native platforms, real storage
-and cold application suites at one immutable source SHA. Heavy Rust uses eight
-shards; cold browser uses four isolated shards, Storybook three and
-served-browser tests two. Profile restart, real RustFS Git-cycle, static catalog
-and dual-engine Help have separate lanes. Independent suites finish after
-failures; only failed build inputs block their consumers. Full qualification
-still requires every suite. Six named workflows support standalone dispatch with
-a source SHA, producer run and attempt. They verify successful producers and
-artifact checksums before reuse. For UI repairs,
-[UI acceptance](.github/workflows/ci-ui.yml) builds and tests a source SHA
-independently, without an earlier qualification run. Keep the full coordinator
-idle while fixing one suite. Reports retain logs, test results, inventories and
-machine-readable timings. Ignored subprocess helpers run through their owning
-acceptance parents. There are no automatic or nightly heavy runs. Publication
-requires complete qualification. See [release instructions](docs/releases.md)
-for manual dispatch and remaining qualification gaps.
+Land narrow, verified Jujutsu changes. Update the owning requirement before or
+with protected behavior, record actual validation in `spec/src/history`, and add
+a Changeset for publishable changes. Do not put credentials or server state
+inside a repository checkout.
 
-The
-[parallel-suite measurement record](spec/src/history/2026/10/15/E-CI-SUITES-MEASURE-001/index.md)
-retains complete run results, standalone timings and unresolved test failures.
-Producer reuse accelerates diagnosis; a failed qualification still blocks
-release.
-
-Initialize the private development fixture once with `pnpm dev:restart`, then
-use `pnpm dev:ui` for Vite HMR at `http://127.0.0.1:7460/`. After Rust edits run
-`pnpm dev:backend:build` and `pnpm dev:backend:restart`. `pnpm dev:stop`
-preserves state; `pnpm dev:reset` explicitly replaces the fixture.
-
-Inspect build storage with `pnpm dev:disk` and `pnpm dev:clean -- --dry-run`.
-Use managed Cargo commands; live targets, fixtures and recovery archives are
-protected. The [documentation guide](docs/site/contributing/documentation.md)
-explains generated references and source coverage.
-
-## Contribute and release
-
-Commit verified slices with Jujutsu and update owning requirements and evidence.
-Run `pnpm changeset` for publishable changes, selecting `@lapismd/jj-store`.
-Changesets creates a Version Packages PR and synchronizes Cargo, native-bundle
-and container versions. The npm coordination package remains private.
-
-Full qualification precedes immutable publication. Releases include checksums,
-container SBOM/provenance and keyless image signatures. Read the
-[release guide](docs/releases.md) before retrying a partial publication.
-
-[Apache-2.0](LICENSE.md), with [third-party notices](docs/licenses/NOTICE.md).
+Security issues should follow [SECURITY.md](SECURITY.md). The project is
+licensed under [Apache-2.0](LICENSE.md); third-party notices are in
+[docs/licenses/NOTICE.md](docs/licenses/NOTICE.md).

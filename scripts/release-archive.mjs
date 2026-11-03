@@ -11,9 +11,9 @@ import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { createHash } from "node:crypto";
-import { version } from "./release-metadata.mjs";
+import { nativeReleaseTargets, version } from "./release-metadata.mjs";
 const target = process.argv[2];
-if (!/^(x86_64|aarch64)-(apple-darwin|unknown-linux-gnu)$/.test(target || ""))
+if (!nativeReleaseTargets.includes(target))
   throw Error("unsupported archive target");
 const temporary = mkdtempSync(join(tmpdir(), "jj-store-archive-"));
 try {
@@ -70,11 +70,15 @@ with open(output,'wb') as raw:
     name,
     epoch,
   ]);
-  const digest = createHash("sha256")
-    .update(readFileSync(join("dist", archive)))
-    .digest("hex");
-  writeFileSync(join("dist", archive + ".sha256"), `${digest}  ${archive}\n`);
-  console.log(archive);
+  cpSync(`target/${target}/release/jj-store`, join("dist", name));
+  chmodSync(join("dist", name), 0o755);
+  for (const asset of [name, archive]) {
+    const digest = createHash("sha256")
+      .update(readFileSync(join("dist", asset)))
+      .digest("hex");
+    writeFileSync(join("dist", asset + ".sha256"), `${digest}  ${asset}\n`);
+  }
+  console.log(`${archive}\n${name}`);
 } finally {
   rmSync(temporary, { recursive: true, force: true });
 }
