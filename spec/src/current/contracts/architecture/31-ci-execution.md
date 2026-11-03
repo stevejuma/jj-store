@@ -128,3 +128,10 @@ E-CI-COLD-RESPONSE-CAPTURE-001 records the next integrated run at `a9c95dc`.
 Three cold command observers lost response bodies after navigation despite
 promise chaining; route-level capture passes their original shard and exact
 WorkStore file. Reaction geometry and complete qualification remain open.
+
+E-CI-QUALIFICATION-001 records exact-source manual complete qualification on
+canonical `main` at `5c2c4c9c8c3dc77ee7ff774a0cf724f23b9d94e3`. Run 41681207161
+passed the complete gate with every selected standard and heavy job successful;
+only the independent advisory cache comparison was skipped. This does not
+establish schedule-event freshness or close quarantine, latency, reliability,
+publication, provider, platform or visual gates.
