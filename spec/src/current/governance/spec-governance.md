@@ -370,10 +370,10 @@ native objects and receipts remain unchanged. Focused cross-layer activation,
 HTTP/RPC, cold lifecycle and UI evidence do not promote live providers, Forgejo
 protocol or visual baseline gates.
 
-Public distribution maps `.github/`, `.changeset/`, `.config/nextest.toml`,
-Dockerfile and `.dockerignore` to architecture/23-public-distribution.md.
-Private Changesets governs Cargo/native/container; Conversations npm scripts
-verify the published tarball. Full M30 gates still bind producers and signers.
+Public distribution maps `.github/`, Changesets and container files to
+architecture/23-public-distribution.md. Every tracked workflow has an explicit
+standard, qualification, experiment or publication owner; reusable and gated
+entries are not obsolete. Full M30 gates still bind producers and signers.
 
 E-AUTOMATION-GOVERNANCE-001 exempts generated `changeset-release/main` and
 Dependabot `dependabot/` PRs from JST-GOV-002/003/004/011 notes and same-change

@@ -1,6 +1,20 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
+export const nativeReleaseTargets = [
+  "x86_64-unknown-linux-gnu",
+  "aarch64-unknown-linux-gnu",
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+];
+
+export function nativeReleaseAssetNames(selectedVersion) {
+  return nativeReleaseTargets.flatMap((target) => {
+    const executable = `jj-store-${selectedVersion}-${target}`;
+    return [executable, `${executable}.tar.gz`];
+  });
+}
+
 export function metadata(root = ".") {
   return JSON.parse(
     execFileSync(

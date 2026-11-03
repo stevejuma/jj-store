@@ -208,8 +208,15 @@ explicit qualified-release workflow run. Publish only missing packages/assets.
 Different source needs a new Changesets version. Never move a version tag or
 overwrite an asset.
 
-Verify archive checksums before extraction. Verify the image digest and
-signature:
+Each supported target publishes a complete `.tar.gz` bundle and a standalone
+`jj-store-<version>-<target>` server executable. Both have individual checksum
+files and entries in `SHA256SUMS`. Prefer the bundle for ordinary installation
+because the standalone executable does not include the matching browser, Help,
+custom client or embedded RustFS helper. After verifying a standalone download,
+set its executable bit before use.
+
+Verify release-asset checksums before extraction or execution. Verify the image
+digest and signature:
 
 ```sh
 cosign verify ghcr.io/stevejuma/jj-store@sha256:DIGEST \
@@ -221,6 +228,14 @@ GHCR visibility must be public and anonymous pulls must succeed before release
 completion. `latest` advances only after publication gates pass. Record
 remaining platform, provider and desktop gates in release notes and the
 milestone ledger.
+
+Every successful canonical `main` check publishes the independently built
+multi-architecture development image as immutable `sha-<first 12 source hex>`
+and rolling `main` tags. Architecture staging tags append `-amd64` or `-arm64`.
+They pass container acceptance and vulnerability scanning, but they do not
+replace complete release qualification. The qualified release image receives the
+exact immutable Git version tag (for example `v0.1.0`) and only then advances
+`latest`; use the version tag or digest for production and recovery.
 
 ## Bounded compilation-cache experiment
 

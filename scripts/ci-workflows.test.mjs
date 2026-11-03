@@ -1,8 +1,98 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { parse as parseYaml } from "yaml";
+
+const workflowRoles = {
+  standard: ["ci.yml", "ci-ui.yml"],
+  qualification: [
+    "ci-health.yml",
+    "ci-heavy.yml",
+    "ci-heavy-backend.yml",
+    "ci-heavy-cold.yml",
+    "ci-heavy-contracts.yml",
+    "ci-heavy-native.yml",
+    "ci-heavy-storage.yml",
+    "ci-heavy-ui.yml",
+    "ci-qualification-build.yml",
+  ],
+  cacheExperiment: ["ci-cache-build.yml", "ci-cache-trial.yml"],
+  publication: [
+    "npm-publish-jj-conversations.yml",
+    "npm-publish-jj-history.yml",
+    "publish-main-image.yml",
+    "publish-release.yml",
+    "publish-spec-pages.yml",
+    "release.yml",
+  ],
+};
+
+test("every tracked workflow has an explicit current owner", () => {
+  const actual = readdirSync(".github/workflows")
+    .filter((name) => name.endsWith(".yml"))
+    .sort();
+  const owned = Object.values(workflowRoles).flat().sort();
+  assert.deepEqual(actual, owned);
+  assert.equal(new Set(owned).size, owned.length);
+  for (const name of owned) {
+    const workflow = parseYaml(
+      readFileSync(`.github/workflows/${name}`, "utf8"),
+    );
+    assert.ok(workflow.on, `${name} has triggers`);
+    assert.ok(workflow.jobs, `${name} has jobs`);
+  }
+  assert.match(
+    readFileSync(".github/workflows/release.yml", "utf8"),
+    /publish: pnpm release:orchestrate/,
+  );
+});
+
+test("Pages validates the spec, manual and source Storybook together", () => {
+  const source = readFileSync(
+    ".github/workflows/publish-spec-pages.yml",
+    "utf8",
+  );
+  const pages = parseYaml(source);
+  const render = pages.jobs.build.steps.find(
+    (step) => step.name === "Render specification, manual and Storybook",
+  );
+  assert.equal(render.env.STORYBOOK_BASE_PATH, "/jj-store/storybook/");
+  assert.match(
+    render.run,
+    /pnpm build-storybook --output-dir spec\/book\/storybook/,
+  );
+  assert.match(render.run, /test -f spec\/book\/storybook\/iframe\.html/);
+  for (const trigger of [pages.on.push.paths, pages.on.pull_request.paths])
+    for (const path of [".storybook/**", "catalog/**", "web/**"])
+      assert.ok(trigger.includes(path), `${path} triggers Pages`);
+  const landing = readFileSync("spec/src/index.md", "utf8");
+  assert.match(landing, /https:\/\/stevejuma\.github\.io\/jj-store\/manual\//);
+  assert.match(
+    landing,
+    /https:\/\/stevejuma\.github\.io\/jj-store\/storybook\//,
+  );
+});
+test("successful main builds publish bounded source and rolling image tags", () => {
+  const main = parseYaml(
+    readFileSync(".github/workflows/publish-main-image.yml", "utf8"),
+  );
+  assert.deepEqual(main.on.workflow_run, {
+    workflows: ["PR checks"],
+    branches: ["main"],
+    types: ["completed"],
+  });
+  assert.match(main.jobs.source.if, /workflow_run\.conclusion == 'success'/);
+  const publication = main.jobs.index.steps.find((step) =>
+    step.name?.startsWith("Publish immutable source"),
+  );
+  assert.match(publication.run, /scripts\/image-tags\.mjs source/);
+  assert.match(publication.run, /jj-store:main/);
+  assert.match(publication.run, /imagetools inspect/);
+  const release = readFileSync(".github/workflows/publish-release.yml", "utf8");
+  assert.match(release, /image-tags\.mjs release-architecture/);
+  assert.match(release, /RELEASE_TAG: \$\{\{ inputs\.tag \}\}/);
+});
 test("embedded runtime installs protoc before compiling its Pulsar dependency", () => {
   const { steps } = parseYaml(
     readFileSync(".github/workflows/ci-qualification-build.yml", "utf8"),
