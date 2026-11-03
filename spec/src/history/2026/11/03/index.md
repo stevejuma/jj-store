@@ -5,3 +5,5 @@ Browse the child pages below.
 ## Pages
 
 - [E-CI-COLD-RESPONSE-001](E-CI-COLD-RESPONSE-001/index.md)
+
+- [E-CI-COLD-REFRESH-001](E-CI-COLD-REFRESH-001/index.md)

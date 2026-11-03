@@ -15,3 +15,8 @@ query keys bind actual operation/companion and registration generation.
 Immutable object reads retain infinite staleness with bounded inactive
 retention; prepared availability, attribution and expiring continuations remain
 transient.
+
+E-CI-COLD-REFRESH-001 retains this ownership model. Cold acceptance still waits
+for the application feed and its serialized live-snapshot recapture after an
+independent native publication; only the Playwright assertion deadline is
+aligned with the existing 15-second automatic-update bound.

@@ -20,6 +20,7 @@ not a completion gate selection.
 | [E-READ-088](../../../../../history/2026/10/05/E-READ-088/index.md)                                         | 2026-10-05 | pending         | Original outcome |
 | [E-UI-VIEW-LOADING-001](../../../../../history/2026/10/10/E-UI-VIEW-LOADING-001/index.md)                   | 2026-10-10 | pending         | Original outcome |
 | [E-REPOSITORY-TABS-SKELETON-001](../../../../../history/2026/10/16/E-REPOSITORY-TABS-SKELETON-001/index.md) | 2026-10-16 | pass            | Original outcome |
+| [E-CI-COLD-REFRESH-001](../../../../../history/2026/11/03/E-CI-COLD-REFRESH-001/index.md)                   | 2026-11-03 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 

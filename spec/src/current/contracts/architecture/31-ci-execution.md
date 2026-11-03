@@ -92,3 +92,9 @@ the page. The focused repair consumes those bodies immediately and preserves the
 same committed-receipt and resulting-view assertions. Three independent cold
 failures remain blockers, so complete qualification is not claimed or rerun by
 this slice.
+
+E-CI-COLD-REFRESH-001 repairs the external-publication failure from that run.
+The exact cold file completed the freshness assertion in 6.8 seconds, proving
+the implicit five-second test deadline was narrower than the established
+15-second cold automatic-update bound. Two independent cold failures remain, so
+complete qualification is still not claimed or rerun.
