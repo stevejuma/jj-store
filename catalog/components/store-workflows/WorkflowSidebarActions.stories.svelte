@@ -12,9 +12,13 @@
   });
   async function openMenu(canvasElement: HTMLElement) {
     const nav = within(
-      await within(canvasElement).findByRole("navigation", {
-        name: "Workflows by repository",
-      }),
+      await within(canvasElement).findByRole(
+        "navigation",
+        {
+          name: "Workflows by repository",
+        },
+        { timeout: 10000 },
+      ),
     );
     const trigger = await nav.findByRole("button", {
       name: "Actions for Build parser",

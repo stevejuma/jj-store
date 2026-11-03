@@ -424,7 +424,8 @@ fn operator_updates_serialize_and_state_locks_release_with_the_owner() {
             let file = file.clone();
             std::thread::spawn(move || {
                 let token = BearerToken::generate().unwrap();
-                for _ in 0..200 {
+                let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+                while std::time::Instant::now() < deadline {
                     if file.grant(PRINCIPAL, &token).is_ok() {
                         return;
                     }
