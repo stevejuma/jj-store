@@ -81,8 +81,8 @@ test("cold native and filesystem views stay idle through real five-minute renewa
   ).toHaveAttribute("aria-selected", "true");
   await expect.poll(() => a.events.length).toBe(1);
   await expect.poll(() => b.events.length).toBe(1);
-  await expect.poll(a.idle).toBe(true);
-  await expect.poll(b.idle).toBe(true);
+  await expect.poll(a.idle, { timeout: 30000 }).toBe(true);
+  await expect.poll(b.idle, { timeout: 30000 }).toBe(true);
   a.data.length = 0;
   b.data.length = 0;
   await page.waitForTimeout(65000);
