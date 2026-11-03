@@ -84,3 +84,11 @@ to 824.422 seconds, but increased affected runner execution by 39.8% and the
 complete PR run from 2017 to 2042 seconds. The retained contract remains two
 disjoint partitions with the same producer archive, selected packages, heavy
 profile and exact source/digest evidence.
+
+E-CI-COLD-RESPONSE-001 records the first integrated full-qualification result
+after the CI stack landed. Two of five cold-browser failures were harness races:
+their command response bodies were read only after accepted mutations navigated
+the page. The focused repair consumes those bodies immediately and preserves the
+same committed-receipt and resulting-view assertions. Three independent cold
+failures remain blockers, so complete qualification is not claimed or rerun by
+this slice.

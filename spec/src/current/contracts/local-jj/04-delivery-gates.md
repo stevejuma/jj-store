@@ -143,3 +143,9 @@ match both the pre-snapshot fingerprint and captured bytes; UTF-8 ranges retain
 the selected-content hash. Continuations read retained ReviewStore evidence, not
 a possibly removed checkout. This M13.3 slice does not complete cold multi-agent
 acceptance or durable turn-boundary inventory qualification.
+
+E-CI-COLD-RESPONSE-001 retains the JST-LOCAL-003/JST-LOCAL-004 mixed native and
+local cold-browser gate. The harness consumes the successful native Thread
+receipt before the mutation's refresh can discard the Playwright response body,
+then still proves the same merged messages and reload behavior. No provider,
+receipt, refresh or presentation contract changes.

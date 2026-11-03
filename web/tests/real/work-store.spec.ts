@@ -85,15 +85,20 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
     await page.getByRole("option").click();
   }
   async function save(scope: Page | Locator, label: string) {
-    const committed = page.waitForResponse(
-      (response) =>
-        response.url().endsWith("/work/commands") &&
-        response.request().method() === "POST",
-    );
+    const committed = page
+      .waitForResponse(
+        (response) =>
+          response.url().endsWith("/work/commands") &&
+          response.request().method() === "POST",
+      )
+      .then(async (response) => ({
+        ok: response.ok(),
+        outcome: await response.json(),
+      }));
     await scope.getByRole("button", { name: label, exact: true }).click();
     const response = await committed;
-    expect(response.ok()).toBe(true);
-    const outcome = await response.json();
+    expect(response.ok).toBe(true);
+    const { outcome } = response;
     expect(outcome.status).toBe("committed");
     expect(outcome.receipt.request_id).toMatch(/^[0-9a-f]{32}$/u);
   }
