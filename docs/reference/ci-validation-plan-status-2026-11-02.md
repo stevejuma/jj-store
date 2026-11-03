@@ -10,14 +10,14 @@ Canonical specifications and evidence remain authoritative.
 
 | Plan slice                                                | Status in this stack | Delivered and pending work                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0. Stabilize the starting revision and environment        | Partial              | The stack retains the existing repairs and quarantine identities and adds earlier source and evidence checks. A complete hosted scheduled run, native Git installation/cache qualification, archived-consumer equivalence, and the original Help/clipboard/browser lifecycle failures remain pending.                                        |
+| 0. Stabilize the starting revision and environment        | Partial              | Exact-source manual complete qualification now passes the integrated stack, including native, storage, UI and cold lanes. A canonical schedule-event run, archived-consumer rerun equivalence and four explicit quarantine re-enable gates remain pending.                                                                                   |
 | 1. Make evidence complete                                 | Delivered            | Ordinary lanes upload source-bound JUnit, inventories, commands, and outcomes. Aggregation rejects missing, duplicate, foreign, canceled, incomplete, and empty evidence; ordinary archive compression is removed.                                                                                                                           |
 | 2. Improve the DAG and setup with unchanged selection     | Partial              | Independent work starts in parallel, source Storybook no longer requires a built payload, and static catalog and app/Help producers are distinct. Formatting, tooling, governance, archive and Node/browser jobs now request explicit minimal capabilities. A measured same-source cold/warm latency comparison remains pending.             |
-| 3. Establish scheduled full coverage                      | Partial              | The heavy coordinator has a canonical-main schedule, independent producers, freshness health, and advisory quarantine repetition. One complete fresh scheduled run on the integrated baseline is still required before coverage can move out of the pull-request path.                                                                       |
+| 3. Establish scheduled full coverage                      | Partial              | Manual complete run 41681207161 passes at exact canonical-main source. The coordinator schedule, freshness health and advisory quarantine repetition are present, but one actual schedule-event run is still required before scheduled freshness is established.                                                                             |
 | 4. Introduce domain selection and targeted backend checks | Delivered and active | Selection schema version 2 actively selects UI, browser, Help, catalog, contract, and backend domains with safe broad fallback. Affected `jj-store`, `jj-store-server`, and `jj-store-capture` packages run as a blocking two-shard targeted cohort. Explicit `all_checks` and heavy workflow dispatch retain complete manual qualification. |
-| 5. Repair the remaining failure mechanisms                | Pending              | Diagnose and repair Help request lifecycle, clipboard feedback, Storybook resources, history readiness, and the registered geometry and palette/workspace quarantines while retaining their original assertions.                                                                                                                             |
-| 6. Optimize the remaining measured bottleneck             | Pending              | Measure 1/2/4 Rust shards, cache behavior, compilation overlap, runner/profile choices, and browser lifetime before selecting an optimization.                                                                                                                                                                                               |
-| 7. Verify qualification and document the operating model  | Partial              | The plan, contracts, evidence, and PR operating model are documented. Exact release-candidate qualification, consumer-rerun identity checks on hosted infrastructure, the remaining platform/provider/visual gate inventory, and the representative latency/reliability review remain pending.                                               |
+| 5. Repair the remaining failure mechanisms                | Partial              | Clipboard, Storybook lifetime, history readiness and integrated cold failures pass exact-source complete qualification. Q-STORY-001, Q-STORY-002, Q-BROWSER-001 and Q-RUST-002 retain their independent original assertions and re-enable gates.                                                                                             |
+| 6. Optimize the remaining measured bottleneck             | Partial              | The four-partition targeted trial retained two shards and Storybook browser lifetime is bounded. Representative cold/warm category samples, cache/compile comparison and the final latency/reliability review remain pending.                                                                                                                |
+| 7. Verify qualification and document the operating model  | Partial              | Exact-source manual complete qualification passes and is documented. Scheduled freshness, consumer-rerun identity on hosted infrastructure, four quarantines, the remaining platform/provider/visual gate inventory and representative latency/reliability review remain pending.                                                            |
 
 ## Acceptance status
 
@@ -43,8 +43,9 @@ Canonical specifications and evidence remain authoritative.
       explicitly authorized before the outstanding hosted heavy run.
 - [ ] Evaluate measured shard/cache/compile/browser bottlenecks without reducing
       coverage or first-attempt reliability.
-- [ ] Exercise the exact release candidate's complete qualification plan and
-      review representative latency and reliability data.
+- [x] Exercise the integrated exact-source candidate through the complete manual
+      qualification plan.
+- [ ] Review representative latency and first-attempt reliability data.
 
 ## Evidence
 
@@ -60,9 +61,12 @@ Canonical specifications and evidence remain authoritative.
   policy jobs without changing selected tests.
 - `E-CI-TARGETED-SHARDS-001` records the measured four-partition latency trial
   and retains two shards because overall wall time did not improve.
+- `E-CI-QUALIFICATION-001` records the passing exact-source manual complete
+  qualification and its still-independent scheduled and release gates.
 
-The second stack's hosted selection and ordinary Rust lanes passed. Its first
-targeted backend execution passed but exposed a verifier path mismatch; this
-change repairs that gate without changing selection. Existing UI workflow
-failures remain part of slices 0 and 5 and do not establish a failure of the new
-selection or targeted-backend workflow.
+Manual complete qualification run 41681207161 passed on canonical `main` at
+`5c2c4c9c8c3dc77ee7ff774a0cf724f23b9d94e3`: 53 jobs succeeded, the complete gate
+succeeded and only the independent advisory cache comparison skipped. The manual
+dispatch does not establish schedule-event freshness or close the four
+quarantines, representative latency/reliability review, publication, provider,
+platform or visual gates.
