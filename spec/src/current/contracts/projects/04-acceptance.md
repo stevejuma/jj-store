@@ -15,3 +15,8 @@ making receipt observation navigation-safe: the harness consumes the committed
 WorkStore response body immediately, before the accepted mutation can navigate
 or refresh the page. Request identity, committed status, resulting view and
 product behavior remain unchanged.
+
+E-CI-COLD-RESPONSE-CAPTURE-001 strengthens that harness boundary after hosted
+load proved a response-promise continuation could still lose the body. The test
+route now reads the real JSON before fulfilling it to the application, then
+retains the same receipt, refresh, reload and resulting-view assertions.

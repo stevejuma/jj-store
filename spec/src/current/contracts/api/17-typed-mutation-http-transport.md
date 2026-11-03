@@ -21,6 +21,11 @@ timeout failure. Once apply/status has parsed and authorized an identity, an
 HTTP deadline or oversized result returns outcome_unknown with that identity.
 Preview cannot publish and does not authorize later apply.
 
+E-CI-COLD-RESPONSE-CAPTURE-001 retains this transport contract while making the
+cold acceptance observer navigation-safe. A one-shot Playwright route reads and
+forwards the real apply response before the committed UI transition, then the
+test still verifies the exact request identity, receipt and resulting status.
+
 Generated OpenAPI and TypeScript contracts include these routes and owned DTOs.
 The generated client declaration remains an API artifact; M4.16 separately
 qualifies the shared browser controls and real native mutation workflow. The

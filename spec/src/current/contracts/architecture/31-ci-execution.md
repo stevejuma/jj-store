@@ -115,3 +115,8 @@ E-CI-COLD-REACTION-GEOMETRY-001 repairs the final focused failure from that run.
 Source-story and cold acceptance retain the Design Core leading-icon alignment
 contract with a 1.25 CSS-pixel tolerance for fractional Chromium layout.
 Complete integrated qualification remains the next release action.
+
+E-CI-COLD-RESPONSE-CAPTURE-001 records the next integrated run at `a9c95dc`.
+Three cold command observers lost response bodies after navigation despite
+promise chaining; route-level capture passes their original shard and exact
+WorkStore file. Reaction geometry and complete qualification remain open.
