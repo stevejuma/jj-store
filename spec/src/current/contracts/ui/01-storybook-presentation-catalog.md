@@ -214,7 +214,9 @@ original request after comment edits or removal. Read-only access retains counts
 and tombstones have no picker or counts. Task Edit and Add subtask actions use
 the shared outline Button surface and semantic hover tokens. Leading Copy
 submenu icons align through the Design Core primitive, without consumer CSS
-overrides.
+overrides. Source-story and cold-browser geometry allow at most 1.25 CSS pixels
+between their leading edges so fractional Chromium layout does not turn a
+subpixel rendering difference into a product failure.
 
 The Threads surface composes Community channel navigation, workspace
 header/conversation, reply panel, member details and rich reactions. Its
