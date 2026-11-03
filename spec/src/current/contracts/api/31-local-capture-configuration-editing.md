@@ -42,3 +42,8 @@ The capture owner drains before replacement; source generations, policy, spools
 and original import receipts remain retained. Busy or failed drain cannot start
 a second capture writer. Loaded settings remain effective until replacement is
 ready, and hidden client drafts are never reset by reload observations.
+
+E-CI-CAPTURE-TAB-OVERFLOW-001 changes only browser-test navigation scaffolding
+when responsive fitting moves a tab into `More`. Capture requests, identities,
+receipts, settings revisions, error recovery and every JST-API-001 contract
+remain unchanged.
