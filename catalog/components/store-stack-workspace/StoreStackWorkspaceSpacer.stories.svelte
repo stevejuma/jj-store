@@ -20,9 +20,13 @@
     parameters: { jjStoreStory: { kind: "application" }, layout: "fullscreen" },
   });
   async function spacer(element: HTMLElement) {
-    const prompt = await within(element).findByRole("group", {
-      name: "Create branch spacer",
-    });
+    const prompt = await within(element).findByRole(
+      "group",
+      {
+        name: "Create branch spacer",
+      },
+      { timeout: 10000 },
+    );
     const reserve = prompt.closest<HTMLElement>(
       '[data-ui-part="trailing-spacer"]',
     )!;

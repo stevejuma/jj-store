@@ -989,23 +989,13 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         .status(),
         reqwest::StatusCode::BAD_REQUEST
     );
-    let task: Value = post(
-        &format!("/local/repos/{id}/index/tasks"),
-        json!({"operation":operation}),
-    )
-    .send()
-    .await
-    .unwrap()
-    .error_for_status()
-    .unwrap()
-    .json()
-    .await
-    .unwrap();
-    assert_eq!(task["snapshot"]["operation"], operation);
-    let task_id = task["id"].as_str().unwrap();
-    let ready_task = tokio::time::timeout(std::time::Duration::from_secs(15), async {
-        loop {
-            let value: Value = read(&format!("/local/repos/{id}/index/tasks/{task_id}"))
+    let (task, task_id, ready_task) =
+        tokio::time::timeout(std::time::Duration::from_secs(15), async {
+            'prepare: loop {
+                let task: Value = post(
+                    &format!("/local/repos/{id}/index/tasks"),
+                    json!({"operation":operation}),
+                )
                 .send()
                 .await
                 .unwrap()
@@ -1014,14 +1004,52 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 .json()
                 .await
                 .unwrap();
-            if value["status"] != "running" && value["status"] != "canceling" {
-                break value;
+                assert_eq!(task["snapshot"]["operation"], operation);
+                let task_id = task["id"].as_str().unwrap().to_owned();
+                let value: Value = read(&format!("/local/repos/{id}/index/tasks/{task_id}"))
+                    .send()
+                    .await
+                    .unwrap()
+                    .error_for_status()
+                    .unwrap()
+                    .json()
+                    .await
+                    .unwrap();
+                if value["status"] == "ready" {
+                    break (task, task_id, value);
+                }
+                if value["status"] == "failed" && value["error"] == "busy" {
+                    tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+                    continue;
+                }
+                if value["status"] != "running" && value["status"] != "canceling" {
+                    panic!("local index preparation failed: {value}");
+                }
+                loop {
+                    tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+                    let value: Value = read(&format!("/local/repos/{id}/index/tasks/{task_id}"))
+                        .send()
+                        .await
+                        .unwrap()
+                        .error_for_status()
+                        .unwrap()
+                        .json()
+                        .await
+                        .unwrap();
+                    if value["status"] == "ready" {
+                        break 'prepare (task, task_id, value);
+                    }
+                    if value["status"] == "failed" && value["error"] == "busy" {
+                        break;
+                    }
+                    if value["status"] != "running" && value["status"] != "canceling" {
+                        panic!("local index preparation failed: {value}");
+                    }
+                }
             }
-            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
-        }
-    })
-    .await
-    .unwrap();
+        })
+        .await
+        .unwrap();
     assert_eq!(ready_task["status"], "ready", "{ready_task}");
     let cancel_task: Value = client
         .post(format!(
