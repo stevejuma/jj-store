@@ -337,7 +337,9 @@ test("capture notifications retain dismissal and drafts until observed recovery"
 }) => {
   await bootstrap(page);
   let unavailable = false;
+  const paths: string[] = [];
   await page.route("**/v1/local/capture**", (route) => {
+    paths.push(new URL(route.request().url()).pathname);
     if (
       unavailable &&
       !new URL(route.request().url()).pathname.endsWith("/settings")
@@ -402,6 +404,8 @@ test("capture notifications retain dismissal and drafts until observed recovery"
   unavailable = true;
   await refresh.click();
   await expect(toast).toHaveCount(1);
+  await expect(refresh).toBeEnabled();
+  await waitForCaptureQuiescence(page, paths);
   await page.setViewportSize({ width: 390, height: 844 });
   const bounds = await toast.boundingBox();
   expect(bounds!.x).toBeGreaterThanOrEqual(0);
