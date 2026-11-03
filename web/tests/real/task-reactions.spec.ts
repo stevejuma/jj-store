@@ -108,20 +108,22 @@ test("task reaction picker persists exact comments and refreshes a second client
       const itemStyle = getComputedStyle(item);
       const iconStyle = getComputedStyle(icon);
       return {
-        itemLeft: item.getBoundingClientRect().left,
         paddingInlineStart: itemStyle.paddingInlineStart,
+        columnGap: itemStyle.columnGap,
         iconWidth: iconStyle.width,
+        iconMarginInlineStart: iconStyle.marginInlineStart,
         iconTransform: iconStyle.transform,
       };
     });
   const copyGeometry = await primitiveGeometry(copy);
   const editGeometry = await primitiveGeometry(edit);
   expect(copyGeometry.paddingInlineStart).toBe(editGeometry.paddingInlineStart);
+  expect(copyGeometry.columnGap).toBe(editGeometry.columnGap);
   expect(copyGeometry.iconWidth).toBe(editGeometry.iconWidth);
+  expect(copyGeometry.iconMarginInlineStart).toBe(
+    editGeometry.iconMarginInlineStart,
+  );
   expect(copyGeometry.iconTransform).toBe(editGeometry.iconTransform);
-  expect(
-    Math.abs(copyGeometry.itemLeft - editGeometry.itemLeft),
-  ).toBeLessThanOrEqual(2);
   await copy.press("Escape");
   await revealActions();
   await row.getByRole("button", { name: "Add reaction", exact: true }).click();

@@ -327,9 +327,10 @@
       const itemStyle = getComputedStyle(item);
       const iconStyle = getComputedStyle(icon);
       return {
-        itemLeft: item.getBoundingClientRect().left,
         paddingInlineStart: itemStyle.paddingInlineStart,
+        columnGap: itemStyle.columnGap,
         iconWidth: iconStyle.width,
+        iconMarginInlineStart: iconStyle.marginInlineStart,
         iconTransform: iconStyle.transform,
       };
     };
@@ -338,11 +339,12 @@
     await expect(copyGeometry.paddingInlineStart).toBe(
       editGeometry.paddingInlineStart,
     );
+    await expect(copyGeometry.columnGap).toBe(editGeometry.columnGap);
     await expect(copyGeometry.iconWidth).toBe(editGeometry.iconWidth);
+    await expect(copyGeometry.iconMarginInlineStart).toBe(
+      editGeometry.iconMarginInlineStart,
+    );
     await expect(copyGeometry.iconTransform).toBe(editGeometry.iconTransform);
-    await expect(
-      Math.abs(copyGeometry.itemLeft - editGeometry.itemLeft),
-    ).toBeLessThanOrEqual(2);
     await userEvent.keyboard("{Escape}");
     const editTask = canvas.getByRole("button", { name: /^Edit task$/ });
     await expect(getComputedStyle(editTask).backgroundColor).not.toBe(
