@@ -249,3 +249,10 @@ browser. Production browsing, search, typed mutations and conflict editing share
 the same components and asynchronous controller contract. Reusable components
 receive presentation data and callbacks, while HTTP and in-memory controllers
 supply interchangeable sources. Deterministic fixtures remain catalog-only.
+
+Completed agent-change stories with more than one retained turn select the panel
+under test by its exact accessible repository and turn identity. DOM ordering
+cannot substitute for that identity. E-CI-STORY-TURN-SELECTION-001 retains the
+same JST-UI-001 and JST-COLLAB-034 through JST-COLLAB-036 assertions for
+current-turn totals, files, controls and the concurrently visible earlier turn;
+it changes no production presentation or saved-change contract.

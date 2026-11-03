@@ -155,7 +155,7 @@ test("external publication refreshes automatically and preserves selection", asy
   const publishedOperation = publishFromExternalCli();
   expect(publishedOperation).toMatch(/^[0-9a-f]{128}$/u);
   await expect
-    .poll(() => routeQuery(page.url()).get("at_op"))
+    .poll(() => routeQuery(page.url()).get("at_op"), { timeout: 15000 })
     .toBe(publishedOperation);
   expect(publishedOperation).not.toBe(oldOperation);
   await expect(main).toBeVisible();

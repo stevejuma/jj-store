@@ -129,6 +129,12 @@ its independent destination. Historical selections, drafts and exact pending
 commands survive all automatic freshness reads. Browser idle, renewal, external
 change latency and recovery require cold built-bundle qualification.
 
+E-CI-COLD-REFRESH-001 confirms this contract is unchanged. The independent CLI
+publication still advances the live route automatically while preserving its
+bookmark, commit and change selections. The cold assertion now uses the same
+15-second automatic-update bound as the other real-browser freshness gates;
+product cadence, event ownership and refresh behavior are unchanged.
+
 JST-UI-020's workspace actions menu opens active named workspace Settings in the
 standard right application sidebar, reusing Threads settings identity, detail
 and destructive-action presentation. Settings use existing bordered Settings

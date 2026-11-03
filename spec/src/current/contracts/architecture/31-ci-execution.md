@@ -92,3 +92,15 @@ the page. The focused repair consumes those bodies immediately and preserves the
 same committed-receipt and resulting-view assertions. Three independent cold
 failures remain blockers, so complete qualification is not claimed or rerun by
 this slice.
+
+E-CI-COLD-REFRESH-001 repairs the external-publication failure from that run.
+The exact cold file completed the freshness assertion in 6.8 seconds, proving
+the implicit five-second test deadline was narrower than the established
+15-second cold automatic-update bound. Two independent cold failures remain, so
+complete qualification is still not claimed or rerun.
+
+E-CI-STORY-TURN-SELECTION-001 repairs the independent hosted source-Storybook
+failure exposed on that freshness slice. Completed-change interactions MUST
+select the fixture's exact accessible repository/turn identity, not a panel's
+incidental DOM position. Product behavior and the twelve-way inventory remain
+unchanged; fresh required checks are still mandatory.

@@ -47,6 +47,12 @@ not a completion gate selection.
 [E-CI-TARGETED-SHARDS-001](../../../../../history/2026/11/02/E-CI-TARGETED-SHARDS-001/index.md)
 | 2026-11-02 | pass | Original outcome | |
 [E-CI-COLD-RESPONSE-001](../../../../../history/2026/11/03/E-CI-COLD-RESPONSE-001/index.md)
+| 2026-11-03 | pass | Original outcome | |
+[E-CI-COLD-REFRESH-001](../../../../../history/2026/11/03/E-CI-COLD-REFRESH-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-STORY-TURN-SELECTION-001](../../../../../history/2026/11/03/E-CI-STORY-TURN-SELECTION-001/index.md)
+| 2026-11-03 | pass | Original outcome |
+[E-CI-STORY-TURN-TYPECHECK-001](../../../../../history/2026/11/03/E-CI-STORY-TURN-TYPECHECK-001/index.md)
 | 2026-11-03 | pass | Original outcome |
 
 <!-- generated-navigation -->
