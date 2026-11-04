@@ -1,3 +1,4 @@
+import { browserHost, type HostEnvironment } from "../host/contracts.js";
 import { QueuedAgentMessages } from "../conversations/queued-agent-messages.svelte.js";
 import { ConversationSessions } from "../conversations/session.svelte.js";
 import { AgentChangesCache } from "./agent-changes-cache.js";
@@ -92,6 +93,7 @@ export class AgentExecution {
     principal?: (repository: string) => string,
     readonly freshness?: import("./application-freshness.js").ApplicationFreshness,
     readonly localManagement: () => boolean = () => true,
+    readonly host: HostEnvironment = browserHost,
   ) {
     this.client = new LocalClient("", fetcher);
     this.stops = new AgentSessionStop(this.client, () => this.updates.status());

@@ -48,6 +48,10 @@ export default defineConfig({
           includeDependenciesRecursively: true,
           groups: [
             {
+              name: "application-environment",
+              test: /\/web\/src\/lib\/(?:host\/(?:contracts|context)\.ts|connections\/context\.ts|appearance\/store\.svelte\.ts)$/,
+            },
+            {
               name: "editor-languages",
               test: /node_modules\/@codemirror\/(?:legacy-modes|lang-[^/]+)\//,
             },

@@ -22,6 +22,7 @@
     mobileBreakpoint = 1024,
     desktopMinMainWidth,
     desktopChrome = false,
+    windowDragging = false,
     mainElement,
     mobileTarget,
     mobileSidebarName = "navigation",
@@ -40,6 +41,7 @@
     mobileBreakpoint?: number;
     desktopMinMainWidth?: number;
     desktopChrome?: boolean;
+    windowDragging?: boolean;
     mainElement?: HTMLElement | null;
     mobileTarget?: HTMLElement | null;
     mobileSidebarName?: string;
@@ -109,7 +111,7 @@
     class="community-app-shell__header"
     role={inBody ? "toolbar" : "navigation"}
     aria-label={inBody ? "Application controls" : "Application navigation"}
-    data-tauri-drag-region={desktopChrome ? "deep" : undefined}
+    data-tauri-drag-region={windowDragging ? "deep" : undefined}
   >
     {#snippet leading()}
       <div class="community-app-shell__header-start">

@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+import {
+  assertDesktopBrowserUi,
+  restoreBrowserPresentation,
+} from "./dev-desktop-ui-browser.mjs";
 import { developmentApi } from "./dev-ui-api.mjs";
 import { developmentFixtureIdentity } from "./dev-ui-identity.mjs";
 import assert from "node:assert/strict";
@@ -10,6 +14,7 @@ import { createUiNativeFixture } from "./dev-ui-native-fixture.mjs";
 import { runUiDevelopment } from "./dev-ui.mjs";
 import { stopPrevious, execute } from "./dev-demo-services.mjs";
 
+const presentation = process.argv[2] === "desktop" ? "macos" : "browser";
 const root = resolve(import.meta.dirname, "..");
 const fixture = await createUiNativeFixture(root, {
   ...process.env,
@@ -60,7 +65,7 @@ try {
     '<script lang="ts">import {label} from "./label.ts";</script><p>{label} component-before</p>';
   await writeFile(join(probe, "Probe.svelte"), component);
   await writeFile(join(probe, "probe.css"), ":root { --hmr-probe: before; }");
-  runtime = await runUiDevelopment(root, environment);
+  runtime = await runUiDevelopment(root, environment, false, presentation);
   const { api, agentsAvailable, headers } = developmentApi(runtime.origin);
   await agentsAvailable();
   const html = await (await fetch(runtime.origin)).text();
@@ -86,6 +91,7 @@ try {
     .getByText("Native HMR acceptance", { exact: true })
     .first()
     .waitFor();
+  if (presentation === "macos") await assertDesktopBrowserUi(page);
   phase = "API guards";
   assert.equal(
     await page.evaluate(
@@ -192,6 +198,7 @@ try {
   phase = "backend restart";
   const restarted = await runUiDevelopment(root, environment, true);
   await agentsAvailable();
+  assert.equal(restarted.presentation, presentation);
   assert.equal(restarted.uiPid, runtime.uiPid);
   assert.notEqual(restarted.serverPid, runtime.serverPid);
   assert.deepEqual(await identity(), initialIdentity);
@@ -202,18 +209,26 @@ try {
     [],
     "Cold application and HMR must have no browser runtime errors",
   );
+  if (presentation === "macos") {
+    await page.goto(runtime.origin);
+    await assertDesktopBrowserUi(page);
+    runtime = await restoreBrowserPresentation(root, environment, page);
+    assert.deepEqual(await identity(), initialIdentity);
+  }
+  assert.deepEqual(browserErrors, []);
   phase = "stop";
   await stopPrevious({
     owner: root,
     runtimeRoot: layout.runtimeRoot,
     runtimeFile: layout.runtimeFile,
   });
-  assert.throws(() => process.kill(restarted.uiPid, 0), { code: "ESRCH" });
-  assert.throws(() => process.kill(restarted.serverPid, 0), { code: "ESRCH" });
+  assert.throws(() => process.kill(runtime.uiPid, 0), { code: "ESRCH" });
+  assert.throws(() => process.kill(runtime.serverPid, 0), { code: "ESRCH" });
   assert.deepEqual(await identity(), initialIdentity);
   console.log(
     JSON.stringify(
       {
+        presentation,
         nativeWrites: "committed through browser proxy",
         streaming: "native SSE ready and changed",
         hmr: ["Svelte", "TypeScript", "CSS"],

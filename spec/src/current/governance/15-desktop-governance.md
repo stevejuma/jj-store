@@ -52,3 +52,10 @@ contacting OpenCode or reading a corrupt pending body. This additive response
 requires the complete registered HTTP/SSE capture inventory, contract-tool tests
 and generated-client checks; it grants no configured startup or import/export
 qualification.
+
+E-DESK-BROWSER-001 separates browser-selectable presentation from native host
+capabilities. Host detection and Tauri commands stay in owned renderer adapters;
+no native transport or permission is added. Shared host/connection context and
+appearance preferences are grouped to retain the 256-file production inventory.
+The fixture-backed cold HMR proof and production browser suite remain distinct
+from actual native/WKWebView qualification and visual baseline approval.

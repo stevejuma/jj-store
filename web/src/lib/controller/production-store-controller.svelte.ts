@@ -16,10 +16,7 @@ import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 import { startConnectionEvents } from "./production-session-events.js";
 
-import type {
-  StoreController,
-  ProductionStoreControllerOptions,
-} from "./contracts.js";
+import type * as Contracts from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
 import { createProductionStoreState } from "./production-store-state.svelte.js";
@@ -36,8 +33,8 @@ import { createProductionStoreActions } from "./production-store-actions.js";
 import { createProductionCommandServices } from "./production-command-services.js";
 
 export function createProductionStoreController(
-  options: ProductionStoreControllerOptions = {},
-): StoreController {
+  options: Contracts.ProductionStoreControllerOptions = {},
+): Contracts.StoreController {
   const history = createStoreRouteHistory(options.browser);
   const data = createProductionStoreState();
   const sessionState = createProductionSessionState();
@@ -48,6 +45,7 @@ export function createProductionStoreController(
     () => sessionState.token,
     () => disconnect("Access denied", true),
     options.active,
+    options.host,
   );
   const { sources, threadNavigation, local, freshness, lifecycle } = connection;
   let { feed, discovery } = connection;
@@ -264,7 +262,7 @@ export function createProductionStoreController(
     freshness,
   );
 
-  const controller: StoreController = productionControllerSurface(
+  const controller: Contracts.StoreController = productionControllerSurface(
     data,
     history,
     () => sessionState.source,

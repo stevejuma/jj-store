@@ -15,6 +15,7 @@ import { assertPortAvailable, start, ready } from "./dev-ui-services.mjs";
 import { developmentAgentEnvironment } from "./dev-agent-runtime.mjs";
 import {
   uiDevelopmentSettings,
+  uiDevelopmentPresentation,
   rewriteUiBackendConfiguration,
 } from "./dev-ui-config.mjs";
 
@@ -115,6 +116,7 @@ export async function runUiDevelopment(
   repositoryRoot,
   environment = process.env,
   backendOnly = false,
+  presentation = "browser",
 ) {
   const prepared = await prepareUiDevelopment(repositoryRoot, environment);
   const {
@@ -126,6 +128,9 @@ export async function runUiDevelopment(
     configuration,
     previous,
   } = prepared;
+  presentation = backendOnly
+    ? uiDevelopmentPresentation("backend", previous)
+    : uiDevelopmentPresentation(presentation === "macos" ? "desktop" : "start");
   const owned = previous
     ? await inspectRuntimeProcesses(previous, {
         owner: repositoryRoot,
@@ -180,6 +185,7 @@ export async function runUiDevelopment(
     ...previous,
     format: 2,
     mode: "vite",
+    presentation,
     accessMode: "local-trusted",
     storageMode: "embedded-rustfs",
     origin: settings.origin,
@@ -210,6 +216,7 @@ export async function runUiDevelopment(
         layout,
         {
           ...environment,
+          VITE_JJ_STORE_DESKTOP_PREVIEW: presentation === "macos" ? "1" : "0",
           JJ_STORE_DEV_PORT: String(settings.uiPort),
           JJ_STORE_DEV_BACKEND_PORT: String(settings.backendPort),
         },
@@ -233,7 +240,7 @@ export async function runUiDevelopment(
       { mode: 0o600 },
     );
     console.log(
-      `JJ Store UI development ready.\nURL: ${settings.origin}\nBackend: ${settings.backendOrigin}\nWorkspace: ${repositoryRoot}\nRuntime: ${layout.runtimeRoot}\nUI: Vite HMR; no builds\nFixture: preserved\nSearch: ${search.configured === false ? "disabled" : "ready"}\nUse pnpm dev:backend:restart after rebuilding Rust; pnpm dev:restart rebuilds the whole stack; pnpm dev:stop stops both processes.`,
+      `JJ Store UI development ready.\nURL: ${settings.origin}\nBackend: ${settings.backendOrigin}\nWorkspace: ${repositoryRoot}\nRuntime: ${layout.runtimeRoot}\nUI: Vite HMR; no builds\nPresentation: ${presentation}\nFixture: preserved\nSearch: ${search.configured === false ? "disabled" : "ready"}\nUse pnpm dev:backend:restart after rebuilding Rust; pnpm dev:restart rebuilds the whole stack; pnpm dev:stop stops both processes.`,
     );
     return runtime;
   } catch (error) {
@@ -264,13 +271,14 @@ if (
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   const action = process.argv[2] ?? "start";
-  if (!["start", "backend"].includes(action))
+  if (!["start", "desktop", "backend"].includes(action))
     throw new Error(`unknown UI development action ${action}`);
   try {
     await runUiDevelopment(
       resolve(import.meta.dirname, ".."),
       process.env,
       action === "backend",
+      uiDevelopmentPresentation(action),
     );
   } catch (error) {
     console.error(error.message);

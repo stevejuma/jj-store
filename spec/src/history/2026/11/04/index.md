@@ -5,3 +5,4 @@ Browse the child pages below.
 ## Pages
 
 - [E-CI-SCHEDULED-FRESHNESS-001](E-CI-SCHEDULED-FRESHNESS-001/index.md)
+- [E-DESK-BROWSER-001](E-DESK-BROWSER-001/index.md)

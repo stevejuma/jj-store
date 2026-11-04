@@ -182,6 +182,7 @@ export interface StoreController {
 
 /** Host-owned transport and routing inputs; defaults retain ordinary browser startup. */
 export type ProductionStoreControllerOptions = {
+  host?: import("../host/contracts.js").HostEnvironment;
   active?: () => boolean;
   authorizationLost?: () => void;
   fetcher?: typeof fetch;

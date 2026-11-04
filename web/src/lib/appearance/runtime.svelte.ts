@@ -1,4 +1,5 @@
 import { onDestroy, untrack } from "svelte";
+import { useHostEnvironment } from "../host/context.js";
 import { attachNativeGlass } from "./desktop-glass.js";
 import {
   applyAppearance,
@@ -10,6 +11,7 @@ import {
 } from "./store.svelte.js";
 /** One device store per app or isolated story, with disposable browser listeners. */
 export function ownAppearance(provided?: AppearanceStore, storage?: Storage) {
+  const host = useHostEnvironment();
   const inherited = useAppearance();
   if (inherited && !provided) return inherited;
   const store =
@@ -46,12 +48,14 @@ export function ownAppearance(provided?: AppearanceStore, storage?: Storage) {
     const scheme = root.style.colorScheme;
     const opacity = root.style.getPropertyValue("--store-glass-opacity");
     root.dataset.uiScrollStrategy = "native";
-    const dispose = attachAppearance(store, window, root);
-    const nativeGlass = attachNativeGlass(root, () =>
-      applyAppearance(root, store),
+    const dispose = attachAppearance(store, window, root, host);
+    const nativeGlass = attachNativeGlass(
+      root,
+      () => applyAppearance(root, store, host),
+      host,
     );
     $effect(() => {
-      applyAppearance(root, store);
+      applyAppearance(root, store, host);
       void nativeGlass?.set(store.live.glass);
     });
     onDestroy(() => {

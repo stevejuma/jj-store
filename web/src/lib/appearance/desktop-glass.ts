@@ -1,4 +1,4 @@
-import { isMacDesktopWindow } from "../desktop-chrome.js";
+import type { HostEnvironment } from "../host/contracts.js";
 
 /** Serialize native effects; never expose CSS for an obsolete or failed enable. */
 export function createGlassController(
@@ -46,26 +46,17 @@ export function createGlassController(
   };
 }
 
-/** The marker is only a hint; the host ACL independently admits this one command. */
-export function attachNativeGlass(root: HTMLElement, refresh: () => void) {
-  if (!isMacDesktopWindow()) return;
-  const native = (
-    window as Window & {
-      __TAURI_INTERNALS__?: {
-        invoke: (
-          command: string,
-          args: { enabled: boolean },
-        ) => Promise<unknown>;
-      };
-    }
-  ).__TAURI_INTERNALS__;
+/** Capability absence leaves desktop browser surfaces opaque. */
+export function attachNativeGlass(
+  root: HTMLElement,
+  refresh: () => void,
+  host: HostEnvironment,
+) {
+  if (!host.setGlassBackground) return;
   const background = root.style.getPropertyValue("background");
   const priority = root.style.getPropertyPriority("background");
   const controller = createGlassController(
-    (enabled) =>
-      native
-        ? native.invoke("set_glass_background", { enabled })
-        : Promise.reject(Error("Native presentation bridge unavailable")),
+    host.setGlassBackground,
     (enabled) => {
       root.dataset.storeNativeGlass = String(enabled);
       if (enabled) root.style.setProperty("background", "transparent");

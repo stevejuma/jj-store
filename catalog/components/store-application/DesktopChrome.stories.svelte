@@ -34,7 +34,7 @@
 
 <Story
   name="MacDesktopHeader"
-  args={{ desktopChrome: true }}
+  args={{ host: { presentation: "macos", windowDragging: true } }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const header = canvas.getByRole("navigation", {
@@ -69,7 +69,10 @@
 
 <Story
   name="NarrowMacDesktopHeader"
-  args={{ desktopChrome: true, displayMode: "auto" }}
+  args={{
+    host: { presentation: "macos", windowDragging: true },
+    displayMode: "auto",
+  }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const shell = canvasElement.querySelector<HTMLElement>(
@@ -98,5 +101,33 @@
         .getByRole("button", { name: "Open navigation sidebar" })
         .getBoundingClientRect().left - header.getBoundingClientRect().left,
     ).toBeGreaterThanOrEqual(80);
+  }}
+/>
+
+<Story
+  name="BrowserDesktopHeader"
+  args={{ host: { presentation: "macos" } }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const header = canvas.getByRole("navigation", {
+      name: "Application navigation",
+    });
+    await expect(header).not.toHaveAttribute("data-tauri-drag-region");
+    await aligned(
+      header,
+      canvas.getByRole("button", { name: "Expand left sidebar" }),
+    );
+    await expect(
+      canvasElement.querySelector("[data-desktop-chrome='macos']"),
+    ).toBeTruthy();
+    await expect(
+      canvas.queryByRole("button", { name: /terminal/i }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Expand left sidebar" }),
+    );
+    await expect(
+      canvas.getByRole("button", { name: "Collapse left sidebar" }),
+    ).toBeVisible();
   }}
 />

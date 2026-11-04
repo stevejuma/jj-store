@@ -141,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed regenerated API types from the structurally identical OpenAPI document. Property ordering changes only; browsing, editing, settings, conversion and their documented user behavior remain unchanged.",
-      "fingerprint": "e128c3b066377f8b2d4661b6a5d73a824803e374cc05fa345bbcc582e88271b6"
+      "reason": "Reviewed explicit host and connection context plus appearance bundling. Production defaults and service-backed screens remain unchanged; browser desktop debugging and native capability limits are documented in the development guide.",
+      "fingerprint": "aa20b88299fb52a800128543b614e80274dca88214a537639e03da7aaab80ebe"
     }
   },
   {

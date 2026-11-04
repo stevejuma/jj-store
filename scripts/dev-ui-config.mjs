@@ -1,3 +1,12 @@
+/** @param {string} action @param {{presentation?: string} | null} previous */
+export function uiDevelopmentPresentation(action, previous = null) {
+  if (action === "desktop") return "macos";
+  if (action === "start") return "browser";
+  if (action === "backend")
+    return previous?.presentation === "macos" ? "macos" : "browser";
+  throw new Error(`unknown UI development action ${action}`);
+}
+
 /** @param {Record<string, string | undefined>} environment */
 export function uiDevelopmentSettings(environment = process.env) {
   /** @param {string} value @param {string} name */

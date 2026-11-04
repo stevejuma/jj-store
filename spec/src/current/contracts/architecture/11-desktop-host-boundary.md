@@ -16,6 +16,16 @@ the released Tauri JavaScript API, aligned to the host's minor version, while
 the Svelte terminal controller owns tab selection and disposable subscriptions.
 No shell HTTP route or core storage dependency is introduced.
 
+The renderer owns a typed host environment with independent presentation and
+optional native capabilities. Bootstrap resolves it before appearance or mount,
+then injects it into application owners and component context. Native metadata
+and Tauri imports stay inside the host adapter boundary. Development desktop
+browser presentation reuses Vite and the existing isolated LocalTrusted fixture;
+it adds no IPC transport, server authority or dependency on catalog fixtures.
+Production groups shared host/connection context and appearance preferences so
+the lazy native adapter fits the existing bounded browser asset inventory. The
+inventory limit and production CSP remain unchanged.
+
 Native glass and traffic-light layout depend only on the host's independently
 locked Tauri, window-vibrancy and minimal AppKit bindings. The renderer receives
 one boolean appearance command restricted to the managed main window and exact

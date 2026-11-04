@@ -12,10 +12,9 @@
   const controls = terminalControls();
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
   import { TerminalController } from "../../terminal/controller.svelte.js";
-  import {
-    nativeTerminalBridge,
-    type TerminalBridge,
-  } from "../../terminal/bridge.js";
+  import { type TerminalBridge } from "../../terminal/bridge.js";
+  import { useHostEnvironment } from "../../host/context.js";
+  const host = useHostEnvironment();
   import StoreTerminalDock from "./StoreTerminalDock.svelte";
   import "./terminal.css";
   let {
@@ -25,7 +24,7 @@
     onLink,
     onRefresh = () => {},
     onMaximize = () => {},
-    bridge = nativeTerminalBridge(),
+    bridge = host.terminal,
     children,
   }: {
     repository: string;
