@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { provideHostEnvironment } from "../../web/src/lib/host/context.js";
+  import {
+    browserHost,
+    type HostEnvironment,
+  } from "../../web/src/lib/host/contracts.js";
   import { untrack } from "svelte";
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import StoreApplication from "./ApplicationStory.svelte";
@@ -12,7 +17,8 @@
     initiallyCollapsed = true,
     displayMode = "auto",
     settingsSearch = "fresh",
-    desktopChrome = false,
+    desktopChrome,
+    host = browserHost,
     accessMode = "authenticated",
   }: {
     initialPage?: StorePage;
@@ -20,9 +26,11 @@
     displayMode?: AppShellDisplayMode;
     settingsSearch?: CatalogSearchSettings;
     desktopChrome?: boolean;
+    host?: HostEnvironment;
     accessMode?: "authenticated" | "local_trusted";
   } = $props();
 
+  provideHostEnvironment(untrack(() => host));
   const controller = untrack(() =>
     createInMemoryStoreController(initialPage, { settingsSearch, accessMode }),
   );

@@ -12,11 +12,22 @@ retain this header.
 
 The host supplies a presentation-only macOS marker before application startup.
 Ordinary browser clients do not reserve native-control space or enable window
-drag regions. The managed main window's exact loopback origin receives only
-window dragging, Tauri's internal double-click zoom and the single boolean
-`set_glass_background` presentation command. No wildcard origin, generic
-filesystem, shell, dialog or core permission is granted. The repository terminal
-extension adds only its named desktop commands. Window controls and links inside
-the header retain their ordinary click behavior. This slice uses Tauri's
-standard double-click zoom; matching the macOS custom double-click preference
-remains a separate refinement.
+drag regions. Under JST-DESK-004, `pnpm dev:desktop:ui` MAY select macOS header
+geometry in the existing fixture-backed Vite application for browser debugging.
+The development-only selection MUST NOT grant native capabilities or change
+production browser defaults. An owned host interface separates presentation from
+optional terminal, glass, window-dragging and sleep-prevention capabilities.
+Host resolution precedes appearance and mounting; components and service owners
+receive the same host explicitly. Native adapter loading requires supported
+versioned metadata and available Tauri IPC. Metadata remains a hint, never
+authorization. Browser desktop mode keeps native controls unavailable, uses
+opaque glass fallback and introduces no HTML traffic lights. Backend-only
+restarts preserve presentation; ordinary `pnpm dev:ui` restores browser layout.
+
+The managed main window's exact loopback origin receives only window dragging,
+Tauri's internal double-click zoom and the single boolean `set_glass_background`
+presentation command. No wildcard origin, generic filesystem, shell, dialog or
+core permission is granted. The repository terminal extension adds only its
+named desktop commands. Window controls and links inside the header retain their
+ordinary click behavior. This slice uses Tauri's standard double-click zoom;
+matching the macOS custom double-click preference remains a separate refinement.

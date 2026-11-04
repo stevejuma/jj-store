@@ -31,7 +31,8 @@
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
   import { onDestroy, setContext, untrack, type Snippet } from "svelte";
   import type { StoreApplicationProps } from "./application-props.js";
-  import { isMacDesktopWindow } from "../../desktop-chrome.js";
+  import { useHostEnvironment } from "../../host/context.js";
+  const host = useHostEnvironment();
   import "./store-application.css";
   import "./store-application-settings.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
@@ -57,7 +58,7 @@
     initiallyCollapsed = true,
     displayMode = "auto",
     layoutStorage,
-    desktopChrome = untrack(isMacDesktopWindow),
+    desktopChrome = host.presentation === "macos",
     children,
   }: StoreApplicationProps = $props();
   import { ownApplicationAppearance as ownAppearance } from "../../appearance/runtime.svelte.js";
@@ -185,6 +186,7 @@
   controller={shell}
   {displayMode}
   {desktopChrome}
+  windowDragging={host.windowDragging}
   {mainElement}
   {mobileTarget}
   mobileSidebarName={settingsOpen ? "settings" : "navigation"}

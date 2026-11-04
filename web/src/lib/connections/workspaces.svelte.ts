@@ -16,6 +16,7 @@ export class ConnectionWorkspaces {
   private routes = new Map<string, ReturnType<typeof connectionBrowser>>();
   constructor(
     private options: {
+      host?: import("../host/contracts.js").HostEnvironment;
       base?: StoreRouteBrowser;
       storage?: Storage;
       fetcher?: typeof fetch;
@@ -55,6 +56,7 @@ export class ConnectionWorkspaces {
       $effect.root(() => {
         controller = createProductionStoreController({
           browser: route,
+          host: this.options.host,
           fetcher: fetcher ?? this.options.fetcher,
           active: () => selected() === id,
           authorizationLost: () => {

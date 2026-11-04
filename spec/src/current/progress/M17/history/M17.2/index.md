@@ -14,6 +14,9 @@ not a completion gate selection.
 | [E-DESK-010](../../../../../history/2026/10/06/E-DESK-010/index.md)                   | 2026-10-06 | pass            | Original outcome |
 | [E-BUILD-STORAGE-001](../../../../../history/2026/10/12/E-BUILD-STORAGE-001/index.md) | 2026-10-12 | pass            | Original outcome |
 
+|
+[E-DESK-BROWSER-001](../../../../../history/2026/11/04/E-DESK-BROWSER-001/index.md)
+| 2026-11-04 | pass | Original outcome |
 <!-- generated-navigation -->
 
 ## Pages

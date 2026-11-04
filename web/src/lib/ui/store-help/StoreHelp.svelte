@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { isMacDesktopWindow } from "../../desktop-chrome.js";
-  const desktop = isMacDesktopWindow();
+  import { useHostEnvironment } from "../../host/context.js";
+  const host = useHostEnvironment();
+  const desktop = host.presentation === "macos";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import BookOpenIcon from "@lucide/svelte/icons/book-open";
   import XIcon from "@lucide/svelte/icons/x";
@@ -182,7 +183,10 @@
     close();
   }}
 >
-  <header class:desktop data-tauri-drag-region={desktop ? "deep" : undefined}>
+  <header
+    class:desktop
+    data-tauri-drag-region={host.windowDragging ? "deep" : undefined}
+  >
     <h1 id="store-help-title">Help</h1>
     <Button
       variant="ghost"

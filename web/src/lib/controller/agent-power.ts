@@ -1,10 +1,11 @@
-import { isMacDesktopWindow } from "../desktop-chrome.js";
+import { browserHost, type HostEnvironment } from "../host/contracts.js";
 import type { AgentStatus } from "./agent-execution-types.js";
 export async function syncAgentPower(
   status: AgentStatus | null,
   enabled: boolean,
+  host: HostEnvironment = browserHost,
 ) {
-  if (!isMacDesktopWindow()) return;
+  if (!host.agentPower) return;
   const active =
     enabled &&
     (status?.live_agents?.some(
@@ -19,8 +20,7 @@ export async function syncAgentPower(
     ),
   );
   try {
-    const { invoke } = await import("@tauri-apps/api/core");
-    await invoke("agent_power", { active, activity });
+    await host.agentPower(active, activity);
   } catch {
     /* Unsupported host never blocks an agent turn. */
   }

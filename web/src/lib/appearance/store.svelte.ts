@@ -1,5 +1,5 @@
 import { getContext, setContext } from "svelte";
-import { isMacDesktopWindow } from "../desktop-chrome.js";
+import { browserHost, type HostEnvironment } from "../host/contracts.js";
 import {
   appearanceStorageKey,
   defaultAppearance,
@@ -70,7 +70,11 @@ export function provideAppearance(store: AppearanceStore) {
 export function useAppearance(): AppearanceStore | undefined {
   return getContext(appearanceContext);
 }
-export function applyAppearance(root: HTMLElement, store: AppearanceStore) {
+export function applyAppearance(
+  root: HTMLElement,
+  store: AppearanceStore,
+  host: HostEnvironment = browserHost,
+) {
   const live = store.live;
   root.dataset.storeTheme = store.theme;
   root.classList.toggle("dark", getIsDark(store.theme));
@@ -79,7 +83,9 @@ export function applyAppearance(root: HTMLElement, store: AppearanceStore) {
   root.dataset.storeDensity = live.density;
   root.dataset.storeGlass = String(
     live.glass &&
-      (!isMacDesktopWindow() || root.dataset.storeNativeGlass === "true"),
+      (host.presentation !== "macos" ||
+        (!!host.setGlassBackground &&
+          root.dataset.storeNativeGlass === "true")),
   );
   root.dataset.storeProminent = String(live.prominent);
   root.style.setProperty("--store-glass-opacity", String(live.opacity / 100));
@@ -93,6 +99,7 @@ export function attachAppearance(
   store: AppearanceStore,
   target: Window,
   root: HTMLElement,
+  host: HostEnvironment = browserHost,
 ) {
   const query = target.matchMedia("(prefers-color-scheme: dark)");
   store.system(query.matches);
@@ -103,7 +110,7 @@ export function attachAppearance(
   };
   query.addEventListener("change", system);
   target.addEventListener("storage", storage);
-  applyAppearance(root, store);
+  applyAppearance(root, store, host);
   return () => {
     query.removeEventListener("change", system);
     target.removeEventListener("storage", storage);

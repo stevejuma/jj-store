@@ -13,3 +13,10 @@ hide. Unsupported browser clients do not advertise the terminal. Missing folders
 explain how to link an existing folder; operational failures use the shared
 notification service. Stories exercise the production dock with a fake bridge
 and remain visual-pending.
+
+The owned renderer host separates macOS presentation from optional terminal and
+window-dragging capabilities. Development desktop browser mode uses the same
+shell and keeps terminal controls absent; selecting header geometry cannot
+construct a native terminal bridge. Stories may inject host capabilities
+explicitly, while real IPC, request identities and session lifetime retain their
+existing JST-DESK-006 contracts.

@@ -1,3 +1,4 @@
+import type { ServerConnectionOptions } from "./options.js";
 import {
   connectionManagement,
   withConnectionState,
@@ -14,7 +15,6 @@ import { ConnectionWorkspaces } from "./workspaces.svelte.js";
 import { connectionStartup } from "./startup.js";
 import { browserNavigation } from "../controller/store-route-browser.js";
 import type { StoreController } from "../controller/contracts.js";
-import type { StoreRouteBrowser } from "../controller/store-route-browser.js";
 
 import {
   connectionHash,
@@ -22,13 +22,7 @@ import {
   readConnectionHash,
 } from "./transport.js";
 export type ServerConnection = import("../api/client.js").Model<"Connection">;
-export function createServerConnections(
-  options: {
-    browser?: StoreRouteBrowser;
-    storage?: Storage;
-    fetcher?: typeof fetch;
-  } = {},
-) {
+export function createServerConnections(options: ServerConnectionOptions = {}) {
   const base = options.browser ?? browserNavigation(false);
   const fetcher: typeof fetch =
     options.fetcher ?? ((...args) => fetch(...args));
@@ -66,6 +60,7 @@ export function createServerConnections(
     base,
     storage,
     fetcher,
+    host: options.host,
     selected: () => selected,
     route: (id) => preferences.routes[id] ?? "#/projects?tab=projects",
     remember,

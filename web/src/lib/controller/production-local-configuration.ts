@@ -15,6 +15,7 @@ export function createLocalConfiguration(
   token: () => string | null = () => null,
   denied?: () => void,
   active: () => boolean = () => true,
+  host?: import("../host/contracts.js").HostEnvironment,
 ) {
   const integrations = new Integrations(
     () => active() && data.accessMode === "local_trusted",
@@ -49,6 +50,7 @@ export function createLocalConfiguration(
       data.repositories.find((r) => r.id === repository)?.principal ?? "",
     freshness,
     () => data.accessMode === "local_trusted",
+    host,
   );
   const configuration = createServerSettings({
     available: () =>

@@ -96,7 +96,11 @@ export class AgentExecutionRefresh {
         const status = await m.client.request<AgentStatus>("agents");
         if (!this.#alive) return true;
         m.value = status;
-        void syncAgentPower(status, m.settings.value?.keep_awake === true);
+        void syncAgentPower(
+          status,
+          m.settings.value?.keep_awake === true,
+          m.host,
+        );
         if (m.pending) await m.checkOutcome();
         await m.stops.checkOutcomes();
         if (!this.#alive) return true;
@@ -107,7 +111,7 @@ export class AgentExecutionRefresh {
         return true;
       } catch (cause) {
         if (!this.#alive) return true;
-        void syncAgentPower(null, false);
+        void syncAgentPower(null, false, m.host);
         this.retained.invalidate("status");
         m.connectionError =
           cause instanceof Error
@@ -128,6 +132,7 @@ export class AgentExecutionRefresh {
         void syncAgentPower(
           this.manager.connectionError ? null : this.manager.value,
           this.manager.settings.value?.keep_awake === true,
+          this.manager.host,
         );
       return accepted;
     });

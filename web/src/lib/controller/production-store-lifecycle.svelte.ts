@@ -276,6 +276,7 @@ export function createProductionConnectionScope(
   token: () => string | null,
   denied: () => void,
   active?: () => boolean,
+  host?: import("../host/contracts.js").HostEnvironment,
 ) {
   const freshness = new ApplicationFreshness(fetcher, denied);
   const local = createLocalConfiguration(
@@ -285,6 +286,7 @@ export function createProductionConnectionScope(
     token,
     denied,
     active,
+    host,
   );
   const scopes = controllerAbortScopes();
   return {

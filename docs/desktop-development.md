@@ -42,6 +42,38 @@ Apache-2.0 attribution are recorded in `docs/ui-provenance.json`. Presentation
 commands and the typed terminal bridge are restricted to the managed main window
 and exact service origin.
 
+## Debugging the desktop UI in a browser
+
+Use the production Svelte screens with browser DevTools and Vite hot reload:
+
+```sh
+# Once on a fresh workspace: build the backend and initialize development data.
+pnpm dev:restart
+# Subsequent UI work: reuse those binaries and the existing development fixture.
+pnpm dev:desktop:ui
+```
+
+Open `http://127.0.0.1:7460/`. This mode uses the real LocalTrusted development
+backend on port 7462 and preserves the workspace's `.local/dev-demo` data.
+Header and Help geometry follow the macOS desktop layout, including the native
+control clearance; no imitation window controls are rendered. Terminal access,
+window dragging, native glass and agent sleep prevention require the native host
+and remain unavailable here. Desktop browser glass keeps opaque surfaces.
+Repository operations and other service-backed features use the real backend.
+
+UI edits hot reload without Rust, RustFS or UI rebuilds. After Rust changes, use
+`pnpm dev:backend:build` followed by `pnpm dev:backend:restart`; Vite and the
+selected desktop presentation remain running. `pnpm dev:stop` stops the owned
+development processes while preserving data. `pnpm dev:ui` switches back to
+ordinary browser presentation. Both UI commands share the existing prerequisite
+and port checks; neither attaches to the installed desktop application.
+
+Existing `JJ_STORE_DEV_ROOT`, `JJ_STORE_DEV_SERVER`,
+`JJ_STORE_DEV_RUSTFS_RUNTIME`, `JJ_STORE_DEV_PORT` and
+`JJ_STORE_DEV_BACKEND_PORT` overrides also apply. Presentation selection is
+limited to development; production browser builds retain browser layout. Native
+WKWebView, vibrancy and distribution acceptance remain separate gates.
+
 ## Repository terminal
 
 In a repository, use the bottom-panel icon beside the right-sidebar toggle in

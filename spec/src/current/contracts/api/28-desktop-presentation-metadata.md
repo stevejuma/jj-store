@@ -2,11 +2,13 @@
 
 The native host's version-1 macOS marker is an immutable window-local
 presentation hint consumed before shell construction. It selects native control
-clearance and drag-region markup. It is neither an HTTP capability nor an
-authorization claim, and browser clients cannot obtain additional repository or
-filesystem access by setting it. The host's window-only permissions remain
-restricted to the managed main window and exact LocalTrusted origin; bootstrap,
-HTTP admission and browser CSP retain their existing contracts.
+clearance; drag-region markup additionally requires the host dragging
+capability. Development browser presentation may select the same clearance
+independently. It is neither an HTTP capability nor an authorization claim, and
+browser clients cannot obtain additional repository or filesystem access by
+setting it. The host's window-only permissions remain restricted to the managed
+main window and exact LocalTrusted origin; bootstrap, HTTP admission and browser
+CSP retain their existing contracts.
 
 Review transport availability is expressed by its optional reader, rather than
 being inferred from a repository profile. Unsupported catalog fixtures omit that

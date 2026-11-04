@@ -16,3 +16,4 @@ Read the owning topic and requirement before implementation.
 - [Remote connection documentation](09-remote-agent-connections.md)
 - [Workflow documentation](10-workflows.md)
 - [Planned thread files documentation](11-thread-files-implementation-plan.md)
+- [Desktop browser development documentation](12-desktop-browser-development.md)

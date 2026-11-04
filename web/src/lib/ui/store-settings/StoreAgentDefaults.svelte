@@ -7,7 +7,8 @@
   import StoreConversationMetadataSettings from "./StoreConversationMetadataSettings.svelte";
   import StoreAgentMentionPreference from "./StoreAgentMentionPreference.svelte";
   import StoreSettingsDisclosure from "./StoreSettingsDisclosure.svelte";
-  import { isMacDesktopWindow } from "../../desktop-chrome.js";
+  import { useHostEnvironment } from "../../host/context.js";
+  const host = useHostEnvironment();
   import { untrack, type Snippet } from "svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
@@ -57,7 +58,7 @@
         <Switch
           id={`${id}-awake`}
           bind:checked={draft.keep_awake}
-          disabled={busy || !isMacDesktopWindow()}
+          disabled={busy || !host.agentPower}
         />
       </StoreWorkField>
       <StoreSettingsDisclosure

@@ -1,7 +1,7 @@
 import type { AgentExecution } from "./agent-execution.svelte.js";
 import { syncAgentPower } from "./agent-power.js";
 export function disposeAgentResources(manager: AgentExecution) {
-  void syncAgentPower(null, false);
+  void syncAgentPower(null, false, manager.host);
   manager.chat.destroy();
   manager.changes.destroy();
   manager.metadata.destroy();
