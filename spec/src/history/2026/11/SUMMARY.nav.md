@@ -4,3 +4,5 @@
   {{#include 02/SUMMARY.nav.md}}
 - [03](03/index.md)
   {{#include 03/SUMMARY.nav.md}}
+- [04](04/index.md)
+  {{#include 04/SUMMARY.nav.md}}

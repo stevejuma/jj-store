@@ -10,14 +10,14 @@ Canonical specifications and evidence remain authoritative.
 
 | Plan slice                                                | Status in this stack | Delivered and pending work                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0. Stabilize the starting revision and environment        | Partial              | Exact-source manual complete qualification now passes the integrated stack, including native, storage, UI and cold lanes. A canonical schedule-event run, archived-consumer rerun equivalence and four explicit quarantine re-enable gates remain pending.                                                                                   |
+| 0. Stabilize the starting revision and environment        | Partial              | Exact-source manual and scheduled complete qualification now pass the integrated stack, including native, storage, UI and cold lanes. Archived-consumer rerun equivalence and four explicit quarantine re-enable gates remain pending.                                                                                                       |
 | 1. Make evidence complete                                 | Delivered            | Ordinary lanes upload source-bound JUnit, inventories, commands, and outcomes. Aggregation rejects missing, duplicate, foreign, canceled, incomplete, and empty evidence; ordinary archive compression is removed.                                                                                                                           |
 | 2. Improve the DAG and setup with unchanged selection     | Partial              | Independent work starts in parallel, source Storybook no longer requires a built payload, and static catalog and app/Help producers are distinct. Formatting, tooling, governance, archive and Node/browser jobs now request explicit minimal capabilities. A measured same-source cold/warm latency comparison remains pending.             |
-| 3. Establish scheduled full coverage                      | Partial              | Manual complete run 41681207161 passes at exact canonical-main source. The coordinator schedule, freshness health and advisory quarantine repetition are present, but one actual schedule-event run is still required before scheduled freshness is established.                                                                             |
+| 3. Establish scheduled full coverage                      | Delivered            | Scheduled complete run 41805896257 passes at exact canonical-main source, and subsequent health run 41811524673 names it as both the latest attempt and last complete success. Advisory diagnostics remain separate from the four quarantine re-enable gates.                                                                                |
 | 4. Introduce domain selection and targeted backend checks | Delivered and active | Selection schema version 2 actively selects UI, browser, Help, catalog, contract, and backend domains with safe broad fallback. Affected `jj-store`, `jj-store-server`, and `jj-store-capture` packages run as a blocking two-shard targeted cohort. Explicit `all_checks` and heavy workflow dispatch retain complete manual qualification. |
 | 5. Repair the remaining failure mechanisms                | Partial              | Clipboard, Storybook lifetime, history readiness and integrated cold failures pass exact-source complete qualification. Q-STORY-001, Q-STORY-002, Q-BROWSER-001 and Q-RUST-002 retain their independent original assertions and re-enable gates.                                                                                             |
 | 6. Optimize the remaining measured bottleneck             | Partial              | The four-partition targeted trial retained two shards and Storybook browser lifetime is bounded. Representative cold/warm category samples, cache/compile comparison and the final latency/reliability review remain pending.                                                                                                                |
-| 7. Verify qualification and document the operating model  | Partial              | Exact-source manual complete qualification passes and is documented. Scheduled freshness, consumer-rerun identity on hosted infrastructure, four quarantines, the remaining platform/provider/visual gate inventory and representative latency/reliability review remain pending.                                                            |
+| 7. Verify qualification and document the operating model  | Partial              | Exact-source manual and scheduled complete qualification pass and are documented. Consumer-rerun identity on hosted infrastructure, four quarantines, platform/provider gates and representative latency/reliability review remain pending; visual approval is explicitly deferred.                                                          |
 
 ## Acceptance status
 
@@ -31,7 +31,7 @@ Canonical specifications and evidence remain authoritative.
       broad selection.
 - [x] Missing, canceled, failed, duplicated, foreign, and unexpectedly skipped
       selected results fail the stable required aggregate.
-- [ ] Demonstrate a complete fresh canonical-main scheduled run on the
+- [x] Demonstrate a complete fresh canonical-main scheduled run on the
       integrated stack.
 - [x] Demonstrate capability-minimal setup through executable workflow
       contracts.
@@ -63,6 +63,8 @@ Canonical specifications and evidence remain authoritative.
   and retains two shards because overall wall time did not improve.
 - `E-CI-QUALIFICATION-001` records the passing exact-source manual complete
   qualification and its still-independent scheduled and release gates.
+- `E-CI-SCHEDULED-FRESHNESS-001` records the passing canonical schedule-event
+  qualification and the subsequent health recognition of that exact run.
 
 Manual complete qualification run 41681207161 passed on canonical `main` at
 `5c2c4c9c8c3dc77ee7ff774a0cf724f23b9d94e3`: 53 jobs succeeded, the complete gate
@@ -70,3 +72,10 @@ succeeded and only the independent advisory cache comparison skipped. The manual
 dispatch does not establish schedule-event freshness or close the four
 quarantines, representative latency/reliability review, publication, provider,
 platform or visual gates.
+
+Scheduled complete qualification run 41805896257 then passed on canonical `main`
+at `f8616d8d5677a544e2365a9ccff97c0c7b5017a5`. Subsequent health run 41811524673
+reported that exact run as both the latest attempt and last complete success.
+This establishes scheduled freshness only: the four quarantines, representative
+latency/reliability, publication, provider and platform gates remain open, while
+visual approval is explicitly deferred.

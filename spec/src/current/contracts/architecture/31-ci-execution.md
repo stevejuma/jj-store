@@ -136,6 +136,15 @@ only the independent advisory cache comparison was skipped. This does not
 establish schedule-event freshness or close quarantine, latency, reliability,
 publication, provider, platform or visual gates.
 
+E-CI-SCHEDULED-FRESHNESS-001 records the first subsequent canonical scheduled
+qualification. Run 41805896257 passed at exact `main` source
+`f8616d8d5677a544e2365a9ccff97c0c7b5017a5`, which contains PR #54 merge
+`a7f8f9de264d98e2aa0d9c2c0d4b684d2b4743f8` as an ancestor. Nightly health run
+41811524673 then named 41805896257 as both the latest attempt and last complete
+success. This closes scheduled freshness only; four quarantines,
+latency/reliability, publication, provider and platform gates remain open, and
+visual approval is explicitly deferred.
+
 E-PUBLIC-SURFACES-001 makes the Pages artifact one source-bound documentation
 surface: the specification remains at the site root, the application manual at
 `/manual/`, and the production-owned source Storybook at `/storybook/` with its
