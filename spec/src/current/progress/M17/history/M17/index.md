@@ -18,6 +18,8 @@ not a completion gate selection.
 
 |
 [E-DESK-BROWSER-001](../../../../../history/2026/11/04/E-DESK-BROWSER-001/index.md)
+| 2026-11-04 | pass | Original outcome | |
+[E-DESK-BROWSER-RELEASE-001](../../../../../history/2026/11/04/E-DESK-BROWSER-RELEASE-001/index.md)
 | 2026-11-04 | pass | Original outcome |
 <!-- generated-navigation -->
 
