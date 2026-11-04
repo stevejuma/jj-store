@@ -10,7 +10,7 @@ export async function sourceTableIdentification({
     page = within(canvasElement.ownerDocument.body);
   await userEvent.click(c.getByRole("tab", { name: "Sources" }));
   const table = await c.findByRole("table", { name: "Capture sources" });
-  const filter = c.getByRole("button", { name: "Filter by harness" });
+  const filter = c.getByRole("combobox", { name: "Filter by harness" });
   const status = c.getByRole("button", { name: "Filter by source status" });
   await expect(filter.closest(".store-capture-sources__table")).toBeNull();
   await expect(status.closest(".store-capture-sources__table")).toBeNull();

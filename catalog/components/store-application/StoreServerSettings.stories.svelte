@@ -177,7 +177,7 @@
       "https://peer.example.test",
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Polling interval unit" }),
+      c.getByRole("combobox", { name: "Polling interval unit" }),
     );
     await userEvent.click(page.getByRole("option", { name: "sec" }));
     const polling = c.getByRole("spinbutton", { name: "Polling interval" });
@@ -243,7 +243,7 @@
     const save = await c.findByRole("button", { name: "Save settings" });
     await expect(save).toBeDisabled();
     await userEvent.click(
-      c.getByRole("button", { name: "Maximum blob size (bytes) unit" }),
+      c.getByRole("combobox", { name: "Maximum blob size (bytes) unit" }),
     );
     await userEvent.click(page.getByRole("option", { name: /^MiB$/ }));
     const input = c.getByRole("spinbutton", {

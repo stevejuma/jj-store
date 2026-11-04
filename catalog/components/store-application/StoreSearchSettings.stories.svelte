@@ -180,7 +180,7 @@
     const c = within(canvasElement),
       page = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      c.getByRole("button", { name: "Polling interval unit" }),
+      c.getByRole("combobox", { name: "Polling interval unit" }),
     );
     await userEvent.click(page.getByRole("option", { name: "sec" }));
     await expect(
@@ -219,7 +219,9 @@
       page = within(canvasElement.ownerDocument.body);
     const budget = c.getByRole("spinbutton", { name: "Index budget" });
     await expect(budget).toHaveValue(512);
-    await userEvent.click(c.getByRole("button", { name: "Index budget unit" }));
+    await userEvent.click(
+      c.getByRole("combobox", { name: "Index budget unit" }),
+    );
     await userEvent.click(page.getByRole("option", { name: "GiB" }));
     await waitFor(() =>
       expect(getComputedStyle(budget).pointerEvents).toBe("auto"),

@@ -23,7 +23,7 @@
     await expect(
       c.queryByRole("button", { name: "Reset Polling interval to default" }),
     ).toBeNull();
-    const unit = c.getByRole("button", { name: "Polling interval unit" });
+    const unit = c.getByRole("combobox", { name: "Polling interval unit" });
     await userEvent.click(unit);
     await userEvent.click(page.getByRole("option", { name: "sec" }));
     await waitFor(() => expect(page.queryByRole("listbox")).toBeNull());
@@ -75,7 +75,7 @@
     const c = within(canvasElement),
       page = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      c.getByRole("button", { name: "Maximum text file size unit" }),
+      c.getByRole("combobox", { name: "Maximum text file size unit" }),
     );
     await userEvent.click(page.getByRole("option", { name: "KiB" }));
     await waitFor(() => expect(page.queryByRole("listbox")).toBeNull());
@@ -113,7 +113,7 @@
     await userEvent.click(c.getByRole("spinbutton"));
     await userEvent.tab();
     await expect(
-      c.getByRole("button", { name: "Polling interval unit" }),
+      c.getByRole("combobox", { name: "Polling interval unit" }),
     ).toHaveFocus();
     await userEvent.keyboard("{Enter}");
     await userEvent.keyboard("{ArrowDown}{Enter}");
@@ -132,7 +132,7 @@
     const c = within(canvasElement);
     await expect(c.getByRole("spinbutton")).toBeDisabled();
     await expect(
-      c.getByRole("button", { name: "Polling interval unit" }),
+      c.getByRole("combobox", { name: "Polling interval unit" }),
     ).toBeDisabled();
     await expect(
       c.getByRole("button", { name: "Reset Polling interval to default" }),
@@ -146,7 +146,7 @@
     const c = within(canvasElement);
     await expect(c.getByRole("spinbutton")).toHaveAttribute("readonly");
     await expect(
-      c.getByRole("button", { name: "Polling interval unit" }),
+      c.getByRole("combobox", { name: "Polling interval unit" }),
     ).toBeDisabled();
     await expect(
       c.getByRole("button", { name: "Reset Polling interval to default" }),
@@ -193,7 +193,7 @@
       ),
     );
     await userEvent.tab();
-    const unit = c.getByRole("button", { name: "Polling interval unit" });
+    const unit = c.getByRole("combobox", { name: "Polling interval unit" });
     await expect(unit).toHaveFocus();
     await waitFor(() => expect(getComputedStyle(unit).boxShadow).toBe("none"));
     await expect(getComputedStyle(group).borderRightColor).toBe(border);
@@ -221,7 +221,10 @@
       "Polling interval unit",
       "Reset Polling interval to default",
     ]) {
-      const control = c.getByRole("button", { name });
+      const control = c.getByRole(
+        name === "Polling interval unit" ? "combobox" : "button",
+        { name },
+      );
       const background = getComputedStyle(control).backgroundColor;
       await pointer.hover(control);
       await waitFor(() =>
@@ -275,12 +278,12 @@
       await waitFor(() =>
         expect(
           getComputedStyle(
-            c.getByRole("button", { name: "Polling interval unit" }),
+            c.getByRole("combobox", { name: "Polling interval unit" }),
           ).pointerEvents,
         ).toBe("auto"),
       );
       await userEvent.click(
-        c.getByRole("button", { name: "Polling interval unit" }),
+        c.getByRole("combobox", { name: "Polling interval unit" }),
       );
       await userEvent.click(page.getByRole("option", { name: unit }));
       await waitFor(() => expect(page.queryByRole("listbox")).toBeNull());
@@ -318,12 +321,12 @@
       await waitFor(() =>
         expect(
           getComputedStyle(
-            c.getByRole("button", { name: "Maximum text file size unit" }),
+            c.getByRole("combobox", { name: "Maximum text file size unit" }),
           ).pointerEvents,
         ).toBe("auto"),
       );
       await userEvent.click(
-        c.getByRole("button", { name: "Maximum text file size unit" }),
+        c.getByRole("combobox", { name: "Maximum text file size unit" }),
       );
       await userEvent.click(page.getByRole("option", { name: unit }));
       await waitFor(() => expect(page.queryByRole("listbox")).toBeNull());

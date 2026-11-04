@@ -81,6 +81,10 @@
         ].filter((group) => group.bookmarks.length)
       : [{ heading: "Bookmarks", bookmarks: visible }],
   );
+  function selectBookmark(name: string) {
+    commandValue = "";
+    onSelect(name);
+  }
 </script>
 
 {#snippet bookmarkRow(bookmark: Bookmark)}
@@ -89,7 +93,7 @@
     aria-label={bookmark.name}
     class="community-bookmark-card"
     data-current={bookmark.name === selected || undefined}
-    onSelect={() => onSelect(bookmark.name)}
+    onSelect={() => selectBookmark(bookmark.name)}
   >
     <span class="community-bookmark-card__heading"
       ><GitBranchIcon aria-hidden="true" /><CommandView.ItemLabel

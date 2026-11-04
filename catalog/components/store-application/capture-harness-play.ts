@@ -72,7 +72,7 @@ export async function filteredCaptureSources({
       ).getByText("5 observed"),
     ).toBeVisible(),
   );
-  const filter = c.getByRole("button", { name: "Filter by harness" });
+  const filter = c.getByRole("combobox", { name: "Filter by harness" });
   await waitFor(() =>
     expect(getComputedStyle(filter).pointerEvents).not.toBe("none"),
   );

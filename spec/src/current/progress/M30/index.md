@@ -394,7 +394,7 @@ gate. Reaction geometry and complete release qualification remain open.
 
 E-PUBLIC-SURFACES-001 qualifies combined Pages, workflows, bounded image tags
 and eight checksummed native assets. E-CI-SCHEDULED-FRESHNESS-001 proves
-canonical schedule-event qualification and health recognition. M30 remains In
-progress: four quarantines, representative latency/reliability, actual
-publication, provider and platform gates remain; visual approval is explicitly
-deferred.
+canonical schedule-event qualification and health recognition while
+E-DEPENDENCY-AUTOMATION-004 records unchanged-contract Design Core 0.10.1
+compatibility. M30 remains In progress: four quarantines, latency/reliability,
+publication, provider and platform gates remain; visual approval is deferred.

@@ -135,7 +135,7 @@
     const grant = within(
       dialog.getByRole("region", { name: "Grant repository Write access" }),
     );
-    await userEvent.click(grant.getByRole("button", { name: "Repository" }));
+    await userEvent.click(grant.getByRole("combobox", { name: "Repository" }));
     await expect(
       within(document.body).queryByRole("option", {
         name: "Read only repository",

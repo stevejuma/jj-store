@@ -1,11 +1,12 @@
 # Storybook presentation catalog
 
-E-DEPENDENCY-AUTOMATION-003 retains the existing Core 0.7.0 application inputs
-while refreshing Mira to 0.1.4. Its Bits UI 2.20.2 copy receives the identical
-published lifecycle/focus patch at this installation root. The Core 0.7.4
-candidate fails branch-regrouping accessibility; no selector, interaction or
-accessibility waiver is accepted. Earlier browser disconnects remain failed
-qualification until fresh current-head hosted UI acceptance completes.
+E-DEPENDENCY-AUTOMATION-004 qualifies Design Core 0.10.1 with one deduplicated
+CodeMirror/Lezer graph and the released Select combobox semantics. Catalog
+interactions query those semantics directly. Branch selection clears the active
+Command View item before regrouping can remove its DOM target, and successful
+stack recovery retains its disappearance assertion with a bounded async wait. No
+selector, interaction or accessibility waiver is accepted; visual approval
+remains separate.
 
 JST-UI-001 includes Visual Delta's released Storybook addon and portable
 Playwright suite. Native capture MUST use installed project browsers with actual

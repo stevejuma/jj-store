@@ -30,7 +30,7 @@
     body: ReturnType<typeof within>,
     name: string,
   ) {
-    await userEvent.click(dialog.getByRole("button", { name: "When" }));
+    await userEvent.click(dialog.getByRole("combobox", { name: "When" }));
     await userEvent.click(
       body.getByRole("option", { name: new RegExp(`^${name}$`) }),
     );

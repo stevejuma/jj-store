@@ -94,7 +94,9 @@
         ".community-projects-repository-skeleton__tree-row",
       ),
     ).toHaveLength(6);
-    expect(rail.queryByRole("button", { name: "Comparison range" })).toBeNull();
+    expect(
+      rail.queryByRole("combobox", { name: "Comparison range" }),
+    ).toBeNull();
     await storyControl(document.body, "Complete workspace read");
     await rail.findByRole("button", { name: fileRowName("README.md") });
     await storyControl(document.body, "Hold next workspace read");
@@ -113,9 +115,11 @@
       ),
     ).toHaveLength(6);
     expect(
-      rail.getByRole("button", { name: "Comparison range" }),
+      rail.getByRole("combobox", { name: "Comparison range" }),
     ).toBeVisible();
-    expect(rail.getByRole("button", { name: "Comparison base" })).toBeVisible();
+    expect(
+      rail.getByRole("combobox", { name: "Comparison base" }),
+    ).toBeVisible();
     await storyControl(document.body, "Complete workspace read");
     await rail.findByRole("button", { name: fileRowName("src/example.ts") });
     expect(
@@ -146,7 +150,7 @@
     await userEvent.click(rail.getByRole("tab", { name: /^Changes$/ }));
     await rail.findByText("No changes");
     expect(
-      rail.getByRole("button", { name: "Comparison range" }),
+      rail.getByRole("combobox", { name: "Comparison range" }),
     ).toBeVisible();
     expect(
       panel.querySelector(".community-projects__file-tree-actions"),

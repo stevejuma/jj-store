@@ -12,10 +12,12 @@ export async function applyPreview(element: HTMLElement) {
   await userEvent.click(
     await portal.findByRole("button", { name: "Apply command" }),
   );
-  await waitFor(() =>
-    expect(
-      portal.queryByRole("button", { name: "Apply command" }),
-    ).not.toBeInTheDocument(),
+  await waitFor(
+    () =>
+      expect(
+        portal.queryByRole("button", { name: "Apply command" }),
+      ).not.toBeInTheDocument(),
+    { timeout: 5_000 },
   );
 }
 export async function commandMenu(

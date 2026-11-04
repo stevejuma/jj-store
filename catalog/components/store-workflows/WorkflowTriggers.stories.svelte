@@ -35,7 +35,7 @@
       dialog.getByRole("button", { name: "Save workflow name" }),
     );
     await userEvent.click(dialog.getByRole("button", { name: "build build" }));
-    const unit = dialog.getByRole("button", { name: "Timeout unit" });
+    const unit = dialog.getByRole("combobox", { name: "Timeout unit" });
     await expect(
       getComputedStyle(unit.closest('[data-slot="input-group-addon"]')!)
         .backgroundColor,
@@ -57,7 +57,7 @@
     await userEvent.click(
       dialog.getByRole("button", { name: "Trigger Run manually" }),
     );
-    await userEvent.click(dialog.getByRole("button", { name: "When" }));
+    await userEvent.click(dialog.getByRole("combobox", { name: "When" }));
     const message = body.getByRole("option", {
       name: "Thread message posted",
     });
@@ -66,7 +66,7 @@
     await userEvent.click(dialog.getByRole("combobox", { name: "Thread" }));
     await userEvent.type(body.getByLabelText("Find a thread"), "general");
     await userEvent.click(await body.findByRole("option", { name: /general/ }));
-    await userEvent.click(dialog.getByRole("button", { name: "Text match" }));
+    await userEvent.click(dialog.getByRole("combobox", { name: "Text match" }));
     await userEvent.click(body.getByRole("option", { name: "Contains" }));
     await userEvent.type(
       dialog.getByRole("textbox", { name: "Message text" }),
@@ -77,7 +77,7 @@
         .getByRole("combobox", { name: "Authors" })
         .getBoundingClientRect(),
       match = dialog
-        .getByRole("button", { name: "Author match" })
+        .getByRole("combobox", { name: "Author match" })
         .getBoundingClientRect();
     await expect(Math.abs(author.top - match.top)).toBeLessThan(2);
     await expect(
@@ -107,13 +107,13 @@
       dialog.getByRole("textbox", { name: "Workflow YAML" }),
     ).toHaveTextContent("01".repeat(16));
     await userEvent.click(dialog.getByRole("tab", { name: "Form" }));
-    await userEvent.click(dialog.getByRole("button", { name: "When" }));
+    await userEvent.click(dialog.getByRole("combobox", { name: "When" }));
     await userEvent.click(body.getByRole("option", { name: "Reaction added" }));
     await expect(
       dialog.queryByRole("textbox", { name: "Message text" }),
     ).toBeNull();
     await userEvent.click(
-      dialog.getByRole("button", { name: "Reaction match" }),
+      dialog.getByRole("combobox", { name: "Reaction match" }),
     );
     await userEvent.click(body.getByRole("option", { name: "Is not" }));
     await userEvent.click(
