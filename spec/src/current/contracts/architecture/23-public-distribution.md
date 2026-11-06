@@ -80,9 +80,9 @@ user-authorized CI rollout may temporarily disable administrator enforcement
 only around each locally verified direct main push; enforcement MUST be restored
 and verified immediately after the push attempt. All other protection settings
 remain intact. Force pushes and branch deletion are disabled. Version tags
-cannot be rewritten or deleted. Automatic publication remains disabled until the
-initial release qualification is ready; CI and Pages qualification continue
-independently.
+cannot be rewritten or deleted. Changesets action v1.9.0 matches CLI v2.
+Automatic publication remains disabled until initial qualification is ready; CI
+and Pages qualification continue independently.
 
 Native CI verifies the runner's compiler triple and builds/tests its native
 debug profile in one shared target root. This avoids a second optimized build
