@@ -1,6 +1,6 @@
 {
   "name": "@lapismd/jj-history",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Lossless typed clients for host-admitted operation-pinned JJ history",
   "type": "module",
   "license": "Apache-2.0",

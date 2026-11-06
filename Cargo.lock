@@ -5319,7 +5319,7 @@ dependencies = [
 
 [[package]]
 name = "jj-agent"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "hex",
  "jj-store-model",
@@ -5393,7 +5393,7 @@ dependencies = [
 
 [[package]]
 name = "jj-collab"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "emojis",
@@ -5456,7 +5456,7 @@ dependencies = [
 
 [[package]]
 name = "jj-forge"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "dirs 7.0.0",
@@ -5477,7 +5477,7 @@ dependencies = [
 
 [[package]]
 name = "jj-history-service"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "jj-store-jj",
@@ -5539,7 +5539,7 @@ dependencies = [
 
 [[package]]
 name = "jj-review"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "hex",
  "jj-agent",
@@ -5553,7 +5553,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "axum",
@@ -5601,7 +5601,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-adapters"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "jj-store-model",
@@ -5618,7 +5618,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-capture"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "jj-agent",
@@ -5638,7 +5638,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-conversations"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "futures 0.3.34",
@@ -5656,7 +5656,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "futures 0.3.34",
@@ -5674,7 +5674,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-git"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "base64 0.23.1",
@@ -5698,7 +5698,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-http"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "axum",
@@ -5727,7 +5727,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-jj"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "base64 0.23.1",
@@ -5770,7 +5770,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-model"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "hex",
  "schemars 1.2.3",
@@ -5781,7 +5781,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-native"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "jj-agent",
@@ -5800,7 +5800,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-object"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "base64 0.23.1",
@@ -5822,7 +5822,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-read-index"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "hex",
  "redb",
@@ -5835,7 +5835,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-replication"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "jj-agent",
@@ -5852,7 +5852,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-rpc"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -5889,7 +5889,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-server"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "axum",
@@ -5942,7 +5942,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-service"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "base64 0.23.1",
@@ -5979,7 +5979,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-tantivy"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "base64 0.23.1",
@@ -6004,7 +6004,7 @@ dependencies = [
 
 [[package]]
 name = "jj-store-wal"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "futures 0.3.34",
@@ -6028,7 +6028,7 @@ dependencies = [
 
 [[package]]
 name = "jj-vault"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "jj-store-jj",
  "regex",
@@ -6042,7 +6042,7 @@ dependencies = [
 
 [[package]]
 name = "jj-work"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "hex",
  "jj-store-model",
@@ -6053,7 +6053,7 @@ dependencies = [
 
 [[package]]
 name = "jj-workflow"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "globset",
  "hex",
@@ -9855,7 +9855,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-jj-store"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "jj-history-service",
  "schemars 1.2.3",
