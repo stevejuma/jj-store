@@ -180,13 +180,16 @@ test(
       mkdirSync(target, { recursive: true });
       for (const file of ["package.json", "tsconfig.json", "src"])
         cpSync(join(source, file), join(target, file), { recursive: true });
+      const historyVersion = JSON.parse(
+        readFileSync(join(source, "package.json"), "utf8"),
+      ).version;
       writeFileSync(
         join(temporary, "package.json"),
         JSON.stringify({
           name: "history-workspace-fixture",
           private: true,
           packageManager: "pnpm@10.32.1",
-          dependencies: { "@lapismd/jj-history": "^0.1.0" },
+          dependencies: { "@lapismd/jj-history": `^${historyVersion}` },
           pnpm: { onlyBuiltDependencies: [] },
         }),
       );

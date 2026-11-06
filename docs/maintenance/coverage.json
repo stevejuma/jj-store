@@ -275,8 +275,8 @@
     ],
     "pages": ["docs/site/technical/local.md"],
     "review": {
-      "reason": "Reviewed @lapismd/jj-history 0.1.0 public publishConfig against unchanged local history manual: admitted heads/open/status/read/blame/close contracts and explicit handle closure remain as documented.",
-      "fingerprint": "cc13ef5d340bb6832d499390f9e4e41bfa6ffdd27779b30905c08702741e733b"
+      "reason": "Reviewed @lapismd/jj-history 0.2.0 public publishConfig against unchanged local history manual: admitted heads/open/status/read/blame/close contracts and explicit handle closure remain as documented.",
+      "fingerprint": "a4956a9fecbb9c4aa8e855cfff325fd2e945e4bfc926948dd3ab8a1c2ca668c7"
     }
   }
 ]
