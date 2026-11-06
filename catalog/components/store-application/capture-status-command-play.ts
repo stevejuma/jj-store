@@ -84,7 +84,7 @@ export async function sourceStatusCommand({
   await expect(page.getByText("No matching statuses")).toBeVisible();
   await userEvent.keyboard("{Escape}");
   await waitFor(() => expect(status).toHaveFocus());
-  await userEvent.click(c.getByRole("button", { name: "Filter by harness" }));
+  await userEvent.click(c.getByRole("combobox", { name: "Filter by harness" }));
   await userEvent.click(page.getByRole("option", { name: "Cursor" }));
   await expect(c.getByText("No sources match these filters")).toBeVisible();
   await waitFor(() =>

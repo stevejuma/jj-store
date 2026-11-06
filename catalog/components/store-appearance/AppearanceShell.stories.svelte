@@ -59,8 +59,8 @@
       const input = await p.findByRole("combobox", {
         name: `${label} navigation`,
       });
-      // The picker focuses its search input on mount; Escape must originate
-      // inside the popover to dismiss it and restore trigger focus.
+      // The picker focuses its search input on mount. The released Command
+      // View consumes the first Escape before the popover restores its trigger.
       await waitFor(() => expect(input).toHaveFocus());
       const popup = input.closest<HTMLElement>(
         ".lc-community-navigation__section-picker",
@@ -83,7 +83,7 @@
       await expect(popup.getBoundingClientRect().right).toBeLessThanOrEqual(
         window.innerWidth - 7.9,
       );
-      await userEvent.keyboard("{Escape}");
+      await userEvent.keyboard("{Escape}{Escape}");
       await waitFor(() => expect(trigger).toHaveFocus());
     }
   }

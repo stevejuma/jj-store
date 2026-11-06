@@ -117,7 +117,7 @@
       "true",
     );
     await expect(
-      await rail.findByRole("button", { name: "Comparison range" }),
+      await rail.findByRole("combobox", { name: "Comparison range" }),
     ).toHaveTextContent("Branch");
     await waitFor(() =>
       expect(

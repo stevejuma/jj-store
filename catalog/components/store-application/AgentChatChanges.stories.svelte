@@ -90,7 +90,7 @@
       await within(rail).findByRole("tab", { name: "Changes" }),
     ).toHaveAttribute("data-state", "active");
     await expect(
-      await within(rail).findByRole("button", { name: "Comparison range" }),
+      await within(rail).findByRole("combobox", { name: "Comparison range" }),
     ).toHaveTextContent("Selected turn");
     const inspector = await c.findByRole("complementary", {
       name: "Workspace file",

@@ -195,8 +195,12 @@
     });
     const rail = within(panel);
     await userEvent.click(rail.getByRole("tab", { name: "Changes" }));
-    const range = await rail.findByRole("button", { name: "Comparison range" });
-    const base = await rail.findByRole("button", { name: "Comparison base" });
+    const range = await rail.findByRole("combobox", {
+      name: "Comparison range",
+    });
+    const base = await rail.findByRole("combobox", {
+      name: "Comparison base",
+    });
     await waitFor(() =>
       expect(
         rail.queryByRole("status", { name: "Loading workspace files" }),

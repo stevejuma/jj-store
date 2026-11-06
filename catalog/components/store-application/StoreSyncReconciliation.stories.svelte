@@ -29,7 +29,7 @@
     });
     await waitFor(async () => {
       await expect(
-        within(dialog).getByRole("button", { name: "Base operation" }),
+        within(dialog).getByRole("combobox", { name: "Base operation" }),
       ).toBeVisible();
     });
     await userEvent.click(

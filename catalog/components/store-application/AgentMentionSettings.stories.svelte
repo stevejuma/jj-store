@@ -122,7 +122,7 @@
       "EXAMPLE",
     );
     await userEvent.click(c.getByRole("button", { name: "Add variable" }));
-    const source = c.getByRole("button", { name: "Source for EXAMPLE" });
+    const source = c.getByRole("combobox", { name: "Source for EXAMPLE" });
     await userEvent.click(source);
     await expect(
       page.getByRole("option", { name: "Secret in device Keychain" }),
