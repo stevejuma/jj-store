@@ -13,7 +13,10 @@ import { join } from "node:path";
 import { createRequire } from "node:module";
 import { execFileSync, spawnSync } from "node:child_process";
 import { parse } from "yaml";
-import { botSpecificationExemption } from "./dependency-automation/spec-policy.mjs";
+import {
+  botSpecificationExemption,
+  skipSpecification,
+} from "./dependency-automation/spec-policy.mjs";
 
 const root = new URL("../", import.meta.url);
 const ci = parse(
@@ -188,6 +191,26 @@ test("bot PRs skip specification calls and retain planned functional and release
   ])
     assert.ok(lanes["release:check"].includes(test), test);
   assert.ok(lanes["release:check"].includes("node scripts/package-check.mjs"));
+});
+
+test("version PRs still render the specification book", () => {
+  const env = {
+    CI: "true",
+    LAPIS_CI_EVENT: "pull_request",
+    LAPIS_CI_PR_AUTHOR: "github-actions[bot]",
+    LAPIS_CI_PR_AUTHOR_TYPE: "Bot",
+    LAPIS_CI_PR_HEAD: "changeset-release/main",
+  };
+  assert.equal(botSpecificationExemption(env), true);
+  assert.equal(skipSpecification("spec:build", env), false);
+  for (const lane of [
+    "spec:check",
+    "spec:validate",
+    "spec:first",
+    "spec:lint",
+    "check:specification-docs",
+  ])
+    assert.equal(skipSpecification(lane, env), true, lane);
 });
 
 function versionFixture() {

@@ -36,7 +36,7 @@ export function botSpecificationExemption(env = process.env) {
 
 export function skipSpecification(lane, env = process.env) {
   const spec =
-    /^(?:spec:(?:check|validate|first|build|lint)|check:specification-docs)$/.test(
+    /^(?:spec:(?:check|validate|first|lint)|check:specification-docs)$/.test(
       lane,
     );
   if (!spec || !botSpecificationExemption(env)) return false;
