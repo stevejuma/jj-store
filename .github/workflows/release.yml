@@ -22,7 +22,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup
-      - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51
+      # v1.9.0 stays on Changesets CLI v2. Action v2 rejects these inputs.
+      - uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d
         id: changesets
         with:
           version: pnpm release:version
