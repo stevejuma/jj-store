@@ -129,13 +129,12 @@ documentation and stable-tree tooling results accompany the same evidence. M30
 stays In progress: this local proof and the separately identified standard CI
 head do not qualify heavy hosted release, other platforms or publication.
 
-E-PR10-UI-READINESS-001 records PR #10's single hosted Storybook failure at the
-otherwise locally qualified head. The private story waits for dismissed selects
-to finish closing. Broader acceptance also exposed editor focus interrupting
-chat navigation; focusing before the explicit jump retains the existing
-full-draft visibility contract. Qualification gates remain unchanged. M30 stays
-In progress. Fresh standard required checks must pass on the repair head; prior
-local or hosted passes do not substitute for that result.
+E-PR10-UI-READINESS-001 and E-CI-CHAT-END-LAYOUT-001 retain hosted Storybook
+failures at otherwise locally qualified heads. Private controls await dismissed
+selects. Chat end navigation focuses before scrolling and repeats its end target
+after deferred editor layout, retaining the 1-pixel full-draft bound without a
+test retry. M30 stays In progress. Fresh required checks must pass on the repair
+head; prior local or hosted passes do not substitute for that result.
 
 E-PR10-AUTOCOMPLETE-001 explicitly reviews M30 with status unchanged. The
 remaining hosted workflow failure is traced to Design Core's deferred input
@@ -398,3 +397,4 @@ canonical schedule-event qualification and health recognition while
 E-DEPENDENCY-AUTOMATION-004 records unchanged-contract Design Core 0.10.1
 compatibility. M30 remains In progress: four quarantines, latency/reliability,
 publication, provider and platform gates remain; visual approval is deferred.
+

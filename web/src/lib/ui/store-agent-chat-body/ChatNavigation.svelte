@@ -40,6 +40,7 @@
         : `[data-chat-item="${CSS.escape(id)}"]`,
     );
   let pointerExit: ReturnType<typeof setTimeout> | undefined;
+  let jumpFrame = 0;
   function enter() {
     clearTimeout(pointerExit);
     hovered = true;
@@ -48,7 +49,10 @@
     clearTimeout(pointerExit);
     pointerExit = setTimeout(() => (hovered = false), 150);
   }
-  onDestroy(() => clearTimeout(pointerExit));
+  onDestroy(() => {
+    clearTimeout(pointerExit);
+    cancelAnimationFrame(jumpFrame);
+  });
   function close() {
     clearTimeout(pointerExit);
     hovered = false;
@@ -184,16 +188,21 @@
   }
   function jumpToEnd() {
     if (!root) return;
+    const scrollport = root;
     const draft = root.querySelector<HTMLElement>(
       "[data-chat-next-message] [role='textbox']",
     );
     (draft ?? target(items.at(-1)?.id ?? ""))?.focus({ preventScroll: true });
     close();
-    root.scrollTo({
-      top: root.scrollHeight,
-      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
+    const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "instant"
+      : "smooth";
+    const reveal = () =>
+      scrollport.scrollTo({ top: scrollport.scrollHeight, behavior });
+    reveal();
+    cancelAnimationFrame(jumpFrame);
+    jumpFrame = requestAnimationFrame(() => {
+      if (root === scrollport) reveal();
     });
   }
 </script>
