@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed historical revset index merging against the selected-operation contract. Updated the local technical guide to clarify exact visibility and read-only preparation; Git transport and conversion identity/authority guidance remain accurate and unchanged.",
-      "fingerprint": "ea28deab170bee94a0f3956c72d58c7a992a429c223c435b4ed993c4dd1b8402"
+      "reason": "Reviewed historical revset index merging and explicit native vault lease release against the selected-operation and command-lifetime contracts. The updated local technical guide remains accurate; Git transport and conversion identity guidance are unchanged.",
+      "fingerprint": "ff115f38a1db26a6464e668a2412c0c072d7f4ab355ba087f86858813d1e3157"
     }
   },
   {
@@ -141,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Design Core 0.10.1 branch-command active-item cleanup: keyboard and pointer selection keep valid combobox focus while preserving documented browsing, editing, settings and conversion behavior.",
-      "fingerprint": "a97358875574c860ef4afa6a01f2919fde88ae1f9f06800cd29c0edbfdbba57d"
+      "reason": "Reviewed deferred conversation layout stabilization: Jump to end still focuses an inline draft before scrolling and now preserves the documented bottom target after the next layout frame.",
+      "fingerprint": "7525130ec8f11977d5a59f6af4e657b2ed428d5c4b981f6cd1e173b0ececa5dd"
     }
   },
   {

@@ -198,7 +198,9 @@ sibling/header-content gaps and messages/turns use 16px gaps, without
 accumulated nested trailing padding. Jump to End focuses this draft when
 present. Navigation focuses the draft before requesting the explicit viewport
 jump, so focus-time caret reveal cannot cancel the request to reveal the whole
-draft. Reduced-motion navigation remains immediate. Optional composer/footer
+draft. It repeats the same end request on the next animation frame so deferred
+editor measurement or font layout cannot leave part of the draft below the
+viewport. Reduced-motion navigation remains immediate. Optional composer/footer
 slots keep the body independent of host draft state and live conversation
 contracts.
 

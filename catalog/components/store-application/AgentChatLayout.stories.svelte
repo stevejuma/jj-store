@@ -95,6 +95,7 @@
     )!;
     const draft = c.getByRole("textbox", { name: "Markdown editor" });
     let revealedCaret = false;
+    let completedLayout = false;
     // Focusing an editor may reveal only its caret; the explicit jump must win.
     draft.addEventListener(
       "focus",
@@ -104,11 +105,18 @@
           behavior: "instant",
         });
         revealedCaret = true;
+        requestAnimationFrame(() => {
+          draft.closest<HTMLElement>(
+            "[data-chat-next-message]",
+          )!.style.paddingTop = "24px";
+          completedLayout = true;
+        });
       },
       { once: true },
     );
     await userEvent.click(c.getByRole("button", { name: "Jump to end" }));
     await expect(revealedCaret).toBe(true);
+    await waitFor(() => expect(completedLayout).toBe(true));
     await expect(draft).toHaveFocus();
     await waitFor(() =>
       expect(draft.getBoundingClientRect().bottom).toBeLessThanOrEqual(

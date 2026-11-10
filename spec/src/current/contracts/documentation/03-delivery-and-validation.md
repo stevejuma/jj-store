@@ -180,6 +180,16 @@ validation, preserved evidence and process ownership checks. Presentation-only
 Help changes may retain accurate manual prose after explicit review; sidebar
 sizing follows the application navigation requirements.
 
+E-VAULT-BACKUP-025 refreshes the local source-review fingerprint after the
+internal native vault lease owner begins explicitly unlocking on drop. The local
+companion, Git interoperability and conversion pages expose no lock-file
+lifetime and remain accurate; the acknowledgement does not qualify Desktop or
+cross-platform backup behavior.
+
+E-CI-DOC-REVIEW-001 records the source-review fingerprint generated for the
+deferred conversation layout repair. The mapped manual remains accurate; this
+acknowledgement does not qualify hosted, release or platform gates.
+
 E-UI-FAVICON-001 adds local browser-tab branding to the browsing guide and
 reviews the existing application source coverage. The accepted artwork and its
 built asset registration add no manual runtime dependency or external request.

@@ -14,7 +14,15 @@ pub(super) fn saved(binding: &Binding) -> Result<StoredBinding> {
     }
     serde_json::from_slice(&bytes).map_err(|_| Error::Binding)
 }
-pub(super) fn lease(binding: &Binding) -> Result<File> {
+pub(super) struct Lease(File);
+
+impl Drop for Lease {
+    fn drop(&mut self) {
+        let _ = self.0.unlock();
+    }
+}
+
+pub(super) fn lease(binding: &Binding) -> Result<Lease> {
     let parent = directory(binding)?;
     let mut directory = fs::DirBuilder::new();
     directory.recursive(true);
@@ -40,7 +48,7 @@ pub(super) fn lease(binding: &Binding) -> Result<File> {
     }
     let lease = options.open(path)?;
     lease.try_lock().map_err(|_| Error::Busy)?;
-    Ok(lease)
+    Ok(Lease(lease))
 }
 impl Binding {
     pub(super) fn verify_saved(&self) -> Result<()> {

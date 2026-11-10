@@ -151,7 +151,7 @@ pub struct Session {
     binding: Binding,
     workspace: Workspace,
     repo: Arc<ReadonlyRepo>,
-    _lease: File,
+    _lease: binding::Lease,
 }
 impl Session {
     pub async fn open(binding: Binding) -> Result<Self> {
