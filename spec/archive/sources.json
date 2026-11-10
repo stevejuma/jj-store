@@ -116,5 +116,97 @@
   "spec/src/security.md": {
     "archive": "spec/archive/2026-10-06/security.source",
     "sha256": "81e99345e9b673669d693a86155ab93f7e3c7bead0cf58e334c943015124c06e"
+  },
+  ".changeset/ci-cold-browser-freshness.md": {
+    "archive": "spec/archive/2026-11-10/changesets/ci-cold-browser-freshness.source",
+    "sha256": "bf823f629200651b4069d08ba7723328ed2e2ff6d6ca54ee272446b2fbac659d"
+  },
+  ".changeset/core-ui-acceptance.md": {
+    "archive": "spec/archive/2026-11-10/changesets/core-ui-acceptance.source",
+    "sha256": "1eddedd02144e99af732b708dfe9dac44fbfc0043f69e1ff53561fa126303bea"
+  },
+  ".changeset/search-save-notice.md": {
+    "archive": "spec/archive/2026-11-10/changesets/search-save-notice.source",
+    "sha256": "363e46dd76d06eaa94a7c25d52e997baec33d9af81ac7665753f9947dafb468d"
+  },
+  ".changeset/main-local-qualification.md": {
+    "archive": "spec/archive/2026-11-10/changesets/main-local-qualification.source",
+    "sha256": "9068e37650d73b907265285bce49a34c50cae6d6b2ec56cd1d096214a2d9eba2"
+  },
+  ".changeset/repository-removal.md": {
+    "archive": "spec/archive/2026-11-10/changesets/repository-removal.source",
+    "sha256": "25a640e640f71d5157871b89261f17b2309cf4dd7adf3d846c3c67fd06cf750d"
+  },
+  ".changeset/crate-overviews.md": {
+    "archive": "spec/archive/2026-11-10/changesets/crate-overviews.source",
+    "sha256": "fb9bdfed7d8e28cbe776193f0bcea96157e887a33ca1462446591e18289ad33d"
+  },
+  ".changeset/injectable-collaboration-stores.md": {
+    "archive": "spec/archive/2026-11-10/changesets/injectable-collaboration-stores.source",
+    "sha256": "bef477edfd387d08c37acc425d00b22833e864af3e576485397b703c6f4c580a"
+  },
+  ".changeset/standalone-companion-provider.md": {
+    "archive": "spec/archive/2026-11-10/changesets/standalone-companion-provider.source",
+    "sha256": "b17887e63769852bfc87753e4b1a6af687a5ce43b235e9a7f3e2bbf1a1bb31a0"
+  },
+  ".changeset/native-agent-privacy.md": {
+    "archive": "spec/archive/2026-11-10/changesets/native-agent-privacy.source",
+    "sha256": "7d22b2770b6bba57188a9d06fa597629d061a9820b75fc9a195891270387569f"
+  },
+  ".changeset/reusable-session-acquisition.md": {
+    "archive": "spec/archive/2026-11-10/changesets/reusable-session-acquisition.source",
+    "sha256": "fa335106b45915fcf9c37fe5f7ccb4375485819003f7c0c37f88fcc5096b2364"
+  },
+  ".changeset/headless-capture.md": {
+    "archive": "spec/archive/2026-11-10/changesets/headless-capture.source",
+    "sha256": "80fd2cc1e6794006eda6f91334368e6b04f1ab833cb30fe64197c5b1d380f0d1"
+  },
+  ".changeset/shared-conversation-stream.md": {
+    "archive": "spec/archive/2026-11-10/changesets/shared-conversation-stream.source",
+    "sha256": "b7b0c04034d553fff44279700c85e3491cd3949173266b65254128f31eb887d6"
+  },
+  ".changeset/injected-prompt-coordination.md": {
+    "archive": "spec/archive/2026-11-10/changesets/injected-prompt-coordination.source",
+    "sha256": "05b7a12e64131c0de9738bad0668a125f52ec6689aa7e818945da041e28c2cb5"
+  },
+  ".changeset/typed-conversation-client.md": {
+    "archive": "spec/archive/2026-11-10/changesets/typed-conversation-client.source",
+    "sha256": "02b1d69556d09c824234049c4d8b21cce23301bf59a76ffc73a1541b3e785532"
+  },
+  ".changeset/shared-read-admission.md": {
+    "archive": "spec/archive/2026-11-10/changesets/shared-read-admission.source",
+    "sha256": "38b7b9fedcef13083b3f055f455b5e9ac61a9f2ee5d715a40ee5ec150c45166c"
+  },
+  ".changeset/local-history-profile.md": {
+    "archive": "spec/archive/2026-11-10/changesets/local-history-profile.source",
+    "sha256": "600ceae263ad2eb0438641c5e65e5efe17ea72106adb41ec8ecd7fe99d9030c1"
+  },
+  ".changeset/admitted-history-bridge.md": {
+    "archive": "spec/archive/2026-11-10/changesets/admitted-history-bridge.source",
+    "sha256": "3e3dda2925893d615420a7ac8e275dc07d642a4c53ae8073f39106db0e88622a"
+  },
+  ".changeset/reusable-workspace-discovery.md": {
+    "archive": "spec/archive/2026-11-10/changesets/reusable-workspace-discovery.source",
+    "sha256": "554da23d24d545a214830d56cf957b96314487a944b8757a75931aa2edb34a22"
+  },
+  ".changeset/history-wire-integers.md": {
+    "archive": "spec/archive/2026-11-10/changesets/history-wire-integers.source",
+    "sha256": "46f7fa3b0fb24a8613ef1e3f4cdd48bf36085c793244caefd652459781198835"
+  },
+  ".changeset/typed-history-client.md": {
+    "archive": "spec/archive/2026-11-10/changesets/typed-history-client.source",
+    "sha256": "c511baeae5dfbfd3ae3b81403eebb218337ddc4771277799a3e1f1fe7d559d26"
+  },
+  ".changeset/linux-vault-directory-sync.md": {
+    "archive": "spec/archive/2026-11-10/changesets/linux-vault-directory-sync.source",
+    "sha256": "8d34fbe65a194dae371badbc13c1a1e03c47ed6bb066a15ea10622f9ab6a0f12"
+  },
+  ".changeset/remote-test-audit-repairs.md": {
+    "archive": "spec/archive/2026-11-10/changesets/remote-test-audit-repairs.source",
+    "sha256": "0e16e881ad168d94c1a5461f6205e074c3764a7305bb68bb56016f64ae8389d8"
+  },
+  ".changeset/desktop-browser-development.md": {
+    "archive": "spec/archive/2026-11-10/changesets/desktop-browser-development.source",
+    "sha256": "487b612e3a8934e080174722dfac9d8a6051725c77ecb6179a25d6d70b70fd69"
   }
 }
