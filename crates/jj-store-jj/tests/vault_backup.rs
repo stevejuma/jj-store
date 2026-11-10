@@ -119,6 +119,21 @@ async fn rejects_concurrent_commands_and_another_vault_binding() {
     other.root = base.join("other");
     assert!(Session::open(other).await.is_err());
 }
+
+#[tokio::test]
+async fn released_session_and_relink_leases_do_not_block_the_next_command() {
+    let temp = tempfile::tempdir().unwrap();
+    let base = temp.path().canonicalize().unwrap();
+    fs::create_dir(base.join("notes")).unwrap();
+    let binding = binding(&base);
+    for _ in 0..512 {
+        let session = Session::open(binding.clone()).await.unwrap();
+        drop(session);
+        binding.relink().unwrap();
+    }
+    Session::open(binding).await.unwrap();
+}
+
 #[cfg(unix)]
 #[tokio::test]
 async fn relinking_the_same_physical_vault_preserves_history_and_rejects_replacement() {

@@ -26,15 +26,20 @@ watch, history/search, restore and sync. Unsupported or incomplete capture MUST
 NOT report success.
 
 Native workers own bounded scans, JJ locks and serialized per-vault mutations.
-Read-only history queries never trigger capture. A host close drains capture
-after editor persistence; remote availability cannot block saved-file closure.
-Failed final capture MUST retain its failure status and the host's original
-worker ownership for an explicit close retry. A retry MUST capture repaired
-saved files before reporting closed. Successful close is idempotent. Dropping
-the sole coordinator owner MUST retire its worker even while change-notification
-handles remain; abandonment never reports a successful final capture. Pending
-work and unknown command outcomes survive restart without duplicate checkpoints
-or blind replay. All active work reports through host progress.
+Every native command lease MUST explicitly unlock when its owner is dropped,
+including session and root-relink paths, before a subsequent command for the
+same binding is admitted. A genuinely overlapping command on that binding
+remains Busy; lock release MUST NOT be replaced by retries or weakened
+admission. Read-only history queries never trigger capture. A host close drains
+capture after editor persistence; remote availability cannot block saved-file
+closure. Failed final capture MUST retain its failure status and the host's
+original worker ownership for an explicit close retry. A retry MUST capture
+repaired saved files before reporting closed. Successful close is idempotent.
+Dropping the sole coordinator owner MUST retire its worker even while
+change-notification handles remain; abandonment never reports a successful final
+capture. Pending work and unknown command outcomes survive restart without
+duplicate checkpoints or blind replay. All active work reports through host
+progress.
 
 Explicit restore preserves a safety checkpoint and uses guarded file writes.
 Regular-file replacement and deletion MUST sync the capability-relative parent

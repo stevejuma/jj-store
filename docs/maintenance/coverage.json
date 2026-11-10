@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed historical revset index merging against the selected-operation contract. Updated the local technical guide to clarify exact visibility and read-only preparation; Git transport and conversion identity/authority guidance remain accurate and unchanged.",
-      "fingerprint": "ea28deab170bee94a0f3956c72d58c7a992a429c223c435b4ed993c4dd1b8402"
+      "reason": "Reviewed historical revset index merging and explicit native vault lease release against the selected-operation and command-lifetime contracts. The updated local technical guide remains accurate; Git transport and conversion identity guidance are unchanged.",
+      "fingerprint": "ff115f38a1db26a6464e668a2412c0c072d7f4ab355ba087f86858813d1e3157"
     }
   },
   {

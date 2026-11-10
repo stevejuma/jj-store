@@ -10,7 +10,7 @@ be recorded. M33's conversation gates and unrelated work remain unchanged.
 | ----- | ------- | ----------- | ------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | M34   | Partial | -           | JST-LOCAL-007 | Functional Notes backup, restore, GitHub/Forgejo sync and history search integrated into main workspaces | Review integrated working version         | E-VAULT-BACKUP-001                                                                                                |
 | M34.1 | Partial | -           | JST-LOCAL-007 | Stable vault identity, independent external JJ state and retained checkpoint commits                     | Deferred cold identity/reopen proof       | E-VAULT-BACKUP-001                                                                                                |
-| M34.2 | Partial | M34.1       | JST-LOCAL-007 | Reusable capture coordinator, watch reconciliation and crash/close recovery                              | Qualify cold native lifecycle later       | E-VAULT-BACKUP-001,E-VAULT-BACKUP-002,E-VAULT-BACKUP-018,E-VAULT-BACKUP-019                                       |
+| M34.2 | Partial | M34.1       | JST-LOCAL-007 | Reusable capture coordinator, watch reconciliation and crash/close recovery                              | Qualify cold native lifecycle later       | E-VAULT-BACKUP-001,E-VAULT-BACKUP-002,E-VAULT-BACKUP-018,E-VAULT-BACKUP-019,E-VAULT-BACKUP-025                    |
 | M34.3 | Partial | M34.2       | JST-LOCAL-007 | Usable local timeline, guarded restore and visible background status                                     | Deferred cold restore qualification       | E-VAULT-BACKUP-003,E-VAULT-BACKUP-019,E-VAULT-BACKUP-021                                                          |
 | M34.4 | Partial | M34.3       | JST-LOCAL-007 | GitHub sign-in, remote setup and fresh-device restore                                                    | Qualify cold app/provider flow later      | E-VAULT-BACKUP-004,E-VAULT-BACKUP-005,E-VAULT-BACKUP-006,E-VAULT-BACKUP-007                                       |
 | M34.5 | Partial | M34.4       | JST-LOCAL-007 | Two-device automatic pull/merge/push with recoverable conflicts                                          | Qualify cold app/provider gates later     | E-VAULT-BACKUP-008,E-VAULT-BACKUP-009,E-VAULT-BACKUP-016,E-VAULT-BACKUP-019                                       |
@@ -89,6 +89,12 @@ separately owned environmental refusals (image Git 2.43.0 against the exact
 2.55.0 capability gate), and the pre-existing macOS native_rpc rustls provider
 defect is assigned and reported without weakening any gate. M34.6 remains
 Partial at its original cold application/search/restore gate.
+
+E-VAULT-BACKUP-025 makes native binding lease release explicit for both session
+and relink owners. The source regression and the original Desktop concurrent
+backup boundary prove that sequential commands no longer inherit a stale Busy
+result; overlapping same-binding commands remain rejected. M34.2 remains Partial
+at its original cold application lifecycle gate.
 
 ## Deferred verification
 
