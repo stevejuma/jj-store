@@ -186,6 +186,10 @@ companion, Git interoperability and conversion pages expose no lock-file
 lifetime and remain accurate; the acknowledgement does not qualify Desktop or
 cross-platform backup behavior.
 
+E-CI-DOC-REVIEW-001 records the source-review fingerprint generated for the
+deferred conversation layout repair. The mapped manual remains accurate; this
+acknowledgement does not qualify hosted, release or platform gates.
+
 E-UI-FAVICON-001 adds local browser-tab branding to the browsing guide and
 reviews the existing application source coverage. The accepted artwork and its
 built asset registration add no manual runtime dependency or external request.

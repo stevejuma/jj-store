@@ -141,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Design Core 0.10.1 branch-command active-item cleanup: keyboard and pointer selection keep valid combobox focus while preserving documented browsing, editing, settings and conversion behavior.",
-      "fingerprint": "a97358875574c860ef4afa6a01f2919fde88ae1f9f06800cd29c0edbfdbba57d"
+      "reason": "Reviewed deferred conversation layout stabilization: Jump to end still focuses an inline draft before scrolling and now preserves the documented bottom target after the next layout frame.",
+      "fingerprint": "7525130ec8f11977d5a59f6af4e657b2ed428d5c4b981f6cd1e173b0ececa5dd"
     }
   },
   {

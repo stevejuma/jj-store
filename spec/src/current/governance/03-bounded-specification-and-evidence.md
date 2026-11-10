@@ -1,5 +1,9 @@
 # Bounded specification and evidence
 
+E-CI-DOC-REVIEW-001 retains JST-GOV-002/003/004/011 unchanged. It records the
+failed hosted formatting and documentation-review inputs, their bounded repair
+and local native validation without promoting any hosted or release gate.
+
 E-STORY-PARITY-001 retains JST-GOV-002/011 owner coverage and qualification.
 Local Docker runs retain exact source, parent history, toolchain and explicit
 package-archive identities with their reports. E-VAULT-BACKUP-021 confirms that

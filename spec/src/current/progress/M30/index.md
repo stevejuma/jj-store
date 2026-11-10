@@ -136,12 +136,12 @@ after deferred editor layout, retaining the 1-pixel full-draft bound without a
 test retry. M30 stays In progress. Fresh required checks must pass on the repair
 head; prior local or hosted passes do not substitute for that result.
 
-E-PR10-AUTOCOMPLETE-001 explicitly reviews M30 with status unchanged. The
-remaining hosted workflow failure is traced to Design Core's deferred input
-selection. Its source repair and authorized package release retain protected
-source/version checks and provenance verification. Fresh required CI on the
-updated jj-store head remains mandatory; this dependency repair does not qualify
-heavy hosted release, other platforms or jj-store publication.
+E-PR10-AUTOCOMPLETE-001 keeps M30 unchanged and traces its hosted failure to
+Design Core's deferred selection; the released repair retains provenance. Runs
+42894033392/42894033253 retain repaired format/doc-review failures. A stale
+local Design Core 0.7 link reproduced the combobox failure; frozen 0.10.1 relink
+passed the exact story 4/4. E-CI-DOC-REVIEW-001 records the follow-up receipt.
+Fresh CI remains required; no release/platform gate changes.
 
 E-LAPIS-AI-001 records local Lapis AI client/helper adoption and Control V3-only
 execution, with exact recovery, bundle and cold compute evidence. This review
@@ -397,4 +397,3 @@ canonical schedule-event qualification and health recognition while
 E-DEPENDENCY-AUTOMATION-004 records unchanged-contract Design Core 0.10.1
 compatibility. M30 remains In progress: four quarantines, latency/reliability,
 publication, provider and platform gates remain; visual approval is deferred.
-
