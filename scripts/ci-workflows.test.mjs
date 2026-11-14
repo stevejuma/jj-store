@@ -93,8 +93,12 @@ test("successful main builds publish bounded source and rolling image tags", () 
   const dbus = webSteps.findIndex((step) =>
     step.run?.includes("libdbus-1-dev"),
   );
+  const chromium = webSteps.findIndex(
+    (step) => step.run === "pnpm exec playwright install --with-deps chromium",
+  );
   const webBuild = webSteps.findIndex((step) => step.run === "pnpm web:build");
   assert.ok(dbus >= 0 && dbus < webBuild);
+  assert.ok(chromium >= 0 && chromium < webBuild);
   const releaseSource = readFileSync(
     ".github/workflows/publish-release.yml",
     "utf8",
