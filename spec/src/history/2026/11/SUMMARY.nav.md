@@ -8,5 +8,9 @@
   {{#include 04/SUMMARY.nav.md}}
 - [06](06/index.md)
   {{#include 06/SUMMARY.nav.md}}
+- [07](07/index.md)
+  {{#include 07/SUMMARY.nav.md}}
 - [10](10/index.md)
   {{#include 10/SUMMARY.nav.md}}
+- [14](14/index.md)
+  {{#include 14/SUMMARY.nav.md}}

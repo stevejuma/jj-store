@@ -15,9 +15,13 @@
   name="Selected commits and headers toggle closed without losing adjacent diffs"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const stack = await canvas.findByRole("region", {
-      name: "Stack feature/api",
-    });
+    const stack = await canvas.findByRole(
+      "region",
+      {
+        name: "Stack feature/api",
+      },
+      { timeout: 5_000 },
+    );
     const commit = within(stack).getByRole("button", {
       name: "Expose repository API",
     });

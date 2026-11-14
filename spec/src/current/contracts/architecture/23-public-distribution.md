@@ -54,11 +54,11 @@ republish an artifact. No dependency automation merges PRs, signs artifacts,
 publishes packages or deploys applications.
 
 GNU/Linux and macOS bundles support ARM64 and x86-64 with the server, client,
-RustFS helper, browser and Help. Each target also has a checksummed standalone
-server asset; the bundle remains the normal installation. Main checks publish
-scanned `sha-<12-hex>` and `main` container tags; qualified releases add the Git
-tag and `latest`. Images use external RustFS and TLS; LocalTrusted, desktop,
-Windows, provider and other storage gates stay separate.
+RustFS helper, browser, Help and a checksummed standalone server asset. The
+main-image web job installs pkg-config and libdbus-1-dev before `web:build`
+because Help staging compiles `docs_reference`. Main publishes `sha-<12-hex>`
+and `main` tags; releases add the Git tag and `latest`. Images use external
+RustFS and TLS; LocalTrusted, desktop, Windows, provider gates stay separate.
 
 Rust 1.99 and released Kingfisher libraries replace checkout-only dependencies.
 Privacy policy and compiled cache identities distinguish the released rule set.

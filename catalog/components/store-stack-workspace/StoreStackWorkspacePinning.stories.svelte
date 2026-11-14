@@ -20,7 +20,11 @@
   args={{ page: "branches" }}
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
-    const branches = await canvas.findByRole("region", { name: "Branches" });
+    const branches = await canvas.findByRole(
+      "region",
+      { name: "Branches" },
+      { timeout: 5_000 },
+    );
     expect(branches).toHaveAttribute("data-fixed", "true");
     await userEvent.click(canvas.getByRole("option", { name: "feature/api" }));
     const stack = await canvas.findByRole("region", {

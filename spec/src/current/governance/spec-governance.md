@@ -373,7 +373,7 @@ protocol or visual baseline gates.
 Public distribution maps `.github/`, Changesets and container files to
 architecture/23-public-distribution.md. Every tracked workflow has an explicit
 standard, qualification, experiment or publication owner; reusable and gated
-entries are not obsolete. Full M30 gates still bind producers and signers.
+entries are not obsolete. Web image installs libdbus; M30 gates still bind.
 
 E-AUTOMATION-GOVERNANCE-001 exempts generated `changeset-release/main` and
 Dependabot `dependabot/` PRs from JST-GOV-002/003/004/011 notes and same-change

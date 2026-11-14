@@ -89,6 +89,12 @@ test("successful main builds publish bounded source and rolling image tags", () 
   assert.match(publication.run, /scripts\/image-tags\.mjs source/);
   assert.match(publication.run, /jj-store:main/);
   assert.match(publication.run, /imagetools inspect/);
+  const webSteps = main.jobs.web.steps;
+  const dbus = webSteps.findIndex((step) =>
+    step.run?.includes("libdbus-1-dev"),
+  );
+  const webBuild = webSteps.findIndex((step) => step.run === "pnpm web:build");
+  assert.ok(dbus >= 0 && dbus < webBuild);
   const release = readFileSync(".github/workflows/publish-release.yml", "utf8");
   assert.match(release, /image-tags\.mjs release-architecture/);
   assert.match(release, /RELEASE_TAG: \$\{\{ inputs\.tag \}\}/);

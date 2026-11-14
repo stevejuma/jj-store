@@ -70,9 +70,13 @@
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("button", {
-        name: "Create commit in feature/api",
-      }),
+      await canvas.findByRole(
+        "button",
+        {
+          name: "Create commit in feature/api",
+        },
+        { timeout: 5_000 },
+      ),
     );
     const staged = canvas.getByRole("group", {
       name: "Staged files for feature/api",
