@@ -391,9 +391,8 @@ hosted checks pass; the cold and release gates remain independent.
 E-CI-COLD-PROJECT-ROUTE-001 passes the operation-pinned project/document cold
 gate. Reaction geometry and complete release qualification remain open.
 
-E-PUBLIC-SURFACES-001 qualifies combined Pages, workflows, bounded image tags
-and eight checksummed native assets. E-CI-SCHEDULED-FRESHNESS-001 proves
-canonical schedule-event qualification and health recognition while
-E-DEPENDENCY-AUTOMATION-004 records unchanged-contract Design Core 0.10.1
-compatibility. M30 remains In progress: four quarantines, latency/reliability,
-publication, provider and platform gates remain; visual approval is deferred.
+E-PUBLIC-SURFACES-001 qualifies Pages, workflows, bounded image tags and eight
+checksummed native assets. E-CI-SCHEDULED-FRESHNESS-001 proves scheduled health;
+E-DEPENDENCY-AUTOMATION-004 records unchanged Design Core 0.10.1 compatibility;
+E-CI-IMAGE-WEB-PLAYWRIGHT-001 records the missing hosted Chromium prerequisite.
+M30 remains In progress until exact-source GHCR and final release qualification.
