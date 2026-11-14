@@ -48,6 +48,16 @@ test("every tracked workflow has an explicit current owner", () => {
   );
 });
 
+test("Changesets CLI v2 keeps its compatible release action", () => {
+  const source = readFileSync(".github/workflows/release.yml", "utf8");
+  assert.match(
+    source,
+    /changesets\/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d/,
+  );
+  for (const input of ["version", "publish", "commit", "title", "commitMode"])
+    assert.match(source, new RegExp(`^\\s+${input}:`, "m"));
+});
+
 test("Pages validates the spec, manual and source Storybook together", () => {
   const source = readFileSync(
     ".github/workflows/publish-spec-pages.yml",
