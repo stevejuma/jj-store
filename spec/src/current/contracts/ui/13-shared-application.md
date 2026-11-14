@@ -26,6 +26,11 @@ overlay modal leases to release before mounting. Original accessibility rules,
 layout thresholds and interaction outcomes remain required; these waits do not
 qualify production cold-start behavior.
 
+Complex Stacks fixtures give their first production control or region a bounded
+five-second render window under contended hosted shards. The original role,
+label, geometry and interaction assertions remain unchanged, and no failed
+assertion is retried.
+
 Branches use the requested card layout within the existing Command View:
 bookmark name, latest description, workspace/conflict chips, author avatar and
 deterministic relative time. Filters are All, Workspace and Conflicted,
