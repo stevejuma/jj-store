@@ -32,6 +32,10 @@ test. The setup/workflow regressions and actionlint are the complete local
 surface; hosted timing remains required before claiming a latency improvement.
 Manual full and heavy qualification inputs are unchanged.
 
+E-CI-RELEASE-PYTHON-001 pins Python 3.12 before qualified-release metadata
+validation. The exact workflow regression, complete release-tooling tests,
+actionlint and hosted publication remain required; local checks cannot publish.
+
 E-CI-TARGETED-SHARDS-001 compares the retained two-shard cohort with a hosted
 four-shard trial. Focused inventory, evidence and workflow regressions plus
 actionlint are the local surface. The measured trial did not improve complete PR

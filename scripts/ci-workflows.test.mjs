@@ -95,9 +95,22 @@ test("successful main builds publish bounded source and rolling image tags", () 
   );
   const webBuild = webSteps.findIndex((step) => step.run === "pnpm web:build");
   assert.ok(dbus >= 0 && dbus < webBuild);
-  const release = readFileSync(".github/workflows/publish-release.yml", "utf8");
-  assert.match(release, /image-tags\.mjs release-architecture/);
-  assert.match(release, /RELEASE_TAG: \$\{\{ inputs\.tag \}\}/);
+  const releaseSource = readFileSync(
+    ".github/workflows/publish-release.yml",
+    "utf8",
+  );
+  const release = parseYaml(releaseSource);
+  assert.match(releaseSource, /image-tags\.mjs release-architecture/);
+  assert.match(releaseSource, /RELEASE_TAG: \$\{\{ inputs\.tag \}\}/);
+  const identitySteps = release.jobs.identity.steps;
+  const python = identitySteps.findIndex((step) =>
+    step.uses?.startsWith("actions/setup-python@"),
+  );
+  const metadata = identitySteps.findIndex(
+    (step) => step.name === "Verify source and coordinated version",
+  );
+  assert.equal(identitySteps[python]?.with["python-version"], "3.12");
+  assert.ok(python >= 0 && python < metadata);
 });
 test("embedded runtime installs protoc before compiling its Pulsar dependency", () => {
   const { steps } = parseYaml(
