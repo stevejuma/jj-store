@@ -1,5 +1,6 @@
 //! Native-approved Git transfer. Network calls never hold the capture lease.
 mod adoption;
+mod endpoint;
 mod import;
 mod process;
 pub(super) mod publication;
@@ -19,19 +20,7 @@ pub struct RemoteTarget {
 impl RemoteTarget {
     pub fn validate(&self) -> Result<()> {
         checked_branch(&self.branch)?;
-        let url = Url::parse(&self.url).map_err(|_| Error::Binding)?;
-        if url.scheme() != "https"
-            || url.host_str().is_none()
-            || !url.username().is_empty()
-            || url.password().is_some()
-            || url.query().is_some()
-            || url.fragment().is_some()
-            || url.path().trim_matches('/').is_empty()
-            || self.url.len() > 4096
-            || self.url.chars().any(char::is_control)
-        {
-            return Err(Error::Binding);
-        }
+        endpoint::protocol(&self.url)?;
         Ok(())
     }
 }
@@ -92,6 +81,12 @@ impl FetchedHead {
         &self.endpoint
     }
 }
+/// Identity already configured on the executing host, never an uploaded key.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum HostSshIdentity {
+    Agent,
+    Default,
+}
 pub struct RemoteTransfer {
     binding: Binding,
     endpoint: String,
@@ -99,6 +94,8 @@ pub struct RemoteTransfer {
     git: PathBuf,
     credential: Option<GitCredentials>,
     local: bool,
+    ssh: Option<HostSshIdentity>,
+    known_hosts: Option<PathBuf>,
 }
 impl RemoteTransfer {
     pub async fn connect(
@@ -107,7 +104,46 @@ impl RemoteTransfer {
         credential: GitCredentials,
     ) -> Result<Self> {
         target.validate()?;
-        Self::initialize(binding, target.url, target.branch, Some(credential), false).await
+        if endpoint::protocol(&target.url)? != endpoint::Protocol::Https {
+            return Err(Error::Binding);
+        }
+        Self::initialize(
+            binding,
+            target.url,
+            target.branch,
+            Some(credential),
+            false,
+            None,
+        )
+        .await
+    }
+    /// Anonymous HTTPS never invokes host Git credential helpers.
+    pub async fn connect_anonymous(binding: Binding, target: RemoteTarget) -> Result<Self> {
+        target.validate()?;
+        if endpoint::protocol(&target.url)? != endpoint::Protocol::Https {
+            return Err(Error::Binding);
+        }
+        Self::initialize(binding, target.url, target.branch, None, false, None).await
+    }
+    /// Host-owned SSH with strict known-host checks and no interactive prompts.
+    pub async fn connect_ssh(
+        binding: Binding,
+        target: RemoteTarget,
+        identity: HostSshIdentity,
+    ) -> Result<Self> {
+        target.validate()?;
+        if endpoint::protocol(&target.url)? != endpoint::Protocol::Ssh {
+            return Err(Error::Binding);
+        }
+        Self::initialize(
+            binding,
+            target.url,
+            target.branch,
+            None,
+            false,
+            Some(identity),
+        )
+        .await
     }
     /// Explicit native-only local transport for admitted local backups and tests.
     /// Never deserialize a renderer path into this capability.
@@ -115,7 +151,7 @@ impl RemoteTransfer {
         checked_branch(branch)?;
         let path = path.canonicalize()?;
         let text = path.to_str().ok_or(Error::Binding)?.to_owned();
-        Self::initialize(binding, text, branch.into(), None, true).await
+        Self::initialize(binding, text, branch.into(), None, true, None).await
     }
     async fn initialize(
         binding: Binding,
@@ -123,6 +159,7 @@ impl RemoteTransfer {
         branch: String,
         credential: Option<GitCredentials>,
         local: bool,
+        ssh: Option<HostSshIdentity>,
     ) -> Result<Self> {
         let session = Session::open(binding.clone()).await?;
         let git = git::get_git_backend(session.repo.store())
@@ -137,7 +174,27 @@ impl RemoteTransfer {
             git,
             credential,
             local,
+            ssh,
+            known_hosts: None,
         })
+    }
+    /// Host-only trust-file selection, never a renderer or repository path.
+    /// The file is read-only; unknown or changed host keys remain rejected.
+    pub fn with_known_hosts(mut self, path: &Path) -> Result<Self> {
+        if self.ssh.is_none() || !path.is_absolute() {
+            return Err(Error::Binding);
+        }
+        let path = path.canonicalize().map_err(|_| Error::Binding)?;
+        let text = path.to_str().ok_or(Error::Binding)?;
+        if path.starts_with(&self.binding.root)
+            || text.len() > 4096
+            || text.chars().any(|c| c.is_control() || c == '$' || c == '%')
+            || !path.metadata().map_err(|_| Error::Binding)?.is_file()
+        {
+            return Err(Error::Binding);
+        }
+        self.known_hosts = Some(path);
+        Ok(self)
     }
     fn reference(&self) -> String {
         format!("refs/heads/{}", self.branch)

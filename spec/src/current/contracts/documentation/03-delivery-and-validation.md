@@ -378,3 +378,17 @@ choice and completed capture-lock release. Configuration fields, environment
 variables, conversion identity and publication authority remain unchanged.
 JST-DOC-001/002 review fingerprints are refreshed only after those mapped pages
 are checked; blocked browser runs do not supply passing Help evidence.
+
+E-VAULT-BACKUP-026 reviews the local embedding guide after adding separate
+anonymous HTTPS and host-managed SSH backup entry points. Native bridge Git and
+conversion guidance retain their existing scope; source validation does not
+qualify an application SSH/provider flow or original-repository writes.
+
+E-VAULT-BACKUP-027 records real loopback SSH acceptance with disposable agent,
+identities, trust files and server state. The native host trust-file profile is
+documented separately from renderer paths and external provider qualification.
+
+E-VAULT-BACKUP-028 refreshes the local manual source fingerprint after the
+strict SSH trust-file implementation. The review retains independent native
+bridge and conversion scope; hosted documentation checks enforce the reviewed
+source.

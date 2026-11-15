@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed historical revset index merging and explicit native vault lease release against the selected-operation and command-lifetime contracts. The updated local technical guide remains accurate; Git transport and conversion identity guidance are unchanged.",
-      "fingerprint": "ff115f38a1db26a6464e668a2412c0c072d7f4ab355ba087f86858813d1e3157"
+      "reason": "Document host-only read-only SSH trust-file selection and real disposable transport qualification; no renderer paths or changed-key bypass.",
+      "fingerprint": "67f8b258b24d0d5854c8f7c7b4f4cb5e4a7f2126a2684f2a6275142161dc6d57"
     }
   },
   {

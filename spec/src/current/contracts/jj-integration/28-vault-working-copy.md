@@ -87,3 +87,11 @@ to one MiB. Retained-object checks precede source access. These read methods
 preserve JST-JJ-003/005 identities, take no working-copy writer lease and cannot
 initialize, reconcile or snapshot a repository. The server-free text projection
 and its resumable frontier remain disposable jj-vault-owned state.
+
+The selected transport admits anonymous HTTPS and host-managed SSH separately
+from HTTPS token authorization. Strict host-key verification, noninteractive
+execution and capture/transport separation remain required (JST-LOCAL-007).
+
+E-VAULT-BACKUP-027 qualifies the explicit native read-only known-hosts selection
+for backup transport. It does not change working-copy capture/import authority
+or admit repository-provided SSH commands; changed host keys refuse transfer.

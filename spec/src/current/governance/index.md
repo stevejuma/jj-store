@@ -32,3 +32,5 @@ Read the owning topic and requirement before implementation.
 
 - [Unchanged-contract chapter lookup](24-unchanged-contract-chapters.md)
 - [Temporary test quarantines](25-test-quarantines.md)
+
+- [Qualification change reviews](qualification-change-reviews.md)

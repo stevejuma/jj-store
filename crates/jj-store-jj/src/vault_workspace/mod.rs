@@ -39,8 +39,8 @@ use jj_lib::{
     workspace::Workspace,
 };
 pub use remote::{
-    FetchedHead, GitCredentials, PendingPublication, PushIntent, PushOutcome, RemoteTarget,
-    RemoteTransfer,
+    FetchedHead, GitCredentials, HostSshIdentity, PendingPublication, PushIntent, PushOutcome,
+    RemoteTarget, RemoteTransfer,
 };
 pub use restore::{RestorePreview, RestoreRequest};
 use serde::{Deserialize, Serialize};
