@@ -392,3 +392,7 @@ E-VAULT-BACKUP-028 refreshes the local manual source fingerprint after the
 strict SSH trust-file implementation. The review retains independent native
 bridge and conversion scope; hosted documentation checks enforce the reviewed
 source.
+
+Original remote embedding documentation distinguishes its explicit native writer
+from immutable readers and independent backup state. E-ORIGINAL-REMOTE-001
+tracks source proof without claiming host delivery.

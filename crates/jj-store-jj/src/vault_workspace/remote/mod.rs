@@ -98,6 +98,18 @@ pub struct RemoteTransfer {
     known_hosts: Option<PathBuf>,
 }
 impl RemoteTransfer {
+    pub(crate) fn native_binding(&self) -> &Binding {
+        &self.binding
+    }
+    pub(crate) fn native_git_path(&self) -> &Path {
+        &self.git
+    }
+    pub(crate) fn native_target(&self) -> RemoteTarget {
+        RemoteTarget {
+            url: self.endpoint.clone(),
+            branch: self.branch.clone(),
+        }
+    }
     pub async fn connect(
         binding: Binding,
         target: RemoteTarget,

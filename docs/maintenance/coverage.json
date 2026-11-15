@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Document host-only read-only SSH trust-file selection and real disposable transport qualification; no renderer paths or changed-key bypass.",
-      "fingerprint": "67f8b258b24d0d5854c8f7c7b4f4cb5e4a7f2126a2684f2a6275142161dc6d57"
+      "reason": "Reviewed explicitly admitted original remote discovery, guarded save, tracking-only fetch and immutable single-bookmark publication; source SSH proof remains distinct from cold host/provider acceptance.",
+      "fingerprint": "fd01b1a09dcba0058175a3f0b5262942b630051e87322f484830714a69644991"
     }
   },
   {

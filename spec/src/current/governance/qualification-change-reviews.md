@@ -15,3 +15,10 @@ precede the measured adoption decision; no test-pass cache is introduced.
 The read-only native SSH trust-file profile retains E-VAULT-BACKUP-027 as a
 separate transport receipt. Loopback proof cannot promote M34.5 beyond Partial
 or substitute for host/provider and cold application acceptance.
+
+JST-LOCAL-008 original remotes use separate mutation admission and private
+state. M34.9 source, real transport and cold host evidence remain independent.
+
+The original SSH source lane is opt-in through the managed validation runner.
+Its private Linux fixture parent retains OpenSSH StrictModes; source proofs do
+not substitute for cold Desktop/hosted or external-provider acceptance.

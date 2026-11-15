@@ -115,7 +115,8 @@
     "validate:stop": "node scripts/validation.mjs stop",
     "validate:clean": "node scripts/validation.mjs clean",
     "check:storybook-parity": "node scripts/validation.mjs run check:storybook-parity",
-    "validation:rust": "node scripts/validation.mjs run validation:rust"
+    "validation:rust": "node scripts/validation.mjs run validation:rust",
+    "test:vault-ssh": "node scripts/validation.mjs run test:vault-ssh"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",

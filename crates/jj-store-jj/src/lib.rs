@@ -31,6 +31,8 @@ pub mod native_dto;
 pub mod objects;
 #[cfg(feature = "native")]
 pub mod operation_stores;
+#[cfg(feature = "vault-backup")]
+pub mod original_remotes;
 #[cfg(feature = "native")]
 pub mod policy;
 #[cfg(any(feature = "native", feature = "local-history"))]

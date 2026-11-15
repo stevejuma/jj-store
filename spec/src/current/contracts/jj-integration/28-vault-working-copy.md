@@ -95,3 +95,8 @@ execution and capture/transport separation remain required (JST-LOCAL-007).
 E-VAULT-BACKUP-027 qualifies the explicit native read-only known-hosts selection
 for backup transport. It does not change working-copy capture/import authority
 or admit repository-provided SSH commands; changed host keys refuse transfer.
+
+[Original repository remotes](../local-jj/33-original-repository-remotes.md) add
+JST-LOCAL-008 through a distinct native writer capability. Immutable read grants
+retain their existing authority; original fetch preserves working files and uses
+native bookmark tracking imports without snapshot or checkout.

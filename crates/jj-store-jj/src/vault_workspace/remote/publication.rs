@@ -1,4 +1,5 @@
 mod recovery;
+mod selected;
 use super::*;
 use jj_lib::backend::CommitId;
 pub use recovery::PendingPublication;

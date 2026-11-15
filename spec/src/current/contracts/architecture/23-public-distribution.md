@@ -370,14 +370,12 @@ policy. Generated contracts are checked against the owned native schema and
 independent archives prove runtime and type consumption without source aliases.
 Package checks do not publish the archive or qualify Notes integration.
 
-Local Linux-compatible validation defaults to context-configured Docker with
-fingerprinted reusable UI/full toolchains. Exact source revisions, parent
-history, lockfiles, pinned sibling sources and explicit checksummed package
-archives govern run identity. Missing images are built on demand. Reports are
-retrieved on success/failure; interruption never establishes acceptance. Remote
-runs use source transfer, isolated services, bounded resources and managed Cargo
-storage. Native desktop/provider qualification remains separate. These local
-results do not assert hosted producer provenance or release qualification.
+Linux-compatible local validation uses Docker with fingerprinted UI/full tools.
+It pins source/parents, lockfiles, siblings and checksummed archives; builds
+missing images; returns pass/fail reports; and retains isolated services,
+resource bounds and managed Cargo. Opt-in `test:vault-ssh` uses disposable keys
+and secure Linux fixture homes for original/backup. Interruption or source proof
+cannot qualify native desktop/providers, hosted producers or public releases.
 
 Browser validation builds its preview through managed Cargo before timing server
 readiness, then launches the executable from the selected registered target. App
