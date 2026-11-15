@@ -3,6 +3,7 @@ mod forgejo;
 pub use forgejo::forgejo_api_root;
 pub mod http;
 mod oauth;
+mod replacement;
 pub mod store;
 mod types;
 use crate::{Error, Result};
@@ -151,30 +152,7 @@ impl Manager {
         user: Value,
         credential: &Credential,
     ) -> Result<Account> {
-        let user_id = identity(&user)?;
-        let login = user
-            .get("login")
-            .and_then(Value::as_str)
-            .filter(|v| crate::safe_name(v))
-            .ok_or(Error::Invalid)?
-            .to_string();
-        let field = |name: &str| {
-            user.get(name)
-                .and_then(Value::as_str)
-                .map(|s| s.chars().take(2048).collect())
-        };
-        let account = Account {
-            id: store::account_id(&api, &user_id, &method),
-            api_url: api,
-            user_id,
-            login,
-            name: field("name"),
-            email: field("email"),
-            avatar_url: field("avatar_url"),
-            method,
-            revision: 1,
-            available: true,
-        };
+        let account = verified_account(api, method, user)?;
         Store::open(&self.root)?.put(account, credential, self.secrets.as_ref())
     }
     pub async fn execute(&self, command: Command, now: u64) -> Result<Inventory> {
@@ -229,6 +207,32 @@ impl Manager {
         inventory.authorization = authorization;
         Ok(inventory)
     }
+}
+fn verified_account(api: String, method: Method, user: Value) -> Result<Account> {
+    let user_id = identity(&user)?;
+    let login = user
+        .get("login")
+        .and_then(Value::as_str)
+        .filter(|v| crate::safe_name(v))
+        .ok_or(Error::Invalid)?
+        .to_owned();
+    let field = |name: &str| {
+        user.get(name)
+            .and_then(Value::as_str)
+            .map(|s| s.chars().take(2048).collect())
+    };
+    Ok(Account {
+        id: store::account_id(&api, &user_id, &method),
+        api_url: api,
+        user_id,
+        login,
+        name: field("name"),
+        email: field("email"),
+        avatar_url: field("avatar_url"),
+        method,
+        revision: 1,
+        available: true,
+    })
 }
 fn identity(user: &Value) -> Result<String> {
     user.get("id")

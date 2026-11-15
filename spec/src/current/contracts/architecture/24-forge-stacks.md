@@ -10,6 +10,14 @@ root at `/api/v1`, retains only public identity and uses Forgejo token headers.
 GitHub OAuth, Enterprise endpoint admission and default server commands stay
 unchanged. Hosts own its explicit caller admission (JST-FORGE-007).
 
+Explicit native token replacement MUST pin the selected account's approved API,
+provider identity, metadata revision and stored credential. Verify the new token
+against that provider before custody writes. A different identity, changed
+revision, refreshed credential or forgotten account MUST refuse without creating
+or resurrecting an account. Successful replacement preserves the opaque account
+reference and scope while refreshing public identity fields; secrets remain in
+injected/OS custody.
+
 ## Requirements
 
 | ID            | Requirement                                                                                                                                                                                                                                                                                                                                 |

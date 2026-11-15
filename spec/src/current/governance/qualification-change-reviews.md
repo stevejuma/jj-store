@@ -22,3 +22,7 @@ state. M34.9 source, real transport and cold host evidence remain independent.
 The original SSH source lane is opt-in through the managed validation runner.
 Its private Linux fixture parent retains OpenSSH StrictModes; source proofs do
 not substitute for cold Desktop/hosted or external-provider acceptance.
+
+E-FORGE-CREDENTIAL-REPLACE-001 maps explicit native token replacement and
+concurrent account/credential guards to JST-FORGE-007 and M31; host adoption and
+live-provider gates remain separate.

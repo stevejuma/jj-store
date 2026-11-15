@@ -13,3 +13,7 @@
 [E-FORGE-CUSTODY-FEATURE-001](../../history/2026/11/15/E-FORGE-CUSTODY-FEATURE-001/index.md)
 qualifies injected-only compilation and native-store refusal under
 JST-FORGE-007; provider and application completion gates remain open.
+
+[E-FORGE-CREDENTIAL-REPLACE-001](../../history/2026/11/15/E-FORGE-CREDENTIAL-REPLACE-001/index.md)
+qualifies native replacement identity/scope and concurrent custody guards for
+JST-FORGE-007. Fixture transport does not establish live-provider acceptance.

@@ -37,3 +37,9 @@ immutable backup review/counts. The embedding manual names the pinned-reader
 entry points, preserves existing Session compatibility and separates first
 initialization from damaged existing state. Shared host orchestration and cold
 applications remain separate from native and real transport source acceptance.
+
+E-FORGE-CREDENTIAL-REPLACE-001 documents identity-checked token replacement
+through the native account manager. Embedding guidance preserves opaque account
+references, approved endpoint scope and concurrent metadata/credential guards.
+Host admission and pending-publication holds remain application-owned; mock
+provider transport does not qualify live sign-in or packaged host adoption.

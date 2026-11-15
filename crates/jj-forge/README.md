@@ -22,3 +22,13 @@ selected HTTPS `/api/v1` instance and an owned PAT. The shared injected secret
 store retains credentials; inventory returns public identity only. The built-in
 HTTP adapter uses provider token headers. This does not extend the default
 GitHub OAuth/Enterprise commands; hosts own caller admission and setup UI.
+
+An embedding host may replace a selected account token with
+`accounts::Manager::replace_token`. The manager verifies the token against the
+account's approved API and provider identity, then rechecks its metadata
+revision and saved credential under the account-store lock. Changed or forgotten
+accounts and concurrently refreshed credentials refuse without overwriting
+custody. Successful replacement keeps the opaque reference and scope, refreshes
+public identity fields and discards previous OAuth refresh material. Host
+admission and pending-publication credential holds remain the embedding
+application's policy.

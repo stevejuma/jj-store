@@ -205,8 +205,8 @@
     "sources": ["crates/jj-forge/src"],
     "pages": ["docs/site/guides/git.md", "docs/site/reference/transport.md"],
     "review": {
-      "reason": "Document injected SecretStore builds that disable native-secrets defaults on forge/service, exclude platform keyring linkage and refuse native calls without fallback. Desktop defaults and command policy are retained.",
-      "fingerprint": "cd8e9531bdb8f0a47cbcf720483e4bef7769b50c634cf0870baeb3cd676f3fba"
+      "reason": "Document identity-checked native token replacement, endpoint and opaque-reference preservation, revision and credential freshness guards, and embedding-host admission/holds.",
+      "fingerprint": "c03141b45b1dd2fec36b3eb6c0cc445cf06c8d3c41a176668d54879208514b65"
     }
   },
   {
