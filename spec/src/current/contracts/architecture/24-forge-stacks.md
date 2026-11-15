@@ -45,17 +45,21 @@ Global Integrations initially manages GitHub accounts, including device OAuth,
 personal tokens and explicit Enterprise API endpoints. Native OS credential
 facilities own saved tokens and optional OAuth refresh tokens; private atomic
 device metadata contains only account identity, endpoint and credential handles.
-There is no plaintext fallback. Downstream native hosts may inject their own
-private metadata root and `ScopedNativeSecrets` namespace while reusing the
-configured public OAuth client ID. The default jj-store namespace is unchanged.
-Saved secrets and device codes never return to the browser. jj-store service
-account operations require LocalTrusted Admin admission; downstream native hosts
-supply their own explicit installation account admission. GitHub's device
-interval, slowdown, expiry, cancellation and token refresh are enforced by the
-backend; the public OAuth client ID is operator configured using
-`JJ_STORE_GITHUB_OAUTH_CLIENT_ID` or the `github-oauth-client-id` file in the
-private device `forges/integrations` directory. The file contains only the
-public client ID, never a token. Environment configuration takes precedence.
+There is no plaintext fallback. The default `native-secrets` feature selects the
+OS keyring backend; an injected-custody host may disable defaults in both
+`jj-forge` and `jj-store-service` to exclude platform keyring libraries. Calls
+to native secret stores in that profile fail as Unsupported, without fallback.
+Downstream native hosts may inject their own private metadata root and
+`ScopedNativeSecrets` namespace while reusing the configured public OAuth client
+ID. The default jj-store namespace is unchanged. Saved secrets and device codes
+never return to the browser. jj-store service account operations require
+LocalTrusted Admin admission; downstream native hosts supply their own explicit
+installation account admission. GitHub's device interval, slowdown, expiry,
+cancellation and token refresh are enforced by the backend; the public OAuth
+client ID is operator configured using `JJ_STORE_GITHUB_OAUTH_CLIENT_ID` or the
+`github-oauth-client-id` file in the private device `forges/integrations`
+directory. The file contains only the public client ID, never a token.
+Environment configuration takes precedence.
 
 GitHub repository detection normalizes HTTPS/SSH/SCP remotes and recognizes only
 GitHub.com or approved Enterprise hosts. One verified account/remote match may

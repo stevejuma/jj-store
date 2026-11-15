@@ -389,3 +389,7 @@ only its existing bookkeeping gates; no failed or canceled test becomes a pass.
 
 The [qualification change reviews](qualification-change-reviews.md) retain CI
 selection, cache experiments and SSH transport gate dispositions.
+
+E-FORGE-CUSTODY-FEATURE-001 maps jj-forge/service Cargo feature selection and
+account-store refusal to JST-FORGE-007 and M31; injected hosts exclude OS
+linkage.

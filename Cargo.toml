@@ -22,7 +22,7 @@ lapis-ai-config = { git = "https://github.com/lapismd/lapis-ai", tag = "v0.2.0",
 jj-store-native = { path = "crates/jj-store-native", version = "0.2.0" }
 jj-store-git = { path = "crates/jj-store-git", version = "0.2.0" }
 jj-store-core = { path = "crates/jj-store-core", version = "0.2.0" }
-jj-forge = { path = "crates/jj-forge", version = "0.2.0" }
+jj-forge = { path = "crates/jj-forge", version = "0.2.0", default-features = false }
 jj-store-read-index = { path = "crates/jj-store-read-index", version = "0.2.0" }
 jj-workflow = { path = "crates/jj-workflow", version = "0.2.0" }
 jj-store-conversations = { path = "crates/jj-store-conversations", version = "0.2.0" }

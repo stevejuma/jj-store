@@ -9,6 +9,10 @@ repository.workspace = true
 homepage.workspace = true
 readme = "README.md"
 
+[features]
+default = ["native-secrets"]
+native-secrets = ["jj-forge/native-secrets"]
+
 [dependencies]
 jj-store-native.workspace = true
 jj-store-core.workspace = true

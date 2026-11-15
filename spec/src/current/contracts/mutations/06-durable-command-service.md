@@ -51,3 +51,9 @@ Avatar and emoji pickers share this command and retain exact source bytes after
 an unknown outcome. Retries resolve the durable receipt before decoding again.
 The legacy upload intent encoding and repository command publication remain
 unchanged.
+
+Injected-custody hosts may disable the service's default `native-secrets` Cargo
+feature. This only excludes platform keyring linkage; it grants no command
+capability and leaves request identity, authorization, receipts, unknown-outcome
+reconciliation and publication policy unchanged. E-FORGE-CUSTODY-FEATURE-001
+qualifies this build boundary under JST-FORGE-007.

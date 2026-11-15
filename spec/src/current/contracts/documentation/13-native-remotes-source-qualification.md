@@ -14,3 +14,9 @@ empty remote and an immutable reviewed commit. Missing local history remains
 unknown; a later capture cannot alter the review's proposed commit or counts.
 The native root is excluded from empty-branch outgoing counts. Documentation
 retains the shared read budget and separate host/credential-custody gates.
+
+E-FORGE-CUSTODY-FEATURE-001 documents default OS custody and the opt-out for
+hosts injecting encrypted secret storage. The embedding guide names both Cargo
+default selections and the fail-closed native-store behavior. Dependency-graph
+and source tests qualify linkage selection only; Server image and both cold
+applications remain separate acceptance gates.
