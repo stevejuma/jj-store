@@ -173,12 +173,25 @@ impl RemoteTransfer {
         local: bool,
         ssh: Option<HostSshIdentity>,
     ) -> Result<Self> {
-        let session = Session::open(binding.clone()).await?;
-        let git = git::get_git_backend(session.repo.store())
+        binding.validate()?;
+        if !binding.state.try_exists()? {
+            // First initialization remains a native mutation; an existing
+            // partial binding must never be replaced or silently repaired.
+            drop(Session::open(binding.clone()).await?);
+        }
+        let _transport = binding::transport(&binding, false)?;
+        binding.verify_saved()?;
+        let loader = RepoLoader::init_from_file_system(
+            &settings()?,
+            &binding.metadata(),
+            &default_backend_factories(),
+        )
+        .map_err(jj)?;
+        let git = git::get_git_backend(loader.store())
             .map_err(jj)?
             .git_repo_path()
             .to_owned();
-        drop(session);
+        binding.verify_saved()?;
         Ok(Self {
             binding,
             endpoint,

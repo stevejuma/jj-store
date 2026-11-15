@@ -8,3 +8,7 @@
 [E-ORIGINAL-REMOTE-005](../../history/2026/11/15/E-ORIGINAL-REMOTE-005/index.md)
 records immutable status after metadata-only descendants. Shared Core intake,
 host integration and cold application gates remain separate.
+
+[E-VAULT-BACKUP-030](../../history/2026/11/15/E-VAULT-BACKUP-030/index.md)
+qualifies capture-independent initialized transfer and immutable native review
+for JST-LOCAL-007/008. Shared orchestration and both cold hosts remain open.

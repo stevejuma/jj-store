@@ -36,6 +36,102 @@ fn unknown(binding: &Binding, request: &str) {
     value["outcome"] = serde_json::json!("unknown");
     fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
 }
+
+#[tokio::test]
+async fn initialized_transfer_does_not_take_the_capture_lease() {
+    let temp = tempfile::tempdir().unwrap();
+    let base = temp.path().canonicalize().unwrap();
+    let (binding, _) = setup(&base).await;
+    let mut capture = Session::open(binding.clone()).await.unwrap();
+    let operation = capture.operation();
+    let transfer = RemoteTransfer::connect_local(binding.clone(), &base.join("origin.git"), "main")
+        .await
+        .unwrap();
+    let reader = jj_store_jj::vault_workspace::HistoryReader::open(binding.clone())
+        .await
+        .unwrap();
+    let review = reader
+        .prepare_push(&transfer, "immutable-review", None)
+        .await
+        .unwrap();
+    assert_eq!(reader.push_divergence(&review).await.unwrap().outgoing, 1);
+    assert_eq!(transfer.observe().await.unwrap(), None);
+    assert_eq!(capture.operation(), operation);
+    fs::write(binding.root.join("Note.md"), "later captured checkpoint").unwrap();
+    let later = capture
+        .capture(&[], "Later capture")
+        .await
+        .unwrap()
+        .checkpoint
+        .unwrap();
+    assert_ne!(later.commit, review.commit());
+    assert_eq!(reader.push_divergence(&review).await.unwrap().outgoing, 1);
+    assert_eq!(
+        reader
+            .prepare_push(&transfer, "same-pinned-reader", None)
+            .await
+            .unwrap()
+            .commit(),
+        review.commit()
+    );
+    assert_eq!(
+        transfer.publish(&review).await.unwrap(),
+        PushOutcome::Complete
+    );
+    assert_eq!(
+        transfer.observe().await.unwrap().as_deref(),
+        Some(review.commit())
+    );
+    assert!(
+        Session::open(binding).await.is_err(),
+        "mutation still requires its exclusive capture lease"
+    );
+}
+
+#[tokio::test]
+async fn retained_publication_does_not_take_the_capture_lease() {
+    let temp = tempfile::tempdir().unwrap();
+    let base = temp.path().canonicalize().unwrap();
+    let (binding, transfer) = setup(&base).await;
+    let capture = Session::open(binding.clone()).await.unwrap();
+    let intent = capture
+        .prepare_push(&transfer, "capture-independent-push", None)
+        .await
+        .unwrap();
+    let operation = capture.operation();
+    fs::write(
+        binding.root.join("Unsnapshotted.md"),
+        "must remain unpublished",
+    )
+    .unwrap();
+    assert_eq!(
+        transfer.publish(&intent).await.unwrap(),
+        PushOutcome::Complete
+    );
+    assert_eq!(
+        transfer.observe().await.unwrap().as_deref(),
+        Some(intent.commit())
+    );
+    assert_eq!(capture.operation(), operation);
+    assert_eq!(
+        fs::read_to_string(binding.root.join("Unsnapshotted.md")).unwrap(),
+        "must remain unpublished"
+    );
+    assert!(
+        !Command::new("git")
+            .arg("--git-dir")
+            .arg(base.join("origin.git"))
+            .args([
+                "cat-file",
+                "-e",
+                &format!("{}:Unsnapshotted.md", intent.commit())
+            ])
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+}
 #[tokio::test]
 async fn explicit_stop_preserves_the_unknown_receipt_and_never_replays_or_clears_a_newer_push() {
     let temp = tempfile::tempdir().unwrap();

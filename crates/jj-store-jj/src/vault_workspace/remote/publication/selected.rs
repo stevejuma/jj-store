@@ -90,26 +90,3 @@ impl PushIntent {
             && self.after == commit
     }
 }
-
-impl Session {
-    /// Counts exactly this retained review, even if a later capture advances.
-    pub async fn push_divergence(&self, intent: &PushIntent) -> Result<CommitDivergence> {
-        self.binding.verify_saved()?;
-        if !intent.bound_to(&self.binding) {
-            return Err(Error::Binding);
-        }
-        let local = self.retained_commit(&intent.after).await?;
-        let remote = match &intent.before {
-            Some(id) => Some(self.retained_commit(id).await?),
-            None => None,
-        };
-        let counts = graph_divergence(
-            self.repo.as_ref(),
-            local.id(),
-            remote.as_ref().map(|c| c.id()),
-        )
-        .await?;
-        self.binding.verify_saved()?;
-        Ok(counts)
-    }
-}

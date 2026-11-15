@@ -29,6 +29,15 @@ existing guarded safety-checkpoint/receipt path and retains both local and
 imported ancestry. Push intent and observed outcomes are device-local; immutable
 readers never transfer, merge, snapshot or publish.
 
+Connecting an already initialized transfer and validating a retained publication
+MUST NOT acquire the capture lease. Immutable backup review/count readers pin
+their own native operation and exact checkpoint while capture continues. First
+transport initialization remains an explicit native command for an absent
+binding; partial or damaged existing state cannot be reinitialized. Independent
+transport/storage fences still protect path movement. An immutable intent never
+captures unsnapshotted files, and publication retains its original ancestry,
+receipt and no-replay checks.
+
 Guarded restoration opens parent directories with no-follow capability APIs,
 component by component. It rechecks this on apply rather than trusting preview
 paths. Symlink aliases cannot reach private metadata or bypass backup

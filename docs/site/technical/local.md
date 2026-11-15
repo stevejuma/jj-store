@@ -945,3 +945,11 @@ conflict labels. It rechecks checkout, sparse, ignore, head and physical
 witnesses without completing the checkout pointer. A different commit stays
 stale even if its tree is unchanged. Preparation and mutation callers continue
 to require the strict exact-operation witness.
+
+An initialized remote transfer does not acquire the capture lease. Embeddings
+can prepare and count a backup push through an existing immutable
+`HistoryReader`; it pins the exact retained checkpoint while a later capture
+continues independently. Retained publication validation uses that immutable
+path too. The native transfer still owns strict credentials, endpoint checks,
+transport/storage fences and durable publication receipts. An absent binding may
+initialize explicitly; an existing damaged binding is never replaced.
