@@ -71,8 +71,8 @@ importers:
         specifier: 5.2.8
         version: 5.2.8
       '@lapismd/design-core':
-        specifier: ^0.13.2
-        version: 0.13.2(svelte@5.57.1)(tailwindcss@4.3.3)
+        specifier: ^0.13.3
+        version: 0.13.3(svelte@5.57.1)(tailwindcss@4.3.3)
       '@lapismd/jj-conversations':
         specifier: ^0.1.0
         version: link:packages/jj-conversations
@@ -753,8 +753,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@lapismd/design-core@0.13.2':
-    resolution: {integrity: sha512-0Xplq0/zsdrb56UP4pWQZYuP3dUMvNpnHfjMT593pivn+qdCf99SNOCk93eWRGHWKihy61qrAIeByMS191MUnw==}
+  '@lapismd/design-core@0.13.3':
+    resolution: {integrity: sha512-VpzlcMhzfPefS8HYiinkL/Jw/+pZgKITGb9TGDhec+5nCiuRCDOzNVY4cTIWDdhZTSdZXdJL4VovpJMACjNRxw==}
     engines: {node: ^22.11 || ^24 || >=26}
     peerDependencies:
       svelte: ^5.0.0
@@ -5582,7 +5582,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lapismd/design-core@0.13.2(svelte@5.57.1)(tailwindcss@4.3.3)':
+  '@lapismd/design-core@0.13.3(svelte@5.57.1)(tailwindcss@4.3.3)':
     dependencies:
       '@codemirror/autocomplete': 6.20.4
       '@codemirror/commands': 6.11.1
