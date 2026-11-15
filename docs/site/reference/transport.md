@@ -352,6 +352,12 @@ the selected service and its verified workspace directory. Job context carries
 repository and revision IDs; it cannot choose arbitrary local paths. Native
 workflow RPC/CLI command and receipt formats remain unchanged.
 
+Embedding hosts can explicitly replace an account token through the native
+manager without adding a wire command. Replacement verifies the same provider
+identity and refuses changed metadata or credentials after verification. It
+preserves account references and endpoint scope; hosts still own admission and
+pending-publication holds.
+
 ## Local forge actions
 
 `POST /v1/local/repos/{repo}/forge` uses the existing LocalTrusted bound-folder,
