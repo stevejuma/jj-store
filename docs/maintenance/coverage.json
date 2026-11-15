@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the separate backup embedding entry points for anonymous HTTPS and host-managed SSH, strict host-key checks, and scoped token headers. Updated the local technical guide; native bridge Git and conversion guidance retain their independent admission and qualification scope.",
-      "fingerprint": "c5300fe02d96bf6369134f5dc91763e5a6761adaf103f2676fd4a83430d22d2b"
+      "reason": "Document host-only read-only SSH trust-file selection and real disposable transport qualification; no renderer paths or changed-key bypass.",
+      "fingerprint": "67f8b258b24d0d5854c8f7c7b4f4cb5e4a7f2126a2684f2a6275142161dc6d57"
     }
   },
   {

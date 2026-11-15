@@ -121,3 +121,6 @@ trust-file selection, wrong-key refusal, exact-branch publication and unknown
 push reconciliation without replay. M34.5 remains Partial: external provider
 HTTPS, host adoption, original-repository commands and cold app qualification
 remain outstanding.
+
+E-VAULT-BACKUP-028 refreshes the required local manual fingerprint for the SSH
+trust-file source profile. M34.5 remains Partial; no product gate is waived.
