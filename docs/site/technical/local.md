@@ -60,8 +60,14 @@ Hosts supply current vault admission, watching and progress, and drain editor
 writes before `try_close`. Failed final capture keeps the same coordinator for
 explicit retry. Guarded file/whole-vault restore retains a safety checkpoint and
 original request receipt; it requires host writer protection. Remote transfer
-and credentials remain host-owned. Ordinary immutable history reads never
-capture files or infer restore authority.
+and credentials remain host-owned. The backup transport exposes separate
+`RemoteTransfer::connect` (HTTPS token), `connect_anonymous` (HTTPS) and
+`connect_ssh` (host agent or default identity) entry points.
+Credential/transport mismatches fail before storage initialization. SSH is
+noninteractive and keeps strict host-key verification; no private-key upload or
+generation is provided. These embedding primitives do not enable
+original-repository writes or qualify an application's SSH/provider flow.
+Ordinary immutable history reads never capture files or infer restore authority.
 
 `jj-history-service` owns the transport-independent read service using the
 focused local-history profile. Native hosts construct it directly with admitted

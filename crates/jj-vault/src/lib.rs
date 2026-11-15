@@ -13,10 +13,10 @@ mod sync;
 pub use jj_store_jj::vault_workspace::{
     AdoptionRequest, AiTurnContext, AiTurnOutcome, AiTurnPage, AiTurnPhase, AiTurnRecord,
     AiUndoPreview, AiUndoRequest, Binding, Capture, Checkpoint, ExistingHistory, FetchedHead,
-    GitCredentials, PendingPublication, PendingStorage, PushIntent, PushOutcome, RemoteTarget,
-    RemoteTransfer, RestorePreview, RestoreRequest, Storage, StorageLocation, StorageProgress,
-    StorageStatus, SyncConflict, SyncProposal, SyncResolution, SyncTerm, VaultRestorePreview,
-    VaultRestoreRequest,
+    GitCredentials, HostSshIdentity, PendingPublication, PendingStorage, PushIntent, PushOutcome,
+    RemoteTarget, RemoteTransfer, RestorePreview, RestoreRequest, Storage, StorageLocation,
+    StorageProgress, StorageStatus, SyncConflict, SyncProposal, SyncResolution, SyncTerm,
+    VaultRestorePreview, VaultRestoreRequest,
 };
 pub use native::NativeRepository;
 pub use schedule::Timing;

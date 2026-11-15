@@ -75,15 +75,20 @@ tokens never enter renderer persistence. Account work is bounded and runs off
 the UI thread; cancellation can revoke an in-flight authorization before it
 persists.
 
-Remote transfer uses a native-approved HTTPS endpoint and selected branch.
-Credentials stay in process memory and per-child environment; neither Git config
-nor receipts store them. Network transfer runs without the capture command
-lease. Fetched Git heads are imported through the native backend and pinned
-explicitly before any guarded restore. A fresh-device restore retains imported
-ancestry. Publication records its exact expected remote head and immutable
-target before network IO. An unknown push is observed before any further
-publication; automatic replay cannot create another intent. Exact-head guards
-reject remote drift.
+Remote transfer uses a native-approved HTTPS or SSH endpoint and selected
+branch. Anonymous HTTPS reads and host-managed SSH agent/default identities do
+not require a forge account. Token authorization is confined to HTTPS. SSH
+remains noninteractive and preserves strict host-key verification using the
+executing host's existing identity and known-host configuration;
+repository-provided SSH commands and private-key upload/generation are not
+admitted. Credentials stay in process memory and per-child environment; neither
+Git config nor receipts store them. Network transfer runs without the capture
+command lease. Fetched Git heads are imported through the native backend and
+pinned explicitly before any guarded restore. A fresh-device restore retains
+imported ancestry. Publication records its exact expected remote head and
+immutable target before network IO. An unknown push is observed before any
+further publication; automatic replay cannot create another intent. Exact-head
+guards reject remote drift.
 
 Hosts queue fetched-head import and guarded remote restore through the injected
 vault worker. Transfer remains outside its queue; only the resulting native

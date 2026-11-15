@@ -20,6 +20,7 @@ impl Session {
                 .to_owned(),
             credential: None,
             local: true,
+            ssh: None,
         };
         let (status, _) = transfer
             .run(&[

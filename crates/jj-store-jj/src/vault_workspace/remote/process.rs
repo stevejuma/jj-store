@@ -41,14 +41,37 @@ impl RemoteTransfer {
                     "protocol.file.allow=never"
                 },
             ]);
+        if let Some(identity) = self.ssh {
+            // Never honor repository/global SSH commands or disable known-host
+            // verification. OpenSSH uses the executing user's existing keys.
+            let command_line = match identity {
+                HostSshIdentity::Agent => {
+                    "ssh -F /dev/null -oBatchMode=yes -oStrictHostKeyChecking=yes -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oIdentityFile=none"
+                }
+                HostSshIdentity::Default => {
+                    "ssh -F /dev/null -oBatchMode=yes -oStrictHostKeyChecking=yes -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oIdentityAgent=none -oIdentitiesOnly=yes"
+                }
+            };
+            command
+                .env("GIT_SSH_COMMAND", command_line)
+                .env("GIT_SSH_VARIANT", "ssh");
+            if identity == HostSshIdentity::Agent
+                && let Some(socket) = std::env::var_os("SSH_AUTH_SOCK")
+            {
+                command.env("SSH_AUTH_SOCK", socket);
+            }
+        }
         if let Some(credential) = &self.credential {
-            let origin = Url::parse(&self.endpoint)
-                .map_err(|_| Error::Binding)?
-                .origin()
-                .ascii_serialization();
+            let endpoint = Url::parse(&self.endpoint).map_err(|_| Error::Binding)?;
             command
                 .env("GIT_CONFIG_COUNT", "1")
-                .env("GIT_CONFIG_KEY_0", format!("http.{origin}/.extraheader"))
+                .env(
+                    "GIT_CONFIG_KEY_0",
+                    format!(
+                        "http.{}.extraheader",
+                        endpoint.as_str().trim_end_matches('/')
+                    ),
+                )
                 .env("GIT_CONFIG_VALUE_0", credential.0.as_str());
         }
         command

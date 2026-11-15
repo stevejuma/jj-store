@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed historical revset index merging and explicit native vault lease release against the selected-operation and command-lifetime contracts. The updated local technical guide remains accurate; Git transport and conversion identity guidance are unchanged.",
-      "fingerprint": "ff115f38a1db26a6464e668a2412c0c072d7f4ab355ba087f86858813d1e3157"
+      "reason": "Reviewed the separate backup embedding entry points for anonymous HTTPS and host-managed SSH, strict host-key checks, and scoped token headers. Updated the local technical guide; native bridge Git and conversion guidance retain their independent admission and qualification scope.",
+      "fingerprint": "c5300fe02d96bf6369134f5dc91763e5a6761adaf103f2676fd4a83430d22d2b"
     }
   },
   {
