@@ -426,3 +426,73 @@ async fn status_rejects_changes_while_counting_instead_of_returning_old_totals()
         Error::Stale
     );
 }
+
+#[tokio::test(flavor = "multi_thread")]
+#[ignore = "requires explicit existing pinned development JJ binary"]
+async fn status_accepts_metadata_only_heads_but_not_a_different_working_copy_commit() {
+    let fixture = Fixture::new();
+    let reader = code::Executor::new(1).unwrap();
+    let original = fixture.operation(&reader).await;
+    let checkout = fs::read(fixture.root.join(".jj/working_copy/checkout")).unwrap();
+    let tree_state = fs::read(fixture.root.join(".jj/working_copy/tree_state")).unwrap();
+    fixture.run(&[
+        "--ignore-working-copy",
+        "-R",
+        fixture.root.to_str().unwrap(),
+        "bookmark",
+        "create",
+        "observed",
+        "-r",
+        "@",
+    ]);
+    let selected = fixture.operation(&reader).await;
+    assert_ne!(selected, original);
+    fs::write(
+        fixture.root.join("new-note.md"),
+        "saved without a snapshot\n",
+    )
+    .unwrap();
+    let before = files(&fixture.root);
+    let observer = tree::Observer::new(reader.clone(), 1).unwrap();
+    let status = observer
+        .status(fixture.access(|_| Ok(())), fixture.root.clone(), selected)
+        .await
+        .unwrap();
+    assert_eq!(status.files, 4);
+    assert_eq!(status.operation, selected);
+    assert_eq!(files(&fixture.root), before);
+    assert!(
+        matches!(
+            reader
+                .working_tree_current(fixture.access(|_| Ok(())), fixture.root.clone(), selected,)
+                .await,
+            Err(code::Error::EpochChanged)
+        ),
+        "status grants no mutation witness"
+    );
+    assert_eq!(
+        fs::read(fixture.root.join(".jj/working_copy/checkout")).unwrap(),
+        checkout
+    );
+    assert_eq!(
+        fs::read(fixture.root.join(".jj/working_copy/tree_state")).unwrap(),
+        tree_state
+    );
+    fixture.run(&[
+        "--ignore-working-copy",
+        "-R",
+        fixture.root.to_str().unwrap(),
+        "new",
+        "-m",
+        "Different commit, same tree",
+    ]);
+    let changed = fixture.operation(&reader).await;
+    assert_ne!(changed, selected);
+    assert_eq!(
+        observer
+            .status(fixture.access(|_| Ok(())), fixture.root.clone(), changed)
+            .await
+            .unwrap_err(),
+        Error::Stale
+    );
+}

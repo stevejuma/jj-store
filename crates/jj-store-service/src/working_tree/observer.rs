@@ -49,6 +49,23 @@ impl Observer {
         root: PathBuf,
         operation: jj_store_model::OperationId,
     ) -> Result<Observation> {
+        self.observe_witness(access, root, operation, false).await
+    }
+    pub(super) async fn observe_status(
+        &self,
+        access: Arc<dyn code::Access>,
+        root: PathBuf,
+        operation: jj_store_model::OperationId,
+    ) -> Result<Observation> {
+        self.observe_witness(access, root, operation, true).await
+    }
+    async fn observe_witness(
+        &self,
+        access: Arc<dyn code::Access>,
+        root: PathBuf,
+        operation: jj_store_model::OperationId,
+        metadata_descendant: bool,
+    ) -> Result<Observation> {
         let permit = Arc::new(
             self.capacity
                 .clone()
@@ -60,10 +77,8 @@ impl Observer {
         let deadline = Instant::now() + Duration::from_secs(8);
         let run = async {
             let before = self
-                .reader
-                .working_tree_current(access.clone(), root.clone(), operation)
-                .await
-                .map_err(query_error)?;
+                .witness(access.clone(), root.clone(), operation, metadata_descendant)
+                .await?;
             let scan_access = access.clone();
             let scan_cancel = cancellation.clone();
             let scan_root = root.clone();
@@ -86,10 +101,8 @@ impl Observer {
                 )
             }).await.map_err(|_| Error::Unavailable)??;
             let after = self
-                .reader
-                .working_tree_current(access.clone(), root, operation)
-                .await
-                .map_err(query_error)?;
+                .witness(access.clone(), root, operation, metadata_descendant)
+                .await?;
             if before != after || after.physical_workspace != physical.workspace.0 {
                 return Err(Error::Stale);
             }
@@ -110,6 +123,24 @@ impl Observer {
         tokio::time::timeout_at(tokio::time::Instant::from_std(deadline), run)
             .await
             .map_err(|_| Error::Limit)?
+    }
+    async fn witness(
+        &self,
+        access: Arc<dyn code::Access>,
+        root: PathBuf,
+        operation: jj_store_model::OperationId,
+        metadata_descendant: bool,
+    ) -> Result<code::working_tree::CurrentState> {
+        if metadata_descendant {
+            self.reader
+                .working_tree_observed(access, root, operation)
+                .await
+        } else {
+            self.reader
+                .working_tree_current(access, root, operation)
+                .await
+        }
+        .map_err(query_error)
     }
 }
 pub(super) fn check(cancellation: &Cancellation, deadline: Instant) -> Result<()> {

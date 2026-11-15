@@ -46,6 +46,13 @@ source fingerprint; failed policy reads cannot become empty rules. Repeated
 metadata, policy and operation-head observations must agree. A current read is
 still an observation, not a checkout lock or command authority.
 
+Read-only aggregate status may additionally accept an operation descendant that
+preserves the exact checked-out named WC commit, trees and labels. Bounded
+ancestry and repeated metadata/policy/head/physical witnesses are required.
+Different commits with identical trees remain stale. This status-only path
+cannot supply strict current-operation preparation/checkout authority or change
+the saved checkout operation pointer.
+
 The service observation owner MUST hold bounded non-queuing admission for the
 complete metadata/scan/comparison read. Canceling the caller cancels its worker
 but cannot release scan admission before a blocking worker exits. The current

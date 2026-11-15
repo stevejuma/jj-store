@@ -35,6 +35,12 @@ The durable service below supplies that publication flow to each typed command
 and the HTTP transport. M4 deployment qualification and browser controls remain
 separate gates.
 
+The immutable working-copy status exception for metadata-only operation
+descendants grants no preparation authority. Native mutation, active-combination
+observation and guarded checkout continue to require the exact saved checkout
+operation and complete physical witnesses. A status frame cannot substitute for
+those strict current-operation preconditions.
+
 The user deferred further UI work on 27 September 2026. M5 backend command,
 preview/apply/status, RPC policy and mutation API gates continue; their browser
 work is retained under deferred M4.3 rather than counted as backend completion.

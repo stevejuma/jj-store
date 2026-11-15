@@ -937,3 +937,11 @@ remote/bookmark discovery. It accepts the immutable source grant and retains no
 writer capability; save, fetch and publication review refuse before transport.
 `OriginalRepository::open` still requires a separately admitted MutationAccess.
 Neither constructor snapshots files or initializes the original repository.
+
+Working-copy status remains readable after a metadata-only original fetch. Its
+immutable observer proves that the saved checkout operation is an ancestor of
+the sole selected head and retains the identical named WC commit, trees and
+conflict labels. It rechecks checkout, sparse, ignore, head and physical
+witnesses without completing the checkout pointer. A different commit stays
+stale even if its tree is unchanged. Preparation and mutation callers continue
+to require the strict exact-operation witness.
