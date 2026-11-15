@@ -40,3 +40,9 @@ overrides must never redirect an unreviewed publication. Unrelated remotes
 survive unchanged. The opt-in real SSH runner exercises original
 fetch/publication and backup transport separately, using disposable private
 fixture homes with StrictModes.
+
+E-ORIGINAL-REMOTE-002 qualifies real HTTPS using an isolated TLS smart-HTTP
+endpoint and disposable container-only trust. Token and anonymous transfers,
+authentication refusal, replacement, redirect isolation and exact original
+publication retain the same native contract; no TLS verification bypass exists.
+The original feature test binary follows the vault-backup profile naming audit.

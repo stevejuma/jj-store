@@ -1,0 +1,1 @@
+- [HTTPS source qualification (continued 2)](details-02.md)

@@ -200,7 +200,7 @@ child.on('close',code=>{if(dropping&&code===0){unlinkSync(base+'/drop-next-respo
       "--features",
       "vault-backup",
       "--test",
-      originalProfile ? "original_remotes" : "vault_ssh_transport",
+      originalProfile ? "vault_original_remotes" : "vault_ssh_transport",
       "--",
       "--ignored",
       ...(originalProfile

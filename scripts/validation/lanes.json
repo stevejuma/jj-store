@@ -41,5 +41,6 @@
   "history:test": "pnpm history:contracts && pnpm --filter @lapismd/jj-history test",
   "check:storybook-parity": "node scripts/dependency-automation/spec-policy.mjs validate --only storybook-parity",
   "validation:rust": "node scripts/managed-cargo.mjs",
-  "test:vault-ssh": "node scripts/test-vault-ssh.mjs"
+  "test:vault-ssh": "node scripts/test-vault-ssh.mjs",
+  "test:vault-https": "node scripts/test-vault-https.mjs"
 }

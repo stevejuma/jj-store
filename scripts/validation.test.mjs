@@ -55,6 +55,7 @@ test("UI and Rust lanes select the complete toolchain they need", () => {
   assert.equal(laneImage("catalog:check"), "ui");
   assert.equal(laneImage("test:embedded-rustfs"), "full");
   assert.equal(laneImage("test:vault-ssh"), "full");
+  assert.equal(laneImage("test:vault-https"), "full");
   assert.equal(laneImage("spec:check"), "full");
   assert.equal(laneImage("check:boundaries"), "full");
 });

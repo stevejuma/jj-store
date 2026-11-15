@@ -374,8 +374,9 @@ Linux-compatible local validation uses Docker with fingerprinted UI/full tools.
 It pins source/parents, lockfiles, siblings and checksummed archives; builds
 missing images; returns pass/fail reports; and retains isolated services,
 resource bounds and managed Cargo. Opt-in `test:vault-ssh` uses disposable keys
-and secure Linux fixture homes for original/backup. Interruption or source proof
-cannot qualify native desktop/providers, hosted producers or public releases.
+and secure Linux fixture homes for original/backup; `test:vault-https` adds TLS
+smart-HTTP with container-only trust. Interruption or source proof cannot
+qualify native desktop/providers, hosted producers or public releases.
 
 Browser validation builds its preview through managed Cargo before timing server
 readiness, then launches the executable from the selected registered target. App

@@ -918,3 +918,9 @@ without arguments it retains the backup transport profile. Its isolated fixture
 home is beneath a secure parent on Linux so OpenSSH StrictModes stays enabled.
 This source proof does not qualify either application host or external
 providers.
+
+`pnpm test:vault-https` separately runs a real TLS smart-HTTP Git endpoint for
+anonymous reads and scoped token publication on both targets. A disposable CA is
+trusted only inside the isolated Linux validation worker and retired afterward;
+ordinary product certificate/redirect policy is unchanged. The source profile
+includes token replacement and target isolation, not cold application custody.

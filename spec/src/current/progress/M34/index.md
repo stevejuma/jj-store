@@ -132,3 +132,8 @@ E-ORIGINAL-REMOTE-001 qualifies guarded native original discovery/save, tracking
 fetch and one reviewed branch push, including SSH divergence refusal and lost
 response reconciliation without replay. M34.9 remains In progress: HTTPS, shared
 host orchestration/adoption and cold application acceptance remain open.
+
+E-ORIGINAL-REMOTE-002 adds real HTTPS token/anonymous transfer and original
+publication source proof. The feature-family audit retains its assertions after
+renaming the original integration binary to its existing vault-backup family.
+M34.9 stays In progress at shared orchestration and both cold application hosts.
