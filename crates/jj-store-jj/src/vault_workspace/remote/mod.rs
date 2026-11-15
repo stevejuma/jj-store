@@ -95,6 +95,7 @@ pub struct RemoteTransfer {
     credential: Option<GitCredentials>,
     local: bool,
     ssh: Option<HostSshIdentity>,
+    known_hosts: Option<PathBuf>,
 }
 impl RemoteTransfer {
     pub async fn connect(
@@ -174,7 +175,26 @@ impl RemoteTransfer {
             credential,
             local,
             ssh,
+            known_hosts: None,
         })
+    }
+    /// Host-only trust-file selection, never a renderer or repository path.
+    /// The file is read-only; unknown or changed host keys remain rejected.
+    pub fn with_known_hosts(mut self, path: &Path) -> Result<Self> {
+        if self.ssh.is_none() || !path.is_absolute() {
+            return Err(Error::Binding);
+        }
+        let path = path.canonicalize().map_err(|_| Error::Binding)?;
+        let text = path.to_str().ok_or(Error::Binding)?;
+        if path.starts_with(&self.binding.root)
+            || text.len() > 4096
+            || text.chars().any(|c| c.is_control() || c == '$' || c == '%')
+            || !path.metadata().map_err(|_| Error::Binding)?.is_file()
+        {
+            return Err(Error::Binding);
+        }
+        self.known_hosts = Some(path);
+        Ok(self)
     }
     fn reference(&self) -> String {
         format!("refs/heads/{}", self.branch)

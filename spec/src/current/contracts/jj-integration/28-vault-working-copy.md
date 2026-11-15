@@ -91,3 +91,7 @@ and its resumable frontier remain disposable jj-vault-owned state.
 The selected transport admits anonymous HTTPS and host-managed SSH separately
 from HTTPS token authorization. Strict host-key verification, noninteractive
 execution and capture/transport separation remain required (JST-LOCAL-007).
+
+E-VAULT-BACKUP-027 qualifies the explicit native read-only known-hosts selection
+for backup transport. It does not change working-copy capture/import authority
+or admit repository-provided SSH commands; changed host keys refuse transfer.

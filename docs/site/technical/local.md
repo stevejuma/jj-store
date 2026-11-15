@@ -886,3 +886,8 @@ comparison bytes privately, observes the workspace again after computing counts
 and rejects changed witnesses or revoked admission. Observer drain waits for
 actual worker leases to exit. These helpers grant no new browser route or
 mutation authority.
+
+Native SSH hosts may select an existing known-hosts file outside the vault. The
+file stays read-only, strict verification remains enabled, and browser or
+repository configuration cannot select its path. A disposable loopback sshd
+acceptance covers real transfer, wrong-key refusal and lost-response recovery.

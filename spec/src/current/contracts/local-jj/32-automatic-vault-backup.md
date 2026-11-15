@@ -79,16 +79,19 @@ Remote transfer uses a native-approved HTTPS or SSH endpoint and selected
 branch. Anonymous HTTPS reads and host-managed SSH agent/default identities do
 not require a forge account. Token authorization is confined to HTTPS. SSH
 remains noninteractive and preserves strict host-key verification using the
-executing host's existing identity and known-host configuration;
-repository-provided SSH commands and private-key upload/generation are not
-admitted. Credentials stay in process memory and per-child environment; neither
-Git config nor receipts store them. Network transfer runs without the capture
-command lease. Fetched Git heads are imported through the native backend and
-pinned explicitly before any guarded restore. A fresh-device restore retains
-imported ancestry. Publication records its exact expected remote head and
-immutable target before network IO. An unknown push is observed before any
-further publication; automatic replay cannot create another intent. Exact-head
-guards reject remote drift.
+executing host's existing identity and known-host configuration. Native hosts
+MAY select an existing absolute known-hosts file outside the vault; renderer and
+repository configuration MUST NOT select that path. Transfers MUST NOT update
+known-hosts files; unknown or changed keys remain rejected. The isolated trust
+file profile ignores global known-hosts files; repository-provided SSH commands
+and private-key upload/generation are not admitted. Credentials stay in process
+memory and per-child environment; neither Git config nor receipts store them.
+Network transfer runs without the capture command lease. Fetched Git heads are
+imported through the native backend and pinned explicitly before any guarded
+restore. A fresh-device restore retains imported ancestry. Publication records
+its exact expected remote head and immutable target before network IO. An
+unknown push is observed before any further publication; automatic replay cannot
+create another intent. Exact-head guards reject remote drift.
 
 Hosts queue fetched-head import and guarded remote restore through the injected
 vault worker. Transfer remains outside its queue; only the resulting native

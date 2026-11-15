@@ -44,14 +44,21 @@ impl RemoteTransfer {
         if let Some(identity) = self.ssh {
             // Never honor repository/global SSH commands or disable known-host
             // verification. OpenSSH uses the executing user's existing keys.
-            let command_line = match identity {
+            let mut command_line = match identity {
                 HostSshIdentity::Agent => {
-                    "ssh -F /dev/null -oBatchMode=yes -oStrictHostKeyChecking=yes -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oIdentityFile=none"
+                    "ssh -F /dev/null -oBatchMode=yes -oStrictHostKeyChecking=yes -oUpdateHostKeys=no -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oIdentityFile=none"
                 }
                 HostSshIdentity::Default => {
-                    "ssh -F /dev/null -oBatchMode=yes -oStrictHostKeyChecking=yes -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oIdentityAgent=none -oIdentitiesOnly=yes"
+                    "ssh -F /dev/null -oBatchMode=yes -oStrictHostKeyChecking=yes -oUpdateHostKeys=no -oPasswordAuthentication=no -oKbdInteractiveAuthentication=no -oIdentityAgent=none -oIdentitiesOnly=yes"
                 }
-            };
+            }.to_owned();
+            if let Some(path) = &self.known_hosts {
+                let path = path.to_str().ok_or(Error::Binding)?;
+                let escaped = path.replace('\\', "\\\\").replace('"', "\\\"");
+                let option = format!("-oUserKnownHostsFile=\"{escaped}\"");
+                command_line.push_str(" -oGlobalKnownHostsFile=/dev/null ");
+                command_line.push_str(&format!("'{}'", option.replace('\'', "'\\''")));
+            }
             command
                 .env("GIT_SSH_COMMAND", command_line)
                 .env("GIT_SSH_VARIANT", "ssh");
