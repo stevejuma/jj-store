@@ -1,7 +1,10 @@
 //! Bounded immutable checkpoint history for a rebuildable search projection.
 pub(super) mod divergence;
 mod index;
+mod operation_frontier;
 mod publication;
+#[cfg(test)]
+mod publication_tests;
 use super::*;
 pub use divergence::{CheckpointDivergence, CommitDivergence};
 use futures::{AsyncReadExt as _, StreamExt as _, TryStreamExt as _};
@@ -53,11 +56,7 @@ impl HistoryReader {
             &default_backend_factories(),
         )
         .map_err(jj)?;
-        let heads = loader.op_heads_store().get_op_heads().await.map_err(jj)?;
-        let [id] = heads.as_slice() else {
-            return Err(Error::Binding);
-        };
-        let operation = loader.load_operation(id).await.map_err(jj)?;
+        let operation = operation_frontier::unique_maximal(&loader).await?;
         let repo = loader.load_at(&operation).await.map_err(jj)?;
         Ok(Self { binding, repo })
     }

@@ -68,6 +68,9 @@ noninteractive and keeps strict host-key verification; no private-key upload or
 generation is provided. These embedding primitives do not enable
 original-repository writes or qualify an application's SSH/provider flow.
 Ordinary immutable history reads never capture files or infer restore authority.
+They remain available when publication briefly exposes one operation alongside
+its ancestors; a divergent operation frontier stays unavailable and is never
+merged by a read.
 
 `jj-history-service` owns the transport-independent read service using the
 focused local-history profile. Native hosts construct it directly with admitted
