@@ -10,18 +10,31 @@ concurrency:
   cancel-in-progress: false
 jobs:
   version:
-    if: github.repository == 'stevejuma/jj-store'
+    if:
+      github.repository == 'stevejuma/jj-store' && github.ref ==
+      'refs/heads/main'
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+      pull-requests: read
       actions: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: ./.github/actions/setup
+      - name: Mint repository-scoped version PR token
+        id: app
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
+        with:
+          client-id: ${{ vars.LAPIS_DEPENDENCY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.LAPIS_DEPENDENCY_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: write
       # v1.9.0 stays on Changesets CLI v2. Action v2 rejects these inputs.
       - uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d
         id: changesets
@@ -31,8 +44,9 @@ jobs:
           commit: Version jj-store packages
           title: Version Packages
           commitMode: github-api
+          createGithubReleases: false
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ steps.app.outputs.token }}
           GH_TOKEN: ${{ github.token }}
       - name: Run checks for the generated release PR
         if: steps.changesets.outputs.pullRequestNumber != ''

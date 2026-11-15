@@ -63,7 +63,9 @@ not a completion gate selection.
 [E-CI-COLD-REACTION-PRIMITIVE-001](../../../../../history/2026/11/03/E-CI-COLD-REACTION-PRIMITIVE-001/index.md)
 | 2026-11-03 | pass | Original outcome |
 [E-CI-COLD-REACTION-STYLE-001](../../../../../history/2026/11/03/E-CI-COLD-REACTION-STYLE-001/index.md)
-| 2026-11-03 | pass | Original outcome |
+| 2026-11-03 | pass | Original outcome | |
+[E-VERSION-PR-APP-AUTH-001](../../../../../history/2026/11/15/E-VERSION-PR-APP-AUTH-001/index.md)
+| 2026-11-15 | pending | Original outcome |
 
 <!-- generated-navigation -->
 
