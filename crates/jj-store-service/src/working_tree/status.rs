@@ -10,7 +10,7 @@ impl Observer {
         operation: jj_store_model::OperationId,
     ) -> Result<baseline::Status> {
         let observed = self
-            .observe(access.clone(), root.clone(), operation)
+            .observe_status(access.clone(), root.clone(), operation)
             .await?;
         let mut entries: BTreeMap<_, _> = observed
             .current
@@ -51,7 +51,7 @@ impl Observer {
             .await
             .map_err(observer::query_error)?;
         // Counts may be expensive: re-observe everything before displaying them.
-        let after = self.observe(access.clone(), root, operation).await?;
+        let after = self.observe_status(access.clone(), root, operation).await?;
         if observed != after {
             return Err(Error::Stale);
         }

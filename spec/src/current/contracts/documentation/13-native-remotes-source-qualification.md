@@ -25,3 +25,9 @@ E-ORIGINAL-REMOTE-004 separates passive native original inspection from writer
 admission. The embedding manual names the immutable constructor and retains
 explicit write admission for save, fetch and publication. Read-only source
 qualification does not enable host routes or complete application acceptance.
+
+E-ORIGINAL-REMOTE-005 documents immutable status after a metadata-only fetch.
+The embedding manual distinguishes the sole-head ancestry and exact WC commit
+proof from strict preparation/checkout witnesses. Neither status nor fetch
+completes the saved checkout pointer, captures disk files or moves a History
+selection. Cold host integration remains a separate gate.

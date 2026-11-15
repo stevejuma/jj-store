@@ -105,6 +105,15 @@ exclude bytes. Metadata/policy/head repetition detects races; repository and
 working-copy directory identity contribute to the private witness. Service code
 uses owned sparse/ignore interfaces, never upstream protobuf or matcher types.
 
+Status-only observation may accept a metadata-only descendant of the saved
+checkout operation after proving bounded operation ancestry, the identical named
+working-copy commit, exact tree terms and conflict labels. Checkout, sparse,
+policy, physical identity and head witnesses must still repeat unchanged. This
+read does not complete the checkout pointer or capture files. Strict current
+witnesses used by mutation/preparation and the ordinary observation API continue
+to require exact operation equality. A different working-copy commit is stale
+even if its file tree is identical.
+
 Read-only local identity hints continue to require an exact secure-config
 metadata binding before selecting a repository email. They never migrate
 configuration or introduce aliases into query evaluation. Multi-harness capture

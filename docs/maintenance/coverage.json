@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Document immutable OriginalRepository::open_readonly discovery without any writer capability; explicit save/fetch/review/publication still require the separate native MutationAccess constructor. Both constructors preserve files and native identities.",
-      "fingerprint": "2bf0f136b6c5c91d79b485919f435dd10e9e7c28a95b0f9b867d54042027385a"
+      "reason": "Document status-only metadata-descendant observation after exact named WC commit and ancestry proof. Strict mutation witnesses retain exact operation equality; no checkout or source index is repaired.",
+      "fingerprint": "686db95ea71466d839c06d40cf93a41cc0519132c736270b76229d2d8124de01"
     }
   },
   {
@@ -70,8 +70,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed mixed-feature Rustls initialization and host-provider preservation. Transport guidance now states provider fallback plus unchanged trust, hostname, endpoint and bearer checks; service architecture and conversion publication contracts remain unchanged.",
-      "fingerprint": "4fdf1bf4dce7eba767256c7ce530d4cd8e5c92b8e72ad741f65f02bd9b607284"
+      "reason": "Reviewed status-only observation after metadata-only operations. Ordinary observation, command preparation and checkout retain strict operation equality, bounded scans and repeat witnesses; public transport and conversion contracts remain unchanged.",
+      "fingerprint": "551b60e450302a5ff18a503d23c28911f67cc994a0cfb11dc1c492714ed24fba"
     }
   },
   {
