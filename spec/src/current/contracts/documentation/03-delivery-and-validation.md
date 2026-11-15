@@ -388,6 +388,7 @@ E-VAULT-BACKUP-027 records real loopback SSH acceptance with disposable agent,
 identities, trust files and server state. The native host trust-file profile is
 documented separately from renderer paths and external provider qualification.
 
-E-VAULT-BACKUP-028 refreshes the local manual source fingerprint after the strict
-SSH trust-file implementation. The review retains independent native bridge
-and conversion scope; hosted documentation checks enforce the reviewed source.
+E-VAULT-BACKUP-028 refreshes the local manual source fingerprint after the
+strict SSH trust-file implementation. The review retains independent native
+bridge and conversion scope; hosted documentation checks enforce the reviewed
+source.

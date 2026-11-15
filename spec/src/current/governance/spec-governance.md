@@ -387,5 +387,5 @@ runs manually and before publication. JST-GOV-003/004/011 retain same-change
 canonical updates, evidence and milestone review. Generated automation skips
 only its existing bookkeeping gates; no failed or canceled test becomes a pass.
 
-The [qualification change reviews](qualification-change-reviews.md) retain
-CI selection, cache experiments and SSH transport gate dispositions.
+The [qualification change reviews](qualification-change-reviews.md) retain CI
+selection, cache experiments and SSH transport gate dispositions.
