@@ -16,3 +16,7 @@ for JST-LOCAL-007/008. Shared orchestration and both cold hosts remain open.
 [E-VAULT-HISTORY-FRONTIER-002](../../history/2026/11/15/E-VAULT-HISTORY-FRONTIER-002/index.md)
 retains fresh current-main source evidence without replacing the original
 frontier regression or the remaining M34.6 native acceptance.
+
+[E-VAULT-HISTORY-FRONTIER-003](../../history/2026/11/15/E-VAULT-HISTORY-FRONTIER-003/index.md)
+records the separately authorized published dependency and fresh consumer
+checks; it does not replace native frontier evidence or complete M34.6.

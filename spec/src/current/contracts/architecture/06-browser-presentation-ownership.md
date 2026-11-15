@@ -7,9 +7,11 @@ registration and artifact paths. This tooling adds no dependency to production
 browser components, native storage or the server, and does not replace existing
 interaction/accessibility qualification.
 
-Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3`
-through portable npm ranges. Source ownership and public contracts remain
-unchanged; local overrides for these released packages are retired.
+Registry-only shell acceptance requires published Design Core `0.13.4` or a
+compatible later release through the normal `^0.13.4` range. This includes the
+upstream responsive focus-retention repair required by JST-UI-002. Mira retains
+its existing portable range; no local override or assertion waiver qualifies the
+released dependency.
 
 Production-owned Community adaptations, presentation models and styles live
 under `web/src/lib`. The isolated catalog imports those modules and supplies
@@ -65,15 +67,13 @@ Catalog collaboration fixtures and state wrappers remain transport-free and
 cannot be imported by production. These extractions keep every production module
 and complete Svelte file within the governed counted-line budget.
 
-The local pnpm hook consumes Design Core's explicitly packed development archive
-under the sibling's ignored package directory. Sibling source alone MUST NOT
-substitute a dependency. Missing archives retain registry ranges; peer ranges
-are never rewritten. The publishable manifest and tracked lockfile retain
-registry resolution. Local validation records the archive digest and checks its
-public contents against the qualified input. The prepared archive contains
-JavaScript rune modules, declarations, Svelte components and CSS under the same
-public subpaths. Components remain consumer-compiled Svelte; this does not
-qualify a registry release with missing public APIs.
+Earlier shell archive receipts qualify their named private inputs only. Current
+Design Core intake uses the public registry tarball and portable lockfile,
+without a pnpm hook, source substitution or archive overlay. The published
+package includes JavaScript rune modules, declarations, Svelte components and
+CSS under the same public subpaths; components remain consumer-compiled Svelte.
+Artifact, signature/provenance and consumer checks remain distinct from native
+storage or installed-application qualification.
 
 The browser enables Svelte dependency optimization for package components and
 rune modules. Main page views and optional inspectors use typed dynamic imports

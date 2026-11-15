@@ -165,3 +165,8 @@ cold application/search/restore gate; Lapis Sync consumer intake is separate.
 [E-VAULT-HISTORY-FRONTIER-002](../../../history/2026/11/15/E-VAULT-HISTORY-FRONTIER-002/index.md)
 records the source-only rebase onto current main; M34.6 stays Partial and all
 existing cold application/restore gates remain unchanged.
+
+[E-VAULT-HISTORY-FRONTIER-003](../../../history/2026/11/15/E-VAULT-HISTORY-FRONTIER-003/index.md)
+records published Core 0.13.4 registry intake and the unchanged focus
+regression; M34.6 stays Partial at its original native
+application/search/restore gates.
