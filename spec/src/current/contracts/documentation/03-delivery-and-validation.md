@@ -391,7 +391,9 @@ documented separately from renderer paths and external provider qualification.
 E-VAULT-BACKUP-028 refreshes the local manual source fingerprint after the
 strict SSH trust-file implementation. The review retains independent native
 bridge and conversion scope; hosted documentation checks enforce the reviewed
-source.
+source. E-VAULT-HISTORY-FRONTIER-001 documents read-only publication windows;
+divergent frontiers remain unavailable, with no changed codecs or application
+gates.
 
 [Native remotes source qualification](13-native-remotes-source-qualification.md)
 retains independent writer, read, transport and host acceptance boundaries.

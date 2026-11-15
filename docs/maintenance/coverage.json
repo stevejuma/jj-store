@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Document initialized capture-independent transport and immutable HistoryReader backup review/counts. The exact retained commit and native publication receipt remain authoritative through concurrent capture; partial binding state is never replaced.",
-      "fingerprint": "a14730c8538f0dbf9d4bacf3c5126d5154d5efc177c85c420f195dbf9e4f83ff"
+      "reason": "Reviewed immutable ancestral-head selection with capture-independent publication review: unique maximal history reads preserve pinned commits, exact intents, capture leases, divergent refusal and working files.",
+      "fingerprint": "85311b793f10a5e3a4101e9a73c655a860c3380c625563e0dd815d306f7714ff"
     }
   },
   {

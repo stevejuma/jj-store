@@ -57,3 +57,8 @@ landmark. Its relocated Application controls toolbar remains inside that
 landmark on repository pages and Settings; desktop retains its existing
 navigation subtree. This preserves landmark coverage without remounting
 controls.
+
+Registry intake now consumes the published Design Core 0.13.4 responsive-focus
+repair for JST-UI-002. The unchanged native change-draft relocation story must
+retain actual dialog focus and text after mobile-to-desktop movement; a broader
+passing command or a substituted archive cannot replace that exact regression.

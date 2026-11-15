@@ -126,6 +126,12 @@ request cannot publish or clear a newer intent. Root relink preserves the
 original request through the stable vault/private-repository binding. Native
 identities, immutable reads and network/capture separation stay unchanged.
 
+Immutable history opening MUST accept a unique maximal operation when a
+publisher briefly exposes both that operation and its ancestors. Ancestry
+inspection MUST be bounded and read-only; divergent or empty frontiers remain
+unavailable without merging, rewriting heads or acquiring the working-copy
+writer lease.
+
 Historical search walks a fixed retained checkpoint ancestry, with bounded
 revision and changed-file pages. Text projection includes UTF-8 regular files up
 to one MiB; other files remain path-searchable and their omission from text
