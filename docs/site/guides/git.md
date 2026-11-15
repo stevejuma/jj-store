@@ -111,3 +111,9 @@ Forgejo's token header, and a host-supplied credential namespace keeps separate
 installations independent. The jj-store browser continues to use explicit
 repository settings for Forgejo; native account support does not imply a global
 Forgejo account screen or permission to push.
+
+Hosts that inject their own encrypted `SecretStore` can disable default features
+on both `jj-forge` and `jj-store-service`. This excludes platform keyring
+libraries; native secret-store calls then return Unsupported. The default
+`native-secrets` feature keeps OS credential storage enabled for desktop hosts.
+Injected custody has no plaintext or OS-store fallback.

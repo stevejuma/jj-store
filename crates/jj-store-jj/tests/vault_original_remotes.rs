@@ -109,7 +109,7 @@ async fn discovery_is_read_only_and_never_returns_embedded_credentials() {
             "https://user:synthetic-secret@forge.example/notes.git",
         ],
     );
-    let repository = OriginalRepository::open(access, root.clone())
+    let mut repository = OriginalRepository::open_readonly(access, root.clone())
         .await
         .unwrap();
     let before = repository.snapshot().await.unwrap();
@@ -141,9 +141,48 @@ async fn discovery_is_read_only_and_never_returns_embedded_credentials() {
         "discovery/binding selection must not initialize transport storage"
     );
     assert!(repository.transport_binding(&root.join("private")).is_err());
+    let transfer = RemoteTransfer::connect_anonymous(
+        binding,
+        RemoteTarget {
+            url: "https://forge.example/notes.git".into(),
+            branch: "main".into(),
+        },
+    )
+    .await
+    .unwrap();
+    assert!(matches!(
+        repository.fetch("origin", &transfer).await,
+        Err(Error::Denied)
+    ));
+    assert!(matches!(
+        repository
+            .review_push("origin", "main", "readonly-request", &transfer)
+            .await,
+        Err(Error::Denied)
+    ));
     assert_eq!(
         repository.snapshot().await.unwrap().operation,
         before.operation
+    );
+    assert!(
+        matches!(
+            repository
+                .save_remote(
+                    &before.remote_configuration,
+                    "origin",
+                    &RemoteTarget {
+                        url: "https://different.invalid/notes.git".into(),
+                        branch: "main".into()
+                    }
+                )
+                .await,
+            Err(Error::Denied)
+        ),
+        "a read-only constructor cannot recover mutation authority from its reader"
+    );
+    assert_eq!(
+        repository.snapshot().await.unwrap().remote_configuration,
+        before.remote_configuration
     );
 }
 #[tokio::test]

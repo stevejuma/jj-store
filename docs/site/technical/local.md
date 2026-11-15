@@ -931,3 +931,9 @@ recorded-bookmark counts and `Session::push_divergence` share one bounded graph
 reader. Review counts belong to its exact retained intent rather than a later
 capture. These read methods never snapshot files, transfer data or move an
 application pin.
+
+Embedding hosts use `OriginalRepository::open_readonly` for passive existing
+remote/bookmark discovery. It accepts the immutable source grant and retains no
+writer capability; save, fetch and publication review refuse before transport.
+`OriginalRepository::open` still requires a separately admitted MutationAccess.
+Neither constructor snapshots files or initializes the original repository.

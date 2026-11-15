@@ -7,7 +7,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-/// Native custody is replaceable only by an injected test implementation.
+/// The executing host supplies OS custody or an explicitly injected secret store.
 pub trait SecretStore: Send + Sync {
     fn get(&self, id: &str) -> Result<Option<String>>;
     fn set(&self, id: &str, value: &str) -> Result<()>;
@@ -34,13 +34,19 @@ impl SecretStore for NativeSecrets {
         ScopedNativeSecrets::new("md.lapis.jj-store.forge.v1").remove(id)
     }
 }
-#[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
+#[cfg(all(
+    feature = "native-secrets",
+    any(target_os = "macos", target_os = "linux", target_os = "windows")
+))]
 fn entry(service: &str, id: &str) -> Result<keyring::Entry> {
     keyring::Entry::new(service, id).map_err(|_| Error::State)
 }
 impl SecretStore for ScopedNativeSecrets {
     fn get(&self, id: &str) -> Result<Option<String>> {
-        #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
+        #[cfg(all(
+            feature = "native-secrets",
+            any(target_os = "macos", target_os = "linux", target_os = "windows")
+        ))]
         {
             match entry(self.service, id)?.get_password() {
                 Ok(v) => Ok(Some(v)),
@@ -48,36 +54,51 @@ impl SecretStore for ScopedNativeSecrets {
                 _ => Err(Error::State),
             }
         }
-        #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
+        #[cfg(not(all(
+            feature = "native-secrets",
+            any(target_os = "macos", target_os = "linux", target_os = "windows")
+        )))]
         {
-            let _ = id;
+            let _ = (self.service, id);
             Err(Error::Unsupported)
         }
     }
     fn set(&self, id: &str, value: &str) -> Result<()> {
-        #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
+        #[cfg(all(
+            feature = "native-secrets",
+            any(target_os = "macos", target_os = "linux", target_os = "windows")
+        ))]
         {
             entry(self.service, id)?
                 .set_password(value)
                 .map_err(|_| Error::State)
         }
-        #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
+        #[cfg(not(all(
+            feature = "native-secrets",
+            any(target_os = "macos", target_os = "linux", target_os = "windows")
+        )))]
         {
-            let _ = (id, value);
+            let _ = (self.service, id, value);
             Err(Error::Unsupported)
         }
     }
     fn remove(&self, id: &str) -> Result<()> {
-        #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
+        #[cfg(all(
+            feature = "native-secrets",
+            any(target_os = "macos", target_os = "linux", target_os = "windows")
+        ))]
         {
             match entry(self.service, id)?.delete_credential() {
                 Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
                 _ => Err(Error::State),
             }
         }
-        #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
+        #[cfg(not(all(
+            feature = "native-secrets",
+            any(target_os = "macos", target_os = "linux", target_os = "windows")
+        )))]
         {
-            let _ = id;
+            let _ = (self.service, id);
             Err(Error::Unsupported)
         }
     }

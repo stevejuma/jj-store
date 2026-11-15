@@ -108,3 +108,7 @@ Container-only trust setup changes no product transport policy or host trust.
 Additive native divergence access supports a known empty remote and an immutable
 push intent. Existing retained-checkpoint divergence remains compatible; every
 comparison shares the same operation pin and bounded native graph reader.
+
+Original remote inspection accepts a read-only source grant through its explicit
+immutable constructor. No dynamic cast or fallback can derive MutationAccess;
+writer commands retain their separate admission and exact native guards.

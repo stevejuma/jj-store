@@ -8,6 +8,11 @@ description = "Owned forge adapters and recoverable stack submission"
 repository.workspace = true
 homepage.workspace = true
 
+[features]
+default = ["native-secrets"]
+# Hosts with injected custody can exclude platform keyring libraries entirely.
+native-secrets = ["dep:keyring"]
+
 [dependencies]
 async-trait = "0.1"
 schemars.workspace = true
@@ -27,8 +32,8 @@ thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-keyring = { version = "3.6", features = ["apple-native"] }
+keyring = { version = "3.6", optional = true, features = ["apple-native"] }
 [target.'cfg(target_os = "windows")'.dependencies]
-keyring = { version = "3.6", features = ["windows-native"] }
+keyring = { version = "3.6", optional = true, features = ["windows-native"] }
 [target.'cfg(target_os = "linux")'.dependencies]
-keyring = { version = "3.6", features = ["sync-secret-service", "crypto-rust"] }
+keyring = { version = "3.6", optional = true, features = ["sync-secret-service", "crypto-rust"] }

@@ -72,13 +72,28 @@ pub struct Snapshot {
 }
 
 pub struct OriginalRepository {
-    access: Arc<dyn MutationAccess>,
+    access: Arc<dyn local_browser::Access>,
+    mutation: Option<Arc<dyn MutationAccess>>,
     root: PathBuf,
     workspace: Workspace,
     repo: Arc<ReadonlyRepo>,
 }
 impl OriginalRepository {
     pub async fn open(access: Arc<dyn MutationAccess>, root: PathBuf) -> Result<Self> {
+        Self::load(access.clone(), Some(access), root).await
+    }
+    /// Immutable source discovery never derives writer authority from a reader.
+    pub async fn open_readonly(
+        access: Arc<dyn local_browser::Access>,
+        root: PathBuf,
+    ) -> Result<Self> {
+        Self::load(access, None, root).await
+    }
+    async fn load(
+        access: Arc<dyn local_browser::Access>,
+        mutation: Option<Arc<dyn MutationAccess>>,
+        root: PathBuf,
+    ) -> Result<Self> {
         access.authorize().await.map_err(|_| Error::Denied)?;
         if !root.is_absolute() || root.canonicalize().map_err(|_| Error::Binding)? != root {
             return Err(Error::Binding);
@@ -125,6 +140,7 @@ impl OriginalRepository {
         access.authorize().await.map_err(|_| Error::Denied)?;
         Ok(Self {
             access,
+            mutation,
             root,
             workspace,
             repo,
@@ -202,11 +218,16 @@ impl OriginalRepository {
             working_copy,
         })
     }
-    async fn current(&self) -> Result<()> {
-        self.access
+    async fn authorize_mutation(&self) -> Result<()> {
+        self.mutation
+            .as_ref()
+            .ok_or(Error::Denied)?
             .authorize_mutation()
             .await
-            .map_err(|_| Error::Denied)?;
+            .map_err(|_| Error::Denied)
+    }
+    async fn current(&self) -> Result<()> {
+        self.authorize_mutation().await?;
         let heads = self
             .workspace
             .repo_loader()
