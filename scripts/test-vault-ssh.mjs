@@ -15,7 +15,17 @@ import { join } from "node:path";
 import { createServer, connect } from "node:net";
 if (!["darwin", "linux"].includes(process.platform))
   throw Error("SSH fixture requires macOS or Linux");
-const base = realpathSync(mkdtempSync(join(tmpdir(), "jj-vault-ssh-")));
+const original = process.argv.slice(2);
+if (original.some((arg) => arg !== "--original"))
+  throw Error("Use --original or no arguments");
+const originalProfile = original.includes("--original");
+// OpenSSH StrictModes rejects a Linux authorized_keys path beneath world-writable /tmp.
+// Only fresh disposable fixture state is created here; host profiles are never read.
+const base = realpathSync(
+  mkdtempSync(
+    join(process.platform === "linux" ? homedir() : tmpdir(), ".jj-vault-ssh-"),
+  ),
+);
 const children = [];
 const logs = [];
 const run = (bin, args, env = process.env) =>
@@ -172,6 +182,12 @@ child.on('close',code=>{if(dropping&&code===0){unlinkSync(base+'/drop-next-respo
     JJ_STORE_SSH_ENDPOINT: `ssh://${userInfo().username}@127.0.0.1:${port}${remote}`,
   };
   run("ssh-add", [join(base, "identity")], testEnv);
+  // Fixture-only preflight retains synthetic diagnostics before sanitized product calls.
+  const trust = join(base, "known 'hosts'").replaceAll("'", "'\\''");
+  run("git", ["ls-remote", "--", testEnv.JJ_STORE_SSH_ENDPOINT], {
+    ...testEnv,
+    GIT_SSH_COMMAND: `ssh -F /dev/null -oBatchMode=yes -oStrictHostKeyChecking=yes -oIdentityFile=none -oGlobalKnownHostsFile=/dev/null '-oUserKnownHostsFile="${trust}"'`,
+  });
   const test = spawn(
     process.execPath,
     [
@@ -184,11 +200,15 @@ child.on('close',code=>{if(dropping&&code===0){unlinkSync(base+'/drop-next-respo
       "--features",
       "vault-backup",
       "--test",
-      "vault_ssh_transport",
+      originalProfile ? "vault_original_remotes" : "vault_ssh_transport",
       "--",
       "--ignored",
-      "--exact",
-      "real_ssh_preserves_files_rejects_host_key_changes_and_recovers_lost_push_responses",
+      ...(originalProfile
+        ? ["original_", "--test-threads=1"]
+        : [
+            "--exact",
+            "real_ssh_preserves_files_rejects_host_key_changes_and_recovers_lost_push_responses",
+          ]),
     ],
     { env: testEnv, stdio: "inherit" },
   );

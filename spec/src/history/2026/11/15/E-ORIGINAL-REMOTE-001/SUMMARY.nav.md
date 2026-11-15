@@ -1,0 +1,1 @@
+- [Original remotes qualification (continued 2)](details-02.md)

@@ -1,8 +1,8 @@
 //! Bounded immutable checkpoint history for a rebuildable search projection.
-mod divergence;
+pub(super) mod divergence;
 mod index;
 use super::*;
-pub use divergence::CheckpointDivergence;
+pub use divergence::{CheckpointDivergence, CommitDivergence};
 use futures::{AsyncReadExt as _, StreamExt as _, TryStreamExt as _};
 pub use index::{IndexFile, IndexFiles, IndexRevision};
 use jj_lib::{backend::TreeValue, revset::RevsetExpression};

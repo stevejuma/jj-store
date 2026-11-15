@@ -891,3 +891,43 @@ Native SSH hosts may select an existing known-hosts file outside the vault. The
 file stays read-only, strict verification remains enabled, and browser or
 repository configuration cannot select its path. A disposable loopback sshd
 acceptance covers real transfer, wrong-key refusal and lost-response recovery.
+
+## Original remote embedding
+
+Original Git-backed JJ remote APIs are a separately admitted native writer under
+source qualification. Dedicated private transfer state isolates them from vault
+backup; immutable readers do not gain mutation authority. Host adoption and real
+transport qualification remain separate from source compilation.
+
+`original_remotes::OriginalRepository` requires an explicit `MutationAccess`, an
+existing canonical Git-backed workspace and one operation head. `snapshot` only
+discovers remotes/bookmarks. `save_remote` checks the discovery configuration
+revision under a physical Git configuration lock, deliberately saves the named
+endpoint and performs no transfer. It never chooses or replaces origin
+implicitly.
+
+`fetch` imports the selected branch into native JJ tracking without a snapshot,
+checkout or file write. `review_push` pins one recorded local bookmark/commit,
+operation, endpoint and observed destination; `push` rechecks that review before
+reserving its durable intent. Divergent ancestry and changed reviews refuse
+publication. The existing transfer observation/recovery API retains unknown
+outcomes and never sends another push to determine acceptance.
+
+`pnpm test:vault-ssh -- --original` runs the disposable real SSH source profile;
+without arguments it retains the backup transport profile. Its isolated fixture
+home is beneath a secure parent on Linux so OpenSSH StrictModes stays enabled.
+This source proof does not qualify either application host or external
+providers.
+
+`pnpm test:vault-https` separately runs a real TLS smart-HTTP Git endpoint for
+anonymous reads and scoped token publication on both targets. A disposable CA is
+trusted only inside the isolated Linux validation worker and retired afterward;
+ordinary product certificate/redirect policy is unchanged. The source profile
+includes token replacement and target isolation, not cold application custody.
+
+Native `CommitDivergence` distinguishes an empty remote branch from a missing
+local checkpoint. `HistoryReader::checkpoint_divergence`, original
+recorded-bookmark counts and `Session::push_divergence` share one bounded graph
+reader. Review counts belong to its exact retained intent rather than a later
+capture. These read methods never snapshot files, transfer data or move an
+application pin.

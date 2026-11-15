@@ -50,3 +50,8 @@ Folder initialization composition persists the proposed identity before
 publication and reuses the same initialization receipt. Reconnect changes only a
 validated device binding; companion metadata and linked project identities
 remain authoritative and unchanged.
+
+Original Git-backed remote writers stay in the JJ integration crate and require
+separate mutation admission. Private transfer bindings isolate them from backup
+and source Git/SSH configuration. Only an explicit named save changes remote
+configuration; immutable history readers retain no mutation authority.

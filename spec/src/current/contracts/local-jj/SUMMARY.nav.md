@@ -30,3 +30,5 @@
 - [Explicit initial stack workspace setup](30-explicit-initial-stack-workspace-setup.md)
 - [Complete native stack discovery and boundaries](31-complete-native-stack-discovery-and-boundaries.md)
 - [Automatic vault backup](32-automatic-vault-backup.md)
+
+- [Original repository remotes](33-original-repository-remotes.md)

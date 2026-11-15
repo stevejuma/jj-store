@@ -15,9 +15,10 @@ mod capture;
 mod content;
 mod history;
 mod initialize;
+pub(crate) use history::divergence::graph_divergence;
 pub use history::{
-    CheckpointDivergence, HistoryFile, HistoryFiles, HistoryPage, HistoryReader, HistoryRevision,
-    IndexFile, IndexFiles, IndexRevision,
+    CheckpointDivergence, CommitDivergence, HistoryFile, HistoryFiles, HistoryPage, HistoryReader,
+    HistoryRevision, IndexFile, IndexFiles, IndexRevision,
 };
 mod path_policy;
 mod remote;
