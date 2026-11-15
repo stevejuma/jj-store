@@ -104,3 +104,7 @@ native bookmark tracking imports without snapshot or checkout.
 Real HTTPS source acceptance covers both private backup and original transfer
 bindings, anonymous reads, scoped tokens, replacement and redirect refusal.
 Container-only trust setup changes no product transport policy or host trust.
+
+Additive native divergence access supports a known empty remote and an immutable
+push intent. Existing retained-checkpoint divergence remains compatible; every
+comparison shares the same operation pin and bounded native graph reader.

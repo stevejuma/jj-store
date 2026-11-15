@@ -924,3 +924,10 @@ anonymous reads and scoped token publication on both targets. A disposable CA is
 trusted only inside the isolated Linux validation worker and retired afterward;
 ordinary product certificate/redirect policy is unchanged. The source profile
 includes token replacement and target isolation, not cold application custody.
+
+Native `CommitDivergence` distinguishes an empty remote branch from a missing
+local checkpoint. `HistoryReader::checkpoint_divergence`, original
+recorded-bookmark counts and `Session::push_divergence` share one bounded graph
+reader. Review counts belong to its exact retained intent rather than a later
+capture. These read methods never snapshot files, transfer data or move an
+application pin.

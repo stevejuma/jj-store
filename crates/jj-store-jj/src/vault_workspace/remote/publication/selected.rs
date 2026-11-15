@@ -9,7 +9,7 @@ impl RemoteTransfer {
         id: &str,
         after: &str,
         before: Option<String>,
-    ) -> Result<Option<PushIntent>> {
+    ) -> Result<Option<(PushIntent, CommitDivergence)>> {
         request_id(id)?;
         if !self.binding.vault_id.starts_with("original-") || self.pending_push()?.is_some() {
             return Err(Error::Busy);
@@ -56,18 +56,29 @@ impl RemoteTransfer {
             .commit("retain reviewed original commit")
             .await
             .map_err(jj)?;
-        Ok(Some(PushIntent {
+        let intent = PushIntent {
             binding: self.binding.clone(),
             endpoint: self.endpoint.clone(),
             branch: self.branch.clone(),
             request_id: id.into(),
             before,
             after: after.into(),
-        }))
+        };
+        let counts = session.push_divergence(&intent).await?;
+        Ok(Some((intent, counts)))
     }
 }
 
 impl PushIntent {
+    pub fn commit(&self) -> &str {
+        &self.after
+    }
+    pub fn remote_commit(&self) -> Option<&str> {
+        self.before.as_deref()
+    }
+    pub fn request_id(&self) -> &str {
+        &self.request_id
+    }
     pub(crate) fn matches_original_selection(
         &self,
         transfer: &RemoteTransfer,
@@ -77,5 +88,28 @@ impl PushIntent {
             && self.endpoint == transfer.endpoint
             && self.branch == transfer.branch
             && self.after == commit
+    }
+}
+
+impl Session {
+    /// Counts exactly this retained review, even if a later capture advances.
+    pub async fn push_divergence(&self, intent: &PushIntent) -> Result<CommitDivergence> {
+        self.binding.verify_saved()?;
+        if !intent.bound_to(&self.binding) {
+            return Err(Error::Binding);
+        }
+        let local = self.retained_commit(&intent.after).await?;
+        let remote = match &intent.before {
+            Some(id) => Some(self.retained_commit(id).await?),
+            None => None,
+        };
+        let counts = graph_divergence(
+            self.repo.as_ref(),
+            local.id(),
+            remote.as_ref().map(|c| c.id()),
+        )
+        .await?;
+        self.binding.verify_saved()?;
+        Ok(counts)
     }
 }

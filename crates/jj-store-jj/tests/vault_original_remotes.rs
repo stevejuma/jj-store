@@ -297,6 +297,12 @@ async fn original_fetch_moves_tracked_bookmarks_without_capturing_or_writing_fil
         "saved on disk, never captured"
     );
     assert!(!root.join("Note.md").exists());
+    let counts = repository
+        .divergence("origin", "main", "main")
+        .await
+        .unwrap();
+    assert_eq!((counts.incoming, counts.outgoing), (0, 0));
+    assert_eq!(counts.remote_commit.as_deref(), Some(second.as_str()));
     let unchanged = repository.fetch("origin", &transfer).await.unwrap();
     assert_eq!(
         unchanged.operation, fetched.operation,
@@ -381,6 +387,11 @@ async fn original_push_publishes_one_reviewed_bookmark_and_recovers_without_repl
         .await
         .unwrap();
     assert_eq!(review.commit(), first);
+    assert_eq!(
+        (review.divergence().incoming, review.divergence().outgoing),
+        (0, 1)
+    );
+    assert!(review.divergence().remote_commit.is_none());
     assert_eq!(
         transfer.observe().await.unwrap(),
         None,

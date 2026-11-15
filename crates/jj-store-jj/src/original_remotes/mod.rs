@@ -1,4 +1,5 @@
 //! Explicit original-repository writer. Immutable HistoryReader grants do not authorize it.
+mod counts;
 mod fetch;
 mod objects;
 mod push;

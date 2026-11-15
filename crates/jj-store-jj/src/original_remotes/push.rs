@@ -1,6 +1,6 @@
 //! One explicit native bookmark review, never an implicit snapshot or all-bookmark push.
 use super::*;
-use crate::vault_workspace::{PushIntent, PushOutcome};
+use crate::vault_workspace::{CommitDivergence, PushIntent, PushOutcome};
 use jj_lib::ref_name::RefName;
 use serde::Deserialize;
 
@@ -16,6 +16,7 @@ pub struct PushReview {
     commit: String,
     target: RemoteTarget,
     intent: PushIntent,
+    counts: CommitDivergence,
 }
 impl PushReview {
     pub fn commit(&self) -> &str {
@@ -23,6 +24,9 @@ impl PushReview {
     }
     pub fn bookmark(&self) -> &str {
         &self.bookmark
+    }
+    pub fn divergence(&self) -> &CommitDivergence {
+        &self.counts
     }
 }
 impl OriginalRepository {
@@ -51,7 +55,7 @@ impl OriginalRepository {
         let backend = git::get_git_backend(self.repo.store()).map_err(|_| Error::Unsupported)?;
         let cache = gix::open(transfer.native_git_path()).map_err(|_| Error::Native)?;
         objects::copy(&backend.git_repo(), &cache, &commit.hex())?;
-        let intent = transfer
+        let (intent, counts) = transfer
             .prepare_original_commit(
                 request_id,
                 &commit.hex(),
@@ -70,6 +74,7 @@ impl OriginalRepository {
             commit: commit.hex(),
             target: transfer.native_target(),
             intent,
+            counts,
         })
     }
     pub async fn push(

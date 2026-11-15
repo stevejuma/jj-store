@@ -46,3 +46,10 @@ endpoint and disposable container-only trust. Token and anonymous transfers,
 authentication refusal, replacement, redirect isolation and exact original
 publication retain the same native contract; no TLS verification bypass exists.
 The original feature test binary follows the vault-backup profile naming audit.
+
+Native graph counts are operation-pinned and bounded. A known empty remote uses
+the native root as its comparison boundary, excluding that root from outgoing
+counts; missing local history stays unknown. Original counts read the recorded
+remote bookmark without network access. Push-review counts pin the exact
+retained commit and observed destination, surviving a later backup capture
+without drift.

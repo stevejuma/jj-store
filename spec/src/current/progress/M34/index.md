@@ -137,3 +137,8 @@ E-ORIGINAL-REMOTE-002 adds real HTTPS token/anonymous transfer and original
 publication source proof. The feature-family audit retains its assertions after
 renaming the original integration binary to its existing vault-backup family.
 M34.9 stays In progress at shared orchestration and both cold application hosts.
+
+E-ORIGINAL-REMOTE-003 adds shared native empty-branch and immutable-review
+counts. The original and backup paths retain bounded read-only graph semantics;
+M34.9 remains In progress at host orchestration and cold application
+qualification.

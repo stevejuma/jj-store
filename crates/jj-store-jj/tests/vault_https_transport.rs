@@ -231,6 +231,14 @@ async fn real_https_tokens_anonymous_reads_and_original_publication_preserve_sco
         .review_push("origin", "main", "https-original", &transfer)
         .await
         .unwrap();
+    assert_eq!(
+        (review.divergence().incoming, review.divergence().outgoing),
+        (0, 1)
+    );
+    assert_eq!(
+        review.divergence().remote_commit.as_deref(),
+        Some(checkpoint.commit.as_str())
+    );
     let proposed = review.commit().to_owned();
     assert_eq!(
         repository.push(&review, &transfer).await.unwrap(),

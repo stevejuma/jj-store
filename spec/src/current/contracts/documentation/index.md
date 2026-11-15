@@ -17,3 +17,5 @@ Read the owning topic and requirement before implementation.
 - [Workflow documentation](10-workflows.md)
 - [Planned thread files documentation](11-thread-files-implementation-plan.md)
 - [Desktop browser development documentation](12-desktop-browser-development.md)
+
+- [Native remotes source qualification](13-native-remotes-source-qualification.md)

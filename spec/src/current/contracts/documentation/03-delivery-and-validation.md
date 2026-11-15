@@ -393,8 +393,5 @@ strict SSH trust-file implementation. The review retains independent native
 bridge and conversion scope; hosted documentation checks enforce the reviewed
 source.
 
-Original remote embedding requires an explicit native writer and private state
-independent from backup and immutable readers. E-ORIGINAL-REMOTE-001 retains
-source proof without host-delivery claims. E-ORIGINAL-REMOTE-002 adds opt-in TLS
-smart HTTP with temporary trust confined to the disposable Linux worker;
-ordinary product certificate verification stays intact.
+[Native remotes source qualification](13-native-remotes-source-qualification.md)
+retains independent writer, read, transport and host acceptance boundaries.
