@@ -1,6 +1,7 @@
 //! Bounded immutable checkpoint history for a rebuildable search projection.
 pub(super) mod divergence;
 mod index;
+mod publication;
 use super::*;
 pub use divergence::{CheckpointDivergence, CommitDivergence};
 use futures::{AsyncReadExt as _, StreamExt as _, TryStreamExt as _};

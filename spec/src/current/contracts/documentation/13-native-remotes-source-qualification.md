@@ -31,3 +31,9 @@ The embedding manual distinguishes the sole-head ancestry and exact WC commit
 proof from strict preparation/checkout witnesses. Neither status nor fetch
 completes the saved checkout pointer, captures disk files or moves a History
 selection. Cold host integration remains a separate gate.
+
+E-VAULT-BACKUP-030 documents capture-independent initialized transport and
+immutable backup review/counts. The embedding manual names the pinned-reader
+entry points, preserves existing Session compatibility and separates first
+initialization from damaged existing state. Shared host orchestration and cold
+applications remain separate from native and real transport source acceptance.

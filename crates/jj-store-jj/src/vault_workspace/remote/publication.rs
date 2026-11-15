@@ -1,3 +1,4 @@
+pub(in crate::vault_workspace) mod prepare;
 mod recovery;
 mod selected;
 use super::*;
@@ -67,54 +68,6 @@ pub(in crate::vault_workspace) fn read<T: serde::de::DeserializeOwned>(path: &Pa
         return Err(Error::Binding);
     }
     serde_json::from_slice(&data).map_err(jj)
-}
-impl Session {
-    /// Pin a current retained checkpoint and prove publication preserves ancestry.
-    /// The transfer records the exact intent durably before starting a child.
-    pub async fn prepare_push(
-        &self,
-        remote: &RemoteTransfer,
-        id: &str,
-        before: Option<String>,
-    ) -> Result<PushIntent> {
-        self.binding.verify_saved()?;
-        request_id(id)?;
-        if self.binding != remote.binding {
-            return Err(Error::Binding);
-        }
-        let checkpoint = self.checkpoint()?.ok_or(Error::Binding)?;
-        let target = self.retained_commit(&checkpoint.commit).await?;
-        if target.has_conflict() {
-            return Err(Error::Jj(
-                "Resolve backup conflicts before publishing".into(),
-            ));
-        }
-        if let Some(before) = &before {
-            if !oid(before) {
-                return Err(Error::Binding);
-            }
-            let before = CommitId::try_from_hex(before).ok_or(Error::Binding)?;
-            if !self
-                .repo
-                .index()
-                .is_ancestor(&before, target.id())
-                .await
-                .map_err(jj)?
-            {
-                return Err(Error::Jj(
-                    "Fetch and merge the remote backup before publishing".into(),
-                ));
-            }
-        }
-        Ok(PushIntent {
-            binding: self.binding.clone(),
-            endpoint: remote.endpoint.clone(),
-            branch: remote.branch.clone(),
-            request_id: id.into(),
-            before,
-            after: checkpoint.commit,
-        })
-    }
 }
 impl RemoteTransfer {
     async fn observes_publication(&self, target: &str) -> Result<bool> {
@@ -211,26 +164,8 @@ impl RemoteTransfer {
         if !oid(&intent.after) {
             return Err(Error::Binding);
         }
-        let session = Session::open(self.binding.clone()).await?;
-        let target = session.retained_commit(&intent.after).await?;
-        if target.has_conflict() {
-            return Err(Error::Binding);
-        }
-        if let Some(before) = &intent.before {
-            if !oid(before) {
-                return Err(Error::Binding);
-            }
-            let before = CommitId::try_from_hex(before).ok_or(Error::Binding)?;
-            if !session
-                .repo
-                .index()
-                .is_ancestor(&before, target.id())
-                .await
-                .map_err(jj)?
-            {
-                return Err(Error::Binding);
-            }
-        }
+        let session = HistoryReader::open(self.binding.clone()).await?;
+        session.validate_push(intent).await?;
         drop(session);
         let directory = self.binding.state.join("remote-push-receipts");
         fs::create_dir_all(&directory)?;

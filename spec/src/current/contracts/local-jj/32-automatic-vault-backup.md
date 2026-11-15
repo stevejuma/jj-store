@@ -93,6 +93,14 @@ its exact expected remote head and immutable target before network IO. An
 unknown push is observed before any further publication; automatic replay cannot
 create another intent. Exact-head guards reject remote drift.
 
+Initialized transfer connection, immutable intent review/counts and retained
+publication validation MUST remain independent of the capture lease. Reviews pin
+an existing native checkpoint and keep their exact commit/counts after later
+captures. A missing new binding may initialize through an explicit native
+command; damaged existing state cannot be silently replaced. Transport/storage
+fences and ancestry, retained-object and publication-receipt guards remain
+required. Network publication never captures additional saved files.
+
 Hosts queue fetched-head import and guarded remote restore through the injected
 vault worker. Transfer remains outside its queue; only the resulting native
 restore updates the saved local checkpoint status.
