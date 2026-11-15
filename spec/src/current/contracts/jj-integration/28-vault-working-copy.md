@@ -121,3 +121,8 @@ comparison shares the same operation pin and bounded native graph reader.
 Original remote inspection accepts a read-only source grant through its explicit
 immutable constructor. No dynamic cast or fallback can derive MutationAccess;
 writer commands retain their separate admission and exact native guards.
+
+Immutable history opening filters ancestral operation-head candidates in memory
+under a two-second, 64-head and 4,096-parent-read bound. It selects only one
+maximal native operation and never repairs the source head set; genuinely
+divergent or empty frontiers remain unavailable (JST-LOCAL-007).
