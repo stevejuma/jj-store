@@ -1,5 +1,11 @@
 # Bounded specification and evidence
 
+Version-PR App authentication preserves JST-GOV-002/003/004/011 source/evidence
+ownership and qualification limits. Parsed workflow regression checks run in the
+existing release-tooling lane. Publication dispatch still uses the workflow
+credential, and no runtime, native, signing, container or milestone gate
+changes.
+
 E-CI-DOC-REVIEW-001 retains JST-GOV-002/003/004/011 unchanged. It records the
 failed hosted formatting and documentation-review inputs, their bounded repair
 and local native validation without promoting any hosted or release gate.

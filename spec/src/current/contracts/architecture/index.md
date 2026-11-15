@@ -34,10 +34,9 @@ Read the owning topic and requirement before implementation.
 - [Injectable collaboration stores](25-injectable-collaboration-stores.md)
 - [Reusable agent workflows](26-reusable-agent-workflows.md)
 - [Vault history search projection](27-vault-history-search.md)
-
 - [Completed history shutdown](28-completed-history-shutdown.md)
 
 - [Pinned history metadata](29-pinned-history-metadata.md)
 - [Planned thread file storage boundary](30-thread-files-plan.md)
-
 - [CI execution and scheduled validation](31-ci-execution.md)
+- [Version PR authentication](32-version-pr-authentication.md)
