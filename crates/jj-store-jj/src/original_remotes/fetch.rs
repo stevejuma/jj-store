@@ -82,10 +82,7 @@ impl OriginalRepository {
                 .await
                 .map_err(|_| Error::Native)?;
         }
-        self.access
-            .authorize_mutation()
-            .await
-            .map_err(|_| Error::Denied)?;
+        self.authorize_mutation().await?;
         self.snapshot().await
     }
 }

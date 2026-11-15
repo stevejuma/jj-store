@@ -57,8 +57,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed operation-pinned native empty-branch counts and immutable push-review divergence; no snapshots, network transfers or application pin movement, with separate cold host acceptance.",
-      "fingerprint": "1517f271d06a3686c70ae0091867630ce03143398322aa38600370059e50d259"
+      "reason": "Document immutable OriginalRepository::open_readonly discovery without any writer capability; explicit save/fetch/review/publication still require the separate native MutationAccess constructor. Both constructors preserve files and native identities.",
+      "fingerprint": "2bf0f136b6c5c91d79b485919f435dd10e9e7c28a95b0f9b867d54042027385a"
     }
   },
   {

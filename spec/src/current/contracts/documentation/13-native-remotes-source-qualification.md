@@ -20,3 +20,8 @@ hosts injecting encrypted secret storage. The embedding guide names both Cargo
 default selections and the fail-closed native-store behavior. Dependency-graph
 and source tests qualify linkage selection only; Server image and both cold
 applications remain separate acceptance gates.
+
+E-ORIGINAL-REMOTE-004 separates passive native original inspection from writer
+admission. The embedding manual names the immutable constructor and retains
+explicit write admission for save, fetch and publication. Read-only source
+qualification does not enable host routes or complete application acceptance.

@@ -53,3 +53,10 @@ counts; missing local history stays unknown. Original counts read the recorded
 remote bookmark without network access. Push-review counts pin the exact
 retained commit and observed destination, surviving a later backup capture
 without drift.
+
+Immutable original discovery has an explicit read-only constructor accepting
+only an existing source Access grant. It retains no mutation capability; save,
+fetch, push review and push refuse before transfer even if the underlying reader
+implementation also supports a separately admitted writer. Hosts MUST use this
+constructor for passive settings projection. The existing writer constructor
+continues to require explicit MutationAccess.

@@ -393,3 +393,7 @@ selection, cache experiments and SSH transport gate dispositions.
 E-FORGE-CUSTODY-FEATURE-001 maps jj-forge/service Cargo feature selection and
 account-store refusal to JST-FORGE-007 and M31; injected hosts exclude OS
 linkage.
+
+E-ORIGINAL-REMOTE-004 maps immutable original inspection to JST-LOCAL-008,
+JST-JJ-005, JST-DOC-002 and M34.9; writer admission and host gates stay
+separate.
