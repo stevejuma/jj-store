@@ -48,13 +48,13 @@ export const commentLifecycle = async ({
   ).toHaveTextContent("Please clarify more");
   await expect(c.queryByRole("button", { name: "Go to reply" })).toBeNull();
   await userEvent.click(
-    c.getByRole("button", { name: "Expand 1 sent comments" }),
+    c.getByRole("button", { name: "Expand sent 1 comment" }),
   );
   const history = c.getByRole("group", { name: "Sent comments" });
   await expect(within(history).queryByRole("textbox")).toBeNull();
   await expect(history).toHaveTextContent("Second line");
   await userEvent.click(
-    c.getByRole("button", { name: "Collapse 1 sent comments" }),
+    c.getByRole("button", { name: "Collapse sent 1 comment" }),
   );
   await storyControl(document.body, "Simulate replies");
   const sourceArea = canvasElement.querySelector(

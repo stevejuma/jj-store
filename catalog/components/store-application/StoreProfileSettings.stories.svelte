@@ -48,6 +48,9 @@
     await userEvent.click(await c.findByRole("button", { name: /^Edit$/ }));
     const name = c.getByRole("textbox", { name: "Display name" });
     await userEvent.type(name, " draft");
+    await expect(
+      c.getByRole("button", { name: "Edit profile photo: Selected avatar" }),
+    ).toBeVisible();
     const clear = c.getByRole("button", { name: "Clear avatar" });
     clear.focus();
     await userEvent.keyboard("{Enter}");
@@ -110,7 +113,7 @@
     const preview = c.getByRole("img", { name: "Preview of :party:" });
     await expect(preview).toBeVisible();
     await expect(preview.parentElement?.parentElement).toContainElement(
-      c.getByRole("button", { name: "Choose emoji image" }),
+      c.getByRole("button", { name: "Choose image for emoji" }),
     );
     await userEvent.click(c.getByRole("button", { name: "Save emoji" }));
     await waitFor(async () => {

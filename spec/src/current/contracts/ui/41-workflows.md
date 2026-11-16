@@ -19,13 +19,15 @@ overlapping action tiles, with the first action in front. Their main heading
 describes the recorded trigger and first action, followed by a remaining-step
 count. It clamps to four lines with a full-text hover title; repository,
 workflow name and version date occupy the footer. The switch and menu remain
-independently accessible. Metadata home selection belongs inside creation.
-Runner labels use Design Core chip entry. The dialog has equal inset spacing
-without a sidebar. Unfinished YAML can return to Form; invalid YAML retains its
-text and shows the last valid form draft with a toast explanation. Closing
-retains both drafts. YAML mode omits the right inspector and uses the whole
-padded dialog body for the editor. Returning to Form retains its inspector
-visibility preference; selecting a block reopens a hidden inspector.
+independently accessible. Metadata home selection belongs inside creation. Under
+JST-UI-001, the card opener's accessible name retains both its exact workflow
+name and visible trigger/action summary; execution policy is unchanged. Runner
+labels use Design Core chip entry. The dialog has equal inset spacing without a
+sidebar. Unfinished YAML can return to Form; invalid YAML retains its text and
+shows the last valid form draft with a toast explanation. Closing retains both
+drafts. YAML mode omits the right inspector and uses the whole padded dialog
+body for the editor. Returning to Form retains its inspector visibility
+preference; selecting a block reopens a hidden inspector.
 
 The footer has a top border. Validation and command failures use the shared
 notification service under JST-UI-019, without inline exception messages.

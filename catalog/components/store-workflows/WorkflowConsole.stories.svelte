@@ -36,7 +36,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const prepare = await canvas.findByRole("button", {
-      name: "Step prepare · completed",
+      name: /^Step prepare · completed: /,
     });
     await expect(canvas.getByLabelText("Log read count")).toHaveTextContent(
       "0",
@@ -67,11 +67,11 @@
     await userEvent.click(canvas.getByRole("button", { name: "Refresh run" }));
     await waitFor(() =>
       expect(
-        canvas.getByRole("button", { name: "Step prepare · completed" }),
+        canvas.getByRole("button", { name: /^Step prepare · completed: / }),
       ).toHaveAttribute("aria-expanded", "true"),
     );
     await userEvent.click(
-      canvas.getByRole("button", { name: "Step test · completed" }),
+      canvas.getByRole("button", { name: /^Step test · completed: / }),
     );
     const group = await canvas.findByRole("button", { name: "Test group" });
     await expect(canvas.getByText(/^Nested output/)).not.toBeVisible();
@@ -106,7 +106,9 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Step prepare · completed" }),
+      await canvas.findByRole("button", {
+        name: /^Step prepare · completed: /,
+      }),
     );
     await waitFor(async () => {
       await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
@@ -144,7 +146,7 @@
       ).toBeVisible();
     });
     await expect(
-      fullscreen.getByRole("button", { name: "Step prepare · completed" }),
+      fullscreen.getByRole("button", { name: /^Step prepare · completed: / }),
     ).toHaveAttribute("aria-expanded", "true");
     const fullPanel = body.getByRole("dialog", {
       name: "Workflow logs full screen",
@@ -194,7 +196,7 @@
       await body.findByRole("option", { name: /Run attempt #1/ }),
     );
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Step prepare · failed" }),
+      await canvas.findByRole("button", { name: /^Step prepare · failed: / }),
     );
     await expect(await canvas.findByLabelText("stdout log")).toHaveTextContent(
       "Old attempt only",
@@ -212,13 +214,13 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      await canvas.findByRole("button", { name: "Step test · failed" }),
+      await canvas.findByRole("button", { name: /^Step test · failed: / }),
     ).toHaveAttribute("aria-expanded", "false");
     await expect(
-      canvas.getByRole("button", { name: "Step summary · not run" }),
+      canvas.getByRole("button", { name: /^Step summary · not run: / }),
     ).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Step test · failed" }),
+      canvas.getByRole("button", { name: /^Step test · failed: / }),
     );
     await expect(await canvas.findByLabelText("stderr log")).toHaveTextContent(
       "diagnostic",
@@ -233,11 +235,11 @@
     const canvas = within(canvasElement);
     await waitFor(async () => {
       await expect(
-        await canvas.findByRole("button", { name: "Step test · cancelled" }),
+        await canvas.findByRole("button", { name: /^Step test · cancelled: / }),
       ).toBeVisible();
     });
     await expect(
-      canvas.getByRole("button", { name: "Step summary · not run" }),
+      canvas.getByRole("button", { name: /^Step summary · not run: / }),
     ).toBeVisible();
   }}
 />
@@ -249,11 +251,11 @@
     const canvas = within(canvasElement);
     await waitFor(async () => {
       await expect(
-        await canvas.findByRole("button", { name: "Step test · running" }),
+        await canvas.findByRole("button", { name: /^Step test · running: / }),
       ).toBeVisible();
     });
     const stepSpinner = canvas
-      .getByRole("button", { name: "Step test · running" })
+      .getByRole("button", { name: /^Step test · running: / })
       .querySelector(".workflow-run-status__spinner");
     const attemptSpinner = canvas
       .getByRole("combobox", { name: "Run attempt" })
@@ -265,7 +267,7 @@
       "none",
     );
     await expect(
-      canvas.getByRole("button", { name: "Step summary · pending" }),
+      canvas.getByRole("button", { name: /^Step summary · pending: / }),
     ).toBeVisible();
   }}
 />
@@ -276,13 +278,13 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Step prepare · pending" }),
+      await canvas.findByRole("button", { name: /^Step prepare · pending: / }),
     );
     await expect(await canvas.findByLabelText("stdout log")).toHaveTextContent(
       "Pinned source ready",
     );
     await expect(
-      canvas.getByRole("button", { name: "Step prepare · completed" }),
+      canvas.getByRole("button", { name: /^Step prepare · completed: / }),
     ).toHaveAttribute("aria-expanded", "true");
   }}
 />
@@ -294,7 +296,9 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Step prepare · completed" }),
+      await canvas.findByRole("button", {
+        name: /^Step prepare · completed: /,
+      }),
     );
     const toast = await body.findByRole("alert");
     await expect(toast).toHaveTextContent("Demo step read failed");

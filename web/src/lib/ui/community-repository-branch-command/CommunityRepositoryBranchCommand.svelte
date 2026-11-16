@@ -90,7 +90,6 @@
 {#snippet bookmarkRow(bookmark: Bookmark)}
   <CommandView.Item
     value={bookmark.name}
-    aria-label={bookmark.name}
     class="community-bookmark-card"
     data-current={bookmark.name === selected || undefined}
     onSelect={() => selectBookmark(bookmark.name)}

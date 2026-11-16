@@ -10,7 +10,9 @@
   });
   async function settings(c: ReturnType<typeof within>) {
     await userEvent.click(
-      c.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+      c.getByRole("button", {
+        name: /^Open profile menu for Maya Chen(?: |$)/,
+      }),
     );
     await userEvent.click(
       await within(document.body).findByRole("menuitem", { name: "Settings" }),

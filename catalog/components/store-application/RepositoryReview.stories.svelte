@@ -22,7 +22,7 @@
   name="Shell and row-local graph spacing"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByRole("option", { name: "main" });
+    await canvas.findByRole("option", { name: /^main / });
     const navigationHeader = canvasElement.querySelector<HTMLElement>(
       ".lc-community-navigation__header",
     )!;
@@ -41,7 +41,7 @@
     const group = canvasElement.querySelector(
       '[data-ui-part="command-group"]',
     )!;
-    const option = canvas.getByRole("option", { name: "main" });
+    const option = canvas.getByRole("option", { name: /^main / });
     await expect(option.getBoundingClientRect().left).toBeCloseTo(
       group.getBoundingClientRect().left,
       0,
@@ -67,11 +67,11 @@
     await expect(heading.getBoundingClientRect().top).toBeCloseTo(top, 0);
     viewport.scrollTop = 0;
     await expect(
-      getComputedStyle(canvas.getByRole("option", { name: "retired" }))
+      getComputedStyle(canvas.getByRole("option", { name: /^retired / }))
         .borderBottomWidth,
     ).toBe("1px");
     await expect(
-      getComputedStyle(canvas.getByRole("option", { name: "retired" }))
+      getComputedStyle(canvas.getByRole("option", { name: /^retired / }))
         .borderBottomLeftRadius,
     ).toBe("0px");
     const branchHeader = canvasElement.querySelector(
@@ -92,11 +92,11 @@
       "rgba(0, 0, 0, 0)",
     );
     await expect(
-      getComputedStyle(canvas.getByRole("option", { name: "main" }))
+      getComputedStyle(canvas.getByRole("option", { name: /^main / }))
         .borderBottomWidth,
     ).toBe("1px");
     await userEvent.click(details);
-    await userEvent.click(canvas.getByRole("option", { name: "main" }));
+    await userEvent.click(canvas.getByRole("option", { name: /^main / }));
     await waitFor(() => {
       const avatars = Array.from(
         canvasElement.querySelectorAll(

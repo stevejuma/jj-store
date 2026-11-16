@@ -243,7 +243,7 @@
     });
     await userEvent.click(
       within(stack).getByRole("button", {
-        name: "Create commit in feature/api",
+        name: "Create commit in feature/api: Start a commit…",
       }),
     );
     const title = within(stack).getByRole("textbox", { name: "Commit title" });

@@ -22,7 +22,7 @@
     await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
     for (const name of ["Codex", "Cursor", "OpenCode"]) {
       const group = await c.findByRole("button", {
-        name: `${name} configuration`,
+        name: new RegExp(`^Configuration: ${name} `),
       });
       await expect(group).toHaveAttribute("aria-expanded", "false");
       await expect(group.querySelector("img")).not.toBeNull();
@@ -49,7 +49,7 @@
       "http://127.0.0.1:4096/",
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Cursor configuration" }),
+      c.getByRole("button", { name: /^Configuration: Cursor / }),
     );
     await waitFor(() =>
       expect(
@@ -69,7 +69,7 @@
     ).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
     await userEvent.click(
-      c.getByRole("button", { name: "Cursor configuration" }),
+      c.getByRole("button", { name: /^Configuration: Cursor / }),
     );
     await expect(
       c.getByRole("textbox", { name: "Cursor CLI folders" }),

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { revisionReviewOpener } from "../../fixtures/revision-review-opener.js";
   import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -19,9 +20,7 @@
   name="Community sections and inline agent context"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Revision open/ }),
-    );
+    await userEvent.click(await revisionReviewOpener(canvasElement));
     const detail = c.getByRole("article", { name: "Review details" });
     await expect(c.queryByRole("tab", { name: "Reviews" })).toBeNull();
     await expect(
@@ -129,9 +128,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       body = within(document.body);
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Revision open/ }),
-    );
+    await userEvent.click(await revisionReviewOpener(canvasElement));
     await userEvent.type(
       within(c.getByRole("group", { name: "Review comment" })).getByRole(
         "textbox",
@@ -188,9 +185,7 @@
     )!;
     await expect(row).not.toBeNull();
     await expect(row.getBoundingClientRect().width).toBeGreaterThan(600);
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Revision open/ }),
-    );
+    await userEvent.click(await revisionReviewOpener(canvasElement));
     await expect(c.queryByRole("list", { name: "Review threads" })).toBeNull();
     await expect(
       c.queryByRole("complementary", { name: "Review discussion" }),
@@ -221,9 +216,7 @@
     );
     await userEvent.click(c.getByRole("button", { name: "Back to reviews" }));
     await expect(c.getByRole("list", { name: "Review threads" })).toBeVisible();
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Revision open/ }),
-    );
+    await userEvent.click(await revisionReviewOpener(canvasElement));
     await expect(
       within(c.getByRole("group", { name: "Review comment" })).getByRole(
         "textbox",

@@ -34,10 +34,11 @@
         class="agent-profile__runtime-field"
         disabled={disabled ||
           (field.label === "Agent harness" && !harnessEditable)}
-        aria-label={`Edit ${field.label.toLowerCase()}`}
         onclick={onEdit}
       >
-        <span><span>{field.label}</span><strong>{field.value}</strong></span
+        <span class="sr-only">Edit </span>
+        <span
+          ><span>{field.label}</span>{" "}<strong>{field.value}</strong></span
         ><PencilIcon aria-hidden="true" />
       </Button>{:else}<div class="agent-profile__runtime-field">
         <span><span>{field.label}</span><strong>{field.value}</strong></span>

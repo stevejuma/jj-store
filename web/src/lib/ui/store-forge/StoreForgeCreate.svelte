@@ -126,8 +126,8 @@
                   variant="outline"
                   size="sm"
                   disabled={blocked}
-                  aria-label="Publication status"
                 >
+                  <span class="sr-only">Publication status: </span>
                   {plan.draft ? "Draft PR" : "Ready for review"}<ChevronDown
                     data-icon="inline-end"
                     aria-hidden="true"

@@ -108,11 +108,13 @@
     assertSetupMargins(canvasElement);
     const canvas = await choose(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("option", { name: "feature/api" }),
+      await canvas.findByRole("option", { name: /^feature\/api / }),
     );
     await canvas.findByRole("region", { name: "Stack feature/api" });
     expect(
-      canvas.getByRole("button", { name: "Apply feature/api" }),
+      canvas.getByRole("button", {
+        name: "Apply to workspace for feature/api",
+      }),
     ).toBeDisabled();
     await userEvent.click(
       within(

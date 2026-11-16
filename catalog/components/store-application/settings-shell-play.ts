@@ -11,7 +11,9 @@ export async function playMobileSettings({
     canvas.getByRole("button", { name: "Open navigation sidebar" }),
   );
   await userEvent.click(
-    canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    canvas.getByRole("button", {
+      name: /^Open profile menu for Maya Chen(?: |$)/,
+    }),
   );
   await userEvent.click(
     await within(canvasElement.ownerDocument.body).findByRole("menuitem", {

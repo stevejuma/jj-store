@@ -84,8 +84,8 @@
         type="button"
         variant="ghost"
         class="store-capture-harness__trigger"
-        aria-label={`${name} configuration`}
       >
+        <span class="sr-only">Configuration: </span>
         <CommunityMemberAvatar {member} size="small" decorative />
         <span class="store-capture-harness__label"
           >{name}

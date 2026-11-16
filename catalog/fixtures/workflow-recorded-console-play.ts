@@ -14,7 +14,7 @@ export const verifyRecordedConsole = async ({
     expect(consoleRegion).toBeVisible();
   });
   const step = await canvas.findByRole("button", {
-    name: "Step build · completed",
+    name: /^Step build · completed: /,
   });
   await expect(step).toHaveAttribute("aria-expanded", "false");
   const console = canvas.getByRole("region", { name: "Step console" });

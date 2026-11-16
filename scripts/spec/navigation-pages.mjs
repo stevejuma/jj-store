@@ -7,13 +7,42 @@ import {
 } from "node:fs";
 import { dirname, join, relative } from "node:path";
 export const navigationMarker = "\n<!-- generated-navigation -->";
-export function indexBody(source) {
+function navigationSection(source) {
   const fieldEnd = source.lastIndexOf("<!-- /evidence-field -->");
   const from = fieldEnd < 0 ? 0 : fieldEnd + "<!-- /evidence-field -->".length;
   const marked = source.indexOf(navigationMarker, from);
   const legacy = source.indexOf("\n## Pages\n", from);
   const offset = marked >= 0 ? marked : legacy;
-  return offset >= 0 ? source.slice(0, offset) : source;
+  if (offset < 0) return null;
+  const start = marked >= 0 ? marked + navigationMarker.length : offset;
+  const heading = /^(?:\r?\n[ \t]*)*## Pages\r?\n/.exec(source.slice(start));
+  if (!heading) return null;
+  let cursor = start + heading[0].length;
+  let end = cursor;
+  let hasLinks = false;
+  const links = [];
+  while (cursor < source.length) {
+    const newline = source.indexOf("\n", cursor);
+    const next = newline < 0 ? source.length : newline + 1;
+    const line = source.slice(cursor, next).trim();
+    if (line && !/^- \[.*\]\([^\n]*\)$/.test(line)) break;
+    if (line) {
+      hasLinks = true;
+      links.push(line);
+      end = next;
+    }
+    cursor = next;
+  }
+  if (marked < 0 && !hasLinks) return null;
+  // Only generated headings/links are replaceable. Later authored reviews
+  // belong to the index body even when a maintainer appended them below Pages.
+  return {
+    body: source.slice(0, offset).trimEnd() + "\n" + source.slice(end),
+    links,
+  };
+}
+export function indexBody(source) {
+  return navigationSection(source)?.body ?? source;
 }
 const fits = (source) =>
   Buffer.byteLength(source) <= 32768 &&
@@ -69,7 +98,28 @@ export function writeIndexPages(file, body, links) {
   const dir = dirname(file);
   const group = `SUMMARY.index-${file.split(/[\\/]/).at(-1).slice(0, -3)}`;
   const folder = join(dir, group);
+  const existing = existsSync(file) ? readFileSync(file, "utf8") : null;
+  const section = existing === null ? null : navigationSection(existing);
+  if (
+    existing !== null &&
+    fits(existing) &&
+    section?.body === body &&
+    JSON.stringify(section.links) === JSON.stringify(links)
+  )
+    return [];
   if (existsSync(folder)) rmSync(folder, { recursive: true, force: true });
+  // A leaf has no navigation to add. Preserve its authored bytes and budget;
+  // adding an empty Pages section can overflow valid legacy evidence.
+  if (!links.length) {
+    const previous = existsSync(file) ? readFileSync(file, "utf8") : null;
+    const source =
+      previous !== null && fits(previous) && indexBody(previous) === body
+        ? previous
+        : body;
+    if (!fits(source)) throw new Error(`oversized authored index: ${file}`);
+    writeFileSync(file, source);
+    return [];
+  }
   const title = body.match(/^# (.+)$/m)?.[1] ?? "Pages";
   const batches = [];
   let offset = 0;

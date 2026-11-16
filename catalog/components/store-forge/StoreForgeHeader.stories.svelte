@@ -96,7 +96,9 @@
     });
     const header = section.querySelector("header")!;
     await userEvent.click(
-      within(header).getByRole("button", { name: "Collapse pull request #42" }),
+      within(header).getByRole("button", {
+        name: /^Collapse pull request \#42: /,
+      }),
     );
     await userEvent.click(
       within(header).getByRole("button", { name: "Edit details" }),

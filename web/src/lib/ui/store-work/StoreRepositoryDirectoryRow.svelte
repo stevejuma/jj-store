@@ -58,8 +58,8 @@
     class="community-projects__row-main community-projects__repository-target"
     disabled={!accessible}
     onclick={() => onOpen(repository.id)}
-    aria-label={`Open repository ${repository.name}`}
   >
+    <span class="sr-only">Open repository </span>
     <span class="store-projects__repository-copy"
       ><span class="store-projects__repository-title"
         ><strong title={repository.id}>{repository.name}</strong>

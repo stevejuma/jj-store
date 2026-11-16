@@ -54,7 +54,7 @@
     expect(canvas.getByRole("button", { name: "Create stack" })).toBeDisabled();
     expect(
       within(stack).getByRole("button", {
-        name: "Create commit in feature/api",
+        name: "Create commit in feature/api: Start a commit…",
       }),
     ).toBeDisabled();
     await userEvent.click(

@@ -140,9 +140,12 @@
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "New agent session" }));
     await c.findByRole("form", { name: "Start agent session" });
-    await c.findByRole("button", {
-      name: "Open session New chat · new-session",
+    const session = await c.findByRole("button", {
+      name: /^Open session New chat(?: |$)/,
     });
+    await expect(session).toHaveAccessibleDescription(
+      /^Session new-session(?:, .+)?$/,
+    );
     await c.findByRole("textbox", { name: "Markdown editor" });
     await expect(
       c.getByRole("combobox", { name: "Starting revision" }),
@@ -265,7 +268,7 @@
       page.queryByRole("dialog", { name: "Edit agent" }),
     ).not.toBeInTheDocument();
     await userEvent.click(panel.getByRole("tab", { name: "Runtime" }));
-    await panel.findByRole("button", { name: "Edit agent harness" });
+    await panel.findByRole("button", { name: /^Edit Agent harness / });
     await userEvent.click(
       panel.getByRole("button", { name: "Close agent details" }),
     );

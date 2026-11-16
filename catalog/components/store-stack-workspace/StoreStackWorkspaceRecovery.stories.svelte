@@ -19,7 +19,7 @@
     const canvas = workspaceCanvas(element);
     await userEvent.click(
       await canvas.findByRole("button", {
-        name: "Create commit in feature/api",
+        name: "Create commit in feature/api: Start a commit…",
       }),
     );
     await messagePreview(element, "Retained commit draft");
@@ -33,10 +33,12 @@
     const canvas = workspaceCanvas(canvasElement),
       portal = workspacePortal(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("option", { name: "feature/api" }),
+      await canvas.findByRole("option", { name: /^feature\/api / }),
     );
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Unapply feature/api" }),
+      await canvas.findByRole("button", {
+        name: "Unapply from workspace for feature/api",
+      }),
     );
     await portal.findByRole("dialog", { name: "Workspace outcome unknown" });
     await waitFor(async () => {
@@ -46,7 +48,9 @@
     expect(portal.queryByRole("button", { name: "Cancel preview" })).toBeNull();
     expect(canvas.getByRole("button", { name: "Create stack" })).toBeDisabled();
     await userEvent.click(portal.getByRole("button", { name: "Check status" }));
-    await canvas.findByRole("button", { name: "Apply feature/api" });
+    await canvas.findByRole("button", {
+      name: "Apply to workspace for feature/api",
+    });
     await waitFor(() => expect(portal.queryByRole("dialog")).toBeNull());
   }}
 />

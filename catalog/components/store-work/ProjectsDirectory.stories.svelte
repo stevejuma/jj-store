@@ -69,11 +69,11 @@
     const row = retired.closest("article")!;
     const title = within(row).getByText("UI repository");
     const target = within(row).getByRole("button", {
-      name: "Open repository UI repository",
+      name: /^Open repository UI repository /,
     });
     const description = within(row).getByTitle("Latest selected change");
     const active = c
-      .getByRole("button", { name: "Open repository Parser repository" })
+      .getByRole("button", { name: /^Open repository Parser repository / })
       .closest("article")!;
     for (const width of [980, 620, 300]) {
       list.style.width = `${width}px`;
@@ -128,11 +128,11 @@
     for (const layout of ["List layout", "Grid layout"]) {
       await userEvent.click(c.getByRole("radio", { name: layout }));
       const row = c
-        .getByRole("button", { name: "Open repository Parser repository" })
+        .getByRole("button", { name: /^Open repository Parser repository / })
         .closest("article")!;
       const view = within(row);
       await expect(
-        view.getByRole("button", { name: "View Maya Chen's profile" }),
+        view.getByRole("button", { name: /^View Maya Chen's profile(?: |$)/ }),
       ).toBeVisible();
       await expect(
         view.getByRole("group", { name: "24 commits, 1 reviews, 2 tasks" }),
@@ -161,9 +161,12 @@
       .closest("article")!;
     await expect(
       within(row).getByRole("button", {
-        name: `Open review ${"e1".repeat(16)}`,
+        name: "Open review #e1e1e1e1",
       }),
     ).toHaveAttribute("title", "e1".repeat(16));
+    await expect(
+      within(row).getByRole("button", { name: "Open review #e1e1e1e1" }),
+    ).toHaveAccessibleDescription("e1".repeat(16));
     await expect(within(row).getByLabelText("3 comments")).toBeVisible();
     await expectReviewRowUsesWidth(
       row,
@@ -222,7 +225,7 @@
     for (const layout of ["List layout", "Grid layout"]) {
       await userEvent.click(c.getByRole("radio", { name: layout }));
       const target = c.getByRole("button", {
-        name: "Open repository UI repository",
+        name: /^Open repository UI repository /,
       });
       await expect(target).toBeVisible();
       await expect(target.getBoundingClientRect().width).toBeGreaterThan(64);

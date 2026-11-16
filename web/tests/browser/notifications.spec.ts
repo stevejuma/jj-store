@@ -28,7 +28,7 @@ test("operational toasts deduplicate, retain dismissal and clear on recovery", a
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Open profile menu for Local" })

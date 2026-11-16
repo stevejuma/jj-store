@@ -62,7 +62,7 @@
       }),
     ).toBeVisible();
     expect(details.querySelector("dl")).toBeNull();
-    await userEvent.click(canvas.getByRole("option", { name: "main" }));
+    await userEvent.click(canvas.getByRole("option", { name: /^main / }));
     const target = await canvas.findByRole("region", { name: "Stack main" });
     await userEvent.click(
       await within(target).findByRole("button", { name: "Main history 240" }),

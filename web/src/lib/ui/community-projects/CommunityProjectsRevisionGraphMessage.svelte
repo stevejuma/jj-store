@@ -15,6 +15,7 @@
     href?: string | undefined;
     onSelect?: (() => void) | undefined;
   } = $props();
+  const identityId = $props.id();
 
   const parts = $derived(parseRepositoryLogMessage(message));
   let copied = $state("");
@@ -93,7 +94,7 @@
         class="community-revision-graph-message__id"
         class:community-revision-graph-message__id--change={part.type ===
           "change"}
-        aria-label="Copy full {label}: {part.value}"
+        aria-describedby="{identityId}-{index}"
         title="Copy full {label}"
         data-copied={state === "copied" || undefined}
         data-copy-failed={state === "failed" || undefined}
@@ -102,6 +103,7 @@
           void copy(part.value);
         }}
       >
+        <span class="sr-only">Copy full {label}: </span>
         <code>{shorten(part.value)}</code>
         {#if state === "copied"}
           <Check aria-hidden="true" />
@@ -111,6 +113,7 @@
           <Copy aria-hidden="true" />
         {/if}
       </button>
+      <span id="{identityId}-{index}" hidden>{part.value}</span>
     {/if}
   {/each}
 </span>

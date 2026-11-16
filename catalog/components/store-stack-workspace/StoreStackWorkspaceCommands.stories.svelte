@@ -37,7 +37,9 @@
       await canvas.findByRole("region", { name: "Stack feature/workspace" }),
     );
     await userEvent.click(
-      stack.getByRole("button", { name: "Create commit in feature/workspace" }),
+      stack.getByRole("button", {
+        name: "Create commit in feature/workspace: Start a commit…",
+      }),
     );
     let form = stack.getByRole("form", {
       name: "Create commit in feature/workspace",
@@ -81,7 +83,9 @@
       new DragEvent("dragstart", { bubbles: true, dataTransfer: transfer }),
     );
     await fireEvent(
-      stack.getByRole("button", { name: "Assign to feature/workspace" }),
+      stack.getByRole("button", {
+        name: "Assign to feature/workspace: Drop files to stage or commit directly",
+      }),
       new DragEvent("drop", {
         bubbles: true,
         cancelable: true,

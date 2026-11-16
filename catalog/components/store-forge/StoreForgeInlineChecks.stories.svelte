@@ -75,7 +75,7 @@
       name: "Selected file diff",
     });
     const inspect = within(section).getByRole("button", {
-      name: "Toggle check results",
+      name: /^Toggle check results: /,
     });
     await expect(inspect).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(inspect);
@@ -173,7 +173,7 @@
     ).not.toBeInTheDocument();
     const checks = within(section).getByRole("region", { name: "CI checks" });
     const trigger = within(checks).getByRole("button", {
-      name: "Toggle check results",
+      name: /^Toggle check results: /,
     });
     const chevron = within(checks).getByRole("button", {
       name: "Expand checks",

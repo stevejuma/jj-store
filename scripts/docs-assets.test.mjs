@@ -7,8 +7,12 @@ import test from "node:test";
 import { documentationPlugin } from "./docs/assets.mjs";
 
 async function fixture(t) {
-  const root = await mkdtemp(join(tmpdir(), "jj-store-help-reload-"));
-  t.after(() => rm(root, { recursive: true, force: true }));
+  const directory = await mkdtemp(join(tmpdir(), "jj-store-help-reload-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  // The production observer watches the bundle's parent for atomic replacement.
+  // Keep that parent inside this fixture instead of watching the shared /tmp.
+  const root = join(directory, "site");
+  await mkdir(root);
   return root;
 }
 async function publish(root, body, files = ["index.html"]) {

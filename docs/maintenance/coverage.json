@@ -141,8 +141,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed deferred conversation layout stabilization: Jump to end still focuses an inline draft before scrolling and now preserves the documented bottom target after the next layout frame.",
-      "fingerprint": "7525130ec8f11977d5a59f6af4e657b2ed428d5c4b981f6cd1e173b0ececa5dd"
+      "reason": "Reviewed browsing, editing, settings and conversion against the source-owned accessibility repairs: visible labels, exact native-ID copy, multi-select filters, drafts, menu actions and workflow history retain their documented operations and permissions. This refresh acknowledges source coverage; complete UI, native and publication qualification remains separate.",
+      "fingerprint": "242a8fc4a67a261d68c4f81498da5a5b5398afab35ad8b3422cf0ef5e8c00ad3"
     }
   },
   {

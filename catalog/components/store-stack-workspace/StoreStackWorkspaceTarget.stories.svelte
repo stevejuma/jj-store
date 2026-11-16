@@ -21,7 +21,7 @@
     const canvas = within(canvasElement);
     const branches = await canvas.findByRole("region", { name: "Branches" });
     await userEvent.click(
-      within(branches).getByRole("option", { name: "main" }),
+      within(branches).getByRole("option", { name: /^main / }),
     );
     const stack = await canvas.findByRole("region", { name: "Stack main" });
     await within(stack).findByRole("button", { name: "Main history 240" });
@@ -78,7 +78,7 @@
     const canvas = within(canvasElement);
     const branches = await canvas.findByRole("region", { name: "Branches" });
     const target = () =>
-      within(branches).getByRole("option", { name: "origin/trunk" });
+      within(branches).getByRole("option", { name: /^origin\/trunk / });
     const search = within(branches).getByPlaceholderText("Search branches");
     await userEvent.click(
       within(branches).getByRole("tab", { name: "Conflicted" }),
@@ -109,7 +109,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const column = await canvas.findByRole("region", { name: "Branches" });
-    const target = within(column).getByRole("option", { name: "main" });
+    const target = within(column).getByRole("option", { name: /^main / });
     expect(target.getBoundingClientRect().bottom).toBeLessThanOrEqual(
       within(column).getByRole("tab", { name: "All" }).getBoundingClientRect()
         .top,
@@ -141,7 +141,7 @@
       within(diff).getByRole("button", { name: "Close Diff column" }),
     );
     await userEvent.click(
-      within(column).getByRole("option", { name: "feature/api" }),
+      within(column).getByRole("option", { name: /^feature\/api / }),
     );
     expect(
       await canvas.findByRole("region", { name: "Stack feature/api" }),
@@ -165,7 +165,7 @@
     const canvas = within(canvasElement);
     const branches = await canvas.findByRole("region", { name: "Branches" });
     await userEvent.click(
-      within(branches).getByRole("option", { name: "main" }),
+      within(branches).getByRole("option", { name: /^main / }),
     );
     const stack = await canvas.findByRole("region", { name: "Stack main" });
     const card = stack.querySelector<HTMLElement>("[data-loaded-commits]")!;

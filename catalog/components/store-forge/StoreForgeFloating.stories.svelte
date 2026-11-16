@@ -67,13 +67,17 @@
     ).toBe(editor);
     await expect(editor).toHaveTextContent("Retained floating draft");
     await userEvent.click(
-      within(window).getByRole("button", { name: "Publication status" }),
+      within(window).getByRole("button", {
+        name: /^Publication status: (?:Draft PR|Ready for review)$/,
+      }),
     );
     await page.findByRole("menuitemradio", { name: "Ready for review" });
     await userEvent.keyboard("{Escape}");
     await expect(window).toBeInTheDocument();
     await expect(
-      within(window).getByRole("button", { name: "Publication status" }),
+      within(window).getByRole("button", {
+        name: /^Publication status: (?:Draft PR|Ready for review)$/,
+      }),
     ).toHaveFocus();
     if (import.meta.env.MODE === "test") {
       const { userEvent: pointer, page: browser } =
@@ -119,7 +123,9 @@
       }
     }
     await userEvent.click(
-      within(window).getByRole("button", { name: "Publication status" }),
+      within(window).getByRole("button", {
+        name: /^Publication status: (?:Draft PR|Ready for review)$/,
+      }),
     );
     await userEvent.keyboard("{Escape}");
     await userEvent.keyboard("{Escape}");

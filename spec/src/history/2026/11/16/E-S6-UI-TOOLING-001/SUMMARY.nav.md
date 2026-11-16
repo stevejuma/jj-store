@@ -1,0 +1,3 @@
+- [Details 2](details-02.md)
+- [Details 3](details-03.md)
+- [Details 4](details-04.md)

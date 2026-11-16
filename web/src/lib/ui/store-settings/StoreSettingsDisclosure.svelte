@@ -26,7 +26,6 @@
         {...props}
         type="button"
         variant="ghost"
-        aria-label={label}
         aria-describedby={description ? descriptionId : undefined}
         class="store-settings-disclosure__trigger"
       >

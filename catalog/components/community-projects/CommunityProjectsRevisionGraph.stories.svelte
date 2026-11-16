@@ -313,8 +313,9 @@
     try {
       for (const commit of [gitCommit, describedCommit]) {
         const button = canvas.getByRole("button", {
-          name: `Copy full commit ID: ${commit}`,
+          name: `Copy full commit ID: ${commit.slice(0, 8)}…${commit.slice(-4)}`,
         });
+        await expect(button).toHaveAccessibleDescription(commit);
         await expect(
           within(button).getByText(`${commit.slice(0, 8)}…${commit.slice(-4)}`),
         ).toBeVisible();
@@ -324,7 +325,7 @@
         await expect(args.onSelect).not.toHaveBeenCalled();
       }
       const button = canvas.getByRole("button", {
-        name: `Copy full commit ID: ${gitCommit}`,
+        name: `Copy full commit ID: ${gitCommit.slice(0, 8)}…${gitCommit.slice(-4)}`,
       });
       button.focus();
       await userEvent.keyboard("{Enter}");

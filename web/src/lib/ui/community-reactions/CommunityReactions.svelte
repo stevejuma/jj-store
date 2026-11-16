@@ -31,6 +31,14 @@
     {...barProps}
     reactions={reactions.map((reaction) => ({
       ...reaction,
+      custom: reaction.customEmojiUrl
+        ? {
+            id: reaction.emoji,
+            shortcode: reaction.emoji,
+            url: reaction.customEmojiUrl,
+            label: reaction.label ?? reaction.emoji,
+          }
+        : undefined,
       label: `${reaction.count} ${reaction.count === 1 ? "reaction" : "reactions"} with ${reaction.label ?? reaction.emoji}${reaction.actors?.length ? `: ${reaction.actors.map((actor) => actor.name).join(", ")}` : ""}`,
     }))}
     {label}

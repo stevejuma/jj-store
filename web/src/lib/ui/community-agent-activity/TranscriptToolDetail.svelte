@@ -35,13 +35,17 @@
     <Button
       variant="ghost"
       size="sm"
-      aria-label={raw ? "Show rich output" : "Show raw output"}
       aria-pressed={raw}
       onclick={() => (raw = !raw)}
     >
-      {#if raw}<EyeIcon data-icon="inline-start" />Formatted{:else}<EyeIcon
+      <span class="sr-only">Show </span>
+      {#if raw}<EyeIcon
           data-icon="inline-start"
-        />Raw JSON{/if}
+          aria-hidden="true"
+        />Formatted{:else}<EyeIcon
+          data-icon="inline-start"
+          aria-hidden="true"
+        />Raw JSON{/if}<span class="sr-only"> output</span>
     </Button>
   </div>
   {#if facts.redacted || facts.truncated || tool.redacted || tool.truncated}<p

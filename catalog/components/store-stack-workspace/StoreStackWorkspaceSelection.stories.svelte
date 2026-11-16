@@ -72,7 +72,9 @@
     const canvas = within(canvasElement);
     const branches = await canvas.findByRole("region", { name: "Branches" });
     for (const name of ["feature/api", "main"]) {
-      const option = within(branches).getByRole("option", { name });
+      const option = within(branches).getByRole("option", {
+        name: new RegExp(`^${name} `),
+      });
       expect(getComputedStyle(option).cursor).toBe("pointer");
       await userEvent.click(option);
       const stack = await canvas.findByRole("region", {

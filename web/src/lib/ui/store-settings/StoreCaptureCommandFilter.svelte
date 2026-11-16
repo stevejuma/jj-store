@@ -45,12 +45,8 @@
 >
   <Popover.Trigger>
     {#snippet child({ props })}
-      <Button
-        {...props}
-        variant="outline"
-        aria-label={`Filter by source ${singular}`}
-        class="max-w-full min-w-0"
-      >
+      <Button {...props} variant="outline" class="max-w-full min-w-0">
+        <span class="sr-only">Filter by source {singular}: </span>
         <span class="truncate">{label}</span><ChevronDownIcon
           data-icon="inline-end"
           aria-hidden="true"

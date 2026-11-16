@@ -154,9 +154,9 @@
         variant="outline"
         class="stack-workspace__drop"
         disabled={!controller.can("create_commit")}
-        aria-label={`Assign to ${stack.name}`}
         onclick={() => open(controller.selection ?? undefined)}
-        >Drop files to stage or commit directly</Button
+        ><span class="sr-only">Assign to {stack.name}: </span>Drop files to
+        stage or commit directly</Button
       >
     </Card.Content>
     <Card.Content
@@ -165,8 +165,9 @@
       <Button
         variant="outline"
         disabled={!controller.can("create_commit")}
-        aria-label={`Create commit in ${stack.name}`}
-        onclick={() => open()}>Start a commit…</Button
+        onclick={() => open()}
+        ><span class="sr-only">Create commit in {stack.name}: </span>Start a
+        commit…</Button
       >
     </Card.Content>
   {/if}

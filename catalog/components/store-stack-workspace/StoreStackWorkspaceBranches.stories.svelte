@@ -26,11 +26,15 @@
     const canvas = within(canvasElement);
     const column = await canvas.findByRole("region", { name: "Branches" });
     const applied = branchGroup(column, "Applied");
-    expect(
-      within(applied)
-        .getAllByRole("option")
-        .map((item) => item.getAttribute("aria-label")),
-    ).toEqual(["feature/api", "feature/model", "feature/workspace"]);
+    const appliedOptions = within(applied).getAllByRole("option");
+    expect(appliedOptions).toHaveLength(3);
+    for (const [index, name] of [
+      /^feature\/api /,
+      /^feature\/model /,
+      /^feature\/workspace /,
+    ].entries()) {
+      await expect(appliedOptions[index]).toHaveAccessibleName(name);
+    }
     expect(
       within(branchGroup(column, "Local branches")).getAllByRole("option"),
     ).toHaveLength(1);
@@ -64,13 +68,13 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("option", { name: "feature/search" }),
+      await canvas.findByRole("option", { name: /^feature\/search / }),
     );
     const stack = await canvas.findByRole("region", {
       name: "Stack feature/search",
     });
     const apply = within(stack).getByRole("button", {
-      name: "Apply feature/search",
+      name: "Apply to workspace for feature/search",
     });
     const header = stack.querySelector('[data-ui-part="column-header"]')!;
     const body = stack.querySelector('[data-ui-part="column-body"]')!;
@@ -83,26 +87,28 @@
     ).toBeEnabled();
     await userEvent.click(apply);
     const unapply = await within(stack).findByRole("button", {
-      name: "Unapply feature/search",
+      name: "Unapply from workspace for feature/search",
     });
     expect(within(document.body).queryByRole("dialog")).toBeNull();
     expect(unapply).toHaveTextContent("Unapply from workspace");
     const branches = canvas.getByRole("region", { name: "Branches" });
     expect(
       within(branchGroup(branches, "Applied")).getByRole("option", {
-        name: "feature/search",
+        name: /^feature\/search /,
       }),
     ).toBeVisible();
     await userEvent.click(unapply);
     await waitFor(() =>
       expect(
-        within(stack).getByRole("button", { name: "Apply feature/search" }),
+        within(stack).getByRole("button", {
+          name: "Apply to workspace for feature/search",
+        }),
       ).toBeVisible(),
     );
     expect(within(document.body).queryByRole("dialog")).toBeNull();
     expect(
       within(branchGroup(branches, "Local branches")).getByRole("option", {
-        name: "feature/search",
+        name: /^feature\/search /,
       }),
     ).toBeVisible();
     await userEvent.click(
@@ -115,7 +121,7 @@
     });
     expect(
       within(appliedStack).queryByRole("button", {
-        name: "Unapply feature/api",
+        name: "Unapply from workspace for feature/api",
       }),
     ).toBeNull();
   }}
@@ -126,7 +132,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const column = await canvas.findByRole("region", { name: "Branches" });
-    const target = within(column).getByRole("option", { name: "main" });
+    const target = within(column).getByRole("option", { name: /^main / });
     expect(target).toBeVisible();
     expect(
       canvas.queryByRole("group", { name: "Workspace target branch" }),
@@ -139,7 +145,7 @@
         .top,
     );
     await userEvent.click(
-      canvas.getByRole("option", { name: "feature/search" }),
+      canvas.getByRole("option", { name: /^feature\/search / }),
     );
     expect(target).toBeVisible();
     await userEvent.click(
@@ -152,7 +158,7 @@
     expect(
       within(canvas.getByRole("region", { name: "Branches" })).getByRole(
         "option",
-        { name: "main" },
+        { name: /^main / },
       ),
     ).toBeVisible();
   }}

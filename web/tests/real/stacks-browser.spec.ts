@@ -221,9 +221,14 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
   await expect(
     topic.getByRole("button", { name: "Topic ancestor", exact: true }),
   ).toBeVisible();
-  await topic.getByRole("button", { name: "Apply topic", exact: true }).click();
+  await topic
+    .getByRole("button", { name: "Apply to workspace for topic", exact: true })
+    .click();
   await expect(
-    topic.getByRole("button", { name: "Unapply topic", exact: true }),
+    topic.getByRole("button", {
+      name: "Unapply from workspace for topic",
+      exact: true,
+    }),
   ).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await view("Workspace").click();
@@ -277,10 +282,16 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
   await view("Branches").click();
   await page.getByRole("option", { name: /topic/ }).click();
   await topic
-    .getByRole("button", { name: "Unapply topic", exact: true })
+    .getByRole("button", {
+      name: "Unapply from workspace for topic",
+      exact: true,
+    })
     .click();
   await expect(
-    topic.getByRole("button", { name: "Apply topic", exact: true }),
+    topic.getByRole("button", {
+      name: "Apply to workspace for topic",
+      exact: true,
+    }),
   ).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await view("Workspace").click();
@@ -515,9 +526,14 @@ test("cold_native_selected_file_and_hunk_mutations_with_undo_redo", async ({
     .toBe(true);
   if (await prepare.isVisible()) await prepare.click();
   await expect(ancestor).toBeVisible();
-  await topic.getByRole("button", { name: "Apply topic", exact: true }).click();
+  await topic
+    .getByRole("button", { name: "Apply to workspace for topic", exact: true })
+    .click();
   await expect(
-    topic.getByRole("button", { name: "Unapply topic", exact: true }),
+    topic.getByRole("button", {
+      name: "Unapply from workspace for topic",
+      exact: true,
+    }),
   ).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await view("Workspace").click();
@@ -560,7 +576,7 @@ test("cold_native_selected_file_and_hunk_mutations_with_undo_redo", async ({
     exact: true,
   });
   const stage = composer.getByRole("button", {
-    name: "Assign to topic",
+    name: "Assign to topic: Drop files to stage or commit directly",
     exact: true,
   });
   await expect(stage).toBeEnabled();

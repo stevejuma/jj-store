@@ -25,7 +25,6 @@
   data-current={(selectedWorkspace
     ? selectedWorkspace === copy.workspace
     : copy.commitId === selectedCommit) || undefined}
-  aria-label={`Working copy · ${copy.workspace}`}
   onclick={() => onSelect(copy.commitId, copy.workspace)}
 >
   <span class="community-bookmark-card__heading">

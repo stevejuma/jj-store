@@ -15,7 +15,9 @@ export function inCapturePanel(
 }
 
 export async function expandCodex(c: ReturnType<typeof within>) {
-  const toggle = await c.findByRole("button", { name: "Codex configuration" });
+  const toggle = await c.findByRole("button", {
+    name: /^Configuration: Codex /,
+  });
   if (toggle.getAttribute("aria-expanded") === "false")
     await userEvent.click(toggle);
 }

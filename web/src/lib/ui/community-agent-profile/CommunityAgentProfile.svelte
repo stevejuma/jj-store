@@ -131,7 +131,6 @@
         <Button
           class="agent-profile__activity-link"
           variant="outline"
-          aria-label="Activity log"
           onclick={onActivity}
         >
           <ActivityIcon aria-hidden="true" /><span>Activity log</span><span
@@ -150,9 +149,9 @@
             <Button
               class="agent-profile__info-row agent-profile__info-link"
               variant="ghost"
-              aria-label={`Copy ${agent.name}'s agent ID`}
               onclick={onCopy}
             >
+              <span class="sr-only">Copy </span>
               <FingerprintIcon aria-hidden="true" /><span
                 class="agent-profile__info-value"
                 ><strong>Agent ID</strong><span class="agent-profile__key"

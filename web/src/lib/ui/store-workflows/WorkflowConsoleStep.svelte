@@ -151,10 +151,8 @@
     }
   }
 >
-  <Collapsible.Trigger
-    class="workflow-console-step__summary"
-    aria-label={label}
-  >
+  <Collapsible.Trigger class="workflow-console-step__summary">
+    {#if !unscoped}<span class="sr-only">{label}: </span>{/if}
     {#if loading && !loaded}<Refresh
         class="workflow-console-spinner"
         aria-label={`Loading logs for ${step.id}`}

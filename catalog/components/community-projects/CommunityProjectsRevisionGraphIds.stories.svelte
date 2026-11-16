@@ -54,14 +54,22 @@
     const body = within(canvasElement.ownerDocument.body);
     await withClipboard(async (write) => {
       const commit = canvas.getByRole("button", {
-        name: `Copy Git commit SHA ${demoCommitId}`,
+        name: /^Copy GIT /,
       });
       const change = canvas.getByRole("button", {
-        name: `Copy JJ Change ID ${demoChangeId}`,
+        name: /^Copy JJ /,
       });
       const split = canvas.getByRole("group", {
         name: "Native revision identifiers",
       });
+      await expect(commit).toHaveAccessibleName("Copy GIT 5656");
+      await expect(change).toHaveAccessibleName("Copy JJ utut");
+      await expect(commit).toHaveAccessibleDescription(
+        `Full Git commit SHA: ${demoCommitId}`,
+      );
+      await expect(change).toHaveAccessibleDescription(
+        `Full JJ Change ID: ${demoChangeId}`,
+      );
       await expect(within(commit).getByText("GIT")).toBeVisible();
       await expect(within(change).getByText("JJ")).toBeVisible();
       await expect(within(commit).getByText("5656")).toBeVisible();
@@ -73,6 +81,7 @@
       await expect(await body.findByText(demoCommitId)).toBeVisible();
       await userEvent.tab();
       await expect(within(commit).getByText("56565..c9")).toBeVisible();
+      await expect(commit).toHaveAccessibleName("Copy GIT 56565..c9");
       await expect(within(change).getByText("JJ")).toBeVisible();
       await expect(
         within(change).getByText("utut", { exact: true }),
@@ -88,6 +97,7 @@
       await expect(
         within(commit).getByText("Copied", { exact: true }),
       ).toBeVisible();
+      await expect(commit).toHaveAccessibleName("Copy GIT Copied");
       await userEvent.tab();
       await expect(within(change).getByText("ututu..ut")).toBeVisible();
       await expect(split.getBoundingClientRect().width).toBe(width);
@@ -114,10 +124,10 @@
     const canvas = within(canvasElement);
     await withClipboard(async (write) => {
       const commit = canvas.getByRole("button", {
-        name: `Copy Git commit SHA ${demoCommitId}`,
+        name: /^Copy GIT /,
       });
       const change = canvas.getByRole("button", {
-        name: `Copy JJ Change ID ${demoChangeId}`,
+        name: /^Copy JJ /,
       });
       await userEvent.tab();
       await expect(commit).toHaveFocus();
@@ -143,7 +153,7 @@
     await withClipboard(async (write) => {
       await expect(canvas.getAllByRole("button")).toHaveLength(1);
       const button = canvas.getByRole("button", {
-        name: `Copy Git commit SHA ${demoCommitId}`,
+        name: /^Copy GIT /,
       });
       await expect(
         within(button).getByText("56565..c9", { exact: true }),
@@ -164,7 +174,7 @@
     await withClipboard(async (write) => {
       await expect(canvas.getAllByRole("button")).toHaveLength(1);
       const button = canvas.getByRole("button", {
-        name: `Copy JJ Change ID ${demoChangeId}`,
+        name: /^Copy JJ /,
       });
       await expect(
         within(button).getByText("ututu..ut", { exact: true }),
@@ -188,7 +198,7 @@
   args={{ compactLeadingChars: 5, expandedLeadingChars: 12 }}
   play={async ({ canvasElement }) => {
     const commit = within(canvasElement).getByRole("button", {
-      name: `Copy Git commit SHA ${demoCommitId}`,
+      name: /^Copy GIT /,
     });
     await expect(
       within(commit).getByText("56565", { exact: true }),
@@ -205,7 +215,7 @@
     await withClipboard(async (write) => {
       write.mockRejectedValueOnce(new Error("Clipboard denied"));
       const commit = canvas.getByRole("button", {
-        name: `Copy Git commit SHA ${demoCommitId}`,
+        name: /^Copy GIT /,
       });
       await userEvent.click(commit);
       await expect(

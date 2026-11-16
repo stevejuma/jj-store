@@ -129,7 +129,7 @@
             variant="outline"
             size="sm"
             class="community-search-command__escape"
-            aria-label="Close search">Esc</Button
+            ><span class="sr-only">Close search: </span>Esc</Button
           >{/snippet}</Dialog.Close
       >
       <CommandView.List id="community-search-command-results">

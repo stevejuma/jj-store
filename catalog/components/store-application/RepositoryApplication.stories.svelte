@@ -29,7 +29,9 @@
     await expect(
       await canvas.findByRole("button", { name: "Collapse Branches column" }),
     ).toBeVisible();
-    await userEvent.click(await canvas.findByRole("option", { name: "main" }));
+    await userEvent.click(
+      await canvas.findByRole("option", { name: /^main / }),
+    );
     await expect(
       await canvas.findByRole("button", {
         name: "Merge native storage and publication",
@@ -50,7 +52,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      await canvas.findByRole("option", { name: "main" }),
+      await canvas.findByRole("option", { name: /^main / }),
     ).toBeVisible();
   }}
 >

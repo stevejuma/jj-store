@@ -273,7 +273,9 @@
     await userEvent.keyboard("{ArrowRight}");
     await waitFor(aligned);
     expect(
-      within(stack).queryByRole("button", { name: "Unapply feature/api" }),
+      within(stack).queryByRole("button", {
+        name: "Unapply from workspace for feature/api",
+      }),
     ).toBeNull();
     const group = within(stack).getByRole("group", {
       name: "Branch actions for feature/api",

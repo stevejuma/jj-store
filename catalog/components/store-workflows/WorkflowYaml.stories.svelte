@@ -28,7 +28,7 @@
       body = within(document.body);
     for (const create of [true, false]) {
       const opener = await canvas.findByRole("button", {
-        name: create ? "Create workflow" : "View Build parser",
+        name: create ? "Create workflow" : /^View Build parser: /,
       });
       await waitFor(() =>
         expect(getComputedStyle(opener).pointerEvents).not.toBe("none"),

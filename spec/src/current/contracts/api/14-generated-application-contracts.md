@@ -1,5 +1,11 @@
 # Generated application contracts
 
+E-S6-UI-TOOLING-001 verifies the updated schema/reference-parser and provenance
+tooling through the29 affected contract/documentation cases. These development
+dependency changes alter no checked-in OpenAPI or TypeScript artifact, DTO or
+wire format. Runtime authorization and native transport qualification remain
+separate from this source-tooling acceptance.
+
 E-CI-SUITES-001 preserves JST-API-006: the independently dispatched API suite
 still regenerates contracts and validates the same actual HTTP captures. Suite
 separation, artifact verification and timing reports change qualification

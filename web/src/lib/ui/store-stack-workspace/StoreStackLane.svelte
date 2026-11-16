@@ -133,7 +133,6 @@
             disabled={!controller.can(
               applied ? "unapply_stack" : "apply_stack",
             )}
-            aria-label={`${applied ? "Unapply" : "Apply"} ${stack.name}`}
             onclick={() =>
               onCommand({
                 kind: applied ? "unapply_stack" : "apply_stack",
@@ -141,7 +140,11 @@
                 branch: stack.name,
               })}
           >
-            {applied ? "Unapply from workspace" : "Apply to workspace"}
+            {applied ? "Unapply from workspace" : "Apply to workspace"}<span
+              class="sr-only"
+            >
+              for {stack.name}</span
+            >
             {#if applied}<Eject
                 data-icon="inline-end"
                 aria-hidden="true"

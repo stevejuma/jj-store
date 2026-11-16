@@ -70,9 +70,9 @@
           class="community-member-hover-card__trigger"
           data-size={avatarSize}
           data-shape={resolvedAvatarShape}
-          aria-label={`View ${member.name}'s profile`}
           onclick={() => onOpenProfile?.(member)}
         >
+          <span class="sr-only">View {member.name}'s profile </span>
           <CommunityMemberAvatar
             {...avatarProps}
             size={avatarSize}
@@ -99,9 +99,9 @@
     <button
       type="button"
       class="community-member-hover-card__identity"
-      aria-label={`Open ${member.name}'s profile`}
       onclick={() => onOpenProfile?.(member)}
     >
+      <span class="sr-only">Open profile: </span>
       <CommunityMemberAvatar
         {...avatarProps}
         size="large"

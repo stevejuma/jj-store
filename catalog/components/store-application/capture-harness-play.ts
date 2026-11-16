@@ -7,10 +7,12 @@ export async function codexConfigurationGroup({
 }) {
   const c = within(canvasElement);
   await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
-  const group = await c.findByRole("button", { name: "Codex configuration" });
+  const group = await c.findByRole("button", {
+    name: /^Configuration: Codex /,
+  });
   for (const name of ["Codex", "Cursor", "OpenCode"])
     await expect(
-      c.getByRole("button", { name: `${name} configuration` }),
+      c.getByRole("button", { name: new RegExp(`^Configuration: ${name} `) }),
     ).toHaveAttribute("aria-expanded", "false");
   await expect(
     c.queryByRole("textbox", { name: "Codex CLI folders" }),

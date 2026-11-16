@@ -125,9 +125,9 @@
               <Button
                 type="button"
                 variant="outline"
-                aria-label="Choose emoji image"
                 disabled={uploading || model?.busy || !!model?.pending}
-                onclick={() => imageInput?.click()}>Choose image</Button
+                onclick={() => imageInput?.click()}
+                >Choose image<span class="sr-only"> for emoji</span></Button
               >
             </div>
           </StoreDirectoryField>

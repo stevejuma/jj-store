@@ -38,7 +38,7 @@ test("local sync controls and grouped progress preserve repository context", asy
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const original = await page.evaluate(() => location.hash);
   await page
@@ -116,7 +116,7 @@ test("captured sync targets survive Settings navigation and timeout", async ({
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const hash = await page.evaluate(() => location.hash);
   await page
@@ -174,7 +174,7 @@ test("Sync reconciliation uses fresh heads and keeps the historical route after 
   );
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const hash = await page.evaluate(() => location.hash);
   const fresh = {

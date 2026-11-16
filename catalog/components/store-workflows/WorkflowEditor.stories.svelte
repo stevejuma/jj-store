@@ -237,7 +237,7 @@
     await userEvent.click(copy.getByRole("button", { name: "Save workflow" }));
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
     const savedCard = canvas.getByRole("button", {
-      name: "View Draft build copy",
+      name: /^View Draft build copy: /,
     });
     await waitFor(() =>
       expect(getComputedStyle(savedCard).pointerEvents).not.toBe("none"),

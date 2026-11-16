@@ -68,12 +68,8 @@
     const hostBounds = panel.parentElement!.getBoundingClientRect();
     expect(Math.abs(cardBounds.left - hostBounds.left)).toBeLessThan(1);
     expect(Math.abs(cardBounds.right - hostBounds.right)).toBeLessThan(1);
-    await expect(
-      p.getByRole("button", { name: /^Copy Git commit SHA/ }),
-    ).toBeVisible();
-    await expect(
-      p.getByRole("button", { name: /^Copy JJ Change ID/ }),
-    ).toBeVisible();
+    await expect(p.getByRole("button", { name: /^Copy GIT / })).toBeVisible();
+    await expect(p.getByRole("button", { name: /^Copy JJ / })).toBeVisible();
     await userEvent.click(p.getByRole("radio", { name: "Show files as list" }));
     await expect(
       panel.querySelector('[data-ui-component="file-listing"]'),

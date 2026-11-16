@@ -42,10 +42,10 @@
           size="xsmall"
           decorative
         />
-        <Collapsible.Trigger
-          class="chat-context-trigger"
-          aria-label={`${open ? "Collapse" : "Expand"} ${entries.length} ${batchId ? "sent" : "pending"} comments`}
-        >
+        <Collapsible.Trigger class="chat-context-trigger">
+          <span class="sr-only"
+            >{open ? "Collapse" : "Expand"} {batchId ? "sent" : "pending"}
+          </span>
           <span
             >{entries.length}
             {entries.length === 1 ? "comment" : "comments"}</span

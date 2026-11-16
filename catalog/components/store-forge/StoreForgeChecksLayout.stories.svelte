@@ -91,10 +91,10 @@
       c.getByText("Workflow / job 36", { exact: true }),
     ).toBeInTheDocument();
     await userEvent.click(
-      c.getByRole("button", { name: "Toggle check results" }),
+      c.getByRole("button", { name: /^Toggle check results: / }),
     );
     await expect(
-      c.getByRole("button", { name: "Toggle check results" }),
+      c.getByRole("button", { name: /^Toggle check results: / }),
     ).toHaveAttribute("aria-expanded", "false");
   }}
 />

@@ -15,7 +15,9 @@ export async function sourceRepositoryCommand({
         .getByRole("list", { name: "Capture source counts" })
         .querySelector<HTMLElement>('[data-ui-part="row"]')!,
     );
-  const filter = c.getByRole("button", { name: "Filter by source repository" });
+  const filter = c.getByRole("button", {
+    name: /^Filter by source repository: /,
+  });
   await userEvent.click(filter);
   const search = await page.findByRole("combobox", {
     name: "Search source repositories",
@@ -38,7 +40,7 @@ export async function sourceRepositoryCommand({
   await userEvent.keyboard("{Escape}");
   await waitFor(() => expect(filter).toHaveFocus());
   await userEvent.click(
-    c.getByRole("button", { name: "Filter by source status" }),
+    c.getByRole("button", { name: /^Filter by source status: / }),
   );
   await userEvent.click(page.getByRole("option", { name: "Degraded" }));
   await expect(counts().getByText("1 shown")).toBeVisible();

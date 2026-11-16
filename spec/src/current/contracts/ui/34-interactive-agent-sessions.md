@@ -142,11 +142,11 @@ using that binding's own operation and workspace link. Their metadata home is
 not a codebase category. Repository-free conversations use the Personal group.
 Pins still deduplicate a participation across codebase groups.
 
-Inbox session rows show the last retained activity time using the owned
-Community relative-time presentation with its exact-date tooltip. They omit the
-bottom row when timing is unknown; lifecycle state and repository/session IDs
-are not repeated there. Draft rows retain their message preview. The header menu
-is wide enough for its action labels and remains bounded by the viewport.
+Inbox session row names retain visible text; descriptions expose full identity
+and lifecycle state. Last activity uses owned Community relative time and its
+exact-date tooltip. Unknown timing omits the bottom row; lifecycle/IDs stay out
+of that row. Drafts retain their preview. The header menu fits its action labels
+and remains bounded by the viewport.
 
 Session settings use the conversation body background. Workspace and Starting
 revision reuse the complete Settings StoreReadOnlyRow component, truncating

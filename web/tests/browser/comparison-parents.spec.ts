@@ -122,7 +122,7 @@ test("comparison parent dropdown searches descriptions and sends the full record
   const copy = page
     .getByRole("grid", { name: "Recorded parents" })
     .getByRole("button", {
-      name: `Copy full operation ID: ${second}`,
+      name: `Copy full operation ID: ${second.slice(0, 8)}…${second.slice(-4)}`,
       exact: true,
     });
   await copy.click();

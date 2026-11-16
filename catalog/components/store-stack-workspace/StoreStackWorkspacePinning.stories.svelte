@@ -26,7 +26,9 @@
       { timeout: 5_000 },
     );
     expect(branches).toHaveAttribute("data-fixed", "true");
-    await userEvent.click(canvas.getByRole("option", { name: "feature/api" }));
+    await userEvent.click(
+      canvas.getByRole("option", { name: /^feature\/api / }),
+    );
     const stack = await canvas.findByRole("region", {
       name: "Stack feature/api",
     });
@@ -218,7 +220,7 @@
     await dropWorkspaceChange(
       source,
       within(stack).getByRole("button", {
-        name: "Assign to feature/workspace",
+        name: "Assign to feature/workspace: Drop files to stage or commit directly",
       }),
     );
     const form = await within(stack).findByRole("form", {

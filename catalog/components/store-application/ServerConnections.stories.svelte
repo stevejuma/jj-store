@@ -28,7 +28,7 @@
       canvas.getAllByRole("button", { name: /^Select .* server$/ }),
     ).toHaveLength(2);
     await expect(
-      canvas.queryByRole("button", { name: "Select Research server" }),
+      canvas.queryByRole("button", { name: "Select R Research server" }),
     ).not.toBeInTheDocument();
     const height = canvas
       .getByRole("button", { name: "Select Local server" })
@@ -43,10 +43,10 @@
         .getBoundingClientRect().height,
     ).toBe(height);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Select Build host server" }),
+      canvas.getByRole("button", { name: "Select B Build host server" }),
     );
     await expect(
-      canvas.getByRole("button", { name: "Select Build host server" }),
+      canvas.getByRole("button", { name: "Select B Build host server" }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(canvas.getByText("Selected Build host")).toBeVisible();
   }}>{#snippet children()}<Fixture />{/snippet}</Story
@@ -66,7 +66,7 @@
     research.focus();
     await userEvent.keyboard("{Enter}");
     await expect(
-      canvas.getByRole("button", { name: "Select Research server" }),
+      canvas.getByRole("button", { name: "Select R Research server" }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(more).toHaveFocus();
     await userEvent.click(
@@ -201,7 +201,7 @@
     await expect(body.getAllByRole("menuitemradio")).toHaveLength(3);
     await userEvent.click(body.getByRole("menuitemradio", { name: "Archive" }));
     await expect(
-      canvas.getByRole("button", { name: "Select Archive server" }),
+      canvas.getByRole("button", { name: "Select A Archive server" }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(
       canvas.getAllByRole("button", { name: /^Select .* server$/ }),
@@ -236,7 +236,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const selected = canvas.getByRole("button", {
-      name: "Select Shared compute server with a very long display name server",
+      name: "Select S Shared compute server with a very long display name server",
     });
     await expect(selected).toHaveAttribute("aria-pressed", "true");
     await expect(selected.scrollWidth).toBeLessThanOrEqual(
@@ -313,7 +313,7 @@
       canvas.getByRole("button", { name: "Select Local server" }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(
-      canvas.queryByRole("button", { name: "Select Research server" }),
+      canvas.queryByRole("button", { name: "Select R Research server" }),
     ).not.toBeInTheDocument();
   }}>{#snippet children()}<Fixture blockSwitching />{/snippet}</Story
 >

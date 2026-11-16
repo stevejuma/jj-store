@@ -36,7 +36,7 @@
     ).toBeVisible();
     await expect(
       await canvas.findByRole("button", {
-        name: "View Server author's profile",
+        name: /^View Server author's profile(?: |$)/,
       }),
     ).toBeVisible();
     const row = canvas
@@ -252,7 +252,9 @@
       "Cancel run",
     );
     await userEvent.unhover(cancel);
-    const step = canvas.getByRole("button", { name: "Step build · pending" });
+    const step = canvas.getByRole("button", {
+      name: /^Step build · pending: /,
+    });
     await expect(step).toHaveAttribute("aria-expanded", "false");
     await expect(
       canvas.queryByRole("button", { name: "Run output" }),

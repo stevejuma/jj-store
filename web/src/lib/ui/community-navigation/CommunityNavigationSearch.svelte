@@ -57,7 +57,7 @@
         type="button"
         variant="ghost"
         class="lc-community-navigation__search-trigger"
-        aria-label="Search repository"
+        aria-keyshortcuts="Meta+K Control+K"
         onclick={requestSearch}
       >
         <SearchIcon aria-hidden="true" />

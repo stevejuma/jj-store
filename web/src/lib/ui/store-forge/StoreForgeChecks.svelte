@@ -89,11 +89,11 @@
       <Button
         variant="ghost"
         class="forge-checks__disclosure"
-        aria-label="Toggle check results"
         aria-expanded={view.expanded}
         aria-controls={`${id}-results`}
         onclick={() => (view.expanded = !view.expanded)}
       >
+        <span class="sr-only">Toggle check results: </span>
         <StoreForgeChecksRing checks={checks?.checks ?? []} state={status} />
         <span class="forge-checks__name"
           ><span role="heading" aria-level={3}

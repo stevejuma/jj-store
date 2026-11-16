@@ -26,7 +26,7 @@
       name: "Stack feature/api",
     });
     const button = within(stack).getByRole("button", {
-      name: "Pull request for feature/api",
+      name: /^Pull request for feature\/api: /,
     });
     const title = within(stack).getByRole("button", {
       name: "Show all changes in feature/api",
@@ -40,7 +40,7 @@
     );
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
     const lower = within(stack).getByRole("button", {
-      name: "Pull request for feature/model",
+      name: /^Pull request for feature\/model: /,
     });
     const lowerRow = within(stack).getByRole("group", {
       name: "Branch status for feature/model",
@@ -126,7 +126,7 @@
       within(unsubmitted).queryByText(/Checks /),
     ).not.toBeInTheDocument();
     const badge = within(stack).getByRole("button", {
-      name: "Pull request for feature/api",
+      name: /^Pull request for feature\/api: /,
     });
     await expect(badge).toHaveTextContent("#42");
     await expect(
@@ -234,14 +234,14 @@
     });
     await userEvent.click(
       within(stack).getByRole("button", {
-        name: "Pull request for feature/workspace",
+        name: /^Pull request for feature\/workspace: /,
       }),
     );
     await expect(
       canvas.getByRole("heading", { name: "Add workspace toolbar" }),
     ).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Collapse pull request #43" }),
+      canvas.getByRole("button", { name: /^Collapse pull request \#43: / }),
     );
     const api = canvas.getByRole("region", { name: "Stack feature/api" });
     await userEvent.click(
@@ -382,7 +382,7 @@
       within(form).getByRole("button", { name: "Create PR" }),
     );
     const badge = await within(stack).findByRole("button", {
-      name: "Pull request for feature/workspace",
+      name: /^Pull request for feature\/workspace: /,
     });
     await expect(badge).toHaveTextContent("#43");
     await expect(
