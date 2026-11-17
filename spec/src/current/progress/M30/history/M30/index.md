@@ -110,6 +110,10 @@ not a completion gate selection.
 | [E-VERSION-PR-APP-AUTH-001](../../../../../history/2026/11/15/E-VERSION-PR-APP-AUTH-001/index.md)                     | 2026-11-15 | pending         | Original outcome |
 | [E-S6-UI-TOOLING-001](../../../../../history/2026/11/16/E-S6-UI-TOOLING-001/index.md)                                 | 2026-11-16 | pending         | Original outcome |
 
+|
+[E-SHARED-DEPENDENCY-ADOPTION-001](../../../../../history/2026/11/17/E-SHARED-DEPENDENCY-ADOPTION-001/index.md)
+| 2026-11-17 | pending | Original outcome |
+
 <!-- generated-navigation -->
 
 ## Pages

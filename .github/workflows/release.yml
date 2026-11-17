@@ -25,7 +25,15 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/setup
+      - run: pnpm check:dependency-intake
+      - name: Guard the complete source-owned Node22 version recipe
+        id: runtime
+        uses: lapismd/lapis-ci/actions/guard-version-runtime@dc81ff65ba812bf005fb2a806eb3308bb8b5f71f
+        with:
+          qualification-file: .github/versioning-runtime.json
+          detect-release-intent: true
       - name: Mint repository-scoped version PR token
+        if: steps.runtime.outputs.hasChangesets == 'true'
         id: app
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
         with:
@@ -38,6 +46,7 @@ jobs:
       # v1.9.0 stays on Changesets CLI v2. Action v2 rejects these inputs.
       - uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d
         id: changesets
+        if: steps.runtime.outputs.hasChangesets == 'true'
         with:
           version: pnpm release:version
           publish: pnpm release:orchestrate
@@ -56,3 +65,8 @@ jobs:
         run: |
           branch=$(gh pr view "$RELEASE_PR" --json headRefName --jq .headRefName)
           gh workflow run ci.yml --ref "$branch" -f all_checks=true
+      - name: Continue existing release orchestration without a PR writer
+        if: steps.runtime.outputs.hasChangesets == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: pnpm release:orchestrate

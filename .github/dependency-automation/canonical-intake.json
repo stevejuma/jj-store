@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "kind": "workspace-dependency-intake",
+  "repository": "stevejuma/jj-store",
+  "slot": "framework-registry",
+  "dependencies": [
+    "@lapismd/design-core",
+    "@lapismd/mira",
+    "@lapismd/spec-validator",
+    "@lapismd/storybook-addon-visual-delta"
+  ],
+  "manifests": [
+    "package.json",
+    "packages/jj-conversations/package.json",
+    "packages/jj-history/package.json"
+  ],
+  "chapters": [
+    "spec/src/current/governance/01-specification-governance.md",
+    "spec/src/current/contracts/architecture/32-version-pr-authentication.md"
+  ],
+  "lockClosure": "registry-transitives"
+}

@@ -5,6 +5,7 @@ import { execFileSync } from "node:child_process";
 import { parse as parseYaml } from "yaml";
 
 const workflowRoles = {
+  completion: ["dependency-completed.yml"],
   standard: ["ci.yml", "ci-ui.yml"],
   qualification: [
     "ci-health.yml",

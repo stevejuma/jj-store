@@ -11,3 +11,31 @@ This authentication boundary changes no immutable-source, signing, native,
 container or publication qualification gate. M30 remains in progress. Source
 workflow checks cannot establish a successful hosted App-created candidate or
 complete release qualification.
+
+## Qualified source automation
+
+JST-ARCH-005 retains private root/native release synchronization, public
+History/Conversations publication, immutable source and platform qualification.
+The reviewed Node22 CLI2 complete recipe and source facts precede App admission.
+False release intent skips the App/writer and retains existing workflow-token
+orchestration. Successful reviewed PR/push/manual workflows notify only the
+pinned coordinator with read metadata and one named App key; workflow-call-only
+events skip before invocation. Source acceptance does not establish activation,
+publication, hosted callbacks or complete native release qualification.
+
+<!-- dependency-intake:framework-registry:start -->
+
+Current registry dependency coordinates; qualification remains separate.
+
+<!-- prettier-ignore -->
+| Manifest | Dependency | Range | Locked version |
+| --- | --- | --- | --- |
+| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
+| `package.json` (devDependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `package.json` (devDependencies) | `@lapismd/spec-validator` | `^0.2.1` | `0.2.1` |
+| `package.json` (devDependencies) | `@lapismd/storybook-addon-visual-delta` | `^0.1.5` | `0.1.5` |
+
+Manifest, peer and integrity facts SHA256:
+`c420da17478c46fb3065247d38eb352bc1f3a303fe1736ebe279ae5af9f8b10e`.
+
+<!-- dependency-intake:framework-registry:end -->
