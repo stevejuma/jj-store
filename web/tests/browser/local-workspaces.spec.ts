@@ -78,10 +78,10 @@ test("local folder settings preserve drafts and link without changing repository
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const originalAppBounds = (await page
-    .getByRole("option", { name: "main", exact: true })
+    .getByRole("option", { name: /^main(?:\s|$)/ })
     .boundingBox())!;
   const originalHash = await page.evaluate(() => location.hash);
   await page
@@ -187,10 +187,10 @@ test("local folder settings preserve drafts and link without changing repository
   await page.setViewportSize({ width: 1400, height: 1000 });
   await page.getByRole("button", { name: "Back to repository" }).click();
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const restoredAppBounds = (await page
-    .getByRole("option", { name: "main", exact: true })
+    .getByRole("option", { name: /^main(?:\s|$)/ })
     .boundingBox())!;
   expect(restoredAppBounds.x).toBeCloseTo(originalAppBounds.x, 0);
   expect(restoredAppBounds.width).toBeCloseTo(originalAppBounds.width, 0);

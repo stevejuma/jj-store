@@ -9,7 +9,7 @@ export async function sourceStatusCommand({
     page = within(canvasElement.ownerDocument.body);
   await userEvent.click(c.getByRole("tab", { name: "Sources" }));
   const table = await c.findByRole("table", { name: "Capture sources" });
-  const status = c.getByRole("button", { name: "Filter by source status" });
+  const status = c.getByRole("button", { name: /^Filter by source status: / });
   await userEvent.click(status);
   const search = await page.findByRole("combobox", {
     name: "Search source statuses",

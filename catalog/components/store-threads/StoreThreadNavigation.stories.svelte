@@ -15,14 +15,14 @@
       name: "Threads by repository",
     });
     const rows = within(inbox).getAllByRole("button", {
-      name: "Open Thread general",
+      name: /^Open Thread general /,
     });
     await expect(rows).toHaveLength(2);
     await userEvent.click(rows[1]!);
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
     await expect(
       within(inbox)
-        .getAllByRole("button", { name: "Open Thread general" })
+        .getAllByRole("button", { name: /^Open Thread general / })
         .every((row) => row.getAttribute("aria-pressed") === "true"),
     ).toBe(true);
     await expect(
@@ -64,7 +64,7 @@
       await c.findByRole("button", { name: "Toggle thread conversations" }),
     );
     await userEvent.click(
-      (await c.findAllByRole("button", { name: "Open Thread general" }))[1]!,
+      (await c.findAllByRole("button", { name: /^Open Thread general / }))[1]!,
     );
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
   }}

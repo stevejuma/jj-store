@@ -23,7 +23,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Add GitHub account" }),
+      await canvas.findByRole("button", { name: "Add account for GitHub" }),
     );
     await userEvent.click(
       within(canvasElement.ownerDocument.body).getByRole("menuitem", {
@@ -60,7 +60,7 @@
       }),
     );
     await expect(
-      await canvas.findByRole("button", { name: "Add GitHub account" }),
+      await canvas.findByRole("button", { name: "Add account for GitHub" }),
     ).toBeEnabled();
     await expect(
       canvas.queryByText("stevejuma", { exact: true }),
@@ -72,7 +72,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Add GitHub account" }),
+      await canvas.findByRole("button", { name: "Add account for GitHub" }),
     );
     const menu = within(canvasElement.ownerDocument.body).getByRole("menu");
     for (const item of within(menu).getAllByRole("menuitem")) {
@@ -108,7 +108,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Add GitHub account" }),
+      await canvas.findByRole("button", { name: "Add account for GitHub" }),
     );
     await userEvent.click(
       within(canvasElement.ownerDocument.body).getByRole("menuitem", {
@@ -157,7 +157,7 @@
       await browser?.viewport(640, 640);
       await userEvent.click(
         await canvas.findByRole("button", {
-          name: "Add another GitHub account",
+          name: "Add another account for GitHub",
         }),
       );
       await userEvent.click(

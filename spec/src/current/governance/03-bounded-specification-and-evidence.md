@@ -1,5 +1,11 @@
 # Bounded specification and evidence
 
+E-S6-UI-TOOLING-001 retains bounded legacy leaf evidence byte-for-byte during
+navigation refresh: a leaf has no generated page list. Non-leaf pagination,
+complete links and the physical400-line/32768-byte rejection stay binding.
+Refresh MUST retain authored reviews appended after generated navigation; only
+its generated heading and link rows are replaceable.
+
 Version-PR App authentication preserves JST-GOV-002/003/004/011 source/evidence
 ownership and qualification limits. Parsed workflow regression checks run in the
 existing release-tooling lane. Publication dispatch still uses the workflow

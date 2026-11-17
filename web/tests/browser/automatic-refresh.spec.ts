@@ -74,7 +74,7 @@ for (const historical of [false, true]) {
     page.on("pageerror", (e) => errors.push(e.message));
     await page.goto(`/#/repos/${repo}/branches?at_op=${retained}`);
     await expect(
-      page.getByRole("option", { name: "main", exact: true }),
+      page.getByRole("option", { name: /^main(?:\s|$)/ }),
     ).toBeVisible();
     changed = true;
     if (!historical)
@@ -94,7 +94,7 @@ for (const historical of [false, true]) {
       );
     }
     await expect(
-      page.getByRole("option", { name: "main", exact: true }),
+      page.getByRole("option", { name: /^main(?:\s|$)/ }),
     ).toBeVisible();
     expect(errors).toEqual([]);
   });

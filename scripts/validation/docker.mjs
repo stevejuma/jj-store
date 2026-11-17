@@ -94,7 +94,9 @@ export async function sendDirectory(config, args, directory) {
 export async function receiveDirectory(config, args, directory) {
   const [cmd, argv] = dockerCommand(config, args);
   const child = spawn(cmd, argv, { stdio: ["ignore", "pipe", "inherit"] });
-  const tar = spawn("tar", ["-C", directory, "-xf", "-"], {
+  // Docker may pad the archive beyond tar's first end marker. Consume through
+  // transport EOF so the pipeline does not close a successful copy early.
+  const tar = spawn("tar", ["--ignore-zeros", "-C", directory, "-xf", "-"], {
     stdio: ["pipe", "inherit", "inherit"],
   });
   await Promise.all([

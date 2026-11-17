@@ -122,7 +122,7 @@
       canvas.queryByRole("region", { name: "Stack feature/search" }),
     ).toBeNull();
     await userEvent.click(
-      canvas.getByRole("option", { name: "feature/search" }),
+      canvas.getByRole("option", { name: /^feature\/search / }),
     );
     const stack = await canvas.findByRole("region", {
       name: "Stack feature/search",
@@ -131,12 +131,12 @@
       within(stack).getByRole("button", { name: "Add search preference" }),
     ).toBeVisible();
     const apply = within(stack).getByRole("button", {
-      name: "Apply feature/search",
+      name: "Apply to workspace for feature/search",
     });
     await expect(apply).toHaveTextContent("Apply to workspace");
     await userEvent.click(apply);
     await within(stack).findByRole("button", {
-      name: "Unapply feature/search",
+      name: "Unapply from workspace for feature/search",
     });
     await expect(canvas.queryByRole("dialog")).toBeNull();
     await userEvent.click(

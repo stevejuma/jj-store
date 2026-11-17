@@ -122,15 +122,14 @@
           ><Menu.Trigger
             >{#snippet child({ props })}<Button
                 {...props}
-                aria-label={manager.data?.accounts.length
-                  ? "Add another GitHub account"
-                  : "Add GitHub account"}
                 variant="outline"
                 disabled={manager.busy || Boolean(manager.flow)}
               >
                 {manager.data?.accounts.length
                   ? "Add another account"
-                  : "Add account"}<Plus data-icon="inline-end" /></Button
+                  : "Add account"}<span class="sr-only"> for GitHub</span><Plus
+                  data-icon="inline-end"
+                /></Button
               >{/snippet}</Menu.Trigger
           >
           <Menu.Content

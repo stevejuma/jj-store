@@ -259,7 +259,7 @@
       ).toBeVisible(),
     );
     const agentReviewSelection = canvas.getByRole("button", {
-      name: /Open Agent session open review with 2 comments/u,
+      name: "Open Preserve the exact operation when this retry races open review with 2 comments",
     });
     const agentReviewCard = agentReviewSelection.closest<HTMLElement>(
       "article.community-projects__review-row",
@@ -281,7 +281,7 @@
       canvas.getByRole("button", { name: "Back to reviews" }),
     );
     const reviewSelection = canvas.getAllByRole("button", {
-      name: /Revision open/u,
+      name: "Open Preserve the exact operation when this retry races open review with 3 comments",
     })[0]!;
     await expect(
       reviewSelection.closest("article.community-projects__review-row"),
@@ -358,7 +358,11 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      (await canvas.findAllByRole("button", { name: /Revision open/u }))[0]!,
+      (
+        await canvas.findAllByRole("button", {
+          name: "Open Preserve the exact operation when this retry races open review with 3 comments",
+        })
+      )[0]!,
     );
     await userEvent.click(canvas.getByRole("button", { name: "Resolve" }));
     await expect(canvas.getByText("Review outcome unknown")).toBeVisible();

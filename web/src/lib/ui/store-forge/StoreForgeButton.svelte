@@ -44,14 +44,15 @@
       size={compact ? "xs" : "sm"}
       class="store-forge-button"
       {disabled}
-      aria-label={mode === "stack"
-        ? `Submit stack ${name}`
-        : `Pull request for ${name}`}
+      aria-label={mode === "stack" ? `Submit stack ${name}` : undefined}
       onclick={(event) => {
         event.stopPropagation();
         open();
       }}
     >
+      {#if mode !== "stack"}<span class="sr-only"
+          >Pull request for {name}:
+        </span>{/if}
       <StoreForgeIcon provider={forge.data?.connection?.provider} />
       {#if mode === "stack"}Submit stack{:else if compact && forge.pr(name)}PR #{forge.pr(
           name,

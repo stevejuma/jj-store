@@ -75,11 +75,9 @@
       />
     </div>
   </div>
-  <button
-    class="workflow-card__open"
-    onclick={onOpen}
-    aria-label={`View ${workflow.definition.name}`}
-    title={summary}><h2>{summary}</h2></button
+  <button class="workflow-card__open" onclick={onOpen} title={summary}
+    ><span class="sr-only">View {workflow.definition.name}: </span>
+    <h2>{summary}</h2></button
   >
   <footer>
     <div class="workflow-card__context">

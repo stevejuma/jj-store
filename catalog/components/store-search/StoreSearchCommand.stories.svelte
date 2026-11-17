@@ -144,7 +144,9 @@
     await expect(await page.findByRole("alert")).toHaveTextContent(
       "Search is not configured",
     );
-    await userEvent.click(page.getByRole("button", { name: "Close search" }));
+    await userEvent.click(
+      page.getByRole("button", { name: "Close search: Esc" }),
+    );
     await expect(
       canvasElement.querySelector("[data-search-open]"),
     ).toHaveAttribute("data-search-open", "false");

@@ -6,3 +6,14 @@ linkWorkspacePackages: true
 
 patchedDependencies:
   bits-ui@2.20.2: patches/bits-ui@2.20.2.patch
+
+overrides:
+  "@tobilu/qmd>zod": 4.6.6
+  "node-llama-cpp>simple-git": 4.1.0
+  "glob@>=9.0.0 <14.0.2": 14.0.6
+  "@tailwindcss/node>source-map-js": 1.2.2
+  "@tobilu/qmd>@modelcontextprotocol/server": 2.3.0
+  "ip-address@<10.7.4": 10.7.4
+  "@apidevtools/json-schema-ref-parser>undici": 8.12.4
+  "ajv>fast-uri": 3.1.9
+  "minimatch@>=7.0.0 <11.0.1": 11.0.8

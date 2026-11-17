@@ -44,7 +44,7 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     "base64",
   );
   await page
-    .getByRole("button", { name: "Edit profile photo", exact: true })
+    .getByRole("button", { name: /^Edit profile photo(?:$|: )/ })
     .click();
   await page.getByLabel("Upload avatar image", { exact: true }).setInputFiles({
     name: "large-headshot.jpg",

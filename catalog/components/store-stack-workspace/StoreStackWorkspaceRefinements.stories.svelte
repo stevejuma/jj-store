@@ -311,7 +311,7 @@
     expect(stack.querySelector(".stack-workspace__lane-meta")).toBeNull();
     await userEvent.click(canvas.getByRole("tab", { name: /^Branches$/ }));
     await userEvent.click(
-      canvas.getByRole("option", { name: "feature/search" }),
+      canvas.getByRole("option", { name: /^feature\/search / }),
     );
     const conflictStack = await canvas.findByRole("region", {
       name: "Stack feature/search",

@@ -1,5 +1,23 @@
 # CI execution and scheduled validation
 
+E-S6-UI-TOOLING-001 preserves test selection, browser versions, declared Node
+runtime and exact native/source artifact admission while updating the supported
+UI tool cohort. Fresh complete affected-lane acceptance and retained audit
+limitations remain required before consumer/version-recipe qualification.
+
+Development dependency remediation retains public registry resolution and
+separate declared-production/full audit results. Published upstream fixes and
+explicit source-owned security resolutions MUST retain actual QMD discovery,
+network-isolated diagram rendering, schema validation and provenance checks; no
+audit suppression or local package-source patch qualifies the tool cohort. The
+local UI validation image supplies the C++ addon build tools required by the
+declared search tooling, using its existing pinned Node/browser profiles.
+
+Report transfer consumes Docker's archive through transport EOF, including
+trailing padding, before accepting both producer and extractor exit statuses. An
+archive end marker MUST NOT turn a complete copy into an early-close error;
+transfer recovery MUST preserve the original failed suite's status and results.
+
 E-CI-LATENCY-001 changes execution ordering and scheduled coverage under
 JST-ARCH-005 without reducing ordinary selection. Source Storybook requires
 same-run source admission and no payload producer. App/Help and static catalog

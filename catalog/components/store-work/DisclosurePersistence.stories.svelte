@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { revisionReviewOpener } from "../../fixtures/revision-review-opener.js";
   import { storyControl } from "../../fixtures/story-controls.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
@@ -113,9 +114,7 @@
   args={{ repository: true, review: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Revision open/ }),
-    );
+    await userEvent.click(await revisionReviewOpener(canvasElement));
     const detail = within(c.getByRole("article", { name: "Review details" }));
     for (const name of [
       "Description",
@@ -126,9 +125,7 @@
     ])
       await userEvent.click(await detail.findByRole("button", { name }));
     await remount(c);
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Revision open/ }),
-    );
+    await userEvent.click(await revisionReviewOpener(canvasElement));
     const restored = within(c.getByRole("article", { name: "Review details" }));
     for (const name of ["Description", "Activity"])
       await expect(restored.getByRole("button", { name })).toHaveAttribute(

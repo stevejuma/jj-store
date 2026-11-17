@@ -27,6 +27,7 @@
     onPin?: () => void;
     onArchive?: () => void;
   } = $props();
+  const identityId = $props.id();
   const presence = $derived(
     item.status === "Online" || item.status === "Working"
       ? "online"
@@ -43,11 +44,10 @@
     data-active={active ? "" : undefined}
     aria-pressed={active}
     data-ui-part="inbox-conversation"
-    aria-label={item.label
-      ? `Open Thread ${item.label}`
-      : `Open session ${item.author.name} · ${item.id}${item.status === "Draft" ? "" : `, ${item.status}`}`}
+    aria-describedby={`${identityId}-identity`}
     onclick={onSelect}
   >
+    <span class="sr-only">Open {item.label ? "Thread" : "session"} </span>
     <CommunityMemberAvatar
       member={item.author}
       size="xsmall"
@@ -80,6 +80,10 @@
         >{/if}
     </span>
   </Button>
+  <span id={`${identityId}-identity`} class="sr-only"
+    >{item.label ? "Thread" : "Session"}
+    {item.id}{item.status === "Draft" ? "" : `, ${item.status}`}</span
+  >
   {#if onPin || onArchive}
     <div class="inbox-row-actions">
       <ButtonGroup.Root aria-label="Conversation actions">

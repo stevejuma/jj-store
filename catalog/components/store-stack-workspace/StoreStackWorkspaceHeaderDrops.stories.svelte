@@ -73,7 +73,7 @@
       await canvas.findByRole(
         "button",
         {
-          name: "Create commit in feature/api",
+          name: "Create commit in feature/api: Start a commit…",
         },
         { timeout: 5_000 },
       ),

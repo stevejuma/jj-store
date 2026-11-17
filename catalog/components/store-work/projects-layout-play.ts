@@ -76,7 +76,7 @@ export async function playOwnershipLayouts({
     view.getByRole("list", { name: "My repositories" }),
   ).toHaveAttribute("data-layout", "list");
   const repositoryRow = view
-    .getByRole("button", { name: "Open repository Parser repository" })
+    .getByRole("button", { name: /^Open repository Parser repository / })
     .closest("article")!;
   const access = within(repositoryRow).getByText("admin access");
   const action = within(repositoryRow).getByRole("button", {

@@ -199,7 +199,7 @@ test("cold capture controls preserve intent and snapshot", async ({ page }) => {
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const route = await page.evaluate(() => location.hash);
   await openSettings(page);
@@ -336,7 +336,7 @@ test("cold capture capability gate withholds transport", async ({ page }) => {
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await openSettings(page);
   await expect(
@@ -374,7 +374,7 @@ test("capture notifications retain dismissal and drafts until observed recovery"
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await openSettings(page);
   await expect(
@@ -535,7 +535,7 @@ test("visible capture follows observations and stops when settings closes", asyn
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await openSettings(page);
   await selectTab(page, "Sources");
@@ -632,7 +632,7 @@ test("cold local configuration editing retains drafts and announces restart", as
   await selectTab(page, "Configuration");
   await page.getByRole("switch", { name: "Enable automatic capture" }).click();
   await page
-    .getByRole("button", { name: "Codex configuration", exact: true })
+    .getByRole("button", { name: /^Configuration: Codex(?:\s|$)/ })
     .click();
   await page
     .getByRole("textbox", { name: "Codex CLI folders" })
@@ -642,7 +642,7 @@ test("cold local configuration editing retains drafts and announces restart", as
   await page.getByRole("button", { name: "Refresh capture" }).click();
   await selectTab(page, "Configuration");
   await page
-    .getByRole("button", { name: "Codex configuration", exact: true })
+    .getByRole("button", { name: /^Configuration: Codex(?:\s|$)/ })
     .click();
   await expect(
     page.getByRole("textbox", { name: "Codex CLI folders" }),

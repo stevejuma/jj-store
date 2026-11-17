@@ -72,7 +72,9 @@
       canvas.getByRole("group", {
         name: "Draggable hunk add keyboard shortcut",
       }),
-      canvas.getByRole("button", { name: "Assign to feature/workspace" }),
+      canvas.getByRole("button", {
+        name: "Assign to feature/workspace: Drop files to stage or commit directly",
+      }),
     );
     await messagePreview(canvasElement, "Add keyboard shortcut");
     await waitFor(() =>
@@ -110,7 +112,7 @@
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("option", { name: "feature/api" }),
+      await canvas.findByRole("option", { name: /^feature\/api / }),
     );
     await commandMenu(
       canvasElement,
@@ -122,7 +124,7 @@
     );
     expect(workspacePortal(canvasElement).queryByRole("dialog")).toBeNull();
     await userEvent.click(
-      canvas.getByRole("option", { name: "feature/workspace" }),
+      canvas.getByRole("option", { name: /^feature\/workspace / }),
     );
     await commandMenu(
       canvasElement,
@@ -145,9 +147,13 @@
       canvas.getByRole("button", { name: workspaceFileName("README.md") }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
-    await userEvent.click(canvas.getByRole("option", { name: "feature/api" }));
     await userEvent.click(
-      canvas.getByRole("button", { name: "Apply feature/api" }),
+      canvas.getByRole("option", { name: /^feature\/api / }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: "Apply to workspace for feature/api",
+      }),
     );
     await waitFor(() =>
       expect(canvas.getByRole("button", { name: "Refresh" })).toBeEnabled(),
@@ -229,14 +235,16 @@
     const canvas = workspaceCanvas(canvasElement),
       portal = workspacePortal(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("option", { name: "feature/search" }),
+      await canvas.findByRole("option", { name: /^feature\/search / }),
     );
     await userEvent.click(
       await canvas.findByRole("button", {
-        name: "Apply feature/search",
+        name: "Apply to workspace for feature/search",
       }),
     );
-    await canvas.findByRole("button", { name: "Unapply feature/search" });
+    await canvas.findByRole("button", {
+      name: "Unapply from workspace for feature/search",
+    });
     expect(portal.queryByRole("dialog")).toBeNull();
     expect(
       canvas.queryByText(/^Workspace has unresolved conflicts/),

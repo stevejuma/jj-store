@@ -240,11 +240,11 @@
     ).toBeNull();
     await expect(
       canvas.getByRole("button", {
-        name: "Advanced runner settings",
+        name: /^Advanced runner settings/,
       }),
     ).toHaveAttribute("aria-expanded", "false");
     const advanced = canvas
-      .getByRole("button", { name: "Advanced runner settings" })
+      .getByRole("button", { name: /^Advanced runner settings/ })
       .closest(".store-settings-disclosure")!.parentElement!;
     await expect(getComputedStyle(advanced).borderTopWidth).toBe("1px");
     await userEvent.click(
@@ -264,7 +264,7 @@
     await userEvent.keyboard("{Escape}");
     await userEvent.click(
       canvas.getByRole("button", {
-        name: "Advanced runner settings",
+        name: /^Advanced runner settings/,
       }),
     );
     await expect(

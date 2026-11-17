@@ -20,13 +20,17 @@ export async function expectSplitCopy(browser, origin) {
         name: "Native revision identifiers",
       });
       const commit = page.getByRole("button", {
-        name: `Copy Git commit SHA ${git}`,
-        exact: true,
+        name: /^Copy GIT(?:\s|$)/,
       });
       const change = page.getByRole("button", {
-        name: `Copy JJ Change ID ${jj}`,
-        exact: true,
+        name: /^Copy JJ(?:\s|$)/,
       });
+      await expect(commit).toHaveAccessibleDescription(
+        `Full Git commit SHA: ${git}`,
+      );
+      await expect(change).toHaveAccessibleDescription(
+        `Full JJ Change ID: ${jj}`,
+      );
       await expect(commit.getByText("5656", { exact: true })).toBeVisible();
       await expect(change.getByText("utut", { exact: true })).toBeVisible();
       // Measure the shipped font, rather than an OS-dependent fallback face.

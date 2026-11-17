@@ -41,7 +41,11 @@ Document messages use the same unframed flow as the agent inbox. Unavailable
 discussion groups retain context without an extra outer card border. Thread
 actions such as Edit message, Copy link and Reply in thread live in a Lucide
 kebab menu within the shared hover bar, accessible on keyboard focus and touch.
-They do not introduce permanent button rows beneath message content.
+They do not introduce permanent button rows beneath message content. Reaction
+bars receive each retained custom image URL through Design Core's public
+custom-reaction model, including when the picker no longer lists it. The
+existing reaction key remains only a presentation key; native toggle identity,
+actor descriptions and selected/count semantics stay owned by the controller.
 
 Navigation and inbox share bounded cached repository reads and application
 WebSocket invalidation. Hidden panels do no background work, and healthy idle

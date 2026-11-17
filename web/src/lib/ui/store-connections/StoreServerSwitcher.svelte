@@ -37,21 +37,24 @@
             variant="ghost"
             size={compact ? "icon-sm" : "default"}
             data-active={owner.selected === server.id ? "" : undefined}
-            aria-label={`Select ${server.name} server`}
             aria-pressed={owner.selected === server.id}
             title={server.name}
             onclick={() => owner.select(server.id)}
             class="lc-community-navigation__item server-switcher__button"
           >
-            <span class="server-switcher__initial" aria-hidden="true"
-              >{#if server.id === "local"}<MonitorIcon />{:else}{server.name
+            <span class="sr-only">Select </span>
+            <span class="server-switcher__initial"
+              >{#if server.id === "local"}<MonitorIcon
+                  aria-hidden="true"
+                />{:else}{server.name
                   .trim()
                   .slice(0, 1)
                   .toUpperCase()}{/if}</span
+            >{" "}
+            <span class="server-switcher__name" class:sr-only={compact}
+              >{server.name}</span
             >
-            {#if !compact}<span class="server-switcher__name"
-                >{server.name}</span
-              >{/if}
+            <span class="sr-only"> server</span>
           </Button>
           {#if !compact && server.id !== "local"}<Button
               variant="ghost"

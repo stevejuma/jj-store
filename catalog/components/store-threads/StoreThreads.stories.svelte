@@ -25,7 +25,7 @@
       await c.findByRole("button", { name: /^Threads$/ }),
     ).toBeVisible();
     await userEvent.click(
-      (await c.findAllByRole("button", { name: "Open Thread general" }))[0]!,
+      (await c.findAllByRole("button", { name: /^Open Thread general / }))[0]!,
     );
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
     await userEvent.click(
@@ -96,7 +96,7 @@
       await body.findByRole("menuitem", { name: "Reply in thread" }),
     );
     const replies = c.getByRole("complementary", { name: "Thread replies" });
-    const replyInput = within(replies).getByRole("textbox", {
+    const replyInput = await within(replies).findByRole("textbox", {
       name: "Markdown editor",
     });
     await waitFor(() =>
@@ -146,6 +146,10 @@
     const reaction = within(reply as HTMLElement).getByRole("button", {
       name: /1 reaction with Lapis/,
     });
+    await expect(reaction.querySelector("img")).toHaveAttribute(
+      "src",
+      expect.stringMatching(/^(blob:|data:image\/)/),
+    );
     reaction.focus();
     await expect(
       await body.findByText(/1 reaction with Lapis/, {
@@ -259,7 +263,7 @@
     ).toBeVisible();
     await waitFor(() =>
       expect(
-        c.getAllByRole("button", { name: "Open Thread Shared planning" }),
+        c.getAllByRole("button", { name: /^Open Thread Shared planning / }),
       ).toHaveLength(2),
     );
   }}

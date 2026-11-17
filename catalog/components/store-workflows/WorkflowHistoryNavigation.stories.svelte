@@ -315,7 +315,9 @@
     const articles = list.querySelectorAll("article");
     const positions = [...articles].map((row) => {
       const status = row.querySelector(".workflow-run-status")!,
-        avatar = row.querySelector('button[aria-label^="View "]')!,
+        avatar = within(row as HTMLElement).getByRole("button", {
+          name: /^View .+'s profile(?: |$)/,
+        }),
         text = row.querySelector(".workflow-history-row__summary")!;
       const a = avatar.getBoundingClientRect(),
         t = text.getBoundingClientRect();

@@ -9,7 +9,7 @@ export async function footerRuntime({
   const c = within(canvasElement),
     page = within(canvasElement.ownerDocument.body);
   await reader(canvasElement);
-  const model = c.getByRole("button", { name: "Model: 6.1 Sol" });
+  const model = c.getByRole("button", { name: /^Model: .*6\.1 Sol$/ });
   const thinking = c.getByRole("button", { name: "Thinking: Medium" });
   const agent = c.getByRole("button", { name: "Agent: Codex" });
   const send = c.getByRole("button", { name: "Send message" });
@@ -29,7 +29,7 @@ export async function footerRuntime({
   await userEvent.click(model);
   await menuFits(18);
   await userEvent.click(page.getByRole("menuitemradio", { name: "6 Astra" }));
-  expect(c.getByRole("button", { name: "Model: 6 Astra" })).toHaveFocus();
+  expect(c.getByRole("button", { name: /^Model: .*6 Astra$/ })).toHaveFocus();
   await userEvent.click(agent);
   await menuFits(18);
   await userEvent.click(page.getByRole("menuitemradio", { name: "OpenCode" }));

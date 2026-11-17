@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { revisionReviewOpener } from "../../fixtures/revision-review-opener.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
@@ -12,9 +13,7 @@
     const c = within(canvasElement);
     if (project) await c.findByRole("button", { name: "Edit project" });
     await userEvent.click(await c.findByRole("tab", { name: "Reviews" }));
-    await userEvent.click(
-      await c.findByRole("button", { name: /Open Revision open/ }),
-    );
+    await userEvent.click(await revisionReviewOpener(canvasElement));
     const detail = await c.findByRole("article", { name: "Review details" });
     await expect(
       c.queryByRole("region", { name: "Project reviews" }),

@@ -1,5 +1,9 @@
 # UI verification
 
+JST-UI-001 visible naming:
+[E-UI-VISIBLE-NAMES-001](../../history/2026/11/17/E-UI-VISIBLE-NAMES-001/index.md)
+retains full native identity and blocking accessibility acceptance.
+
 JST-UI-001/JST-UI-016 shared application menu and retained command dialogs:
 [E-APPLICATION-MENU-001](../../history/2026/10/14/E-APPLICATION-MENU-001/index.md).
 

@@ -281,7 +281,7 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
       }),
     ).toBeVisible();
     await expect(
-      page.getByRole("option", { name: "main", exact: true }),
+      page.getByRole("option", { name: /^main(?:\s|$)/ }),
     ).toContainText("just now by Maya Chen");
     await page.screenshot({ path: ".scratch/catalog-full-app.png" });
     await expectSplitCopy(browser, origin);

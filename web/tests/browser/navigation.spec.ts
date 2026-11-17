@@ -14,7 +14,7 @@ test("hash route restores snapshot and file through controls reload and browser 
   await api(page, { changed: true });
   await connect(page);
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   expect(new URL(page.url()).hash).toBe(
     `#/repos/${repo}/branches?at_op=${operation}`,

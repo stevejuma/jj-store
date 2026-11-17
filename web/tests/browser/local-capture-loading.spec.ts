@@ -152,7 +152,9 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await page.goto("/");
   await openAgents(page);
   await page.getByRole("tab", { name: "Configuration", exact: true }).click();
-  const group = page.getByRole("button", { name: "Codex configuration" });
+  const group = page.getByRole("button", {
+    name: /^Configuration: Codex(?:\s|$)/,
+  });
   const roots = page.getByRole("textbox", { name: "Codex CLI folders" });
   await group.click();
   await expect(group).toHaveAttribute("aria-expanded", "true");
@@ -183,7 +185,7 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await page.getByRole("option", { name: "Codex", exact: true }).click();
   await expect(table.locator("tbody > tr")).toHaveCount(2);
   const statusFilter = page.getByRole("button", {
-    name: "Filter by source status",
+    name: /^Filter by source status: /,
   });
   await expect(
     filter.locator(
@@ -236,7 +238,7 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await statusSearch.press("ArrowDown");
   await statusSearch.press("Enter");
   await expect(table.locator("tbody > tr")).toHaveCount(2);
-  await expect(statusFilter).toHaveText("2 statuses");
+  await expect(statusFilter).toHaveText("Filter by source status: 2 statuses");
   await statusSearch.fill("");
   await expect(
     page.getByRole("option", { name: "Degraded", exact: true }),
@@ -358,7 +360,7 @@ test("cold repository source filtering composes with status and harness filters"
     page.getByText("Coverage current", { exact: true }),
   ).toBeVisible();
   const repositoryFilter = page.getByRole("button", {
-    name: "Filter by source repository",
+    name: /^Filter by source repository: /,
   });
   await repositoryFilter.click();
   const search = page.getByRole("combobox", {
@@ -375,7 +377,9 @@ test("cold repository source filtering composes with status and harness filters"
   await page
     .getByRole("option", { name: "Previously bound repository", exact: true })
     .click();
-  await expect(repositoryFilter).toHaveText("2 repositories");
+  await expect(repositoryFilter).toHaveText(
+    "Filter by source repository: 2 repositories",
+  );
   await expect(table.locator("tbody > tr")).toHaveCount(2);
   await page
     .getByRole("option", {
@@ -394,7 +398,9 @@ test("cold repository source filtering composes with status and harness filters"
   await expect(repositoryFilter).toBeFocused();
   await page.getByRole("button", { name: "Filter by harness" }).click();
   await page.getByRole("option", { name: "Codex", exact: true }).click();
-  await page.getByRole("button", { name: "Filter by source status" }).click();
+  await page
+    .getByRole("button", { name: /^Filter by source status: / })
+    .click();
   await page.getByRole("option", { name: "Degraded", exact: true }).click();
   await page
     .getByRole("combobox", { name: "Search source statuses" })

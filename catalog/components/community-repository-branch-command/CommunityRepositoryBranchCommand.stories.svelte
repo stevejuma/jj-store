@@ -52,7 +52,7 @@
       await pointer.hover(filters);
     }
     const unselectedBranch = canvas.getByRole("option", {
-      name: "feature/native-objects",
+      name: /^feature\/native-objects /,
     });
     const restingBackground =
       getComputedStyle(unselectedBranch).backgroundColor;
@@ -67,7 +67,7 @@
       restingBackground,
     );
     const selectedBranch = canvas.getByRole("option", {
-      name: "feature/publication",
+      name: /^feature\/publication /,
     });
     const selectedCursor = selectedBranch.getAttribute("aria-selected");
     await userEvent.hover(selectedBranch);
@@ -103,7 +103,7 @@
     );
     const workingCopyTitle = workingCopy.querySelector("strong")!;
     const branchTitle = canvas
-      .getByRole("option", { name: "main" })
+      .getByRole("option", { name: /^main / })
       .querySelector('[data-ui-part="item-label"]')!;
     await expect(getComputedStyle(workingCopyTitle).fontSize).toBe(
       getComputedStyle(branchTitle).fontSize,
@@ -130,14 +130,14 @@
     await userEvent.click(canvas.getByRole("tab", { name: "Workspace" }));
     await expect(canvas.getAllByRole("option")).toHaveLength(1);
     await expectSeparators();
-    await expect(canvas.getByRole("option", { name: "main" })).toBeVisible();
+    await expect(canvas.getByRole("option", { name: /^main / })).toBeVisible();
     await expect(
-      canvas.getByRole("option", { name: "main" }),
+      canvas.getByRole("option", { name: /^main / }),
     ).toHaveTextContent("just now by Maya Chen");
     await userEvent.click(canvas.getByRole("tab", { name: "Conflicted" }));
     await expect(canvas.getAllByRole("option")).toHaveLength(1);
     await expectSeparators();
-    await userEvent.click(canvas.getByRole("option", { name: "conflicted" }));
+    await userEvent.click(canvas.getByRole("option", { name: /^conflicted / }));
     await expect(args.onSelect).toHaveBeenLastCalledWith("conflicted");
     await userEvent.click(canvas.getByRole("tab", { name: "All" }));
     await userEvent.type(
@@ -148,7 +148,7 @@
     await expectSeparators();
     await expect(
       canvas.getByRole("option", {
-        name: "feature/native-objects",
+        name: /^feature\/native-objects /,
       }),
     ).toBeVisible();
   }}
@@ -158,7 +158,9 @@
 <Story
   name="Workspace chip sits at the title row edge"
   play={async ({ canvasElement }) => {
-    const branch = within(canvasElement).getByRole("option", { name: "main" });
+    const branch = within(canvasElement).getByRole("option", {
+      name: /^main /,
+    });
     const chip = within(branch).getByText("Workspace", { exact: true });
     const heading = branch.querySelector<HTMLElement>(
       ".community-bookmark-card__heading",

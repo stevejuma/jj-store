@@ -92,9 +92,9 @@
       name: "Branches",
     });
     const list = within(branches);
-    expect(list.queryByRole("option", { name: "cloud-runner" })).toBeNull();
+    expect(list.queryByRole("option", { name: /^cloud-runner / })).toBeNull();
     expect(
-      list.queryByRole("option", { name: "workspace/experiment" }),
+      list.queryByRole("option", { name: /^workspace\/experiment / }),
     ).toBeNull();
     await list.findByText("Partially applied");
     await userEvent.type(
@@ -102,7 +102,7 @@
       "workspace/experiment",
     );
     await userEvent.click(
-      list.getByRole("option", { name: "cloud-observability" }),
+      list.getByRole("option", { name: /^cloud-observability / }),
     );
     const upper = await canvas.findByRole("region", {
       name: "Stack cloud-observability",
@@ -125,7 +125,7 @@
     );
     expect(
       within(upper).getByRole("button", {
-        name: "Apply cloud-observability",
+        name: "Apply to workspace for cloud-observability",
       }),
     ).toBeEnabled();
   }}

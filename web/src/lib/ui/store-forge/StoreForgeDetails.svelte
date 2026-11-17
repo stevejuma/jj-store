@@ -72,15 +72,13 @@
               >
                 <Collapsible.Trigger>
                   {#snippet child({ props })}
-                    <Button
-                      {...props}
-                      variant="ghost"
-                      size="sm"
-                      aria-label={`${expanded ? "Collapse" : "Expand"} pull request #${pr.number}`}
-                    >
+                    <Button {...props} variant="ghost" size="sm">
                       {#if expanded}<ChevronDown
                           aria-hidden="true"
                         />{:else}<ChevronRight aria-hidden="true" />{/if}
+                      <span class="sr-only"
+                        >{expanded ? "Collapse" : "Expand"} pull request #{pr.number}:
+                      </span>
                       <span
                         >{selected
                           ? controller.title || pr.title

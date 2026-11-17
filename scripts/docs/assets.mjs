@@ -121,30 +121,67 @@ export function documentationPlugin(root) {
           loading = false;
         }
       };
-      const observer = watch(
-        parent,
-        { recursive: true },
-        (_event, filename) => {
-          if (filename !== null) {
-            const path = resolve(parent, filename.toString());
-            if (path !== manifestPath && path !== directory) return;
-          }
-          generation += 1;
-          void reload();
-        },
-      );
-      observer.on("error", (error) => {
+      /** @type {import("node:fs").FSWatcher | undefined} */
+      let contentsObserver;
+      const changed = () => {
+        if (closed) return;
+        generation += 1;
+        void reload();
+      };
+      /** @param {Error} error */
+      const observerFailed = (error) => {
+        if (closed) return;
         dispose();
         server.config.logger.warn(
           `Help observer stopped: ${error.message}. Restart Vite after rebuilding documentation.`,
         );
+      };
+      const observeContents = () => {
+        contentsObserver?.close();
+        contentsObserver = undefined;
+        if (closed) return;
+        try {
+          // Subscribe directly: recursive registration can miss a manifest
+          // published immediately after the bundle directory is replaced.
+          contentsObserver = watch(directory, (_event, filename) => {
+            if (
+              filename === null ||
+              resolve(directory, filename.toString()) === manifestPath
+            )
+              changed();
+          });
+          contentsObserver.on("error", observerFailed);
+        } catch (error) {
+          // Keep the parent subscription while an atomic rebuild has no bundle.
+          if (!(
+            error instanceof Error &&
+            "code" in error &&
+            error.code === "ENOENT"
+          ))
+            observerFailed(
+              error instanceof Error ? error : new Error(String(error)),
+            );
+        }
+      };
+      const observer = watch(parent, (_event, filename) => {
+        if (closed) return;
+        if (
+          filename !== null &&
+          resolve(parent, filename.toString()) !== directory
+        )
+          return;
+        observeContents();
+        changed();
       });
+      observer.on("error", observerFailed);
       dispose = () => {
         closed = true;
         observer.close();
+        contentsObserver?.close();
         server.httpServer?.off("close", dispose);
       };
       server.httpServer?.once("close", dispose);
+      observeContents();
       // Close the startup read/subscribe gap without periodic filesystem reads.
       generation += 1;
       await reload();

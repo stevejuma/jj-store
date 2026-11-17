@@ -174,12 +174,12 @@
     await expect(selectedCommit).toHaveTextContent("default");
     await expect(
       within(selectedCommit).getByRole("button", {
-        name: /Copy JJ Change ID/u,
+        name: /^Copy JJ /u,
       }),
     ).toBeVisible();
     await expect(
       within(selectedCommit).getByRole("button", {
-        name: /Copy Git commit SHA/u,
+        name: /^Copy GIT /u,
       }),
     ).toBeVisible();
     await expect(selectedCommit).toHaveTextContent(/seconds ago|just now/u);

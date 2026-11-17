@@ -47,12 +47,11 @@ test("selected JJ Log change restores rail commands and clears them on navigatio
   await expect(actions).toBeVisible();
   await actions.getByRole("button", { name: "Edit description" }).click();
   const dialog = page.getByRole("dialog", { name: "Edit description" });
-  await expect(
-    dialog.getByRole("button", {
-      name: `Copy Git commit SHA ${commit}`,
-      exact: true,
-    }),
-  ).toBeVisible();
+  const copyIdentity = dialog.getByRole("button", { name: /^Copy GIT / });
+  await expect(copyIdentity).toBeVisible();
+  await expect(copyIdentity).toHaveAccessibleDescription(
+    `Full Git commit SHA: ${commit}`,
+  );
   await dialog.getByRole("button", { name: "Cancel" }).click();
   await rail.getByRole("button", { name: "Op Log", exact: true }).click();
   await expect(actions).toHaveCount(0);

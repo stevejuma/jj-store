@@ -43,12 +43,14 @@
       ).toBe(true);
     });
     await expect(canvasElement.querySelector("script")).toBeNull();
-    const toggle = c.getByRole("button", { name: "Show raw output" });
+    const toggle = c.getByRole("button", { name: "Show Raw JSON output" });
     toggle.focus();
     await userEvent.keyboard("{Enter}");
     await expect(c.getByText(/formatted_output/)).toBeVisible();
     await expect(c.getByRole("group", { name: "json" })).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Show rich output" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Show Formatted output" }),
+    );
     await expect(c.getByRole("group", { name: "typescript" })).toBeVisible();
   }}
 />
@@ -60,7 +62,9 @@
       c.getByRole("region", { name: "Diff for src/example.ts" }),
     ).toBeVisible();
     await expect(c.getByLabelText("1 additions and 1 deletions")).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Show raw output" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Show Raw JSON output" }),
+    );
     await expect(c.getByText(/oldText/)).toBeVisible();
     const page = within(canvasElement);
     await userEvent.click(
@@ -74,11 +78,11 @@
       }),
     );
     await expect(
-      c.getByRole("button", { name: "Show rich output" }),
+      c.getByRole("button", { name: "Show Formatted output" }),
     ).toBeVisible();
     const read = await open(canvasElement, "Read example.ts");
     await expect(
-      read.getByRole("button", { name: "Show raw output" }),
+      read.getByRole("button", { name: "Show Raw JSON output" }),
     ).toBeVisible();
   }}
 />
@@ -100,7 +104,7 @@
     ).toBeVisible();
     const unknown = await open(canvasElement, "Unsupported");
     await userEvent.click(
-      unknown.getByRole("button", { name: "Show raw output" }),
+      unknown.getByRole("button", { name: "Show Raw JSON output" }),
     );
     await expect(unknown.getByText(/untrusted.png/)).toBeVisible();
     await expect(unknown.queryByRole("img")).toBeNull();
@@ -132,11 +136,11 @@
       edit.getByRole("region", { name: "Diff for src/example.ts" }),
     ).toBeVisible();
     await userEvent.click(
-      read.getByRole("button", { name: "Show raw output" }),
+      read.getByRole("button", { name: "Show Raw JSON output" }),
     );
     await expect(read.getByText(/native_name/)).toBeVisible();
     await expect(
-      edit.getByRole("button", { name: "Show raw output" }),
+      edit.getByRole("button", { name: "Show Raw JSON output" }),
     ).toBeVisible();
   }}
 />

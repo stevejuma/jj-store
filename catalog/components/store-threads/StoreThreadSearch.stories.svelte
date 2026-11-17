@@ -1,7 +1,8 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/StoreThreadsFixture.svelte";
+  import { THREAD_IDS } from "../../fixtures/thread-transport.js";
   const { Story } = defineMeta({
     title: "JJ Store/Threads/Inbox search",
     component: Fixture,
@@ -11,7 +12,14 @@
   });
   async function search({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
-    await c.findByRole("button", { name: "Open Thread general" });
+    const general = await c.findByRole("button", {
+      name: /^Open Thread general /,
+    });
+    await expect(general).toHaveAccessibleDescription(
+      new RegExp(
+        `^Thread ${THREAD_IDS.repo}:${THREAD_IDS.thread}:${THREAD_IDS.repo}(?:, .+)?$`,
+      ),
+    );
     await userEvent.click(
       await c.findByRole("button", { name: "Search loaded conversations" }),
     );
@@ -20,13 +28,13 @@
     });
     await userEvent.type(input, "release checklist");
     await expect(
-      c.getByRole("button", { name: "Open Thread planning" }),
+      c.getByRole("button", { name: /^Open Thread planning / }),
     ).toBeVisible();
     await expect(
-      c.queryByRole("button", { name: "Open Thread general" }),
+      c.queryByRole("button", { name: /^Open Thread general / }),
     ).toBeNull();
     await userEvent.click(
-      c.getByRole("button", { name: "Open Thread planning" }),
+      c.getByRole("button", { name: /^Open Thread planning / }),
     );
     await expect(
       await c.findByText("Release planning discussion"),
@@ -54,18 +62,39 @@
   args={{}}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(
-      await c.findByRole("button", { name: "Toggle thread conversations" }),
+    const page = within(canvasElement.ownerDocument.body);
+    // The loading skeleton has the same panel and search controls as the inbox.
+    // Wait for loaded content before retaining elements across the lazy mount.
+    await page.findByText("planning", { selector: "strong" });
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector(
+          '[data-ui-component="app-shell"][data-ui-part="root"]',
+        ),
+      ).toHaveAttribute("data-display-mode", "mobile"),
     );
+    const conversations = await c.findByRole("button", {
+      name: "Toggle thread conversations",
+    });
+    await expect(conversations).toHaveAttribute("aria-pressed", "false");
+    await userEvent.click(conversations);
+    await expect(conversations).toHaveAttribute("aria-pressed", "true");
+    const inbox = await page.findByRole("complementary", {
+      name: "Thread conversations",
+    });
+    await expect(inbox).toBeVisible();
+    const list = within(inbox);
     await userEvent.click(
-      await c.findByRole("button", { name: "Search loaded conversations" }),
+      await list.findByRole("button", { name: "Search loaded conversations" }),
     );
     await userEvent.type(
-      c.getByRole("searchbox", { name: "Search loaded conversations" }),
+      await list.findByRole("searchbox", {
+        name: "Search loaded conversations",
+      }),
       "release",
     );
     await expect(
-      c.getByRole("button", { name: "Open Thread planning" }),
+      await list.findByRole("button", { name: /^Open Thread planning / }),
     ).toBeVisible();
   }}
 />
@@ -74,7 +103,7 @@
   args={{ pagedSearch: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await c.findByRole("button", { name: "Open Thread general" });
+    await c.findByRole("button", { name: /^Open Thread general / });
     await userEvent.click(
       await c.findByRole("button", { name: "Search loaded conversations" }),
     );
@@ -85,7 +114,7 @@
     await expect(c.getByText("No matching conversations")).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: /More Threads/ }));
     await expect(
-      await c.findByRole("button", { name: "Open Thread planning" }),
+      await c.findByRole("button", { name: /^Open Thread planning / }),
     ).toBeVisible();
     await expect(input).toHaveValue("release");
   }}

@@ -49,7 +49,7 @@
           .querySelector(".community-member-avatar"),
       ).not.toBeNull();
       const copy = portal.getByRole("button", {
-        name: `Copy full operation ID: ${IDS.opLeft}`,
+        name: `Copy full operation ID: ${IDS.opLeft.slice(0, 8)}…${IDS.opLeft.slice(-4)}`,
       });
       await userEvent.click(copy);
       await expect(write).toHaveBeenLastCalledWith(IDS.opLeft);

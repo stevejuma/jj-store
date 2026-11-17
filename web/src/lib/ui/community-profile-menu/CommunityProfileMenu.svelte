@@ -60,8 +60,10 @@
                     type="button"
                     variant="ghost"
                     class="community-profile-menu__trigger"
-                    aria-label={`Open profile menu for ${member.name}`}
                   >
+                    <span class="sr-only"
+                      >Open profile menu for {compact ? member.name : ""}</span
+                    >
                     <CommunityMemberAvatar {member} showPresence decorative />
                     {#if !compact}
                       <span class="community-profile-menu__identity">

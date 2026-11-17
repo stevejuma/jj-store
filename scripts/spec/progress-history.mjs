@@ -1,10 +1,26 @@
-import { readFileSync, readdirSync, writeFileSync, mkdirSync } from "node:fs";
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+  mkdirSync,
+} from "node:fs";
 import { join, dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadLedger, relationsFor } from "./progress-loader.mjs";
 import { taskHistory } from "./progress-integrity.mjs";
 import { updateNavigation } from "./navigation-update.mjs";
-import { indexBody } from "./navigation-pages.mjs";
+import { indexBody, navigationMarker } from "./navigation-pages.mjs";
+
+function writeHistoryPage(file, body) {
+  const previous = existsSync(file) ? readFileSync(file, "utf8") : "";
+  const start = file.endsWith("/index.md")
+    ? previous.indexOf(navigationMarker)
+    : -1;
+  // The navigation pass replaces derived links after the history is written.
+  // Retain its existing section meanwhile so unchanged leaves do not churn.
+  writeFileSync(file, body + (start < 0 ? "" : previous.slice(start)));
+}
 function files(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
     e.isDirectory() ? files(join(dir, e.name)) : [join(dir, e.name)],
@@ -42,7 +58,8 @@ export function refreshTaskHistories() {
       Math.max(0, body.lastIndexOf("<!-- /evidence-field -->")),
     );
     const source = offset < 0 ? body : body.slice(0, offset);
-    writeFileSync(path, source + relationContext(ledger, relations, entry));
+    const next = source + relationContext(ledger, relations, entry);
+    if (next !== body) writeFileSync(path, next);
   }
   for (const task of ledger.tasks) {
     const family = task.id.split(".")[0];
@@ -64,7 +81,7 @@ export function refreshTaskHistories() {
         current.split("\n").length > 280 ||
         Buffer.byteLength(current + row) > 26 * 1024
       ) {
-        writeFileSync(
+        writeHistoryPage(
           join(root, part ? `history-${part + 1}.md` : "index.md"),
           current,
         );
@@ -73,7 +90,7 @@ export function refreshTaskHistories() {
       }
       current += row + "\n";
     }
-    writeFileSync(
+    writeHistoryPage(
       join(root, part ? `history-${part + 1}.md` : "index.md"),
       current,
     );

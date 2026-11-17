@@ -8,6 +8,33 @@ stack recovery retains its disappearance assertion with a bounded async wait. No
 selector, interaction or accessibility waiver is accepted; visual approval
 remains separate.
 
+JST-UI-001 accessible names MUST retain the visible labels of cards, profile
+menus, search, stack actions and forge account/status and native identifier
+controls. Text-bearing controls derive names from their contents; search exposes
+supported keyboard shortcuts. Copy controls include the visible identifier
+abbreviation and retain the complete native identity as an accessible
+description and exact clipboard payload. Pointer, keyboard and feedback states
+retain these semantics; no accessibility rule or visual baseline is waived.
+Revision-message references retain the same visible
+abbreviation/full-description boundary as graph identifiers, including keyboard
+copy and independent row selection. Inbox row names retain visible content;
+their accessible descriptions preserve full conversation identity and existing
+lifecycle status. Avatar-picker names retain their action and selected-image
+description. Profile controls preserve live avatar presence, identity/handle
+text and the complete displayed Agent ID; capture disclosures retain their
+harness and scope, and repository actions retain status, description and access
+text alongside the repository name. Capture filter names include the current
+selection; disclosure names retain visible help. Tool output, emoji upload and
+workflow-step controls retain their visible format/action and duration text
+alongside intent and status. Review controls retain the displayed excerpt and
+abbreviated native thread ID, with the complete ID available as an accessible
+description. Comment disclosures retain their visible count and singular/plural
+text alongside sent/pending intent. Server controls retain visible initials and
+names, including a complete name in compact mode; link cards retain their host,
+title and displayed address. Runtime editing controls retain each visible field
+and current value. Footer runtime pickers retain selected values and any live
+avatar/presence semantics.
+
 JST-UI-001 includes Visual Delta's released Storybook addon and portable
 Playwright suite. Native capture MUST use installed project browsers with actual
 macOS/Linux host provenance and OS/architecture-separated PNG paths. An ignored

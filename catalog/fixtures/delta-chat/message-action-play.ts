@@ -23,19 +23,19 @@ export async function messageActions({
     await within(document.body).findByRole("button", { name: "React 👍" }),
   );
   const reaction = await c.findByRole("button", {
-    name: "1 reaction with 👍: 1",
+    name: "1 reaction with 👍: 👍 1",
   });
   await expect(reaction).toHaveAttribute("aria-pressed", "true");
   await storyControl(document.body, "Hide body");
   await storyControl(document.body, "Show body");
   await expect(
-    c.getByRole("button", { name: "1 reaction with 👍: 1" }),
+    c.getByRole("button", { name: "1 reaction with 👍: 👍 1" }),
   ).toHaveAttribute("aria-pressed", "true");
   await userEvent.click(
-    c.getByRole("button", { name: "1 reaction with 👍: 1" }),
+    c.getByRole("button", { name: "1 reaction with 👍: 👍 1" }),
   );
   await expect(
-    c.queryByRole("button", { name: "1 reaction with 👍: 1" }),
+    c.queryByRole("button", { name: "1 reaction with 👍: 👍 1" }),
   ).toBeNull();
   await userEvent.click(
     c.getByRole("button", { name: "Agent response · Synthetic review" }),

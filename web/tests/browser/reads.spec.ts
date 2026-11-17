@@ -72,7 +72,7 @@ test("changed-file collections consume commit, group and path cursors", async ({
   });
 
   await connect(page);
-  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page.getByRole("option", { name: /^main(?:\s|$)/ }).click();
   await page
     .getByRole("button", { name: /binary <script>/u })
     .first()
@@ -120,7 +120,7 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   page.on("pageerror", (e) => errors.push(e.message));
   await api(page);
   await connect(page);
-  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page.getByRole("option", { name: /^main(?:\s|$)/ }).click();
   await expect(
     page.getByRole("button", { name: /binary <script>/ }).first(),
   ).toBeVisible();
@@ -216,13 +216,12 @@ test("branch targets scope native history and expose repository decorations", as
   });
   await connect(page);
   const workingCopy = page.getByRole("button", {
-    name: "Working copy · laptop",
-    exact: true,
+    name: /^Working copy laptop(?:\s|$)/,
   });
   await expect(workingCopy).toBeVisible();
 
   revsets.length = 0;
-  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page.getByRole("option", { name: /^main(?:\s|$)/ }).click();
   await expect.poll(() => revsets.at(-1)).toBe(`::${commit}`);
   const revisionGraph = page.getByRole("list", { name: "Revision graph" });
   const conflicted = graphTag(revisionGraph, "conflicted").first();
@@ -264,7 +263,7 @@ test("multiple_heads_require_choice_and_events_preserve_the_selected_view", asyn
     .getByRole("button", { name: operation.slice(0, 12), exact: true })
     .click();
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", {
@@ -299,7 +298,7 @@ test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({
   await page.getByLabel("Access token", { exact: true }).fill(token);
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await page.route("**/snapshot", (route) =>
     route.fulfill({ status: 403, json: { version: 1, code: "access_denied" } }),
@@ -322,7 +321,7 @@ test("mobile_connect_and_history_have_no_horizontal_overflow", async ({
   await api(page);
   await connect(page);
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -353,7 +352,7 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
     await route.fulfill({ json: result });
   });
   await connect(page);
-  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page.getByRole("option", { name: /^main(?:\s|$)/ }).click();
   const revisionGraph = page.getByRole("list", { name: "Revision graph" });
   await expect
     .poll(
@@ -501,7 +500,7 @@ test("index_preparation_retries_the_original_query_after_context_edits", async (
   ).toBeVisible();
   await page.getByRole("button", { name: "Prepare graph index" }).click();
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await expect.poll(() => queries.length).toBe(2);
   expect(queries[1]).toBe(queries[0]);
@@ -528,7 +527,7 @@ test("event_reconnect_resumes_and_reset_refreshes_automatically", async ({
   });
   await connect(page);
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   await expect.poll(() => resumes.slice(0, 2)).toEqual([null, id]);
   await expect
@@ -536,7 +535,7 @@ test("event_reconnect_resumes_and_reset_refreshes_automatically", async ({
     .toBeGreaterThan(1);
   expect(resumes.slice(1).every((cursor) => cursor === id)).toBe(true);
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
 });
 

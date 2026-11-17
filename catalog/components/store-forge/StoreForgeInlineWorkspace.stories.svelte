@@ -141,7 +141,7 @@
     });
     await userEvent.click(
       within(stack).getByRole("button", {
-        name: "Pull request for feature/api",
+        name: /^Pull request for feature\/api: /,
       }),
     );
     await expect(canvas.getByText("No file selected")).toBeVisible();
@@ -159,7 +159,7 @@
       name: "Selected changes from stack-api",
     });
     const toggle = within(details).getByRole("button", {
-      name: "Collapse pull request #42",
+      name: /^Collapse pull request \#42: /,
     });
     const summary = toggle.closest<HTMLElement>("[data-forge-summary]")!;
     await expect(summary.getBoundingClientRect().bottom).toBeLessThan(
@@ -178,10 +178,14 @@
       within(details).getByRole("region", { name: "Selected file diff" }),
     ).toBeVisible();
     await expect(
-      within(details).getByRole("button", { name: "Expand pull request #42" }),
+      within(details).getByRole("button", {
+        name: /^Expand pull request \#42: /,
+      }),
     ).toBeVisible();
     await userEvent.click(
-      within(details).getByRole("button", { name: "Expand pull request #42" }),
+      within(details).getByRole("button", {
+        name: /^Expand pull request \#42: /,
+      }),
     );
     await userEvent.click(
       within(summary).getByRole("button", { name: "Float PR details" }),
@@ -198,7 +202,7 @@
     ).toHaveAttribute("aria-expanded", "false");
     await expect(
       within(floating).getByRole("button", {
-        name: "Collapse pull request #42",
+        name: /^Collapse pull request \#42: /,
       }),
     ).toBeDisabled();
     const fileDiff = within(details).getByRole("region", {
@@ -224,7 +228,7 @@
     );
     await expect(
       within(details).getByRole("button", {
-        name: "Collapse pull request #42",
+        name: /^Collapse pull request \#42: /,
       }),
     ).toBeEnabled();
     await userEvent.click(

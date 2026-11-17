@@ -78,7 +78,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByRole("option", { name: "feature/native-objects" }),
+      canvas.getByRole("option", { name: /^feature\/native-objects / }),
     );
     await expect(
       canvas.getByRole("button", { name: "Stream immutable native objects" }),
@@ -88,7 +88,7 @@
         name: "Preserve concurrent publication history",
       }),
     ).not.toBeInTheDocument();
-    await userEvent.click(canvas.getByRole("option", { name: "main" }));
+    await userEvent.click(canvas.getByRole("option", { name: /^main / }));
     await inspectDiff(canvasElement);
   }}
   >{#snippet template()}<div class="repository-story">
@@ -191,9 +191,12 @@
     });
     await expect(getComputedStyle(metadata).borderBottomWidth).toBe("0px");
     const copyButton = within(details).getByRole("button", {
-      name: `Copy full operation ID: ${IDS.opLeft}`,
+      name: `Copy full operation ID: ${IDS.opLeft.slice(0, 8)}…${IDS.opLeft.slice(-4)}`,
     });
     await expect(copyButton).toBeVisible();
+    await expect(copyButton).toHaveAccessibleDescription(
+      `Full operation ID: ${IDS.opLeft}`,
+    );
     const parentButton = within(details).getByRole("button", {
       name: /Parent/,
     });

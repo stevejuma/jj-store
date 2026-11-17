@@ -4,7 +4,7 @@ export async function admission(canvasElement: HTMLElement) {
   const canvas = within(canvasElement);
   await userEvent.click(
     await canvas.findByRole("button", {
-      name: "Execution access",
+      name: /^Execution access /,
     }),
   );
   const input = await canvas.findByRole("combobox", {

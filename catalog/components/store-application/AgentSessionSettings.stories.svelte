@@ -112,13 +112,13 @@
       runtime.queryByRole("button", { name: "Clean up workspace" }),
     ).not.toBeInTheDocument();
     await expect(
-      runtime.getByRole("button", { name: "Edit model" }),
+      runtime.getByRole("button", { name: /^Edit Model / }),
     ).toHaveTextContent("configured-model");
     await expect(
-      runtime.getByRole("button", { name: "Edit execution mode" }),
+      runtime.getByRole("button", { name: /^Edit Execution mode / }),
     ).toHaveTextContent("ask");
     await userEvent.click(
-      runtime.getByRole("button", { name: "Edit execution mode" }),
+      runtime.getByRole("button", { name: /^Edit Execution mode / }),
     );
     const editor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),
@@ -128,7 +128,9 @@
     ).toHaveValue("Repository helper");
     await waitFor(() =>
       expect(
-        editor.getByRole("button", { name: "Choose agent image" }),
+        editor.getByRole("button", {
+          name: "Choose agent image: Selected avatar",
+        }),
       ).toBeVisible(),
     );
     await waitFor(async () => {
@@ -161,7 +163,7 @@
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Edit execution mode" }),
+      c.getByRole("button", { name: /^Edit Execution mode / }),
     );
     const retainedEditor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),
@@ -236,7 +238,7 @@
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Edit execution mode" }),
+      c.getByRole("button", { name: /^Edit Execution mode / }),
     );
     const editor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),
@@ -296,10 +298,10 @@
     await expect(cleanup.querySelector("svg")).not.toBeNull();
     await expect(actions.getBoundingClientRect().top).toBeGreaterThan(
       c
-        .getByRole("button", { name: "Edit execution mode" })
+        .getByRole("button", { name: /^Edit Execution mode / })
         .getBoundingClientRect().bottom,
     );
-    await userEvent.click(c.getByRole("button", { name: "Edit model" }));
+    await userEvent.click(c.getByRole("button", { name: /^Edit Model / }));
     const editor = within(
       await page.findByRole("dialog", { name: "Edit agent" }),
     );
@@ -349,13 +351,13 @@
       page.getByRole("menuitem", { name: "Conversation details" }),
     );
     await expect(
-      c.getByRole("button", { name: "Edit model" }),
+      c.getByRole("button", { name: /^Edit Model / }),
     ).toHaveTextContent("retained-model");
     await expect(
-      c.getByRole("button", { name: "Edit thinking" }),
+      c.getByRole("button", { name: /^Edit Thinking / }),
     ).toHaveTextContent("high");
     await expect(
-      c.getByRole("button", { name: "Edit execution mode" }),
+      c.getByRole("button", { name: /^Edit Execution mode / }),
     ).toHaveTextContent("read-only");
     await expect(
       c.queryByLabelText("Last session command"),

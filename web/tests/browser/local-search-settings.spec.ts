@@ -65,7 +65,7 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   });
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const hash = await page.evaluate(() => location.hash);
   await page

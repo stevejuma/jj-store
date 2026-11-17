@@ -234,7 +234,9 @@
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+      canvas.getByRole("button", {
+        name: /^Open profile menu for Maya Chen(?: |$)/,
+      }),
     );
     await userEvent.click(
       await body.findByRole("menuitem", { name: "Sign out" }),
@@ -252,7 +254,7 @@
     await waitFor(() =>
       expect(
         canvas.getByRole("button", {
-          name: "Open profile menu for Maya Chen",
+          name: /^Open profile menu for Maya Chen(?: |$)/,
         }),
       ).toBeVisible(),
     );

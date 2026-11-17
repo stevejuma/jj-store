@@ -28,17 +28,17 @@
     const c = within(canvasElement);
     const search = await c.findByPlaceholderText("Search branches");
     await userEvent.type(search, "a");
-    const first = c.getByRole("option", { name: "feature/native-objects" });
-    const other = c.getByRole("option", { name: "main" });
+    const first = c.getByRole("option", { name: /^feature\/native-objects / });
+    const other = c.getByRole("option", { name: /^main / });
     const workingCopy = c.getByRole("button", {
-      name: "Working copy · default",
+      name: /^Working copy default /,
     });
     for (const option of [first, other, workingCopy]) {
       await userEvent.click(option);
       await expect(c.getByLabelText("Loading JJ log")).toBeVisible();
       await expect(first).toBeVisible();
       await expect(other).toBeVisible();
-      await expect(c.getByRole("option", { name: "main" })).toBe(other);
+      await expect(c.getByRole("option", { name: /^main / })).toBe(other);
       await expect(
         c.queryByLabelText("Loading branches"),
       ).not.toBeInTheDocument();
@@ -59,7 +59,7 @@
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      await canvas.findByRole("option", { name: "feature/native-objects" }),
+      await canvas.findByRole("option", { name: /^feature\/native-objects / }),
     );
     await userEvent.click(
       canvas.getByRole("button", { name: "Toggle details" }),

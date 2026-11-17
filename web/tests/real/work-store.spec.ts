@@ -458,7 +458,10 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   );
   expect(thread.presentation.excerpt).toBeTruthy();
   const reviewRow = view.locator("article").filter({
-    has: page.getByRole("button", { name: `Open review ${thread.thread_id}` }),
+    has: page.getByRole("button", {
+      name: `Open review #${thread.thread_id.slice(0, 8)}`,
+      exact: true,
+    }),
   });
   await expect(reviewRow).toContainText(thread.presentation.excerpt);
   await view.getByRole("radio", { name: "Grid layout", exact: true }).click();
@@ -466,7 +469,7 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await view.getByRole("tab", { name: "Repositories", exact: true }).click();
   const repositoryRow = view.locator("article").filter({
     has: page.getByRole("button", {
-      name: "Open repository jj-store demo",
+      name: /^Open repository jj-store demo /,
       exact: true,
     }),
   });

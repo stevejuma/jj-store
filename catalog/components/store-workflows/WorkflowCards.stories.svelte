@@ -45,12 +45,12 @@
     await waitFor(() =>
       expect(
         getComputedStyle(
-          canvas.getByRole("button", { name: "View Build parser" }),
+          canvas.getByRole("button", { name: /^View Build parser: / }),
         ).pointerEvents,
       ).not.toBe("none"),
     );
     await userEvent.click(
-      await canvas.findByRole("button", { name: "View Build parser" }),
+      await canvas.findByRole("button", { name: /^View Build parser: / }),
     );
     dialog = within(await body.findByRole("dialog", { name: "Edit workflow" }));
     await expect(

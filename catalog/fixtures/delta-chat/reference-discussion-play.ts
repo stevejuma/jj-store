@@ -59,13 +59,13 @@ export async function referenceDiscussionLinks(canvasElement: HTMLElement) {
     "case screenBlock",
   );
   await userEvent.click(
-    c.getByRole("button", { name: "Collapse 4 sent comments" }),
+    c.getByRole("button", { name: "Collapse sent 4 comments" }),
   );
   expect(
     within(reply).getAllByRole("article", { name: "Comment by You" }),
   ).toHaveLength(2);
   await userEvent.click(
-    c.getByRole("button", { name: "Expand 4 sent comments" }),
+    c.getByRole("button", { name: "Expand sent 4 comments" }),
   );
   expect(
     within(reply).getAllByRole("article", { name: "Comment by You" }),

@@ -122,7 +122,7 @@
       ".stack-workspace__stage-start",
     )!;
     const dropButton = within(drop).getByRole("button", {
-      name: "Assign to feature/api",
+      name: "Assign to feature/api: Drop files to stage or commit directly",
     });
     expect(getComputedStyle(dropButton).borderStyle).toBe("dashed");
     expect(getComputedStyle(dropButton).borderWidth).toBe("2px");
@@ -133,7 +133,9 @@
       ),
     ).toBeLessThanOrEqual(1);
     await userEvent.click(
-      stack.getByRole("button", { name: "Create commit in feature/api" }),
+      stack.getByRole("button", {
+        name: "Create commit in feature/api: Start a commit…",
+      }),
     );
     let form = stack.getByRole("form", {
       name: "Create commit in feature/api",

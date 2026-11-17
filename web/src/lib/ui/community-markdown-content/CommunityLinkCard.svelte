@@ -12,7 +12,6 @@
     class="store-link-card"
     data-layout={layout}
     href={link.href}
-    aria-label={link.label}
     target="_blank"
     rel="noopener noreferrer"
     ><span class="store-link-card__mark" aria-hidden="true">↗</span><span

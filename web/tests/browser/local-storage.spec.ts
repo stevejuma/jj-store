@@ -60,7 +60,7 @@ test("Storage recovers a lost response without replacing the captured target", a
   );
   await page.goto("/");
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
   const hash = new URL(page.url()).hash;
   await page

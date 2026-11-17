@@ -21,7 +21,9 @@
       page = within(document.body);
     await c.findByText("Helper", { exact: true });
     await userEvent.click(
-      c.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+      c.getByRole("button", {
+        name: /^Open profile menu for Maya Chen(?: |$)/,
+      }),
     );
     await userEvent.click(
       await page.findByRole("menuitem", { name: "Settings" }),
@@ -87,7 +89,9 @@
       page = within(document.body);
     await c.findByText("Helper", { exact: true });
     await userEvent.click(
-      c.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+      c.getByRole("button", {
+        name: /^Open profile menu for Maya Chen(?: |$)/,
+      }),
     );
     await userEvent.click(
       await page.findByRole("menuitem", { name: "Settings" }),
@@ -114,7 +118,7 @@
     ).toBeGreaterThan(toggleRow.getBoundingClientRect().width * 0.75);
     const metadata = within(
       c.getByRole("region", { name: "Preferences" }),
-    ).getByRole("button", { name: "Conversation metadata" });
+    ).getByRole("button", { name: /^Conversation metadata / });
     await expect(metadata).toHaveAttribute("aria-expanded", "false");
     metadata.focus();
     await userEvent.keyboard("{Enter}");
@@ -247,7 +251,9 @@
       page = within(document.body);
     await c.findByText("Helper", { exact: true });
     await userEvent.click(
-      c.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+      c.getByRole("button", {
+        name: /^Open profile menu for Maya Chen(?: |$)/,
+      }),
     );
     await userEvent.click(
       await page.findByRole("menuitem", { name: "Settings" }),

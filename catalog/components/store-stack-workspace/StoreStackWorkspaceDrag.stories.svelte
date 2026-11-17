@@ -81,7 +81,7 @@
       within(stage).getByRole("status", { name: "Drop guide" }),
     ).toHaveTextContent("Stage changes for a new commit");
     const child = within(stage).getByRole("button", {
-      name: "Assign to feature/workspace",
+      name: "Assign to feature/workspace: Drop files to stage or commit directly",
     });
     await fireEvent(
       stage,

@@ -187,11 +187,11 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   await expect(
     page
       .getByRole("navigation", { name: "Threads by repository" })
-      .getByRole("button", { name: "Open Thread general", exact: true }),
+      .getByRole("button", { name: /^Open Thread general /, exact: true }),
   ).toBeVisible();
   await page.screenshot({ path: "/tmp/jj-thread-fix-forum.png" });
   const topic = page.getByRole("button", {
-    name: "Open Thread general",
+    name: /^Open Thread general /,
     exact: true,
   });
   await expect(topic).toBeVisible();

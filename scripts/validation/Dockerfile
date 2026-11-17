@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b7
 COPY --from=node /usr/local/ /usr/local/
 ENV DEBIAN_FRONTEND=noninteractive PNPM_HOME=/opt/pnpm PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 ENV PATH=/opt/tools:/opt/pnpm:$PATH
-RUN apt-get update && apt-get install -y --no-install-recommends git python3 python3-venv curl ca-certificates pkg-config libdbus-1-dev lsof && rm -rf /var/lib/apt/lists/* && npm install -g pnpm@10.32.1
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential git python3 python3-venv curl ca-certificates pkg-config libdbus-1-dev lsof && rm -rf /var/lib/apt/lists/* && npm install -g pnpm@10.32.1
 COPY ci-setup-jj.mjs /opt/install-jj.mjs
 RUN mkdir -p /opt/tools && RUNNER_TEMP=/opt GITHUB_PATH=/tmp/jj-path node /opt/install-jj.mjs && mv /opt/jj-store-ci-tools/jj /opt/tools/jj && rm -rf /opt/jj-store-ci-tools
 RUN git config --system user.name 'JJ Store validation' && git config --system user.email 'validation@localhost' && git config --system --add safe.directory '*'

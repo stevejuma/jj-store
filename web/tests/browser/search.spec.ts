@@ -132,7 +132,7 @@ test("command search opens native results and routes through stable identities",
   await expect(
     page.getByRole("dialog", { name: "Search workspace", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Close search" }).click();
+  await page.getByRole("button", { name: "Close search: Esc" }).click();
   await expect(
     page.getByRole("dialog", { name: "Search workspace", exact: true }),
   ).not.toBeVisible();

@@ -66,9 +66,9 @@
             variant="ghost"
             size={control.label === "Agent" ? "icon-sm" : "sm"}
             {disabled}
-            aria-label={`${control.label}: ${selected}`}
             title={`${control.label}: ${selected}`}
           >
+            <span class="sr-only">{control.label}: </span>
             {#if control.label === "Agent"}<BotIcon aria-hidden="true" />
             {:else if control.label === "Thinking"}<LightbulbIcon
                 data-icon="inline-start"
@@ -81,7 +81,7 @@
               />{/if}
             {#if control.label !== "Agent"}<span class="chat-runtime-label"
                 >{selected}</span
-              >{/if}
+              >{:else}<span class="sr-only">{selected}</span>{/if}
           </Button>
         {/snippet}
       </DropdownMenu.Trigger>

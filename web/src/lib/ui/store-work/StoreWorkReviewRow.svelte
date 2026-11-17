@@ -19,6 +19,7 @@
     onOpen?: (id: string) => void | Promise<void>;
     agent?: CommunityMemberModel;
   } = $props();
+  const nativeId = $props.id();
   const title = $derived(
     thread.presentation?.excerpt || anchorLabel(thread.anchor),
   );
@@ -45,8 +46,9 @@
     {title}
     disabled={!onOpen}
     onclick={() => onOpen?.(thread.thread_id)}
-    aria-label={`Open ${anchorLabel(thread.anchor)} ${thread.status} review with ${thread.comment_count} comments`}
-    >{title}</button
+    ><span class="sr-only">Open </span>{title}<span class="sr-only">
+      {thread.status} review with {thread.comment_count} comments</span
+    ></button
   >
   <button
     type="button"
@@ -54,9 +56,13 @@
     title={thread.thread_id}
     disabled={!onOpen}
     onclick={() => onOpen?.(thread.thread_id)}
-    aria-label={`Open review ${thread.thread_id}`}
-    >#{thread.thread_id.slice(0, 8)}</button
+    aria-describedby={nativeId}
+    ><span class="sr-only">Open review </span>#{thread.thread_id.slice(
+      0,
+      8,
+    )}</button
   >
+  <span id={nativeId} hidden>{thread.thread_id}</span>
   <span class="community-projects__review-row-branch" title={artifact}
     ><span aria-hidden="true">›</span>{#if agent}<CommunityMemberAvatar
         member={agent}

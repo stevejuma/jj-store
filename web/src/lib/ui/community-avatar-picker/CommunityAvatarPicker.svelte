@@ -130,9 +130,9 @@
         class="community-avatar-picker__trigger"
         data-size={size}
         data-shape={shape}
-        aria-label={label}
         disabled={disabled || uploading}
       >
+        <span class="sr-only">{label}{value ? ": " : ""}</span>
         {#if value}<img
             src={value}
             alt="Selected avatar"

@@ -28,6 +28,7 @@
 
   type Side = "commit" | "change";
   type Feedback = "" | "copied" | "failed";
+  const identityId = $props.id();
   let feedback = $state<Record<Side, Feedback>>({ commit: "", change: "" });
   const timers: Partial<Record<Side, ReturnType<typeof setTimeout>>> = {};
   const requests = { commit: 0, change: 0 };
@@ -111,7 +112,7 @@
           onblur={() => {
             focused = null;
           }}
-          aria-label="Copy {label} {value}"
+          aria-describedby="{identityId}-{side}-identity"
           data-copied={feedback[side] === "copied" || undefined}
           data-copy-failed={feedback[side] === "failed" || undefined}
           onclick={(event) => {
@@ -119,17 +120,15 @@
             void copy(side, value);
           }}
         >
-          <CommunityChip size="inline" shape="square" variant="muted" ariaHidden
+          <span class="sr-only">Copy</span>
+          <CommunityChip size="inline" shape="square" variant="muted"
             >{chip}</CommunityChip
           >
           {#if feedback[side] && active === side}
-            <span
-              class="id-feedback"
-              data-copy-feedback={feedback[side]}
-              aria-hidden="true"
-            >
-              {#if feedback[side] === "copied"}<Check />{:else}<TriangleAlert
-                />{/if}
+            <span class="id-feedback" data-copy-feedback={feedback[side]}>
+              {#if feedback[side] === "copied"}<Check
+                  aria-hidden="true"
+                />{:else}<TriangleAlert aria-hidden="true" />{/if}
               {feedback[side] === "copied" ? "Copied" : "Retry"}
             </span>
           {:else}
@@ -141,6 +140,9 @@
         </button>
       {/snippet}
     </Tooltip.Trigger>
+    <span class="sr-only" id="{identityId}-{side}-identity"
+      >Full {label}: {value}</span
+    >
     <Tooltip.Content side="top" sideOffset={6}>{value}</Tooltip.Content>
   </Tooltip.Root>
 {/snippet}
@@ -176,7 +178,7 @@
       <button
         type="button"
         class="community-revision-graph-ids__button"
-        aria-label="Copy full {commitLabel}: {commitId}"
+        aria-describedby="{identityId}-commit-identity"
         title="Copy full {commitLabel}"
         data-copied={feedback.commit === "copied" || undefined}
         data-copy-failed={feedback.commit === "failed" || undefined}
@@ -185,6 +187,7 @@
           void copy("commit", commitId);
         }}
       >
+        <span class="sr-only">Copy full {commitLabel}:</span>
         <code
           >{commitId.length <= 13
             ? commitId
@@ -196,6 +199,9 @@
           />
         {:else}<Copy aria-hidden="true" />{/if}
       </button>
+      <span class="sr-only" id="{identityId}-commit-identity"
+        >Full {commitLabel}: {commitId}</span
+      >
     {/if}
     {#if commitLabel === "commit ID"}
       <span

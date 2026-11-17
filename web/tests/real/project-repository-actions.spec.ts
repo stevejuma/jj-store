@@ -227,7 +227,7 @@ test("settings registration and reconnect use the shared dialog rows", async ({
   });
   await page.goto("/#/projects?tab=repositories");
   await page
-    .getByRole("button", { name: "Open profile menu for Local", exact: true })
+    .getByRole("button", { name: /^Open profile menu for Local(?: |$)/ })
     .click();
   await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
   const folders = page.getByRole("region", { name: "Git-backed JJ folders" });

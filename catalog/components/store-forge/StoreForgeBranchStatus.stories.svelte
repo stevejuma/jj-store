@@ -37,7 +37,7 @@
     );
     await expect(within(row).getByText("Changes to push")).toBeVisible();
     const pr = within(row).getByRole("button", {
-      name: "Pull request for feature/api",
+      name: /^Pull request for feature\/api: /,
     });
     await expect(pr).toHaveTextContent("PR #42");
     await expect(pr.getBoundingClientRect().height).toBe(
@@ -93,7 +93,7 @@
       title.getBoundingClientRect().bottom,
     );
     const pr = within(row).getByRole("button", {
-      name: "Pull request for feature/model",
+      name: /^Pull request for feature\/model: /,
     });
     await expect(pr).toHaveTextContent("PR #41");
     await expect(within(row).getByText("Nothing to push")).toBeVisible();

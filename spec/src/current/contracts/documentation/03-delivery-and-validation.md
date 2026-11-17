@@ -167,8 +167,9 @@ unfinished or rejected rebuild retains the last validated bundle. Missing
 initial assets prevent Vite development and preview startup with an actionable
 `pnpm docs:build` error, including direct Vite entry points. Reloads are serial,
 superseded reads cannot replace newer assets, and shutdown releases observers.
-This development mechanism performs no periodic reads or application reloads;
-production and desktop retain their startup-loaded immutable bundles.
+Development MUST watch only the bundle and its parent and rebind on bundle
+replacement without recursive unrelated-file discovery, periodic reads or app
+reloads; production and desktop retain immutable startup-loaded bundles.
 
 The source review gate records content fingerprints and a topic-specific review
 explanation. A passing gate proves acknowledged source coverage, not prose

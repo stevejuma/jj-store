@@ -32,7 +32,7 @@
       ).toBeVisible();
     });
     await userEvent.click(
-      canvas.getByRole("button", { name: "View Build parser" }),
+      canvas.getByRole("button", { name: /^View Build parser: / }),
     );
     const dialog = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),
@@ -75,7 +75,7 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "View Build parser" }),
+      await canvas.findByRole("button", { name: /^View Build parser: / }),
     );
     const dialog = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),
@@ -111,7 +111,7 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "View Build parser" }),
+      await canvas.findByRole("button", { name: /^View Build parser: / }),
     );
     const editor = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),
@@ -144,12 +144,12 @@
     );
     await expect(
       history.getByRole("button", {
-        name: "Copy full operation ID: " + "61".repeat(64),
+        name: "Copy full operation ID: 61616161…6161",
       }),
     ).toBeVisible();
     await expect(
       history.getByRole("button", {
-        name: "Copy Git commit SHA " + "62".repeat(64),
+        name: /^Copy GIT /,
       }),
     ).toBeVisible();
     await userEvent.click(history.getByRole("button", { name: "Run output" }));
@@ -185,7 +185,7 @@
     );
     await userEvent.click(canvas.getByRole("tab", { name: "Workflows" }));
     await userEvent.click(
-      canvas.getByRole("button", { name: "View Build parser" }),
+      canvas.getByRole("button", { name: /^View Build parser: / }),
     );
     const reopened = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),

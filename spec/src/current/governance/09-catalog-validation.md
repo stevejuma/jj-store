@@ -1,5 +1,11 @@
 # Catalog validation
 
+E-S6-UI-TOOLING-001 qualifies the supported
+Storybook10.6.7/Vitest4.1.12/Vite8.3.8 cohort through the complete directly
+affected UI/catalog and CI-tooling lanes. Pre-existing
+documentation/search/signing audit findings remain explicit; this
+development-tooling repair cannot qualify release publication or waive a gate.
+
 E-VISUAL-DELTA-MACOS-001 adds registry Visual Delta 0.1.0, shared capture
 settings and an ignored machine-local native selection. Its CLI, Storybook panel
 and Playwright suite MUST resolve the same profile, static-server port and
@@ -29,7 +35,10 @@ overlap failures. The production web manifest includes only flat, regular
 documents and all other public files remain outside the served allowlist. Direct
 Storybook URLs in this cold harness MUST track the generated paths of their
 current grouped titles; a grouping or title change updates those consumers in
-the same change.
+the same change. Lazy inbox stories wait for loaded conversation content before
+retaining panel or search elements: the loading composition deliberately shares
+those controls, and its detached elements cannot prove live interaction. Mobile
+plays then open the live panel and scope queries to its accessible landmark.
 
 The owned native agent timeline and grouped tool-call presentation adapt
 Community's adjacent-call grouping and per-call wrapper composition. Their

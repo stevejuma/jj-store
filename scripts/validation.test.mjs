@@ -1,6 +1,18 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  mkdtemp,
+  mkdir,
+  writeFile,
+  readFile,
+  rm,
+  chmod,
+} from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { execFileSync } from "node:child_process";
+import { receiveDirectory } from "./validation/docker.mjs";
+import {
   validationConfig,
   imageKey,
   validateArchives,
@@ -14,6 +26,52 @@ test("Docker is default and native must be explicit", () => {
     "native",
   );
   assert.throws(() => validationConfig({ runtime: "magic" }, {}), /runtime/);
+});
+
+test("Docker report collection consumes archive padding before completion", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "validation-report-transfer-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const source = join(root, "source"),
+    destination = join(root, "destination"),
+    tools = join(root, "tools");
+  for (const directory of [source, destination, tools]) await mkdir(directory);
+  await writeFile(join(source, "result.json"), "{}\n");
+  const archive = execFileSync("tar", [
+    "--format=ustar",
+    "-C",
+    source,
+    "-cf",
+    "-",
+    ".",
+  ]);
+  const executable = join(tools, "docker");
+  await writeFile(
+    executable,
+    `#!${process.execPath}\nprocess.stdout.write(Buffer.from(${JSON.stringify(archive.toString("base64"))},'base64'));process.stdout.end(Buffer.alloc(8*1024*1024));\n`,
+  );
+  await chmod(executable, 0o755);
+  const previous = process.env.PATH;
+  process.env.PATH = tools + ":" + previous;
+  t.after(() => {
+    process.env.PATH = previous;
+  });
+  await receiveDirectory(
+    {},
+    ["cp", "owned-fixture:/results/.", "-"],
+    destination,
+  );
+  assert.equal(
+    await readFile(join(destination, "result.json"), "utf8"),
+    "{}\n",
+  );
+  await writeFile(
+    executable,
+    `#!${process.execPath}\nprocess.exitCode=23;process.stdout.write(Buffer.from(${JSON.stringify(archive.toString("base64"))},'base64'));process.stdout.end(Buffer.alloc(8*1024*1024));\n`,
+  );
+  await assert.rejects(
+    receiveDirectory({}, ["cp", "owned-fixture:/results/.", "-"], destination),
+    /Docker transfer exited 23/,
+  );
 });
 test("remote resource limits are bounded positive numbers", () => {
   assert.equal(validationConfig({}, {}).cpus, 8);
