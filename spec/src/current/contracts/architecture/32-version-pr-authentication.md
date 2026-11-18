@@ -17,11 +17,17 @@ complete release qualification.
 JST-ARCH-005 retains private root/native release synchronization, public
 History/Conversations publication, immutable source and platform qualification.
 The reviewed Node22 CLI2 complete recipe and source facts precede App admission.
-False release intent skips the App/writer and retains existing workflow-token
-orchestration. Successful reviewed PR/push/manual workflows notify only the
-pinned coordinator with read metadata and one named App key; workflow-call-only
-events skip before invocation. Source acceptance does not establish activation,
-publication, hosted callbacks or complete native release qualification.
+Intent qualification compares the changed candidate to exact current remote
+main; a post-preparation same-main no-op is not a changed-candidate proof. With
+no note, CLI status rejects changed private workspace packages even when the raw
+version macro exits successfully without changing metadata. The measured empty
+maintenance note lets the guard report false intent without acquiring App/writer
+authority. False release intent skips the App/writer and retains existing
+workflow-token orchestration. Successful reviewed PR/push/manual workflows
+notify only the pinned coordinator with read metadata and one named App key;
+workflow-call-only events skip before invocation. Source acceptance does not
+establish activation, publication, hosted callbacks or complete native release
+qualification.
 
 <!-- dependency-intake:framework-registry:start -->
 

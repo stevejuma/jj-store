@@ -114,6 +114,10 @@ not a completion gate selection.
 [E-SHARED-DEPENDENCY-ADOPTION-001](../../../../../history/2026/11/17/E-SHARED-DEPENDENCY-ADOPTION-001/index.md)
 | 2026-11-17 | pending | Original outcome |
 
+|
+[E-SHARED-INTENT-CORRECTION-001](../../../../../history/2026/11/18/E-SHARED-INTENT-CORRECTION-001/index.md)
+| 2026-11-18 | pass | Original outcome |
+
 <!-- generated-navigation -->
 
 ## Pages

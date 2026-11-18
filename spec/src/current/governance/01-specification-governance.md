@@ -214,3 +214,8 @@ Manifest, peer and integrity facts SHA256:
 `c420da17478c46fb3065247d38eb352bc1f3a303fe1736ebe279ae5af9f8b10e`.
 
 <!-- dependency-intake:framework-registry:end -->
+
+E-SHARED-INTENT-CORRECTION-001 retains JST-ARCH-005 release gates while
+qualifying intent against exact remote main and the changed source candidate.
+Successful raw no-note metadata synchronization does not establish successful
+CLI status admission; original limited receipts remain retained.
