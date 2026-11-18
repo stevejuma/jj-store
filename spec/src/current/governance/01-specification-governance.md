@@ -185,3 +185,42 @@ foundation snapshot, kept separate from derived palette generation. Catalog
 extensions qualify persistence, mode pairing, scoped previews and app-wide
 foreground/background roles before recording acceptance. Inherited broad-lane
 failures and visual approval remain explicit independent gates.
+
+## Shared registry intake
+
+JST-GOV-002/003/004/011 and JST-ARCH-005 retain source ownership and all
+functional, audit and release gates. Normal checks, canonical aggregate and main
+version preparation independently verify external Core, Mira, Node-only
+validator and Visual Delta compatible patches outside bot exemptions. Both
+public package contracts and the source-owned Conversations workspace link stay
+intact; that owned output is not an external registry input. Local
+publisher/image failures explicitly accepted by the user remain separately
+visible. No collector, assertion, quarantine, credential scope, release
+authority or advisory gate is relaxed.
+
+<!-- dependency-intake:framework-registry:start -->
+
+Current registry dependency coordinates; qualification remains separate.
+
+<!-- prettier-ignore -->
+| Manifest | Dependency | Range | Locked version |
+| --- | --- | --- | --- |
+| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
+| `package.json` (devDependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `package.json` (devDependencies) | `@lapismd/spec-validator` | `^0.2.1` | `0.2.1` |
+| `package.json` (devDependencies) | `@lapismd/storybook-addon-visual-delta` | `^0.1.5` | `0.1.5` |
+
+Manifest, peer and integrity facts SHA256:
+`c420da17478c46fb3065247d38eb352bc1f3a303fe1736ebe279ae5af9f8b10e`.
+
+<!-- dependency-intake:framework-registry:end -->
+
+E-SHARED-INTENT-CORRECTION-001 retains JST-ARCH-005 release gates while
+qualifying intent against exact remote main and the changed source candidate.
+Successful raw no-note metadata synchronization does not establish successful
+CLI status admission; original limited receipts remain retained.
+
+Managed maintenance notes retain one exact reserved12-hex path, regular valid
+UTF-8 reads and an8192-byte bound. Null/array/malformed/nonempty-unexpected
+metadata, symlinks, missing/unsafe and oversized files reject before same-fact
+returns; computed runtime release maps retain their existing source authority.

@@ -152,6 +152,8 @@ jobs:
           CI_EVENT: ${{ github.event_name }}
           CI_BASE_SHA:
             ${{ github.event.pull_request.base.sha || github.event.before }}
+      - name: Independent external dependency intake
+        run: pnpm check:dependency-intake
       - name: Static architecture and specification checks
         run: |
           pnpm check:architecture

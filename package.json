@@ -117,7 +117,9 @@
     "check:storybook-parity": "node scripts/validation.mjs run check:storybook-parity",
     "validation:rust": "node scripts/validation.mjs run validation:rust",
     "test:vault-ssh": "node scripts/validation.mjs run test:vault-ssh",
-    "test:vault-https": "node scripts/validation.mjs run test:vault-https"
+    "test:vault-https": "node scripts/validation.mjs run test:vault-https",
+    "check:dependency-intake": "node scripts/validation.mjs run check:dependency-intake",
+    "test:dependency-intake": "node scripts/validation.mjs run test:dependency-intake"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",
@@ -180,6 +182,7 @@
     "prettier-plugin-svelte": "^3.5.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "semver": "7.8.6",
     "sigstore": "4.1.1",
     "storybook": "10.6.7",
     "svelte": "^5.57.1",

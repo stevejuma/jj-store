@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "nodeMajor": 22,
+  "cliVersion": "2.31.1",
+  "packageManager": "pnpm@10.32.1",
+  "configSha256": "bcc9e671c2cfe8ef93b6f0afff274a101ea43a2625b34831de3cc5b1f35b9358",
+  "scripts": {
+    "release:version": "changeset version && node scripts/release-version.mjs && pnpm install --lockfile-only --ignore-pnpmfile && prettier --write package.json CHANGELOG.md"
+  },
+  "files": {
+    "pnpm-workspace.yaml": "1eb95f4f88c696e2dde8abecea3996287c85ae59d87df3cb0dc37cbca15e9381",
+    ".prettierrc.json": "3903606ac55876c427b91a02ae22266fa259370f02c21313ed0f5a95c1726b50",
+    ".prettierignore": "cd1d7a0ed8f05df0108a46bb54d1d1902fe3361677cfdff1f20353f89e62beeb",
+    "scripts/release-version.mjs": "7d988fa4eba990ab9a3c192d733db9f641f479ead2e9ca691b111e2b9fd1d849",
+    "scripts/release-metadata.mjs": "ced30358a97d4802c45a6c58e9dbfa33c0507ce0a557b57cdf2e75aba29e0933"
+  }
+}

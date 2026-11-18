@@ -1,11 +1,12 @@
 # Public distribution and release orchestration
 
+[Qualified automation](32-version-pr-authentication.md) retains all gates.
+
 E-DEPENDENCY-AUTOMATION-003 retains Core 0.7.0 and root Bits UI 2.19.5 while
 publishing Mira 0.1.4 with its verified Bits UI 2.20.2 patch. Core 0.7.4 stays
 held after its accessibility failure; the private root remains a non-publishing
 consumer. Frozen installs and source/attempt-bound artifacts remain required.
 E-UI-CATALOG-HELP-001 leaves JST-ARCH-005 publication gates unchanged.
-
 E-VAULT-BACKUP-021 retains exact source and sibling pins when Docker validation
 runs from a separate Jujutsu workspace. The explicit generic Rust lane uses
 managed Cargo and the existing disk reserve; publication gates are unchanged.
@@ -20,10 +21,9 @@ excludes native object/WAL and application transports. The focused JJ companion
 feature adds qualified source evidence without those native/application modules.
 This source-library qualification does not publish any package or native bundle.
 
-Crate-root READMEs introduce each package's role, actual usage entry points and
-dependency context, with links to detailed documentation under `docs`. Separate
-maintained helper workspaces have the same overview. Documentation coverage and
-package containment do not expand their platform or release qualification.
+Crate-root and maintained-helper READMEs retain roles, actual usage and
+dependency context with detailed `docs` links; documentation and package
+containment do not expand platform or release qualification.
 
 JST-ARCH-005 governs the coordinated public source, Cargo, native archive and
 container distribution. Changesets owns the release version and notes through

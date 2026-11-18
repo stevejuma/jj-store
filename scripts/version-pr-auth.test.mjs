@@ -26,7 +26,24 @@ test("version PRs require canonical main and a repository-scoped App without fal
   );
   assert.ok(app, "version PR writes require an App token");
   assert.equal(app.id, "app");
-  assert.equal(app.if, undefined);
+  assert.equal(app.if, "steps.runtime.outputs.hasChangesets == 'true'");
+  assert.equal(writer.if, app.if);
+  const guard = version.steps.find((step) => step.id === "runtime");
+  assert.equal(
+    guard.uses,
+    "lapismd/lapis-ci/actions/guard-version-runtime@dc81ff65ba812bf005fb2a806eb3308bb8b5f71f",
+  );
+  assert.deepEqual(guard.with, {
+    "qualification-file": ".github/versioning-runtime.json",
+    "detect-release-intent": true,
+  });
+  assert.ok(version.steps.indexOf(guard) < version.steps.indexOf(app));
+  const intake = version.steps.find(
+    (step) => step.run === "pnpm check:dependency-intake",
+  );
+  assert.ok(
+    intake && version.steps.indexOf(intake) < version.steps.indexOf(guard),
+  );
   assert.equal(app["continue-on-error"], undefined);
   assert.deepEqual(app.with, {
     "client-id": "${{ vars.LAPIS_DEPENDENCY_APP_CLIENT_ID }}",
@@ -66,4 +83,11 @@ test("publisher and dispatch authority remain separate from the PR App", () => {
   assert.equal(dispatch.env.GH_TOKEN, "${{ github.token }}");
   assert.ok(dispatch.run.includes("-f all_checks=true"));
   assert.equal(version.permissions.actions, "write");
+});
+
+test("false intent retains existing workflow-token orchestration without the App", () => {
+  const step = version.steps.find((s) => s.run === "pnpm release:orchestrate");
+  assert.equal(step.if, "steps.runtime.outputs.hasChangesets == 'false'");
+  assert.deepEqual(step.env, { GH_TOKEN: "${{ github.token }}" });
+  assert.equal(step["continue-on-error"], undefined);
 });
