@@ -380,6 +380,7 @@ Dependabot `dependabot/` PRs from JST-GOV-002/003/004/011 notes and same-change
 spec/evidence gates. Static checks, PR governance and publication qualification
 remain. Version automation writes no spec or evidence. A maintainer may combine
 Dependabot Cargo updates; only crates that are not git-only are published.
+E-DEPENDENCY-AUTOMATION-006 ignores `changesets/action` and fingerprints `src`.
 
 E-CI-STANDARD-001 changes JST-ARCH-005 distribution qualification as explicitly
 requested: standard PR gates remain required, while the complete heavy workflow

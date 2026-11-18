@@ -16,4 +16,6 @@ Only source-qualified rows may be restored. Incremental layers mask exact
 replacements and removals, keep original identities and compact after four
 layers. Persisted source facts, checksums and posting invariants are verified
 before reuse. All source closure, authorization, native publication, receipts
-and unknown-outcome contracts remain unchanged.
+and unknown-outcome contracts remain unchanged. Documentation review
+fingerprints implementation sources; dependency pin bumps alone do not
+invalidate it.

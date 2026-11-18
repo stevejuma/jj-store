@@ -186,18 +186,15 @@
   },
   {
     "id": "custom-data-indexes",
-    "sources": [
-      "crates/jj-store-read-index/src",
-      "crates/jj-store-read-index/Cargo.toml"
-    ],
+    "sources": ["crates/jj-store-read-index/src"],
     "pages": [
       "docs/site/reference/configuration.md",
       "docs/site/technical/reads.md",
       "docs/site/technical/architecture.md"
     ],
     "review": {
-      "reason": "Reviewed redb 4.5 with unchanged custom index keys, posting invariants, bounded retention, native authority and version-independent operator documentation.",
-      "fingerprint": "28adbd8ba72a9d150d6ad61a699f7ca958ebe0ff4a5e1a008a9811f85a8159cc"
+      "reason": "Reviewed redb 4.6 against version-independent custom index docs; fingerprint implementation sources only so Dependabot Cargo pins no longer invalidate the acknowledgement.",
+      "fingerprint": "73957f8f84f435a4fb5d54fd9343851cd4644e36d401881fbb90c56f02894f8c"
     }
   },
   {

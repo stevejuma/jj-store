@@ -16,4 +16,5 @@ external-host fixture.
 
 E-CLI-GIT-CRATES-001 keeps crates.io publication to the jj-store command and the
 crates it links. jj-history-service, jj-vault, tauri-plugin-jj-store, and
-jj-store-embedded-rustfs stay git-only.
+jj-store-embedded-rustfs stay git-only. Compatible redb and prost pin bumps keep
+these native factory, authorization and operation-pinned read contracts.

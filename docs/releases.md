@@ -28,10 +28,15 @@ Generated `changeset-release/main` PRs and Dependabot-authored `dependabot/` PRs
 do not need spec, milestone, evidence or additional Changesets edits. The
 Changesets exemption follows lapis-notes; jj-store extends it to Dependabot.
 Static spec validation, formatting, package checks and all impact-selected test
-lanes still run. The release workflow explicitly dispatches all standard checks
-for Version Packages; version automation does not generate spec evidence.
-Ordinary PRs retain the spec and evidence requirements, and publication always
-requires qualification.
+lanes still run. Dependabot already skips progress, spec-first and Changesets
+intent gates while selected functional lanes remain required. It ignores
+`changesets/action` so grouped Actions updates cannot replace the contracted
+v1.9.0 release pin, and version-independent documentation topics fingerprint
+implementation sources rather than dependency pins so ordinary Cargo version
+bumps do not fail closed on stale review acknowledgements. The release workflow
+explicitly dispatches all standard checks for Version Packages; version
+automation does not generate spec evidence. Ordinary PRs retain the spec and
+evidence requirements, and publication always requires qualification.
 
 ## CI and full qualification
 

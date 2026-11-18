@@ -117,6 +117,33 @@ test("bot PRs skip only change-specific governance", () => {
   }
 });
 
+test("Dependabot keeps the contracted Changesets action pin and version-independent index sources", () => {
+  const dependabot = parse(
+    readFileSync(new URL(".github/dependabot.yml", root), "utf8"),
+  );
+  const actions = dependabot.updates.find(
+    (update) => update["package-ecosystem"] === "github-actions",
+  );
+  assert.ok(
+    actions.ignore?.some(
+      (rule) =>
+        rule["dependency-name"] === "changesets/action" &&
+        rule["update-types"]?.includes("version-update:semver-major"),
+    ),
+    "Dependabot must ignore changesets/action majors that break the v1.9.0 pin",
+  );
+  assert.match(
+    readFileSync(new URL(".github/workflows/release.yml", root), "utf8"),
+    /changesets\/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d/,
+  );
+  const coverage = JSON.parse(
+    readFileSync(new URL("docs/maintenance/coverage.json", root), "utf8"),
+  );
+  const indexes = coverage.find((topic) => topic.id === "custom-data-indexes");
+  assert.deepEqual(indexes.sources, ["crates/jj-store-read-index/src"]);
+  assert.ok(!indexes.sources.some((path) => path.endsWith("Cargo.toml")));
+});
+
 test("bot PRs skip specification calls and retain planned functional and release lanes", () => {
   assert.equal(ci.jobs.governance.if, undefined);
   const staticStep = ci.jobs.governance.steps.find((step) =>
