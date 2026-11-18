@@ -118,6 +118,10 @@ not a completion gate selection.
 [E-SHARED-INTENT-CORRECTION-001](../../../../../history/2026/11/18/E-SHARED-INTENT-CORRECTION-001/index.md)
 | 2026-11-18 | pass | Original outcome |
 
+|
+[E-SHARED-MANAGED-NOTE-001](../../../../../history/2026/11/18/E-SHARED-MANAGED-NOTE-001/index.md)
+| 2026-11-18 | pass | Original outcome |
+
 <!-- generated-navigation -->
 
 ## Pages

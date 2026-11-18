@@ -219,3 +219,8 @@ E-SHARED-INTENT-CORRECTION-001 retains JST-ARCH-005 release gates while
 qualifying intent against exact remote main and the changed source candidate.
 Successful raw no-note metadata synchronization does not establish successful
 CLI status admission; original limited receipts remain retained.
+
+Managed maintenance notes retain one exact reserved12-hex path, regular valid
+UTF-8 reads and an8192-byte bound. Null/array/malformed/nonempty-unexpected
+metadata, symlinks, missing/unsafe and oversized files reject before same-fact
+returns; computed runtime release maps retain their existing source authority.

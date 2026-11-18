@@ -1,3 +1,7 @@
+import {
+  managedMaintenanceNote,
+  readMaintenanceNote,
+} from "./maintenance-note.mjs";
 import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
@@ -81,8 +85,8 @@ export function checkWorkspaceIntake(root = process.cwd()) {
     );
   }
   for (const path of changedFiles)
-    if (path.startsWith(".changeset/") && existsSync(resolve(root, path)))
-      files[path] = read(path);
+    if (managedMaintenanceNote(path))
+      files[path] = readMaintenanceNote(resolve(root, path));
   return verifyIntake({
     policyBytes,
     files,

@@ -1,3 +1,7 @@
+import {
+  maintenanceNotePaths,
+  verifyMaintenanceNotes,
+} from "./maintenance-note.mjs";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual as equal } from "node:util";
@@ -180,10 +184,14 @@ export function verifyIntake({
 }) {
   const policy = JSON.parse(policyBytes),
     facts = intakeFacts(policy, files);
+  const changesets = maintenanceNotePaths(changedFiles);
   for (const path of policy.chapters)
     if (slot(documents[path], policy).managed !== intakeSlot(policy, facts))
       fail("managed source facts differ from actual inputs");
-  if (!before) return facts;
+  if (!before) {
+    verifyMaintenanceNotes(changedFiles, files);
+    return facts;
+  }
   const old = intakeFacts(policy, before);
   for (const [path, groups] of Object.entries(old.manifests))
     for (const [type, entries] of Object.entries(groups))
@@ -197,7 +205,10 @@ export function verifyIntake({
           fail("same-version registry integrity changed");
       }
   verifyImmutablePackages(policy, before, files, old, facts);
-  if (equal(old, facts)) return facts;
+  if (equal(old, facts)) {
+    verifyMaintenanceNotes(changedFiles, files);
+    return facts;
+  }
   if (policyBytes !== basePolicyBytes) fail("missing or changed source opt-in");
   const allowed = new Set([
     ...policy.manifests,
@@ -205,9 +216,6 @@ export function verifyIntake({
     "pnpm-lock.yaml",
     ...policy.chapters,
   ]);
-  const changesets = changedFiles.filter((p) =>
-    /^\.changeset\/lapis-dependencies-[a-f0-9]{12}\.md$/.test(p),
-  );
   if (
     changesets.length > 1 ||
     changedFiles.some((p) => !allowed.has(p) && !changesets.includes(p))
@@ -252,15 +260,7 @@ export function verifyIntake({
         }
       }
   }
-  for (const file of changesets) {
-    const match = /^---\n([\s\S]*?)^---(?:\n|$)/m.exec(files[file] ?? "");
-    if (
-      !match ||
-      match.index !== 0 ||
-      !equal(match[1].trim() ? YAML.parse(match[1]) : {}, release)
-    )
-      fail("unexpected release intent");
-  }
+  verifyMaintenanceNotes(changedFiles, files, release);
   if (Object.keys(release).length && !changesets.length)
     fail("runtime patch requires its Changeset");
   verifyCatalogTransition(policy, before, files, old, facts);
