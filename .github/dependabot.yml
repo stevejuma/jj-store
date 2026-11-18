@@ -7,6 +7,14 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+    ignore:
+      # Contracted to Changesets CLI v2-compatible action v1.9.0; action v2
+      # renames inputs and fails the release workflow pin.
+      - dependency-name: "changesets/action"
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+          - version-update:semver-patch
   - package-ecosystem: cargo
     directories:
       - /

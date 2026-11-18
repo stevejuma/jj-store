@@ -80,10 +80,11 @@ user-authorized CI rollout may temporarily disable administrator enforcement
 only around each locally verified direct main push; enforcement MUST be restored
 and verified immediately after the push attempt. All other protection settings
 remain intact. Force pushes and branch deletion are disabled. Version tags
-cannot be rewritten or deleted. Changesets action v1.9.0 matches CLI v2.
-Automatic publication remains disabled pending initial qualification; CI and
-Pages qualification continue independently. Version PR authentication follows
-the [scoped App contract](32-version-pr-authentication.md).
+cannot be rewritten or deleted. Changesets action v1.9.0 matches CLI v2;
+Dependabot ignores replacements. Automatic publication remains disabled pending
+initial qualification; CI and Pages continue independently. Version PR
+authentication follows the
+[scoped App contract](32-version-pr-authentication.md).
 
 Native CI verifies the runner's compiler triple and builds/tests its native
 debug profile in one shared target root. This avoids a second optimized build
@@ -101,15 +102,13 @@ recorded Lapis AI source revision with Control V3 prepared-context admission,
 and the collision-safe `jj-store-jj` client. No fixture ACP, installed CLI or
 interactive state may be substituted. Missing resources fail; existing tests and
 acceptance assertions remain required. The complete qualification gate includes
-the runtime producer.
-
-Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
-calls. It starts independent policy, standard Rust and affected web checks; the
-standard cohort excludes server, CLI and capture. E-CI-ACTIVE-SELECTION-001
-makes source Storybook, served application, static catalog and Help independent
-schema-version-2 domains, with separate web and catalog units. The app/Help
-producer builds only their preview tools and fixtures; cold/native acceptance
-remains full qualification.
+the runtime producer. Standard CI runs on pull requests, main pushes, explicit
+dispatch and reusable calls. It starts independent policy, standard Rust and
+affected web checks; the standard cohort excludes server, CLI and capture.
+E-CI-ACTIVE-SELECTION-001 makes source Storybook, served application, static
+catalog and Help independent schema-version-2 domains, with separate web and
+catalog units. The app/Help producer builds only their preview tools and
+fixtures; cold/native acceptance remains full qualification.
 
 The stable `required` check validates every planned domain and rejects missing,
 failed, canceled or unexpected skips. Shared/generated/unknown inputs, main and

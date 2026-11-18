@@ -29,7 +29,8 @@ generations commit atomically; source mismatch, corruption or incompatible
 schema requires reconstruction. Derived storage failure never fails publication.
 A bounded authorized fallback uses the same selected root and the existing
 public error/timeout contract. Cache loss cannot hide a source integrity
-failure.
+failure. Documentation review fingerprints the read-index implementation
+sources; dependency pin bumps alone do not invalidate that acknowledgement.
 
 Incremental projection reuse compares exact immutable object selections and
 handles edits and removals. Partial traversal and additions-only comparisons

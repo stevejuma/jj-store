@@ -21,3 +21,6 @@ modules. The technical manual describes complete qualification, exact artifact
 and signer identity, owner bootstrap and actual registry verification before its
 fingerprint is acknowledged. M30 retains release status authority; reviewed
 source and archive evidence do not establish public package availability.
+E-DEPENDENCY-AUTOMATION-006 keeps version-independent topics fingerprinted on
+implementation sources so ordinary Dependabot Cargo pin bumps do not fail
+review.
