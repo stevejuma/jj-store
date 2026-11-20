@@ -82,8 +82,8 @@ importers:
         specifier: 5.2.8
         version: 5.2.8
       '@lapismd/design-core':
-        specifier: ^0.13.5
-        version: 0.13.5(svelte@5.57.1)(tailwindcss@4.3.3)
+        specifier: ^0.13.7
+        version: 0.13.7(svelte@5.57.1)(tailwindcss@4.3.3)
       '@lapismd/jj-conversations':
         specifier: ^0.1.0
         version: link:packages/jj-conversations
@@ -474,9 +474,6 @@ packages:
   '@codemirror/legacy-modes@6.5.5':
     resolution: {integrity: sha512-9ltT214oMb3Y1w5eAZMSigzrjzZnMI2Wa3Feq73rU/i4C56MkwrpfswfQYOr28C5pXr6dWwspNTMyeHXlzWMxg==}
 
-  '@codemirror/lint@6.9.7':
-    resolution: {integrity: sha512-28/+iWLYxKxsvGYhSYL7zaCZqLz5+FFFDq9tVsvGv9kv8RY4fFAchJ5WX9M3YrrRlTIsECjsXPqeNgnSmNP2dg==}
-
   '@codemirror/lint@6.9.8':
     resolution: {integrity: sha512-qNvtcE73xUto/D1RvtgSRI4A1Hg8ekxlvtZpjHpdpisLBnhyu82EUEJMEgaxkjuQCA8vqnrylENWKOsEDCOHcw==}
 
@@ -777,8 +774,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@lapismd/design-core@0.13.5':
-    resolution: {integrity: sha512-90tQddxbljFiW/MIQbJQ6YWB8oHbGp08g7P/LIMD++dta9AR36Vye3HoQxQbcVUELJ30gq+gxyIQcefZDM7FtA==}
+  '@lapismd/design-core@0.13.7':
+    resolution: {integrity: sha512-oJXRalyUybTYYK1wJG++zaEQk2GoRgt4GubMKXmQaSSBTH5senGHxT3dBlvMnKAH0MzpMhlRcDMhCtTGvjPZ0w==}
     engines: {node: ^22.11 || ^24 || >=26}
     peerDependencies:
       svelte: ^5.0.0
@@ -4195,9 +4192,6 @@ packages:
     resolution: {integrity: sha512-JfJeIHke7y2egdGGgRAvpCwYFUsHlM2gPcrVOxFkznt/4uzQ7HFmvE63iFHVLBJNDuyDOQgijDK/tXH/f6Msjg==}
     engines: {node: '>=6.10'}
 
-  tslib@2.8.1:
-    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
-
   tslib@2.9.1:
     resolution: {integrity: sha512-a4Ux9VKuIMHsOS7ENbEq6hK2ZGYIT27Rtl0E4eD9KqwxhKiQeMZE/9xb3IdYwWaSOyIBQLExhQgXDTYoiCxnWA==}
 
@@ -4811,7 +4805,7 @@ snapshots:
     dependencies:
       '@codemirror/autocomplete': 6.20.4
       '@codemirror/language': 6.13.1
-      '@codemirror/lint': 6.9.7
+      '@codemirror/lint': 6.9.8
       '@codemirror/state': 6.7.6
       '@codemirror/view': 6.43.15
       '@lezer/common': 1.5.5
@@ -4975,12 +4969,6 @@ snapshots:
     dependencies:
       '@codemirror/streamparser': 6.0.0
 
-  '@codemirror/lint@6.9.7':
-    dependencies:
-      '@codemirror/state': 6.7.6
-      '@codemirror/view': 6.43.15
-      crelt: 1.0.7
-
   '@codemirror/lint@6.9.8':
     dependencies:
       '@codemirror/state': 6.7.6
@@ -5010,13 +4998,13 @@ snapshots:
     dependencies:
       '@dnd-kit/geometry': 0.4.0
       '@dnd-kit/state': 0.4.0
-      tslib: 2.8.1
+      tslib: 2.9.1
 
   '@dnd-kit/collision@0.4.0':
     dependencies:
       '@dnd-kit/abstract': 0.4.0
       '@dnd-kit/geometry': 0.4.0
-      tslib: 2.8.1
+      tslib: 2.9.1
 
   '@dnd-kit/dom@0.4.0':
     dependencies:
@@ -5024,17 +5012,17 @@ snapshots:
       '@dnd-kit/collision': 0.4.0
       '@dnd-kit/geometry': 0.4.0
       '@dnd-kit/state': 0.4.0
-      tslib: 2.8.1
+      tslib: 2.9.1
 
   '@dnd-kit/geometry@0.4.0':
     dependencies:
       '@dnd-kit/state': 0.4.0
-      tslib: 2.8.1
+      tslib: 2.9.1
 
   '@dnd-kit/state@0.4.0':
     dependencies:
       '@preact/signals-core': 1.14.4
-      tslib: 2.8.1
+      tslib: 2.9.1
 
   '@dnd-kit/svelte@0.4.0(svelte@5.57.1)':
     dependencies:
@@ -5042,7 +5030,7 @@ snapshots:
       '@dnd-kit/dom': 0.4.0
       '@dnd-kit/state': 0.4.0
       svelte: 5.57.1
-      tslib: 2.8.1
+      tslib: 2.9.1
 
   '@emnapi/core@1.11.0':
     dependencies:
@@ -5251,7 +5239,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lapismd/design-core@0.13.5(svelte@5.57.1)(tailwindcss@4.3.3)':
+  '@lapismd/design-core@0.13.7(svelte@5.57.1)(tailwindcss@4.3.3)':
     dependencies:
       '@codemirror/autocomplete': 6.20.4
       '@codemirror/commands': 6.11.1
@@ -9014,8 +9002,6 @@ snapshots:
   trough@2.2.0: {}
 
   ts-dedent@2.3.0: {}
-
-  tslib@2.8.1: {}
 
   tslib@2.9.1: {}
 

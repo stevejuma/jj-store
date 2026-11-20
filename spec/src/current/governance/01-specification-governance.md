@@ -205,13 +205,13 @@ Current registry dependency coordinates; qualification remains separate.
 <!-- prettier-ignore -->
 | Manifest | Dependency | Range | Locked version |
 | --- | --- | --- | --- |
-| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
+| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.7` | `0.13.7` |
 | `package.json` (devDependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
 | `package.json` (devDependencies) | `@lapismd/spec-validator` | `^0.2.1` | `0.2.1` |
 | `package.json` (devDependencies) | `@lapismd/storybook-addon-visual-delta` | `^0.1.5` | `0.1.5` |
 
 Manifest, peer and integrity facts SHA256:
-`c420da17478c46fb3065247d38eb352bc1f3a303fe1736ebe279ae5af9f8b10e`.
+`dc73c86abc6d13b522e86450db9a0de0f0db619ca16605fad0421ab2348bdd59`.
 
 <!-- dependency-intake:framework-registry:end -->
 
