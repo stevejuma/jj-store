@@ -114,8 +114,9 @@ test("native project task and review pages share pinned commit activity", async 
   ).toHaveAttribute("aria-expanded", "true");
   await page.goto(`/#/repos/${home}/reviews?at_op=${operation}`);
   await page
+    .getByRole("article")
+    .filter({ has: page.getByText(/^Revision [0-9a-f]{7}$/) })
     .getByRole("button", { name: /^Open .* open review with/ })
-    .first()
     .click();
   const review = page.getByRole("article", { name: "Review details" });
   await expect(review).toBeVisible();

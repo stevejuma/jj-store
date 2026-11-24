@@ -225,7 +225,7 @@ async function main() {
     try {
       for (const role of ui ? roles : ["source", ...roles]) {
         const dir = join(temp, role);
-        downloadArtifact(`qualification-${role}`, dir, expected);
+        await downloadArtifact(`qualification-${role}`, dir, expected);
         const receipt = verifyReceipt(
           JSON.parse(await readFile(join(dir, `${role}.json`), "utf8")),
           expected,
@@ -234,7 +234,7 @@ async function main() {
         for (const name of names.filter(
           (name) => payloads[name].role === role,
         )) {
-          downloadArtifact(name, payloads[name].root, expected);
+          await downloadArtifact(name, payloads[name].root, expected);
           await verifyPayload(name, receipt.payloads[name]);
         }
       }

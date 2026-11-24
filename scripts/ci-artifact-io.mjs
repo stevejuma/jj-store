@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { lstat, readdir } from "node:fs/promises";
+import { setTimeout as delay } from "node:timers/promises";
 import { join, relative, resolve } from "node:path";
 
 export async function filesUnder(root, directory = root) {
@@ -50,20 +51,40 @@ export async function githubApi(path) {
   return response.json();
 }
 
-export function downloadArtifact(name, root, expected) {
-  execFileSync(
-    "gh",
-    [
-      "run",
-      "download",
-      expected.run,
-      "--repo",
-      expected.repository,
-      "--name",
-      `${name}-${expected.attempt}`,
-      "--dir",
-      root,
-    ],
-    { stdio: "inherit" },
-  );
+export async function downloadArtifact(
+  name,
+  root,
+  expected,
+  env = process.env,
+) {
+  const artifact = `${name}-${expected.attempt}`;
+  const args = [
+    "run",
+    "download",
+    expected.run,
+    "--repo",
+    expected.repository,
+    "--name",
+    artifact,
+    "--dir",
+    root,
+  ];
+  for (let attempt = 1; ; attempt++) {
+    try {
+      execFileSync("gh", args, { env, stdio: ["ignore", "inherit", "pipe"] });
+      return;
+    } catch (error) {
+      const status = /\bHTTP (\d{3})\b/.exec(String(error.stderr))?.[1];
+      // gh errors may include a signed artifact URL. Report only the status.
+      const reason = status
+        ? `HTTP ${status}`
+        : `gh ${error.code ?? error.signal ?? error.status}`;
+      if (attempt >= 3 || !["502", "503", "504"].includes(status))
+        throw Error(`Download of ${artifact} failed: ${reason}`);
+      console.warn(
+        `Retrying ${artifact} after ${reason} (attempt ${attempt}/3)`,
+      );
+      await delay(1000 * 2 ** (attempt - 1));
+    }
+  }
 }
