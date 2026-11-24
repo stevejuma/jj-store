@@ -332,3 +332,43 @@ test("native timing separates target preparation from test execution", async () 
     await rm(temp, { recursive: true, force: true });
   }
 });
+
+test("artifact download retries HTTP 503 and stops on HTTP 403", async () => {
+  const { downloadArtifact } = await import("./ci-artifact-io.mjs");
+  const root = await mkdtemp(join(tmpdir(), "ci-download-"));
+  const gh = join(root, "gh");
+  const count = join(root, "attempts");
+  const env = {
+    ...process.env,
+    PATH: root + ":" + process.env.PATH,
+    COUNT: count,
+  };
+  try {
+    await writeFile(
+      gh,
+      '#!/bin/sh\necho attempt >> "$COUNT"\nif [ "$STATUS" = 403 ] || [ "$(wc -l < "$COUNT")" -eq 1 ]; then echo "error downloading artifact: HTTP ${STATUS}" >&2; exit 1; fi\n',
+      { mode: 0o700 },
+    );
+    const expected = {
+      run: "123",
+      repository: "stevejuma/jj-store",
+      attempt: 1,
+    };
+    await downloadArtifact("qualification-source", root, expected, {
+      ...env,
+      STATUS: "503",
+    });
+    assert.equal((await readFile(count, "utf8")).trim().split("\n").length, 2);
+    await assert.rejects(
+      () =>
+        downloadArtifact("qualification-source", root, expected, {
+          ...env,
+          STATUS: "403",
+        }),
+      /HTTP 403/,
+    );
+    assert.equal((await readFile(count, "utf8")).trim().split("\n").length, 3);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
