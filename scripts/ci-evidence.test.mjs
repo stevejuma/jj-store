@@ -198,6 +198,38 @@ test("freshness distinguishes absent attempts, failed, partial and complete sche
     false,
   );
 });
+test("freshness recovers after complete manual qualification of the main SHA", () => {
+  const failed = { ...run, conclusion: "failure" };
+  const manual = {
+    ...run,
+    event: "workflow_dispatch",
+    mainSourceVerified: true,
+    created_at: "2026-11-02T09:00:00Z",
+    updated_at: "2026-11-02T10:00:00Z",
+    html_url: "manual",
+  };
+  assert.equal(nightlyHealth([failed, manual], now).healthy, true);
+  assert.equal(nightlyHealth([manual], now).success, "manual");
+  for (const change of [
+    { mainSourceVerified: false },
+    { complete: false },
+    { conclusion: "failure" },
+    { status: "in_progress" },
+    { head_branch: "feature" },
+    { event: "pull_request" },
+  ])
+    assert.equal(
+      nightlyHealth([failed, { ...manual, ...change }], now).healthy,
+      false,
+    );
+  assert.equal(
+    nightlyHealth(
+      [manual, { ...failed, created_at: "2026-11-02T11:00:00Z" }],
+      now,
+    ).healthy,
+    false,
+  );
+});
 test("schedule admission is confined to canonical main and exact source; early same-run consumers retain producer checks", () => {
   const jobs = [
     "Resolve qualification source",

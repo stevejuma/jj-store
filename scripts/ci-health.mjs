@@ -3,11 +3,16 @@ import { appendFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
 
-// A successful partial/manual run cannot refresh scheduled full validation.
+const manualSourceStep = "Confirm qualification of the dispatched main SHA";
 export function nightlyHealth(runs, now = Date.now()) {
   const canonical = runs.filter(
     (run) =>
-      run.event === "schedule" &&
+      (run.event === "schedule" ||
+        (run.event === "workflow_dispatch" &&
+          run.mainSourceVerified === true &&
+          run.complete === true &&
+          run.status === "completed" &&
+          run.conclusion === "success")) &&
       run.head_branch === "main" &&
       run.repository?.full_name === "stevejuma/jj-store" &&
       run.path === ".github/workflows/ci-heavy.yml" &&
@@ -28,11 +33,11 @@ export function nightlyHealth(runs, now = Date.now()) {
       : Infinity;
   const issues = [];
   if (age(attempt, "created_at") > 30)
-    issues.push("No scheduled attempt within 30 hours");
+    issues.push("No qualifying attempt within 30 hours");
   if (age(success, "updated_at") > 48)
-    issues.push("No complete scheduled success within 48 hours");
+    issues.push("No complete qualification success within 48 hours");
   if (attempt?.status === "completed" && attempt.conclusion !== "success")
-    issues.push(`Latest scheduled attempt: ${attempt.conclusion}`);
+    issues.push(`Latest qualification attempt: ${attempt.conclusion}`);
   if (attempt?.conclusion === "success" && attempt.complete !== true)
     issues.push("Latest success has incomplete qualification evidence");
   return {
@@ -63,13 +68,14 @@ async function main() {
   // A bounded freshness window avoids treating old history as current health.
   for (let page = 1; page <= 5; page++) {
     const data = await api(
-      `actions/workflows/ci-heavy.yml/runs?event=schedule&branch=main&per_page=100&page=${page}`,
+      `actions/workflows/ci-heavy.yml/runs?branch=main&per_page=100&page=${page}`,
     );
     runs.push(...data.workflow_runs);
     if (data.workflow_runs.length < 100) break;
   }
   for (const run of runs.filter(
     (r) =>
+      ["schedule", "workflow_dispatch"].includes(r.event) &&
       r.conclusion === "success" &&
       Date.now() - Date.parse(r.updated_at) <= 48 * 3600000,
   )) {
@@ -84,6 +90,12 @@ async function main() {
     const gates = jobs.filter(
       (job) => job.name === "Complete qualification gate",
     );
+    run.mainSourceVerified =
+      gates.length === 1 &&
+      gates[0].steps?.some(
+        (step) =>
+          step.name === manualSourceStep && step.conclusion === "success",
+      );
     run.complete = gates.length === 1 && gates[0].conclusion === "success";
   }
   const health = nightlyHealth(runs);

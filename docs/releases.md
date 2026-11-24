@@ -115,13 +115,15 @@ not re-enable quarantines or certify repaired product behavior. The canonical
 human registers retain ownership and re-enable criteria. Scheduled diagnostic
 failures remain visible in job results and `qualification-results-quarantine-*`.
 
-`ci-health.yml` independently checks every six hours for a scheduled attempt
-within 30 hours and a complete success within 48 hours. It rejects partial
-success and reports unavailable API evidence separately. It neither publishes
-nor authorizes release evidence reuse. Only canonical main scheduled producers
-are admitted; cross-run consumers still require the successful standard gate.
-Same-run consumers can start after source resolution and their actual producers;
-the final complete gate still requires standard checks and every heavy lane.
+`ci-health.yml` checks freshness every six hours and after full qualification
+completes on main. It requires an eligible attempt within 30 hours and a
+complete success within 48 hours. A successful manual run on main counts when
+the complete gate confirms that the tested source matches the dispatch SHA. It
+can clear an older scheduled failure. A later failed scheduled attempt turns
+health red again. Cross-run consumers still require the successful standard
+gate. Same-run consumers can start after source resolution and their actual
+producers; the final complete gate still requires standard checks and every
+heavy lane.
 
 Rollout remains broad: narrower UI/backend family selection and measured shard
 or cache experiments must wait for a complete hosted full run and corresponding
