@@ -7,8 +7,10 @@ mod network;
 pub use network::{fetch, inspect, push};
 const OUTPUT_BYTES: u64 = 1024 * 1024;
 const CACHE_BYTES: u64 = 512 * 1024 * 1024;
-fn disk(path: &Path) -> Result<u64> {
-    let mut pending = vec![path.to_owned()];
+fn disk(root: &Path) -> Result<u64> {
+    scan_entries(root, vec![root.to_owned()])
+}
+fn scan_entries(root: &Path, mut pending: Vec<std::path::PathBuf>) -> Result<u64> {
     let mut bytes = 0u64;
     let mut files = 0;
     while let Some(path) = pending.pop() {
@@ -16,12 +18,22 @@ fn disk(path: &Path) -> Result<u64> {
         if files > 100_000 {
             return Err("Git cache entry limit".into());
         }
-        let metadata = std::fs::symlink_metadata(&path)?;
+        // Git atomically renames lockfiles and temporary packs while the
+        // live scan is in progress. A vanished entry no longer consumes
+        // space at that path. The cache root itself must always exist.
+        let metadata = match std::fs::symlink_metadata(&path) {
+            Err(e) if path != root && e.kind() == std::io::ErrorKind::NotFound => continue,
+            result => result?,
+        };
         if metadata.file_type().is_symlink() {
             return Err("Git cache symlink".into());
         }
         if metadata.is_dir() {
-            for entry in std::fs::read_dir(path)? {
+            let entries = match std::fs::read_dir(&path) {
+                Err(e) if path != root && e.kind() == std::io::ErrorKind::NotFound => continue,
+                result => result?,
+            };
+            for entry in entries {
                 pending.push(entry?.path());
             }
         } else {
@@ -152,6 +164,19 @@ mod tests {
                 .to_string()
                 .contains("output limit")
         );
+    }
+    #[test]
+    fn cache_monitor_accounts_for_entries_after_a_git_lockfile_rename() {
+        let cache = tempfile::tempdir().unwrap();
+        let lock = cache.path().join("packed-refs.lock");
+        let published = cache.path().join("packed-refs");
+        std::fs::write(&published, b"old").unwrap();
+        std::fs::write(&lock, b"refs").unwrap();
+        let pending = vec![published.clone(), lock.clone()];
+        std::fs::rename(lock, published).unwrap();
+
+        assert_eq!(scan_entries(cache.path(), pending).unwrap(), 4);
+        assert!(disk(&cache.path().join("missing-root")).is_err());
     }
     #[test]
     fn cache_monitor_rejects_excess_bytes_and_symlinks() {

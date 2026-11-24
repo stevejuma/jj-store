@@ -22,3 +22,5 @@
   {{#include 17/SUMMARY.nav.md}}
 - [18](18/index.md)
   {{#include 18/SUMMARY.nav.md}}
+- [24](24/index.md)
+  {{#include 24/SUMMARY.nav.md}}

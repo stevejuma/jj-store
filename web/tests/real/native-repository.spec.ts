@@ -84,7 +84,7 @@ function publishFromExternalCli() {
 async function connect(page: import("@playwright/test").Page) {
   await page.goto(`/#/repos/${repository}/branches`);
   await expect(
-    page.getByRole("option", { name: "main", exact: true }),
+    page.getByRole("option", { name: /^main(?:\s|$)/ }),
   ).toBeVisible();
 }
 
@@ -118,21 +118,18 @@ test("demo history exposes one native divergent change", async ({ page }) => {
   await expect(alpha).toBeVisible();
   await expect(beta).toBeVisible();
 
-  const rowFor = (message: typeof alpha) =>
-    message.locator(
-      "xpath=ancestor::div[contains(@class, 'community-revision-graph__row')]",
-    );
-  const labelFor = async (message: typeof alpha, kind: "Git" | "JJ") =>
-    rowFor(message)
-      .getByRole("button", {
-        name: new RegExp(
-          `^Copy ${kind === "Git" ? "Git commit SHA" : "JJ Change ID"}`,
-        ),
-      })
-      .getAttribute("aria-label");
+  const identifiers = (message: typeof alpha) =>
+    page
+      .getByRole("listitem")
+      .filter({ has: message })
+      .getByRole("group", { name: "Native revision identifiers" });
+  const changeId = /^Full JJ Change ID: [k-z]{32}$/;
+  const commitId = /^Full Git commit SHA: [0-9a-f]{128}$/;
+  const fullId = (message: typeof alpha, pattern: RegExp) =>
+    identifiers(message).getByText(pattern).textContent();
 
-  expect(await labelFor(alpha, "JJ")).toBe(await labelFor(beta, "JJ"));
-  expect(await labelFor(alpha, "Git")).not.toBe(await labelFor(beta, "Git"));
+  expect(await fullId(alpha, changeId)).toBe(await fullId(beta, changeId));
+  expect(await fullId(alpha, commitId)).not.toBe(await fullId(beta, commitId));
 });
 
 test("external publication refreshes automatically and preserves selection", async ({
@@ -143,7 +140,7 @@ test("external publication refreshes automatically and preserves selection", asy
   );
   await connect(page);
   expect((await eventRequest).headers()["authorization"]).toBeUndefined();
-  const main = page.getByRole("option", { name: "main", exact: true });
+  const main = page.getByRole("option", { name: /^main(?:\s|$)/ });
   await expect(main).toBeVisible();
   await main.click();
   await page
@@ -200,9 +197,7 @@ test("native conflict selection previews and publishes one atomic resolution", a
       requests.push(request.postDataJSON());
   });
   await connect(page);
-  await page
-    .getByRole("option", { name: "conflict/demo", exact: true })
-    .click();
+  await page.getByRole("option", { name: /^conflict\/demo(?:\s|$)/ }).click();
   await page
     .getByRole("button", { name: "Unresolved browser conflict", exact: true })
     .click();
@@ -260,7 +255,7 @@ test("browser mutation previews and publishes one native request", async ({
       requests.push(request.postDataJSON());
   });
   await connect(page);
-  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page.getByRole("option", { name: /^main(?:\s|$)/ }).click();
   await page
     .getByRole("button", { name: "Add repository browser", exact: true })
     .click();

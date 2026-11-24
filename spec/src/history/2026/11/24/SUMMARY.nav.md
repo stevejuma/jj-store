@@ -1,0 +1,2 @@
+- [E-CI-COLD-BRANCH-GIT-001](E-CI-COLD-BRANCH-GIT-001/index.md)
+  {{#include E-CI-COLD-BRANCH-GIT-001/SUMMARY.nav.md}}
