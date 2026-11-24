@@ -2,6 +2,10 @@ name: Nightly validation health
 on:
   schedule:
     - cron: "43 */6 * * *"
+  workflow_run:
+    workflows: ["Full qualification"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read

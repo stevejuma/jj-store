@@ -226,6 +226,11 @@ jobs:
           CI_STAGE: heavy
           CI_PLAN: "{}"
           CI_JOBS: ${{ toJSON(needs) }}
+      - name: Confirm qualification of the dispatched main SHA
+        if: >-
+          github.event_name == 'workflow_dispatch' && github.ref ==
+          'refs/heads/main' && needs.resolve.outputs.source == github.sha
+        run: echo "Full qualification covered the dispatched main revision."
 concurrency:
   group:
     qualification-${{ github.event_name }}-${{ github.workflow }}-${{ inputs.ref

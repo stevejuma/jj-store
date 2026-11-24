@@ -163,6 +163,12 @@ success. This closes scheduled freshness only; four quarantines,
 latency/reliability, publication, provider and platform gates remain open, and
 visual approval is explicitly deferred.
 
+Nightly health MUST accept a completed manual full qualification on canonical
+main when the complete gate confirms the resolved source equals the dispatch
+SHA. It counts toward both the 30-hour attempt and 48-hour success windows. A
+later failed scheduled attempt supersedes that recovery. Health reevaluates
+after qualification completes on main and independently every six hours.
+
 E-PUBLIC-SURFACES-001 makes the Pages artifact one source-bound documentation
 surface: the specification remains at the site root, the application manual at
 `/manual/`, and the production-owned source Storybook at `/storybook/` with its

@@ -7,6 +7,9 @@ regressions, workflow validation and an integrated hosted full run. Narrower PR
 selection remains disabled pending that run; local regressions establish neither
 full product qualification nor measured latency.
 
+Freshness evidence from a manual main run requires a successful complete gate
+and confirmation of the dispatch SHA in the same run attempt.
+
 E-CI-SELECTION-001 keeps broad standard checks while recording a versioned
 shadow domain plan. Affected CLI, server and capture package closures add
 blocking targeted backend coverage with exact two-shard execution evidence.

@@ -391,8 +391,8 @@ E-DEPENDENCY-AUTOMATION-004 records unchanged Design Core 0.10.1 compatibility;
 E-CI-IMAGE-WEB-PLAYWRIGHT-001 records the missing hosted Chromium prerequisite.
 M30 remains In progress until exact-source GHCR and final release qualification.
 
-E-S6-UI-TOOLING-001/E-UI-VISIBLE-NAMES-001 keep M30 In progress. Cold Storybook
-1047/0/2, web 114/0/1; E-DEPENDENCY-AUTOMATION-006.
+E-S6-UI-TOOLING-001/E-UI-VISIBLE-NAMES-001: Storybook 1047/0/2, web 114/0/1. M30
+remains in progress (E-DEPENDENCY-AUTOMATION-006, E-CI-COLD-BRANCH-GIT-001).
 <!-- generated-navigation -->
 
 ## Pages

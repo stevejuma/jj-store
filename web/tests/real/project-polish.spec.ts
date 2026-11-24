@@ -16,7 +16,7 @@ test("repository documents linked projects and Activity filters retain native sc
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`/#/repos/${home}/branches`);
-  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page.getByRole("option", { name: /^main(?:\s|$)/ }).click();
   await expect
     .poll(() => new URLSearchParams(page.url().split("?")[1]).get("bookmark"))
     .toBe("main");

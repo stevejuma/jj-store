@@ -114,8 +114,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed safe owned Unix pipe registration and the real-pipe byte-drain/EOF regression. Desktop flags, launch admission, nonblocking lifetime and CLI documentation remain unchanged; strict deprecation diagnostics and the unsafe-code ban stay enforced.",
-      "fingerprint": "0d6bd9692ac8f04d8e91b2be36128c467156f07bd33b49cded18f004dd58746e"
+      "reason": "Git cache accounting tolerates lockfiles and directories renamed during a fetch. Commands, limits and operator recovery guidance are unchanged.",
+      "fingerprint": "36c947f969930b32f3672ced600e1bd12094d17a9e773a0f94312e578fd196e8"
     }
   },
   {

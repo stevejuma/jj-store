@@ -12,7 +12,7 @@ test("Git import refreshes automatically", async ({ page }) => {
   const workspace = process.env.JJ_STORE_GIT_CYCLE_WORKSPACE!;
   const root = process.env.JJ_STORE_REAL_ROOT!;
   await page.goto("/");
-  const main = page.getByRole("option", { name: "main", exact: true });
+  const main = page.getByRole("option", { name: /^main(?:\s|$)/ });
   await expect(main).toBeVisible();
   await main.click();
   await page.getByRole("tab", { name: "Commits", exact: true }).click();

@@ -126,8 +126,9 @@ Runtime, API, external storage and native checks start independently after
 source validation; assets need backend tools, embedded tests need runtime, and
 browser consumers wait only for their required artifacts. UI acceptance is
 already required by standard checks and is not repeated by the coordinator.
-Backend failures do not block unrelated consumers. Every producer, suite and
-shard remains mandatory for complete qualification and publication.
+Every producer, suite and shard remains mandatory for qualification and
+publication. An exact-source main dispatch can supply the complete gate for
+nightly health.
 
 The scoped Conversations npm workflow MUST be an admitted producer for that same
 unchanged graph only on canonical main dispatch or its package-scoped
